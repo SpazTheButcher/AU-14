@@ -4,19 +4,6 @@
   name: cm-job-name-squad-leader
   description: cm-job-description-squad-leader
   playTimeTracker: CMJobSquadLeader
-  requirements:
-  - !type:RoleTimeRequirement
-    role: CMJobHospitalCorpsman
-    time: 3600 # 1 hour
-  - !type:RoleTimeRequirement
-    role: CMJobCombatTech
-    time: 3600 # 1 hour
-  - !type:RoleTimeRequirement
-    role: CMJobFireteamLeader
-    time: 18000 # 5 hours
-  - !type:DepartmentTimeRequirement
-    department: CMSquad
-    time: 36000 # 10 hours
   ranks:
     RMCRankGunnerySergeant:
     - !type:RoleTimeRequirement
@@ -45,7 +32,7 @@
         RMCSkillConstruction: 2
         RMCSkillCqc: 1
         RMCSkillEndurance: 2
-        RMCSkillEngineer: 2
+        RMCSkillEngineer: 3
         RMCSkillFirearms: 1
         RMCSkillFireman: 1
         RMCSkillIntel: 1
