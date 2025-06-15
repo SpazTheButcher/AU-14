@@ -1,10 +1,11 @@
 - type: entity
   parent: RemoteSignaller
   id: AU14RemoteSignallerAdvanced
-  name: advanced remote signaller
-  description: A handheld device used for remotely sending signals to objects within a small radius of about 50 meters.
+  name: ProtonCall XL Portable Telephone
+  description: A Weyland-Yutani brickphone made by a subsidiary of their communications division. Probably pried from the dead hands of some corporate shmuck. This one’s being used for dialing CLF IEDs. Someone etched 'Fuck the United Americas' into the side.
   components:
   - type: Sprite
+    sprite: _AU14/Items/IEDs/signaller.rsi
     state: advanced
   - type: Item
     inhandVisuals:

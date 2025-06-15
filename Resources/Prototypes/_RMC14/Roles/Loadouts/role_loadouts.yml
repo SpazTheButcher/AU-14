@@ -998,3 +998,14 @@
   - FoodSweetsRMC
   - FoodPackagedRMC
   - FoodHealthyRMC
+
+- type: roleLoadout
+  id: AU14JobCivilianCWPSRanger
+  points: 7
+  groups:
+  - PaperworkRMC
+  - CannedDrinksRMC
+  - FlasksRMC
+  - FoodSweetsRMC
+  - FoodPackagedRMC
+  - FoodHealthyRMC

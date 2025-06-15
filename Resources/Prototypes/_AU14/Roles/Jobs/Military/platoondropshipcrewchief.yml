@@ -44,6 +44,7 @@
         RMCSkillPilot: 2
         RMCSkillPowerLoader: 2
         RMCSkillSurgery: 1
+        RMCSkillPolice: 1
     - type: JobPrefix
       prefix: au14-job-prefix-govfordcc
     - type: TacticalMapIcon

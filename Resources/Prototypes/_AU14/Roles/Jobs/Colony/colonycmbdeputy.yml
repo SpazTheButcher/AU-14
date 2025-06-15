@@ -9,8 +9,12 @@
     AU14RankCMBSrDeputy:
     - !type:RoleTimeRequirement
       role: AU14JobCivilianCMBDeputy
-      time: 1200 # 20 hours
-    RMCRankCMBDeputy: []
+      time: 2400 # 20 hours
+    RMCRankCMBDeputy:
+    - !type:RoleTimeRequirement
+      role: AU14JobCivilianCMBDeputy
+      time: 240 # 4 hours
+    AU14RankCMBProbDeputy: []
   startingGear: AU14GearCivilianCMBDeputy
   icon: "RMCJobIconBureauDeputy"
   requireAdminNotify: false

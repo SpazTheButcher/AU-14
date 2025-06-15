@@ -20,7 +20,7 @@
       time: 90000 # 25 hours
     RMCRankWeYaJuniorExecutive: []
   startingGear: AU14GearCivilianCorporateLiaison
-  icon: "CMJobIconLiaison"
+  icon: "CMJobIconEmpty"
   requireAdminNotify: false
   joinNotifyCrew: false
   supervisors: au14-job-supervisors-colonycivilian

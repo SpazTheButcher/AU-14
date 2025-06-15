@@ -173,23 +173,23 @@
 - type: entity
   parent: RMCCrateBase
   id: AU14CrateBoxAR10
-  name: AR10 assault rifle crate (x1 AR10 assault rifle, x4 AR10 Magazine)
+  name: AR10 assault rifle crate (x1 AR10 assault rifle, x4 M16 Magazine)
   components:
   - type: StorageFill
     contents:
-    - id: WeaponRifleAR10
+    - id: AU14WeaponRifleAR10
       amount: 1
-    - id: RMCMagazineRifleAR10
+    - id: RMCMagazineRifleM16
       amount: 4
 
 - type: entity
   parent: RMCCrateBase
   id: AU14CrateBoxAR10Magazines
-  name: AR10 Magazine Crate (x6 AR10 Magazine)
+  name: M16/AR10 Magazine Crate (x6 M16 Magazine)
   components:
   - type: StorageFill
     contents:
-    - id: RMCMagazineRifleAR10
+    - id: RMCMagazineRifleM16
       amount: 6
 
 - type: entity
@@ -284,7 +284,74 @@
     - id: CMMagazinePistolM1984
       amount: 4
 
+- type: entity
+  parent: RMCCrateBase
+  id: AU14CrateBoxRevolverM2019
+  name: "M2019 autorevolver crate (1x M2019 autorevolver, 4x Speed loader (.357)"
+  components:
+  - type: StorageFill
+    contents:
+    - id: AU14WeaponRevolverM2019
+      amount: 1
+    - id: RMCSpeedLoader357
+      amount: 4
+
+- type: entity
+  parent: RMCCrateBase
+  id: AU14CrateBox357HP
+  name: ".357 hollowpoint speed loader crate (x7 hollowpoint speed loader .357)"
+  components:
+  - type: StorageFill
+    contents:
+    - id: RMCSpeedLoader357Hollowpoint
+      amount: 7
+
+- type: entity
+  parent: RMCCrateBase
+  id: AU14CrateBox357
+  name: ".357 speed loader crate (x7 speed loader .357)"
+  components:
+  - type: StorageFill
+    contents:
+    - id: RMCSpeedLoader357
+      amount: 7
+
+- type: entity
+  parent: RMCCrateBase
+  id: AU14CrateBoxMod88
+  name: "Mod 88 Combat Pistol crate (x6 Mod 88 AP magazine, x1 Mod 88 combat pistol, x1 rail flashlight)"
+  components:
+  - type: StorageFill
+    contents:
+    - id: RMCGunCasePistolM77
+      amount: 1
+
+- type: entity
+  parent: RMCCrateBase
+  id: AU14CrateBoxMod88Mags
+  name: "Mod 88 AP magazine crate (x7 Mod 88 AP magazine)"
+  components:
+  - type: StorageFill
+    contents:
+    - id: CMMagazinePistolM77AP
+      amount: 7
+
 #Tools
+
+- type: entity
+  parent: RMCCrateBase
+  id: AU14CrateAssortedKnives
+  name: Assorted Knives Crate (2x M2132 machete, 4x M5 bayonet, x5 M11 throwing knife)
+  components:
+  - type: StorageFill
+    contents:
+    - id: CMM2132Machete
+      amount: 2
+    - id: RMCM5Bayonet
+      amount: 4
+    - id: CMM11Knife
+      amount: 5
+
 - type: entity
   parent: RMCCrateBase
   id: AU14CrateBoxToolbelt

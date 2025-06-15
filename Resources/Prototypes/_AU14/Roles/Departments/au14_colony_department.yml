@@ -63,6 +63,7 @@
   roles:
   - AU14JobCivilianCMBDeputy
   - AU14JobCivilianCMBMarshal
+  - AU14JobCivilianCWPSRanger
   departmentRadio: null
   headOfDepartment: null
 
@@ -75,6 +76,7 @@
   roles:
   - AU14JobCivilianCMBDeputy
   - AU14JobCivilianCMBMarshal
+  - AU14JobCivilianCWPSRanger
   - AU14JobCivilianEcologist
   - AU14JobCivilianUSASFRecruiter
   - AU14Jobcivilianminer

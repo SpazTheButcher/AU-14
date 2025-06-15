@@ -46,6 +46,8 @@
     shoes: RMCBootsCorporate
     id: AU14IDCardColonyFreightSystemsSpecialist
     ears: CMHeadsetColony
+  inhand:
+  - CMStampApproved
 
 - type: entity
   parent: CMSpawnPointJobBase

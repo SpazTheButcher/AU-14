@@ -289,9 +289,11 @@
         amount: 8
       - id: CMWebbingPouch
         amount: 3
-    - name: Synthetic Reset Key
+    - name: Miscellaneous
       entries:
       - id: RMCSynthResetKey
+        amount: 2
+      - id: CMStampApproved
         amount: 2
 
 - type: entity
@@ -696,7 +698,7 @@
         amount: 1
       - id: AU14CivilianBoilerSuitGreen
         amount: 1
-    - name: Smartpacks
+    - name: Backpacks
       choices: { CMBackpack: 1 }
       entries:
       - id: RMCSmartpack
@@ -759,8 +761,6 @@
       - id: RMCPouchConstruction
         amount: 2
       - id: RMCPouchMedkitFillAdvanced
-        amount: 1
-      - id: CMWebbingPouch
         amount: 1
       - id: RMCToolWebbingSmallERTFilled
         amount: 1

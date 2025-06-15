@@ -26,6 +26,7 @@
         RMCSkillEngineer: 3
         RMCSkillFireman: 2
         RMCSkillVehicles: 1
+        RMCSkillPolice: 1
     - type: JobPrefix
       prefix: au14-job-prefix-clfmachinegunner
     - type: TacticalMapIcon
@@ -42,7 +43,7 @@
     shoes: RMCBootsPMCFilled
     neck: RMCCLFArmband
     jumpsuit: CMJumpsuitColonist
-    id: CMIDCardColonist
+    id: AU14IDCardColonyColonist
     ears: AU14CLFHeadset
   inhand:
   - RMCWeaponLMGM60

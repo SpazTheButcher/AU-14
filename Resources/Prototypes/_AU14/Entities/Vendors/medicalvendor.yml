@@ -16,8 +16,10 @@
       entries:
       - id: CMOintment10
         amount: 30
-      - id: CMGauze10
+      - id: AU14HemostaticGauzePacket
         amount: 30
+      - id: AU14Tourniquet
+        amount: 15
       - id: CMBurnKit10
         amount: 15
       - id: CMTraumaKit10

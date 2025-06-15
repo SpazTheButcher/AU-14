@@ -42,6 +42,7 @@
         RMCSkillSmartGun: 1
         RMCSkillConstruction: 2
         RMCSkillEngineer: 3
+        RMCSkillPolice: 1
     - type: SquadArmorWearer
     - type: JobPrefix
       prefix: au14-job-prefix-govforsquadautomaticrifleman

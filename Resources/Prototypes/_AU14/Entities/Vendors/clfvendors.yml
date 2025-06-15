@@ -212,9 +212,6 @@
         amount: 1
       - id: RMCPouchExplosive
         amount: 1
-      - id: RMCPouchFirstResponder
-        name: First Responder Pouch (Empty)
-        amount: 1
       - id: RMCPouchTools
         amount: 3
 #      - id: Sling Pouch
@@ -242,7 +239,7 @@
       - id: CMM11Knife
         amount: 15
       - id: CMEntrenchingTool
-        amount: 5
+        amount: 15
       - id: CMScrewdriver
         amount: 5
       - id: CMWirecutter
@@ -285,15 +282,19 @@
       #- id: CMSparePDTLBattleBuddyKit
       #  amount: 3
       - id: CMSandbagEmpty25
-        amount: 5
+        amount: 30
       - id: RMCPowerCellHigh
         amount: 5
+      - id: RMCZipties
+        amount: 30
     - name: Medical Supplies
       entries:
-      - id: CMGauze10
-        amount: 12
+      - id: AU14HemostaticGauzePacket
+        amount: 24
       - id: CMOintment10
-        amount: 12
+        amount: 24
+      - id: AU14Tourniquet
+        amount: 6
 
 - type: entity
   parent: ColMarTechBase
@@ -334,8 +335,10 @@
       entries:
       - id: CMOintment10
         amount: 60
-      - id: CMGauze10
+      - id: AU14HemostaticGauzePacket
         amount: 60
+      - id: AU14Tourniquet
+        amount: 30
       - id: CMBurnKit10
         amount: 30
       - id: CMTraumaKit10

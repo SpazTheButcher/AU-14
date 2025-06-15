@@ -28,6 +28,7 @@
         RMCSkillFirearms: 1
         RMCSkillFireman: 1
         RMCSkillJtac: 3
+        RMCSkillPolice: 1
     - type: JobPrefix
       prefix: au14-job-prefix-govforsquadsergeant
     - type: TacticalMapIcon

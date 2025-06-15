@@ -32,6 +32,7 @@
         RMCSkillEngineer: 3
         RMCSkillFireman: 1
         RMCSkillVehicles: 1
+        RMCSkillPolice: 1
     - type: JobPrefix
       prefix: au14-job-prefix-govforsquadrifleman
     - type: TacticalMapIcon

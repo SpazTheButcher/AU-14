@@ -149,3 +149,11 @@
   components:
   - type: PresetIdCard
     job: AU14Jobciviliankellandwarden
+
+- type: entity
+  parent: CMIDCardBase
+  id: AU14IDCardcivilianCWPSranger
+  name: CWPS Ranger ID card
+  components:
+  - type: PresetIdCard
+    job: AU14JobCivilianCWPSRanger
