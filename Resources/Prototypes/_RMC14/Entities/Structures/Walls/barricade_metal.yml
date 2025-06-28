@@ -167,9 +167,6 @@
     thornsDamage:
       types:
         Slash: 10
-  - type: Construction
-    graph: BarricadeMetalGraph
-    node: nodeMetal
   - type: RMCConstructionUpgradeTarget
     upgrades: ["RMCExplosiveUpgrade", "RMCBiohazardUpgrade", "RMCBruteUpgrade"]
   - type: Tag
@@ -271,9 +268,6 @@
             collection: MetalBreak
         - !type:DoActsBehavior
           acts: [ "Destruction" ]
-    - type: Construction
-      graph: BarricadeTurnstileGraph
-      node: nodeTurnstile
 
 - type: entity
   parent: CMBarricadeTurnstile
@@ -286,9 +280,7 @@
       layers:
       - state: turnstile_med
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeTurnstileGraph
-      node: nodeTurnstile
+
 
 #Handrails
 - type: entity
@@ -325,9 +317,7 @@
         - !type:DoActsBehavior
           acts: [ "Destruction" ]
     - type: Climbable
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
+
 
 - type: entity
   parent: RMCBarricadeHandrail
@@ -337,9 +327,7 @@
       layers:
       - state: handrail_b_0
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
+
 
 - type: entity
   parent: RMCBarricadeHandrail
@@ -349,9 +337,6 @@
       layers:
       - state: handrail_med
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
 
 - type: entity
   parent: RMCBarricadeHandrail
@@ -361,9 +346,7 @@
       layers:
       - state: handrail_strata
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
+
 
 - type: entity
   parent: RMCBarricadeHandrail
@@ -373,9 +356,7 @@
       layers:
       - state: hr_kutjevo
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
+
 
 - type: entity
   parent: RMCBarricadeHandrail
@@ -385,9 +366,6 @@
       layers:
       - state: wire_rail
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
 
 - type: entity
   parent: RMCBarricadeHandrail
@@ -397,9 +375,6 @@
       layers:
       - state: handrail_hybrisa
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
 
 - type: entity
   parent: RMCBarricadeHandrail
@@ -409,9 +384,6 @@
       layers:
       - state: centerroadbarrier2
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
 
 - type: entity
   parent: RMCBarricadeHybrisaCenterRoad
@@ -434,9 +406,7 @@
       layers:
       - state: plasticroadbarrierred
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
+
 
 - type: entity
   parent: RMCBarricadeHybrisaPlasticRoadBarrier
@@ -546,10 +516,6 @@
     thornsDamage:
       types:
         Slash: 10
-  - type: Construction
-    graph: BarricadeMetalDoorGraph
-    node: nodeBarricadeMetalDoor
-  - type: InteractedBlacklist
     blacklist:
       components:
       - Xeno
