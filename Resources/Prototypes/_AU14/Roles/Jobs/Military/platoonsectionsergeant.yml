@@ -22,7 +22,7 @@
   joinNotifyCrew: false
   supervisors: au14-job-supervisors-govfor
   accessGroups:
-  - SquadLeader
+  - augovforcommand
   overwatchSortPriority: -6
   overwatchShowName: true
   overwatchRoleName: Platoon Sergeant

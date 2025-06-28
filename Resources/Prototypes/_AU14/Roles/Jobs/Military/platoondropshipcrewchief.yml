@@ -26,8 +26,7 @@
   joinNotifyCrew: false
   supervisors: au14-job-supervisors-govfor
   accessGroups:
-  - Pilot
-  - Rifleman
+  - augovforpilot
   roleWeight: 0.25
   special:
   - !type:AddComponentSpecial
