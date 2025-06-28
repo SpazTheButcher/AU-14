@@ -380,81 +380,132 @@
     doAfter: 0
   - type: IconLabel
     labelTextLocId: AU14-naloxone-medicine-container-label-text
-- type: reagent
-  id: AU14BlackGoo
-  name: reagent-name-goo
-  group: Toxins
-  desc: reagent-desc-goo
-  physicalDesc: reagent-physical-desc-necrotic
-  flavor: bitter
-  color: "#545156"
-  worksOnTheDead: true
-  metabolisms:
-    Medicine:
-      effects:
-      - !type:CauseGooInfection
-        conditions:
-        - !type:ReagentThreshold
-          min: 5
-- type: reagent
-  id: AU14BlackGooAlpha
-  name: reagent-name-goo
-  group: Toxins
-  desc: reagent-desc-goo
-  physicalDesc: reagent-physical-desc-necrotic
-  flavor: bitter
-  color: "#545156"
-  worksOnTheDead: true
-  metabolisms:
-    Medicine:
-      effects:
-      - !type:CauseAlphaInfection
-        conditions:
-        - !type:ReagentThreshold
-          min: 5
-      - !type:MovespeedModifier
-        walkSpeedModifier: 1.35
-        sprintSpeedModifier: 0.4
-      - !type:GenericStatusEffect
-        key: Stutter
-        component: StutteringAccent
-      - !type:Jitter
-      - !type:GenericStatusEffect
-        key: Stun
-      - !type:ChemVomit
-        probability: 1.0
-      - !type:Drunk
-        boozePower: 100
-      - !type:HealthChange
-        scaleByQuantity: false
-        damage:
-          types:
-            Poison: 2
+
+#gauze
+
 - type: entity
-  suffix: Goo
-  parent: PrefilledSyringe
-  id: AUSyringeGoo
+  parent: CMBaseHealingItem
+  id: AU14HemostaticGauzePacket
+  name: hemostatic gauze packet
+  description: A vacuum sealed packet of chemically treated gauze designed to stop arterial bleeding fast. The powder burns like hell, but it works. Single-use. Rip it open, jam it in, hope for the best.
   components:
-  - type: Label
-    currentLabel: reagent-name-goo
-  - type: SolutionContainerManager
-    solutions:
-      injector:
-        maxVol: 15
-        reagents:
-        - ReagentId: AU14BlackGoo
-          Quantity: 15
+  - type: Sprite
+    sprite: _AU14/Items/quickclot.rsi
+    state: quickclot
+  - type: Item
+    sprite: _AU14/Items/quickclot.rsi
+    inhandVisuals:
+      left:
+      - state: qc_left
+      right:
+      - state: qc_right
+  - type: SpawnItemsOnUse
+    items:
+    - id: AU14HemostaticGauzePacketTrash
+    - id: AU14HemostaticGauze
+    sound:
+      path: /Audio/Effects/unwrap.ogg
+
 - type: entity
-  suffix: Goo
-  parent: PrefilledSyringe
-  id: AlphaSyringe
+  parent: CMBaseHealingItem
+  id: AU14HemostaticGauzePacketTrash
+  name: used hemostatic gauze packet
+  description: A vacuum sealed packet of chemically treated gauze designed to stop arterial bleeding fast. The powder burns like hell, but it works. Single-use. This one is trash, its already been used!
   components:
-  - type: Label
-    currentLabel: reagent-name-goo
-  - type: SolutionContainerManager
-    solutions:
-      injector:
-        maxVol: 15
-        reagents:
-        - ReagentId: AU14BlackGooAlpha
-          Quantity: 15
+  - type: Sprite
+    sprite: _AU14/Items/quickclot.rsi
+    state: qc_ripped
+  - type: Item
+    sprite: _AU14/Items/quickclot.rsi
+    inhandVisuals:
+      left:
+      - state: qc_left
+      right:
+      - state: qc_right
+
+- type: entity
+  parent: CMBaseHealingItem
+  id: AU14HemostaticGauze
+  name: hemostatic gauze
+  description: A strip of gauze soaked with a powdery clotting agent. Once it’s out of the packet, the clock’s ticking, stuff it deep into the wound and stop the bleeding before it’s too late.
+  components:
+  - type: Tag
+    tags:
+    - Brutepack
+  - type: Sprite
+    sprite: _AU14/Items/quickclot.rsi
+    state: hemgauze
+  - type: Item
+    sprite: _AU14/Items/quickclot.rsi
+    inhandVisuals:
+      left:
+      - state: hemgauze_left
+      right:
+      - state: hemgauze_right
+  - type: WoundTreater
+    wound: Brute
+    treats: true
+    group: Brute
+    consumable: true
+    canUseUnskilled: true
+    skills:
+      RMCSkillMedical: 2
+    treatBeginSound:
+      path: "/Audio/_RMC14/Medical/bandage.ogg"
+    treatEndSound:
+      path: "/Audio/Items/Medical/brutepack_end.ogg"
+    userPopup: au14-hs-user-popup
+    targetPopup: au14-hs-target-popup
+    othersPopup: au14-hs-others-popup
+    noneSelfPopup: cm-gauze-none-self-popup
+    noneOtherPopup: cm-gauze-none-other-popup
+    noWoundsOnUserPopup: cm-wounds-already-treated-self-popup
+    noWoundsOnTargetPopup: cm-wounds-already-treated-target-popup
+  - type: MedicallyUnskilledDoAfter
+    min: 5
+    doAfter: 8
+
+#tourniquet
+
+#to do: add pain when applied
+- type: entity
+  parent: CMBaseHealingItem
+  id: AU14Tourniquet
+  name: CAT tourniquet
+  description: A single use tourniquet designed for self-application under fire. The CAT uses a high-tension Velcro strap and windlass rod to cut off arterial bleeding on limbs. Effective, painful and not exactly gentle. Overuse can lead to nerve damage or amputation. Still, better maimed than dead.
+  components:
+  - type: Tag
+    tags:
+    - Brutepack
+  - type: Sprite
+    sprite: Objects/Specific/Medical/medical.rsi
+    state: tourniquet
+  - type: Item
+    sprite: Objects/Specific/Medical/medical.rsi
+    inhandVisuals:
+      left:
+      - state: tourniquet-inhand-left
+      right:
+      - state: tourniquet-inhand-right
+  - type: WoundTreater
+    wound: Brute
+    treats: true
+    group: Brute
+    consumable: true
+    canUseUnskilled: true
+    skills:
+      RMCSkillMedical: 2
+    treatBeginSound:
+      path: "/Audio/_RMC14/Medical/splint.ogg"
+    treatEndSound:
+      path: "/Audio/Items/Medical/brutepack_begin.ogg"
+    userPopup: au14-tq-user-popup
+    targetPopup: au14-tq-target-popup
+    othersPopup: au14-tq-others-popup
+    noneSelfPopup: cm-gauze-none-self-popup
+    noneOtherPopup: cm-gauze-none-other-popup
+    noWoundsOnUserPopup: cm-wounds-already-treated-self-popup
+    noWoundsOnTargetPopup: cm-wounds-already-treated-target-popup
+  - type: MedicallyUnskilledDoAfter
+    min: 3
+    doAfter: 4
