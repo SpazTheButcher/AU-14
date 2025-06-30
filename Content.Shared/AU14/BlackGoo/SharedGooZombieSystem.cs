@@ -29,6 +29,6 @@ public abstract class SharedGooZombieSystem : EntitySystem
 
     private void OnRefreshNameModifiers(Entity<GooZombieComponent> entity, ref RefreshNameModifiersEvent args)
     {
-        args.AddModifier("zombie-name-prefix");
+        args.AddModifier("goo-name-prefix");
     }
 }
