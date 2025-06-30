@@ -1390,3 +1390,25 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: RequireProjectileTarget
+
+  # Stock car
+
+- type: entity
+  id: AU14propstockcar
+  name: stock car
+  description: A stock car used by UA racing fame John Wayne Jr. Just pretend the supercharger is stock.
+  components:
+  - type: Sprite
+    sprite: _AU14/Structures/vehicles/stockcar.rsi
+    state: stockcar
+  - type: Clickable
+  - type: InteractionOutline
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 30000
+      behaviors:
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: RequireProjectileTarget
