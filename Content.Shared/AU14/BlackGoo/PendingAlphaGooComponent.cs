@@ -8,7 +8,8 @@ namespace Content.Shared.AU14.BlackGoo;
 /// Temporary because diseases suck.
 /// </summary>
 [RegisterComponent, NetworkedComponent]
-public sealed partial class PendingAlphaGooComponent : PendingGooZombieComponent
+public sealed partial class PendingAlphaGooComponent : Component
 {
 
 }
+

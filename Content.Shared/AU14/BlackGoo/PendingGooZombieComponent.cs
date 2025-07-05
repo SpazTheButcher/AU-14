@@ -8,7 +8,7 @@ namespace Content.Shared.AU14.BlackGoo;
 /// Temporary because diseases suck.
 /// </summary>
 [RegisterComponent, NetworkedComponent]
-public partial class PendingGooZombieComponent : Component
+public sealed partial class PendingGooZombieComponent : Component
 {
     /// <summary>
     /// Damage dealt every second to infected individuals.
@@ -17,7 +17,7 @@ public partial class PendingGooZombieComponent : Component
     {
         DamageDict = new ()
         {
-            { "Poison", 0.2 },
+            { "Poison", 0.7 },
         }
     };
 
@@ -40,7 +40,7 @@ public partial class PendingGooZombieComponent : Component
     /// The minimum amount of time initial infected have before they start taking infection damage.
     /// </summary>
     [DataField]
-    public TimeSpan MinInitialInfectedGrace = TimeSpan.FromMinutes(12.5f);
+    public TimeSpan MinInitialInfectedGrace = TimeSpan.FromMinutes(7.5f);
 
     /// <summary>
     /// The maximum amount of time initial infected have before they start taking damage.
