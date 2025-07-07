@@ -2,7 +2,7 @@
 AU14 is a Multiplayer Sandbox game set in the Universe of the Xenomorph.
 
 
-AU14 is forked from [RMC14]([https://discord.gg/AXwvzDw9CY/](https://github.com/RMC-14/RMC-14)/)  and uses assets from both them and the CM13 project, copyright in metadata files.
+AU14 is forked from RMC14  and uses assets from both them and the CM13 project, copyright in metadata files.
 
 ## Links
 
