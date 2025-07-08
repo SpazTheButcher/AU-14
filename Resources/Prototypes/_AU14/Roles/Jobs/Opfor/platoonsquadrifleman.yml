@@ -44,7 +44,7 @@
 - type: startingGear
   id: AU14GearopforSquadRifleman
   equipment:
-    id: AU14SIDCardopforqquadRifleman
+    id: AU14IDCardopforSquadRifleman
 
 - type: entity
   parent: CMSpawnPointJobBase

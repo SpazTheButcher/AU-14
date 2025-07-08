@@ -1,6 +1,6 @@
 ﻿- type: entity
   parent: CMIDCardBase
-  id: AU14IDcardopforPlatCo
+  id: AU14IDCardopforPlatCo
   name: platoon commander ID card
   components:
   - type: PresetIdCard
@@ -8,7 +8,7 @@
 
 - type: entity
   parent: CMIDCardBase
-  id: AU14IDcardopforPlatOp
+  id: AU14IDCardopforPlatOp
   name: platoon operations officer ID card
   components:
   - type: PresetIdCard
@@ -16,7 +16,7 @@
 
 - type: entity
   parent: CMIDCardBase
-  id: AU14IDcardopforDSPilot
+  id: AU14IDCardopforDSPilot
   name: dropship pilot ID card
   components:
   - type: PresetIdCard
@@ -24,7 +24,7 @@
 
 - type: entity
   parent: CMIDCardBase
-  id: AU14IDcardopforDCC
+  id: AU14IDCardopforDCC
   name: dropship crew chief ID card
   components:
   - type: PresetIdCard
@@ -32,7 +32,7 @@
 
 - type: entity
   parent: CMIDCardBase
-  id: AU14IDcardopforSecSergeant
+  id: AU14IDCardopforSecSergeant
   name: platoon sergeant ID card
   components:
   - type: PresetIdCard
@@ -40,7 +40,7 @@
 
 - type: entity
   parent: CMIDCardBase
-  id: AU14IDcardopforSquadSergeant
+  id: AU14IDCardopforSquadSergeant
   name: squad sergeant ID card
   components:
   - type: PresetIdCard
@@ -48,7 +48,7 @@
 
 - type: entity
   parent: CMIDCardBase
-  id: AU14IDcardopforSquadRifleman
+  id: AU14IDCardopforSquadRifleman
   name: squad sergeant ID card
   components:
   - type: PresetIdCard
@@ -56,7 +56,7 @@
 
 - type: entity
   parent: CMIDCardBase
-  id: AU14IDcardopforSquadAutomaticRifleman
+  id: AU14IDCardopforSquadAutomaticRifleman
   name: squad sergeant ID card
   components:
   - type: PresetIdCard
@@ -64,7 +64,7 @@
 
 - type: entity
   parent: CMIDCardBase
-  id: AU14JobIDcardopforPlatoonCorpsman
+  id: AU14JobIDCardopforPlatoonCorpsman
   name: platoon corpsman ID card
   components:
   - type: PresetIdCard
@@ -72,7 +72,7 @@
 
 - type: entity
   parent: CMIDCardBase
-  id: AU14JobIDcardopforRadioTelephoneOoperator
+  id: AU14JobIDCardopforRadioTelephoneOperator
   name: radio telephone operator ID card
   components:
   - type: PresetIdCard

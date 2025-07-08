@@ -56,7 +56,7 @@
 - type: startingGear
   id: AU14GearopforSectionSergeant
   equipment:
-    id: AU14opforSecSergeant
+    id: AU14IDCardopforSecSergeant
 
 - type: entity
   parent: CMSpawnPointJobBase
