@@ -1,5 +1,5 @@
 using Content.Shared.Damage;
-using Robust.Shared.Player;
+using Robust.Server.Player;
 using Robust.Shared.IoC;
 
 namespace Content.Server.Destructible.Thresholds.Triggers;
