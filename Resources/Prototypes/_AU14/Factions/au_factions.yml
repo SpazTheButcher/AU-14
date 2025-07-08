@@ -1,0 +1,52 @@
+﻿- type: npcFaction
+  id: AUGovfor
+  hostile:
+  - RMCXeno
+  - CLF
+
+
+- type: npcFaction
+  id: RMCXeno
+  hostile:
+  - AUGovfor
+  - AUUpp
+  - AuWeyu
+  - Survivor
+  - CLF
+
+- type: npcFaction
+  id: AUgoo
+  hostile:
+  - UNMC
+  - AUUpp
+  - AuWeyu
+  - AUColonist
+  - CLF
+
+- type: npcFaction
+  id: AUUpp
+  hostile:
+  - RMCXeno
+
+- type: npcFaction
+  id: auCLF
+  hostile:
+  - AUGovfor
+
+- type: npcFaction
+  id: AuWeyu
+  hostile:
+  - RMCXeno
+
+- type: npcFaction
+  id: AUColonist
+  hostile:
+  - AUColonist
+
+
+- type: npcFaction
+  id: AUBureau
+  hostile:
+  - RMCXeno
+
+

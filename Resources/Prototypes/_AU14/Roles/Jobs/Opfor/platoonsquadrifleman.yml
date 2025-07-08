@@ -1,0 +1,69 @@
+- type: job
+  parent: CMJobBase
+  id: AU14JobOpforSquadRifleman
+  name: au14-job-name-opforsquadrifleman
+  description: au14-job-description-opforsquadrifleman
+  setPreference: true
+  playTimeTracker: AU14JobOpforSquadRifleman
+  ranks:
+    RMCRankPrivateFirstClass:
+    - !type:RoleTimeRequirement
+      role: AU14JobOpforSquadRifleman
+      time: 900 # 15 hours
+    RMCRankPrivate: []
+  startingGear: AU14GearOPFORSquadRifleman
+  dummyStartingGear: AU14GearOPFORRiflemanDummy
+  icon: "AU14JobIconRFN"
+  requireAdminNotify: false
+  joinNotifyCrew: false
+  supervisors: au14-job-supervisors-OPFOR
+  accessGroups:
+  - Rifleman
+  hasIcon: false
+  roleWeight: 0.25
+  special:
+  - !type:AddComponentSpecial
+    components:
+    - type: Skills
+      skills:
+        RMCSkillEndurance: 1
+        RMCSkillFirearms: 1
+        RMCSkillConstruction: 2
+        RMCSkillEngineer: 3
+        RMCSkillFireman: 1
+        RMCSkillVehicles: 1
+        RMCSkillPolice: 1
+    - type: JobPrefix
+      prefix: au14-job-prefix-OPFORsquadrifleman
+    - type: TacticalMapIcon
+      icon:
+        sprite: _RMC14/Interface/map_blips.rsi
+        state: synth
+  hidden: false
+
+- type: startingGear
+  id: AU14GearOPFORSquadRifleman
+  equipment:
+    id: AU14SIDCardOPFORqquadRifleman
+
+- type: entity
+  parent: CMSpawnPointJobBase
+  id: AU14SpawnPointOPFORSquadRifleman
+  name: Spawn Point OPFOR Squad Rifleman
+  components:
+  - type: SpawnPoint
+    job_id: AU14JobOpforSquadRifleman
+  - type: Sprite
+    state: syn_spawn
+
+- type: playTimeTracker
+  id: AU14JobOpforSquadRifleman
+  isHumanoid: true
+
+- type: startingGear
+  id: AU14GearOPFORRiflemanDummy
+  equipment:
+    outerClothing: AU14ArmorM3JungleThree
+    shoes: AU14BootsJungle
+    head: AU14JungleM10Helmet
+    jumpsuit: AU14JungleFatigues
