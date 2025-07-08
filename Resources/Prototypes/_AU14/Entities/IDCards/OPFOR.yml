@@ -76,4 +76,4 @@
   name: radio telephone operator ID card
   components:
   - type: PresetIdCard
-    job: AU14JobOpforRadioTelephoneOoperator
+    job: AU14JobOpforRadioTelephoneOperator
