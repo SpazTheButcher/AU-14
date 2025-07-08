@@ -14,7 +14,7 @@
   joinNotifyCrew: false
   supervisors: au14-job-supervisors-govfor
   accessGroups:
-  - Rifleman
+  - augovforcommand
   roleWeight: 0.25
   special:
   - !type:AddComponentSpecial
