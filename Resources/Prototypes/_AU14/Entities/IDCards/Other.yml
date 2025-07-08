@@ -1,0 +1,16 @@
+﻿- type: entity
+  parent: CMIDCardBase
+  id: AU14IDCardmobboss
+  name: Mob Boss ID card
+  components:
+  - type: PresetIdCard
+    job: AU14Jobmobboss
+
+
+- type: entity
+  parent: CMIDCardBase
+  id: AU14IDCardmobgoon
+  name: Mob Goon ID card
+  components:
+  - type: PresetIdCard
+    job: AU14Jobmobgoon

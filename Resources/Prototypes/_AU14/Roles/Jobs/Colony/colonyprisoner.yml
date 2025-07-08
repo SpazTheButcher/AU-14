@@ -9,7 +9,7 @@
   icon: "CMJobIconEmpty"
   requireAdminNotify: false
   joinNotifyCrew: false
-  supervisors: au14-job-supervisors-Loner
+  supervisors: au14-job-supervisors-loner
   roleWeight: 0.6
   special:
   - !type:AddComponentSpecial
