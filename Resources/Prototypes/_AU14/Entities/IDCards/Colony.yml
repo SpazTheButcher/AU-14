@@ -24,11 +24,11 @@
 
 - type: entity
   parent: CMIDCardBase
-  id: AU14IDCardColonyEcologist
-  name: ecologist ID card
+  id: AU14IDCardColonyscientist
+  name: scientist ID card
   components:
   - type: PresetIdCard
-    job: AU14JobCivilianEcologist
+    job: AU14JobCivilianscientist
 
 - type: entity
   parent: CMIDCardBase
