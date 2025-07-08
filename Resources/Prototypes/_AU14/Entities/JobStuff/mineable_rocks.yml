@@ -26,7 +26,7 @@
       - !type:DoActsBehavior
         acts: ["Destruction"]
   - type: Sprite
-    sprite: _AU14/JobMinerals/solaris_mrock.rsi
+    sprite: _RMC14/Structures/Walls/solaris_rock.rsi
     state: solaris_rock
   - type: Icon
     sprite: _RMC14/Structures/Walls/solaris_rock.rsi
