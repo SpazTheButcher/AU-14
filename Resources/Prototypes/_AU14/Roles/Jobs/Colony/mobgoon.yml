@@ -4,6 +4,7 @@
   name: au14-job-name-mobgoon
   description: au14-job-description-mobgoon
   setPreference: true
+  playTimeTracker: AU14Jobmobgoon
   startingGear: AU14GearMobgoon
   icon: "CMJobIconEmpty"
   requireAdminNotify: false
@@ -47,3 +48,6 @@
   - type: Sprite
     state: syn_spawn
 
+- type: playTimeTracker
+  id: AU14Jobmobgoon
+  isHumanoid: true
