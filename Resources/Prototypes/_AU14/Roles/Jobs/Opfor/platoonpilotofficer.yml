@@ -15,12 +15,12 @@
       role: AU14JobOpforDSPilot
       time: 3600 # 60 hours
     RMCRankSecondLT: []
-  startingGear: AU14GearOPFORDSPilot
-  dummyStartingGear: AU14GearOPFORDSPilotDummy
+  startingGear: AU14GearopforDSPilot
+  dummyStartingGear: AU14GearopforDSPilotDummy
   icon: "AU14JobIconPilotOfficer"
   requireAdminNotify: true
   joinNotifyCrew: false
-  supervisors: au14-job-supervisors-OPFOR
+  supervisors: au14-job-supervisors-opfor
   accessGroups:
   - Pilot
   - Rifleman
@@ -42,7 +42,7 @@
         RMCSkillSurgery: 1
         RMCSkillPolice: 1
     - type: JobPrefix
-      prefix: au14-job-prefix-OPFORdspilot
+      prefix: au14-job-prefix-opfordspilot
     - type: TacticalMapIcon
       icon:
         sprite: _RMC14/Interface/map_blips.rsi
@@ -50,14 +50,14 @@
   hidden: false
 
 - type: startingGear
-  id: AU14GearOPFORDSPilot
+  id: AU14GearopforDSPilot
   equipment:
-    id: AU14IDCardOPFORDSPilot
+    id: AU14IDCardopforDSPilot
 
 - type: entity
   parent: CMSpawnPointJobBase
-  id: AU14SpawnPointOPFORDSPilot
-  name: Spawn Point OPFOR Dropship Pilot
+  id: AU14SpawnPointopforDSPilot
+  name: Spawn Point opfor Dropship Pilot
   components:
   - type: SpawnPoint
     job_id: AU14JobOpforDSPilot
@@ -69,7 +69,7 @@
   isHumanoid: true
 
 - type: startingGear
-  id: AU14GearOPFORDSPilotDummy
+  id: AU14GearopforDSPilotDummy
   equipment:
     outerClothing: AU14USASFICPS2
     shoes: CMBootsBrown

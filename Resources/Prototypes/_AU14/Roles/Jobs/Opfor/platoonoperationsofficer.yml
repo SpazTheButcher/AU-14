@@ -7,12 +7,12 @@
   playTimeTracker: AU14JobOpforPlatOp
   ranks:
     RMCRankSecondLT: []
-  startingGear: AU14GearOPFORPlatOp
-  dummyStartingGear: AU14GearOPFORPlatOpDummy
+  startingGear: AU14GearopforPlatOp
+  dummyStartingGear: AU14GearopforPlatOpDummy
   icon: "AU14JobIconOpsOfc"
   requireAdminNotify: true
   joinNotifyCrew: false
-  supervisors: au14-job-supervisors-OPFOR
+  supervisors: au14-job-supervisors-opfor
   accessGroups:
   - Rifleman
   roleWeight: 0.25
@@ -38,7 +38,7 @@
         RMCSkillSurgery: 1
         RMCSkillVehicles: 1
     - type: JobPrefix
-      prefix: au14-job-prefix-OPFORplatop
+      prefix: au14-job-prefix-opforplatop
     - type: TacticalMapIcon
       icon:
         sprite: _RMC14/Interface/map_blips.rsi
@@ -46,14 +46,14 @@
   hidden: false
 
 - type: startingGear
-  id: AU14GearOPFORPlatOp
+  id: AU14GearopforPlatOp
   equipment:
-    id: AU14IDCardOPFORPlatOp
+    id: AU14IDCardopforPlatOp
 
 - type: entity
   parent: CMSpawnPointJobBase
-  id: AU14SpawnPointOPFORPlatOp
-  name: Spawn Point OPFOR Platoon Operations Officer
+  id: AU14SpawnPointopforPlatOp
+  name: Spawn Point opfor Platoon Operations Officer
   components:
   - type: SpawnPoint
     job_id: AU14JobOpforPlatOp
@@ -65,7 +65,7 @@
   isHumanoid: true
 
 - type: startingGear
-  id: AU14GearOPFORPlatOpDummy
+  id: AU14GearopforPlatOpDummy
   equipment:
     shoes: CMBootsBlack
     head: AU14JunglePatrolCap

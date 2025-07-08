@@ -4,7 +4,6 @@
   name: au14-job-name-mobboss
   description: au14-job-description-mobboss
   setPreference: true
-  playTimeTracker: AU14Jobmobboss
   startingGear: AU14GearMobBoss
   icon: "CMJobIconEmpty"
   requireAdminNotify: false

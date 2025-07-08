@@ -19,12 +19,12 @@
       role: AU14JobOpforDCC
       time: 720 # 12 hours
     AU14RankUSASFTechnicalSergeant: []
-  startingGear: AU14GearOPFORDCC
-  dummyStartingGear: AU14GearOPFORDCCDummy
+  startingGear: AU14GearopforDCC
+  dummyStartingGear: AU14GearopforDCCDummy
   icon: "AU14JobIconDCC"
   requireAdminNotify: true
   joinNotifyCrew: false
-  supervisors: au14-job-supervisors-OPFOR
+  supervisors: au14-job-supervisors-opfor
   accessGroups:
   - Pilot
   - Rifleman
@@ -46,7 +46,7 @@
         RMCSkillSurgery: 1
         RMCSkillPolice: 1
     - type: JobPrefix
-      prefix: au14-job-prefix-OPFORdcc
+      prefix: au14-job-prefix-opfordcc
     - type: TacticalMapIcon
       icon:
         sprite: _RMC14/Interface/map_blips.rsi
@@ -54,14 +54,14 @@
   hidden: false
 
 - type: startingGear
-  id: AU14GearOPFORDCC
+  id: AU14GearopforDCC
   equipment:
-    id: AU14IDCardOPFORDCC
+    id: AU14IDCardopforDCC
 
 - type: entity
   parent: CMSpawnPointJobBase
-  id: AU14SpawnPointOPFORDCC
-  name: Spawn Point OPFOR Dropship Crew Chief
+  id: AU14SpawnPointopforDCC
+  name: Spawn Point opfor Dropship Crew Chief
   components:
   - type: SpawnPoint
     job_id: AU14JobOpforDCC
@@ -73,7 +73,7 @@
   isHumanoid: true
 
 - type: startingGear
-  id: AU14GearOPFORDCCDummy
+  id: AU14GearopforDCCDummy
   equipment:
     outerClothing: AU14USASFICPS2
     shoes: CMBootsBrown

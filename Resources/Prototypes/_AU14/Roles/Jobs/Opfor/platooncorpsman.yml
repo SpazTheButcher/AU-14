@@ -11,12 +11,12 @@
       role: AU14JobOpforPlatoonCorpsman
       time: 1200 # 20 hours
     RMCRankLanceCorporal: []
-  startingGear: AU14GearOPFORPlatoonCorpsman
-  dummyStartingGear: AU14GearOPFORCorpsmanDummy
+  startingGear: AU14GearopforPlatoonCorpsman
+  dummyStartingGear: AU14GearopforCorpsmanDummy
   icon: "AU14JobIconCorpsman"
   requireAdminNotify: false
   joinNotifyCrew: false
-  supervisors: au14-job-supervisors-OPFOR
+  supervisors: au14-job-supervisors-opfor
   accessGroups:
   - HospitalCorpsman
   overwatchSortPriority: -2
@@ -36,7 +36,7 @@
         RMCSkillEngineer: 3
         RMCSkillPolice: 1
     - type: JobPrefix
-      prefix: au14-job-prefix-OPFORplatooncorpsman
+      prefix: au14-job-prefix-opforplatooncorpsman
     - type: TacticalMapIcon
       icon:
         sprite: _RMC14/Interface/map_blips.rsi
@@ -44,14 +44,14 @@
   hidden: false
 
 - type: startingGear
-  id: AU14GearOPFORPlatoonCorpsman
+  id: AU14GearopforPlatoonCorpsman
   equipment:
-    id: AU14JobIDCardOPFORPlatoonCorpsman
+    id: AU14JobIDCardopforPlatoonCorpsman
 
 - type: entity
   parent: CMSpawnPointJobBase
-  id: AU14SpawnPointOPFORPlatoonCorpsman
-  name: Spawn Point OPFOR Squad Sergeant
+  id: AU14SpawnPointopforPlatoonCorpsman
+  name: Spawn Point opfor Squad Sergeant
   components:
   - type: SpawnPoint
     job_id: AU14JobOpforPlatoonCorpsman
@@ -63,7 +63,7 @@
   isHumanoid: true
 
 - type: startingGear
-  id: AU14GearOPFORCorpsmanDummy
+  id: AU14GearopforCorpsmanDummy
   equipment:
     outerClothing: AU14ArmorM3JungleOne
     gloves: CMHandsLatex

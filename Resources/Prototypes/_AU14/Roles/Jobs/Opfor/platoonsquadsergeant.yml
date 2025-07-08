@@ -7,12 +7,12 @@
   playTimeTracker: AU14JobOpforSquadSergeant
   ranks:
     RMCRankSergeant: []
-  startingGear: AU14GearOPFORSquadSergeant
-  dummyStartingGear: AU14GearOPFORSquadSergantDummy
+  startingGear: AU14GearopforSquadSergeant
+  dummyStartingGear: AU14GearopforSquadSergantDummy
   icon: "AU14JobIconSarge"
   requireAdminNotify: false
   joinNotifyCrew: false
-  supervisors: au14-job-supervisors-OPFOR
+  supervisors: au14-job-supervisors-opfor
   accessGroups:
   - FTL
   overwatchSortPriority: -5
@@ -30,7 +30,7 @@
         RMCSkillJtac: 3
         RMCSkillPolice: 1
     - type: JobPrefix
-      prefix: au14-job-prefix-OPFORsquadsergeant
+      prefix: au14-job-prefix-opforsquadsergeant
     - type: TacticalMapIcon
       icon:
         sprite: _RMC14/Interface/map_blips.rsi
@@ -39,14 +39,14 @@
   hidden: false
 
 - type: startingGear
-  id: AU14GearOPFORSquadSergeant
+  id: AU14GearopforSquadSergeant
   equipment:
-    id: AU14IDCardOPFORSquadSergeant
+    id: AU14IDCardopforSquadSergeant
 
 - type: entity
   parent: CMSpawnPointJobBase
-  id: AU14SpawnPointOPFORSquadSergeant
-  name: Spawn Point OPFOR Squad Sergeant
+  id: AU14SpawnPointopforSquadSergeant
+  name: Spawn Point opfor Squad Sergeant
   components:
   - type: SpawnPoint
     job_id: AU14JobOpforSquadSergeant
@@ -58,7 +58,7 @@
   isHumanoid: true
 
 - type: startingGear
-  id: AU14GearOPFORSquadSergantDummy
+  id: AU14GearopforSquadSergantDummy
   equipment:
     outerClothing: AU14ArmorM3JungleOne
     shoes: CMBootsBrown

@@ -4,7 +4,6 @@
   name: au14-job-name-mobgoon
   description: au14-job-description-mobgoon
   setPreference: true
-  playTimeTracker: AU14Jobmobgoon
   startingGear: AU14GearMobgoon
   icon: "CMJobIconEmpty"
   requireAdminNotify: false

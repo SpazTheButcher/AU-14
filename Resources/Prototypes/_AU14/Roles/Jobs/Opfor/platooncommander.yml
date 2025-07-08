@@ -11,12 +11,12 @@
       role: AU14JobOpforPlatCo
       time: 7200 # 120 hours
     RMCRankFirstLT: []
-  startingGear: AU14GearOPFORPlatCo
-  dummyStartingGear: AU14GearOPFORPlatCoDummy
+  startingGear: AU14GearopforPlatCo
+  dummyStartingGear: AU14GearopforPlatCoDummy
   icon: "AU14JobIconPlatCo"
   requireAdminNotify: true
   joinNotifyCrew: false
-  supervisors: au14-job-supervisors-OPFORplatco
+  supervisors: au14-job-supervisors-opforplatco
   accessGroups:
   - Rifleman
   roleWeight: 0.25
@@ -42,7 +42,7 @@
         RMCSkillSurgery: 1
         RMCSkillVehicles: 1
     - type: JobPrefix
-      prefix: au14-job-prefix-OPFORplatco
+      prefix: au14-job-prefix-opforplatco
     - type: TacticalMapIcon
       icon:
         sprite: _RMC14/Interface/map_blips.rsi
@@ -50,14 +50,14 @@
   hidden: false
 
 - type: startingGear
-  id: AU14GearOPFORPlatCo
+  id: AU14GearopforPlatCo
   equipment:
-    id: AU14IDCardOPFORPlatCo
+    id: AU14IDCardopforPlatCo
 
 - type: entity
   parent: CMSpawnPointJobBase
-  id: AU14SpawnPointOPFORPlatCo
-  name: Spawn Point OPFOR Platoon Commander
+  id: AU14SpawnPointopforPlatCo
+  name: Spawn Point opfor Platoon Commander
   components:
   - type: SpawnPoint
     job_id: AU14JobOpforPlatCo
@@ -69,7 +69,7 @@
   isHumanoid: true
 
 - type: startingGear
-  id: AU14GearOPFORPlatCoDummy
+  id: AU14GearopforPlatCoDummy
   equipment:
     shoes: CMBootsBlack
     head: CMHeadCapPeakedFormal

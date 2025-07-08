@@ -1,6 +1,6 @@
 ﻿- type: entity
   parent: CMIDCardBase
-  id: AU14IDcardopforopforPlatCo
+  id: AU14IDcardopforPlatCo
   name: platoon commander ID card
   components:
   - type: PresetIdCard
@@ -8,7 +8,7 @@
 
 - type: entity
   parent: CMIDCardBase
-  id: AU14IDcardopforopforPlatOp
+  id: AU14IDcardopforPlatOp
   name: platoon operations officer ID card
   components:
   - type: PresetIdCard
@@ -16,7 +16,7 @@
 
 - type: entity
   parent: CMIDCardBase
-  id: AU14IDcardopforopforDSPilot
+  id: AU14IDcardopforDSPilot
   name: dropship pilot ID card
   components:
   - type: PresetIdCard
@@ -24,7 +24,7 @@
 
 - type: entity
   parent: CMIDCardBase
-  id: AU14IDcardopforopforDCC
+  id: AU14IDcardopforDCC
   name: dropship crew chief ID card
   components:
   - type: PresetIdCard
@@ -64,7 +64,7 @@
 
 - type: entity
   parent: CMIDCardBase
-  id: AU14JobIDcardopforopforPlatoonCorpsman
+  id: AU14JobIDcardopforPlatoonCorpsman
   name: platoon corpsman ID card
   components:
   - type: PresetIdCard
@@ -72,7 +72,7 @@
 
 - type: entity
   parent: CMIDCardBase
-  id: AU14JobIDcardopforopforRadioTelephoneOoperator
+  id: AU14JobIDcardopforRadioTelephoneOoperator
   name: radio telephone operator ID card
   components:
   - type: PresetIdCard

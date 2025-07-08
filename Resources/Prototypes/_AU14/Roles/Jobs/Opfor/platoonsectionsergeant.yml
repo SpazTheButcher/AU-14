@@ -15,12 +15,12 @@
       role: AU14JobOpforSectionSergeant
       time: 3600 # 60 hours
     RMCRankStaffSergeant: []
-  startingGear: AU14GearOPFORSectionSergeant
-  dummyStartingGear: AU14GearOPFORPlatoonSergantDummy
+  startingGear: AU14GearopforSectionSergeant
+  dummyStartingGear: AU14GearopforPlatoonSergantDummy
   icon: "AU14JobIconPlatoonSarge"
   requireAdminNotify: true
   joinNotifyCrew: false
-  supervisors: au14-job-supervisors-OPFOR
+  supervisors: au14-job-supervisors-opfor
   accessGroups:
   - SquadLeader
   overwatchSortPriority: -6
@@ -45,7 +45,7 @@
         RMCSkillVehicles: 1
         RMCSkillPolice: 1
     - type: JobPrefix
-      prefix: au14-job-prefix-OPFORSSG
+      prefix: au14-job-prefix-opforSSG
     - type: TacticalMapIcon
       icon:
         sprite: _RMC14/Interface/map_blips.rsi
@@ -54,14 +54,14 @@
   hidden: false
 
 - type: startingGear
-  id: AU14GearOPFORSectionSergeant
+  id: AU14GearopforSectionSergeant
   equipment:
-    id: AU14OPFORSecSergeant
+    id: AU14opforSecSergeant
 
 - type: entity
   parent: CMSpawnPointJobBase
-  id: AU14SpawnPointOPFORSectionSergeant
-  name: Spawn Point OPFOR Section Sergeant
+  id: AU14SpawnPointopforSectionSergeant
+  name: Spawn Point opfor Section Sergeant
   components:
   - type: SpawnPoint
     job_id: AU14JobOpforSectionSergeant
@@ -73,7 +73,7 @@
   isHumanoid: true
 
 - type: startingGear
-  id: AU14GearOPFORPlatoonSergantDummy
+  id: AU14GearopforPlatoonSergantDummy
   equipment:
     outerClothing: AU14ArmorM3JungleTwo
     shoes: CMBootsBrown

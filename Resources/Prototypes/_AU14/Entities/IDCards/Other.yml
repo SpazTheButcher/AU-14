@@ -4,7 +4,7 @@
   name: Mob Boss ID card
   components:
   - type: PresetIdCard
-    job: AU14IDCardmobboss
+    job: AU14Jobmobboss
 
 
 - type: entity
@@ -13,4 +13,4 @@
   name: Mob Goon ID card
   components:
   - type: PresetIdCard
-    job: AU14IDCardmobgoon
+    job: AU14Jobmobgoon
