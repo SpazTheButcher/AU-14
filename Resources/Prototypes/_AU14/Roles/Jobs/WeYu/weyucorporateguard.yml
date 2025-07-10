@@ -1,11 +1,11 @@
 - type: job
   parent: CMJobBase
-  id: AU14Jobwyguard
+  id: AU14JobWYGuard
   name: au14-job-name-wyguard
   description: au14-job-description-wyguard
   setPreference: true
-  playTimeTracker: AU14Jobwyguard
-  startingGear: AU14Gearwyguard
+  playTimeTracker: AU14JobWYGuard
+  startingGear: AU14GearWYGuard
   icon: "RMCJobIconBureauDeputy"
   requireAdminNotify: false
   joinNotifyCrew: false
@@ -37,7 +37,7 @@
   hidden: false
 
 - type: startingGear
-  id: AU14Gearwyguard
+  id: AU14GearWYGuard
   equipment:
     head: RMCHeadCapBureau
     jumpsuit: CMJumpsuitLiaisonCharcoal
@@ -48,14 +48,14 @@
 
 - type: entity
   parent: CMSpawnPointJobBase
-  id: AU14SpawnPointwyguard
+  id: AU14SpawnPointWYGuard
   name: Spawn Point WY guard
   components:
   - type: SpawnPoint
-    job_id: AU14Jobwyguard
+    job_id: AU14JobWYGuard
   - type: Sprite
     state: syn_spawn
 
 - type: playTimeTracker
-  id: AU14Jobwyguard
+  id: AU14JobWYGuard
   isHumanoid: true
