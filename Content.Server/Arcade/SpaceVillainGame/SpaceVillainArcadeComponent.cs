@@ -71,7 +71,7 @@ public sealed partial class SpaceVillainArcadeComponent : SharedSpaceVillainArca
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField("possibleFirstEnemyNames")]
     public List<string> PossibleFirstEnemyNames = new(){
-        "the Automatic", "Farmer", "Lord", "scientist", "the Cuban", "the Evil", "the Dread King",
+        "the Automatic", "Farmer", "Lord", "Professor", "the Cuban", "the Evil", "the Dread King",
         "the Space", "Lord", "the Great", "Duke", "General"
     };
 

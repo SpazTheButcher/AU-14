@@ -2,7 +2,7 @@
 
 - type: entity
   parent: CMEncryptionKey
-  id: AUEncryptionKeyMob
+  id: AU14EncryptionKeyMob
   name: Mob encryption key
   description: An encryption key used to communicate on the Family channel.
   components:
@@ -15,8 +15,8 @@
 
 - type: entity
   parent: RMCHeadsetMarine
-  id: AUheadsetmob
-  name: Mob Headset
+  id: AU14HeadsetMob
+  name: Mob headset
   description: A common colony headset with a custom channel
   components:
   - type: Sprite
@@ -24,4 +24,4 @@
   - type: ContainerFill
     containers:
       key_slots:
-      - AUEncryptionKeyMob
+      - AU14EncryptionKeyMob

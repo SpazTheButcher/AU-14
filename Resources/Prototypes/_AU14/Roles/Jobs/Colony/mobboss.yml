@@ -1,10 +1,10 @@
 - type: job
   parent: CMJobBase
-  id: AU14Jobmobboss
+  id: AU14JobMobBoss
   name: au14-job-name-mobboss
   description: au14-job-description-mobboss
   setPreference: true
-  playTimeTracker: AU14Jobmobboss
+  playTimeTracker: AU14JobMobBoss
   startingGear: AU14GearMobBoss
   icon: "CMJobIconEmpty"
   requireAdminNotify: false
@@ -35,18 +35,18 @@
   equipment:
     jumpsuit: CMJumpsuitLiaisonCharcoal
     shoes: RMCShoesLaceup
-    id: AU14IDCardmobboss
-    ears: AUheadsetmob
+    id: AU14IDCardMobBoss
+    ears: AU14HeadsetMob
 
 - type: entity
   parent: CMSpawnPointJobBase
-  id: AU14SpawnPointmobboss
+  id: AU14SpawnPointMobBoss
   name: Spawn Point Mob Boss
   components:
   - type: SpawnPoint
-    job_id: AU14Jobmobboss
+    job_id: AU14JobMobBoss
   - type: Sprite
     state: syn_spawn
 - type: playTimeTracker
-  id: AU14Jobmobboss
+  id: AU14JobMobBoss
   isHumanoid: true
