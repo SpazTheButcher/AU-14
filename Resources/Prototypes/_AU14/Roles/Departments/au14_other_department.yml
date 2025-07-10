@@ -10,9 +10,9 @@
   - AU14JobCivilianCWPSRanger
   - AU14JobCivilianScientist
   - AU14JobCivilianUSASFRecruiter
-  - AU14JobcivilianMiner
-  - AU14JobcivilianPrisoner
-  - AU14JobcivilianKellandWarden
+  - AU14JobCivilianMiner
+  - AU14JobCivilianPrisoner
+  - AU14JobCivilianKellandWarden
   departmentRadio: null
   headOfDepartment: null
 
@@ -38,9 +38,9 @@
   description: au14-department-prison-description
   color: "#e3ce94"
   roles:
-  - AU14JobcivilianPrisoner
+  - AU14JobCivilianPrisoner
   - AU14JobWYGuard
-  - AU14JobcivilianKellandWarden
+  - AU14JobCivilianKellandWarden
   - AU14JobCivilianPhysician
   - AU14JobCivilianFreightSystemsSpecialist
   departmentRadio: null
