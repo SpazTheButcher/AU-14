@@ -26,14 +26,23 @@
       - !type:DoActsBehavior
         acts: ["Destruction"]
   - type: Sprite
-    sprite: _AU14/JobMinerals/solaris_mrock.rsi
-    state: solaris_rock
+    sprite: Structures/Walls/rock.rsi
+    layers:
+    - state: rock_asteroid
+    - map: [ "enum.EdgeLayer.South" ]
+      state: rock_asteroid_south
+    - map: [ "enum.EdgeLayer.East" ]
+      state: rock_asteroid_east
+    - map: [ "enum.EdgeLayer.North" ]
+      state: rock_asteroid_north
+    - map: [ "enum.EdgeLayer.West" ]
+      state: rock_asteroid_west
   - type: Icon
-    sprite: _RMC14/Structures/Walls/solaris_rock.rsi
-    state: solaris_rock
+    sprite: Structures/Walls/rock.rsi
+    state: rock_asteroid
   - type: IconSmooth
     key: walls
-    base: solaris_rock
+    mode: NoSprite
 
 
 
