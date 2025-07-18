@@ -12,6 +12,7 @@
   - type: SoundOnGather
   - type: Gatherable
     toolWhitelist:
+  - type: tag
     tags:
     - Pickaxe
   - type: Damageable

@@ -7,8 +7,8 @@
   - type: SpriteFade
   - type: Clickable
   - type: OreVein
-    currentOre: Log
-    OreChance: 1.0
+    currentOre: OreWood
+    oreChance: 1.0
   - type: Sprite
     noRot: true
     sprite: Objects/Decoration/Flora/flora_trees.rsi
