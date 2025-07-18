@@ -12,7 +12,7 @@
   - type: SoundOnGather
   - type: Gatherable
     toolWhitelist:
-  - type: tag
+  - type: Tag
     tags:
     - Pickaxe
   - type: Damageable
@@ -22,7 +22,7 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 220
+        damage: 850
       behaviors:
       - !type:DoActsBehavior
         acts: ["Destruction"]
@@ -48,14 +48,14 @@
 
 
 - type: entity
-  id: mineablesolarisrockgold
+  id: mineablesolarisrocksteel
   parent: mineablesolarisrock
-  description: An ore vein rich with gold.
+  description: An ore vein rich with steel.
   suffix: Gold
   components:
   - type: OreVein
     oreChance: 1.0
-    currentOre: OreGold
+    currentOre: OreSteel
 
 #need to add a gold sprite, might just do a nonrotatable one, could have all veins unmarked but still in specific areas, could be interesting
 

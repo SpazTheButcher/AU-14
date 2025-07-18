@@ -193,3 +193,13 @@
   components:
   - type: AccessReader
     access: [ [ "RMCAccessWeYa" ] ]
+
+
+- type: entity
+  parent: CMAirlock
+  id: AUAirlockPrisonStaffLocked
+  name: Staff Door
+  suffix: Liaison, Locked
+  components:
+  - type: AccessReader
+    access: [ [ "AUAccessPrisonStaff" ] ]
