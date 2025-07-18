@@ -23,6 +23,7 @@
   accessGroups:
   - aucmb
   - Colonist
+  - AUPrisonStaff
   roleWeight: 0.25
   special:
   - !type:AddComponentSpecial

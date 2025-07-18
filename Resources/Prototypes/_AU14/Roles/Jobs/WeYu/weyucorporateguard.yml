@@ -12,6 +12,7 @@
   supervisors: au14-job-supervisors-wy
   accessGroups:
   - auwy
+  - AUPrisonStaff
   roleWeight: 0.25
   special:
   - !type:AddComponentSpecial

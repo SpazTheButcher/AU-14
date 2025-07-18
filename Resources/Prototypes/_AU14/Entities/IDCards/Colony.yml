@@ -145,7 +145,7 @@
 - type: entity
   parent: CMIDCardBase
   id: AU14IDCardCivilianKellandWarden
-  name: Kelland warden ID card
+  name: Warden ID card
   components:
   - type: PresetIdCard
     job: AU14JobCivilianKellandWarden

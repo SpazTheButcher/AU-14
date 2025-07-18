@@ -1,6 +1,6 @@
 - type: gameMap
   id: lv747insurgencycompmap
-  mapName: LV-747 Solaris Gulch (Insurgency)
+  mapName: LV-747 Solaris Gulch (Colony Fall)
   mapPath: /Maps/_RMC14/SolarisCF.yml
   minPlayers: 0
   maxPlayers: 75
@@ -26,7 +26,7 @@
             # Security/LEO
             AU14JobCivilianCMBMarshal: [1, 1]
             AU14JobCivilianCMBDeputy: [1, 2]
-
+            AU14JobWYGuard: [1,2]
             # Engineering/Logi
             AU14JobCivilianForeman: [1, 1]
             AU14JobCivilianFreightSystemsSpecialist: [1, 1]
@@ -45,18 +45,18 @@
             AU14JobCivilianKellandWarden: [1, 1]
 
             # CLF
-            AU14JobCLFGuerilla: [10, 10]
-            AU14JobCLFPhysician: [1, 1]
-            AU14JobCLFMachineGunner: [1, 1]
-            AU14JobCLFCellLeader: [1, 1]
+            AU14JobCLFGuerilla: [0, 0]
+            AU14JobCLFPhysician: [0, 0]
+            AU14JobCLFMachineGunner: [0, 0]
+            AU14JobCLFCellLeader: [0, 0]
 
             # LACN
-            AU14JobGOVFORPlatCo: [1, 1]
-            AU14JobGOVFORPlatOp: [1, 1]
-            AU14JobGOVFORDSPilot: [1, 1]
-            AU14JobGOVFORDCC: [1, 1]
-            AU14JobGOVFORSectionSergeant: [1, 1]
-            AU14JobGOVFORSquadSergeant: [2, 2]
-            AU14JobGOVFORSquadRifleman: [2, 2]
-            AU14JobGOVFORSquadAutomaticRifleman: [2, 2]
-            AU14JobGOVFORPlatoonCorpsman: [1, 1]
+            AU14JobGOVFORPlatCo: [0, 0]
+            AU14JobGOVFORPlatOp: [0, 0]
+            AU14JobGOVFORDSPilot: [0, 0]
+            AU14JobGOVFORDCC: [0, 0]
+            AU14JobGOVFORSectionSergeant: [0, 0]
+            AU14JobGOVFORSquadSergeant: [0, 0]
+            AU14JobGOVFORSquadRifleman: [0, 0]
+            AU14JobGOVFORSquadAutomaticRifleman: [0, 0]
+            AU14JobGOVFORPlatoonCorpsman: [0, 0]
