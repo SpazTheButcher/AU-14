@@ -122,6 +122,7 @@ public abstract class SharedRMCPowerSystem : EntitySystem
             TrySpawnInContainer(startingCell, ent, ent.Comp.CellContainerSlot, out _);
 
         var sprite = EnsureComp<SpriteSetRenderOrderComponent>(ent);
+        /*
         switch (Transform(ent).LocalRotation.GetDir())
         {
             case Direction.South:
@@ -137,6 +138,7 @@ public abstract class SharedRMCPowerSystem : EntitySystem
                 _sprite.SetOffset(ent, new Vector2(-0.7f, -0.4f));
                 break;
         }
+        */
 
         Dirty(ent, sprite);
     }
