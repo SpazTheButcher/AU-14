@@ -28,7 +28,7 @@
   name: cm-access-colony-command
 
 - type: accessLevel
-  id: Au
+  id: CMAccessColonyArmory
   name: rmc-access-colony-armory
 
 
