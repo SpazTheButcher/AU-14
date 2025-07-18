@@ -16,6 +16,7 @@
   - Colonist
   - auengi
   - CMCargoTech
+  - AUPrisonStaff
   roleWeight: 0.25
   special:
   - !type:AddComponentSpecial

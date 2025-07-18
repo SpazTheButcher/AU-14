@@ -19,3 +19,10 @@
   tags:
   - CMAccessColonyPublic
   - RMCAccessWeYa
+
+
+- type: accessGroup
+  id: AUPrisonStaff
+  tags:
+  - AUAccessPrison
+
