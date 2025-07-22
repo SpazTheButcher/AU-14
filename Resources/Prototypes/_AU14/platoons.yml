@@ -6,7 +6,7 @@
     Corpsman: AU14USCMcorpsmanvendor
     Arifleman: AU14USCMSGequipmentvendor
     Dcc: AU14AircrewWeaponsVendor
-    OperationsOfficer: USCMOperationsOfficerVendor
+    OperationsOfficer: AU14USCMsectionleaderequipmentvendor
     Rto: AU14RTOVendor
     SectionSergeant: AU14USCMsectionleaderequipmentvendor
     Pilot: AU14AircrewWeaponsVendor
@@ -19,7 +19,7 @@
     Corpsman: AU14USCMcorpsmanvendor
     Arifleman: AU14USCMequipmentvendor
     Dcc: AU14AircrewWeaponsVendor
-    OperationsOfficer: USCMOperationsOfficerVendor
+    OperationsOfficer: AU14USCMsectionleaderequipmentvendor
     Rto: AU14RTOVendor
     SectionSergeant: AU14USCMsectionleaderequipmentvendor
     Pilot: AU14AircrewWeaponsVendor
@@ -32,7 +32,7 @@
     Corpsman: AU14USCMcorpsmanvendor
     Arifleman: AU14USCMequipmentvendor
     Dcc: AU14AircrewWeaponsVendor
-    OperationsOfficer: USCMOperationsOfficerVendor
+    OperationsOfficer: AU14USCMsectionleaderequipmentvendor
     Rto: AU14RTOVendor
     SectionSergeant: AU14USCMsectionleaderequipmentvendor
     Pilot: AU14AircrewWeaponsVendor
@@ -48,7 +48,7 @@
     Corpsman: AU14USCMcorpsmanvendor
     Arifleman: AU14USCMequipmentvendor
     Dcc: AU14AircrewWeaponsVendor
-    OperationsOfficer: USCMOperationsOfficerVendor
+    OperationsOfficer: AU14USCMsectionleaderequipmentvendor
     Rto: AU14RTOVendor
     SectionSergeant: AU14USCMsectionleaderequipmentvendor
     Pilot: AU14AircrewWeaponsVendor

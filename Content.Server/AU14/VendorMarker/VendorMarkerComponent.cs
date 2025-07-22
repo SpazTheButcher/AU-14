@@ -21,7 +21,7 @@ namespace Content.Server.AU14.VendorMarker
         // Use shared enum from Content.Shared.AU14
 
         // Designates the vendor's job
-        [DataField("Class")]
+        [DataField("class")]
         public PlatoonMarkerClass Class { get; set; }
     }
 }
