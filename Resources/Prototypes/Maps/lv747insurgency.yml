@@ -12,6 +12,8 @@
   platoonsGovfor:
     - LACN
     - USCM
+  defaultgovor: USCM
+  defaultopfor: UPP
   stations:
     AU14Routerra:
       stationProto: StandardUNMCWarship
