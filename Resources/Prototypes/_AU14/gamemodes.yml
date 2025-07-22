@@ -1,0 +1,72 @@
+- type: gamePreset
+  id: ForceOnForce
+  alias:
+    - forceonforce
+  name: Force on Force
+  showInVote: true
+  description: Force on Force mode
+  requiresOpforVote: true
+  requiresGovforVote: true
+  supportedMaps: FoFmapPool
+
+- type: gamePreset
+  id: Insurgency
+  alias:
+    - insurgency
+  name: Insurgency
+  showInVote: true
+  description: Insurgency mode
+  requiresGovforVote: true
+  supportedMaps: ColonyMapPool
+  rules:
+  - PlatoonSpawn
+
+- type: gamePreset
+  id: ColonyFall
+  alias:
+    - colonyfall
+  name: Colony Fall
+  showInVote: true
+  description: Colony Fall mode
+
+- type: gamePreset
+  id: Jailbreak
+  alias:
+    - jailbreak
+  name: Jailbreak
+  showInVote: true
+  description: Jailbreak mode
+
+- type: gamePreset
+  id: Prometheus
+  alias:
+    - prometheus
+  name: Prometheus
+  showInVote: true
+  description: Prometheus mode
+
+- type: gamePreset
+  id: Criminal
+  alias:
+    - criminal
+  name: Criminal
+  showInVote: true
+  description: Criminal mode
+
+
+- type: gameMapPool
+  id: ColonyMapPool
+  maps:
+  - lv747insurgencycompmap
+
+- type: gameMapPool
+  id: FoFmapPool
+  maps:
+  - lv747insurgencycompmap
+
+
+- type: entity
+  id: PlatoonSpawn
+  parent: BaseGameRule
+  components:
+  - type: PlatoonSpawnRule

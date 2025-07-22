@@ -4,6 +4,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 using System.Diagnostics;
 using System.Numerics;
+using Content.Shared.AU14;
 
 namespace Content.Server.Maps;
 
@@ -53,6 +54,11 @@ public sealed partial class GameMapPrototype : IPrototype
     /// </summary>
     public IReadOnlyDictionary<string, StationConfig> Stations => _stations;
 
+    [DataField("platoonsGovfor"), AutoNetworkedField]
+    public List<ProtoId<PlatoonPrototype>> PlatoonsGovfor { get; private set; } = new();
+
+    [DataField("platoonsOpfor"),AutoNetworkedField]
+    public List<ProtoId<PlatoonPrototype>> PlatoonsOpfor { get; private set; }  = new();
     /// <summary>
     /// Performs a shallow clone of this map prototype, replacing <c>MapPath</c> with the argument.
     /// </summary>
@@ -63,7 +69,8 @@ public sealed partial class GameMapPrototype : IPrototype
             ID = ID,
             MapName = MapName,
             MapPath = mapPath,
-            _stations = _stations
+            _stations = _stations,
+
         };
     }
 }

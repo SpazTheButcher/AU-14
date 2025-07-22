@@ -27,6 +27,12 @@ namespace Content.Server.GameTicking.Presets
         [DataField("showInVote")]
         public bool ShowInVote;
 
+        [DataField("requiresGovforVote")]
+        public bool RequiresGovforVote;
+
+        [DataField("requiresOpforVote")]
+        public bool RequiresOpforVote;
+
         [DataField("minPlayers")]
         public int? MinPlayers;
 
