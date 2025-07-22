@@ -20,7 +20,7 @@
 - type: entity
   parent: [ ClothingEyesBase , ShowMedicalIcons ]
   id: CMGlassesM42ScoutSight
-  name: M96 scout sight
+  name: M42 scout sight
   description: A headset and night vision sighting system for the M96 Scout Rifle. Allows highlighted imaging of surroundings.
   components:
   - type: Item
@@ -32,20 +32,13 @@
       map: [ "icon" ]
   - type: Clothing
     sprite: _RMC14/Objects/Clothing/Eyes/Glasses/m42_scoutsight.rsi
-  - type: NightVisionItem
   - type: Appearance
-  - type: GenericVisualizer
-    visuals:
-      enum.NightVisionItemVisuals.Active:
-        icon:
-          True: { state: icon_on }
-          False: { state: icon }
 
 - type: entity
   parent: ClothingEyesHudMedical
   id: RMCGlassesM4SPRBattleSight
-  name: M4SPR Battle Sight
-  description: A headset and night vision sighting system for the M4SPR Custom Battle Rifle. Allows highlighted imaging of surroundings, as well as the ability to view the suit sensor health status readouts of other marines.
+  name: M4RA Battle Sight
+  description: A headset and night vision sighting system for the M4RA Custom Battle Rifle. Allows highlighted imaging of surroundings, as well as the ability to view the suit sensor health status readouts of other marines.
   components:
   - type: Item
     storedRotation: 0
@@ -56,20 +49,13 @@
       map: [ "icon" ]
   - type: Clothing
     sprite: _RMC14/Objects/Clothing/Eyes/Glasses/m42_scoutsight.rsi
-  - type: NightVisionItem
   - type: Appearance
-  - type: GenericVisualizer
-    visuals:
-      enum.NightVisionItemVisuals.Active:
-        icon:
-          True: { state: icon_on }
-          False: { state: icon }
 
 - type: entity
   parent: ClothingEyesBase
   id: RMCGlassesSmartGunSight
-  name: ML66A head mounted sight # TODO RMC14 meson tile vision see description below
-  description: A headset and goggles system for the ML66A Smart Gun. # TODO RMC14 Has a low-res short-range imager, allowing for view of terrain.
+  name: M56B head mounted sight # TODO RMC14 meson tile vision see description below
+  description: A headset and goggles system for the M56B Smart Gun. # TODO RMC14 Has a low-res short-range imager, allowing for view of terrain.
   components:
   - type: Item
     storedRotation: 0
@@ -80,20 +66,48 @@
       map: [ "icon" ]
   - type: Clothing
     sprite: _RMC14/Objects/Clothing/Eyes/Glasses/ml66a_sight.rsi
-  - type: NightVisionItem
-    skills:
-      RMCSkillSmartGun: 1
   - type: ClothingRequireEquipped
     whitelist:
       components:
       - SmartGun
   - type: Appearance
+
+- type: entity
+  parent: ClothingEyesBase
+  id: RMCGlassesExperimentalMeson
+  name: experimental meson goggles # TODO RMC14 meson tile vision see description below
+  description: An improved but experimental version of the standard issue meson goggles, due to increased complexity these can only be worn by synthetics. Allows for full night vision. # TODO RMC14 and viewing of the surroundings. Click it to toggle.
+  components:
+  - type: Item
+    storedRotation: 0
+  - type: Sprite
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/experimental_meson_hud.rsi
+    layers:
+    - state: icon
+      map: [ "icon" ]
+  - type: Clothing
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/experimental_meson_hud.rsi
+  - type: ItemToggle
+    activated: true
+    soundActivate:
+      path: /Audio/_RMC14/Machines/click.ogg
+      params:
+        variation: 0.250
+    soundDeactivate:
+      path: /Audio/_RMC14/Machines/click.ogg
+      params:
+        variation: 0.250
+  - type: ComponentToggler
+    components:
+    - type: NightVisionItem
+  - type: Appearance
+  - type: RMCItemToggleClothingVisuals
   - type: GenericVisualizer
     visuals:
-      enum.NightVisionItemVisuals.Active:
-        icon:
-          True: { state: icon_on }
-          False: { state: icon }
+      enum.ToggleVisuals.Toggled:
+        enum.ToggleVisuals.Layer:
+          True: {state: icon-on}
+          False: {state: icon}
 
 - type: entity
   parent: [ClothingEyesHudMedical, BaseToggleClothing]
@@ -147,7 +161,7 @@
 - type: entity
   parent: ClothingEyesBase
   id: RMCGlassesMarineRpg # TODO make this actually prescription
-  name: Marine RPG glasses
+  name: marine RPG glasses
   description: The Corps may call them Regulation Prescription Glasses but you know them as Rut Prevention Glasses.
   components:
   - type: Item
@@ -161,10 +175,51 @@
     - EYES
 
 - type: entity
-  parent: ClothingEyesBase
+  parent: RMCGlassesMarineRpg
+  id: RMCGlassesBiMexYellow
+  name: BiMex Polarized Shades
+  description: Sleek, angular shades designed for the modern operator.
+  components:
+  - type: Sprite
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/bimex_yellow_glasses.rsi
+  - type: Clothing
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/bimex_yellow_glasses.rsi
+
+- type: entity
+  parent: RMCGlassesBiMexYellow
+  id: RMCGlassesBiMexBronze
+  components:
+  - type: Sprite
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/bimex_bronze_glasses.rsi
+  - type: Clothing
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/bimex_bronze_glasses.rsi
+
+- type: entity
+  parent: RMCGlassesMarineRpg
+  id: RMCGlassesBiMexBlack
+  name: BiMex Tactical Shades
+  description: Sleek, angular shades designed for the modern operator.
+  components:
+  - type: Sprite
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/bimex_black_glasses.rsi
+  - type: Clothing
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/bimex_black_glasses.rsi
+
+- type: entity
+  parent: RMCGlassesMarineRpg
+  id: RMCGlassesMarineRpgOld
+  name: old marine RPG glasses
+  components:
+  - type: Sprite
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/old_rpg_glasses.rsi
+  - type: Clothing
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/old_rpg_glasses.rsi
+
+- type: entity
+  parent: [ClothingEyesBase, RMCHelmetGarbToggleableBase]
   id: RMCGogglesBallistic
   name: marine ballistic goggles
-  description: Standard issue UNMC goggles. While commonly found mounted atop M10 pattern helmets, they are also capable of preventing insects, dust, and other things from getting into one's eyes.
+  description: Standard issue USCM goggles. While commonly found mounted atop M10 pattern helmets, they are also capable of preventing insects, dust, and other things from getting into one's eyes.
   components:
   - type: Item
     storedRotation: 0
@@ -175,34 +230,163 @@
     slots:
     - MASK
     - EYES
+  - type: HelmetAccessory
+    rsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/ballistic_goggles.rsi
+      state: helmet
+    toggledRsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/ballistic_goggles.rsi
+      state: helmet-down
 
 - type: entity
   parent: RMCGogglesBallistic
   id: RMCGogglesBallisticBlack # TODO prescription variant
   name: black marine ballistic goggles
-  description: Standard issue UNMC goggles. While commonly found mounted atop M10 pattern helmets, they are also capable of preventing insects, dust, and other things from getting into one's eyes. This one has black tinted lenses.
+  description: Standard issue USCM goggles. While commonly found mounted atop M10 pattern helmets, they are also capable of preventing insects, dust, and other things from getting into one's eyes. This one has black tinted lenses.
   components:
   - type: Sprite
     sprite: _RMC14/Objects/Clothing/Eyes/Glasses/black_ballistic_goggles.rsi
   - type: Clothing
     sprite: _RMC14/Objects/Clothing/Eyes/Glasses/black_ballistic_goggles.rsi
+  - type: HelmetAccessory
+    rsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/black_ballistic_goggles.rsi
+      state: helmet
+    toggledRsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/black_ballistic_goggles.rsi
+      state: helmet-down
 
 - type: entity
   parent: RMCGogglesBallistic
   id: RMCGogglesBallisticOrange # TODO prescription variant
   name: orange marine ballistic goggles
-  description: Standard issue UNMC goggles. While commonly found mounted atop M10 pattern helmets, they are also capable of preventing insects, dust, and other things from getting into one's eyes. This one has amber colored day lenses.
+  description: Standard issue USCM goggles. While commonly found mounted atop M10 pattern helmets, they are also capable of preventing insects, dust, and other things from getting into one's eyes. This one has amber colored day lenses.
   components:
   - type: Sprite
     sprite: _RMC14/Objects/Clothing/Eyes/Glasses/orange_ballistic_goggles.rsi
   - type: Clothing
     sprite: _RMC14/Objects/Clothing/Eyes/Glasses/orange_ballistic_goggles.rsi
+  - type: HelmetAccessory
+    rsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/orange_ballistic_goggles.rsi
+      state: helmet
+    toggledRsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/orange_ballistic_goggles.rsi
+      state: helmet-down
+
+- type: entity
+  parent: RMCGogglesBallistic
+  id: RMCGogglesBallisticRed # TODO prescription variant
+  name: red marine ballistic goggles
+  description: Standard issue UNMC goggles. While commonly found mounted atop M10 pattern helmets, they are also capable of preventing insects, dust, and other things from getting into one's eyes. This one has scarlet colored day lenses.
+  components:
+  - type: Sprite
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/red_ballistic_goggles.rsi
+  - type: Clothing
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/red_ballistic_goggles.rsi
+  - type: HelmetAccessory
+    rsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/red_ballistic_goggles.rsi
+      state: helmet
+    toggledRsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/red_ballistic_goggles.rsi
+      state: helmet-down
+
+- type: entity
+  parent: RMCGogglesBallistic
+  id: RMCGogglesBallisticBlue # TODO prescription variant
+  name: blue marine ballistic goggles
+  description: Standard issue UNMC goggles. While commonly found mounted atop M10 pattern helmets, they are also capable of preventing insects, dust, and other things from getting into one's eyes. This one has blue colored day lenses.
+  components:
+  - type: Sprite
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/blue_ballistic_goggles.rsi
+  - type: Clothing
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/blue_ballistic_goggles.rsi
+  - type: HelmetAccessory
+    rsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/blue_ballistic_goggles.rsi
+      state: helmet
+    toggledRsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/blue_ballistic_goggles.rsi
+      state: helmet-down
+
+- type: entity
+  parent: RMCGogglesBallistic
+  id: RMCGogglesBallisticPurple # TODO prescription variant
+  name: purple marine ballistic goggles
+  description: Standard issue UNMC goggles. While commonly found mounted atop M10 pattern helmets, they are also capable of preventing insects, dust, and other things from getting into one's eyes. This one has purple colored day lenses.
+  components:
+  - type: Sprite
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/purple_ballistic_goggles.rsi
+  - type: Clothing
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/purple_ballistic_goggles.rsi
+  - type: HelmetAccessory
+    rsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/purple_ballistic_goggles.rsi
+      state: helmet
+    toggledRsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/purple_ballistic_goggles.rsi
+      state: helmet-down
+
+- type: entity
+  parent: RMCGogglesBallistic
+  id: RMCGogglesBallisticYellow # TODO prescription variant
+  name: yellow marine ballistic goggles
+  description: Standard issue UNMC goggles. While commonly found mounted atop M10 pattern helmets, they are also capable of preventing insects, dust, and other things from getting into one's eyes. This one has yellow colored day lenses.
+  components:
+  - type: Sprite
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/yellow_ballistic_goggles.rsi
+  - type: Clothing
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/yellow_ballistic_goggles.rsi
+  - type: HelmetAccessory
+    rsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/yellow_ballistic_goggles.rsi
+      state: helmet
+    toggledRsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/yellow_ballistic_goggles.rsi
+      state: helmet-down
+
+- type: entity
+  parent: RMCGogglesBallistic
+  id: RMCGogglesBallisticPolarizedBlue # TODO prescription variant
+  name: M1A1 marine polarized ballistic goggles
+  description: Newer issue UNMC goggles. While commonly found mounted atop M10 pattern helmets, they are also capable of preventing insects, dust, and other things from getting into one's eyes. This version has larger polarized lenses.
+  components:
+  - type: Sprite
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/blue_polarized_ballistic_goggles.rsi
+  - type: Clothing
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/blue_polarized_ballistic_goggles.rsi
+  - type: HelmetAccessory
+    rsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/blue_polarized_ballistic_goggles.rsi
+      state: helmet
+    toggledRsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/blue_polarized_ballistic_goggles.rsi
+      state: helmet-down
+
+- type: entity
+  parent: RMCGogglesBallistic
+  id: RMCGogglesBallisticPolarizedOrange # TODO prescription variant
+  name: M1A1 marine polarized ballistic goggles
+  description: Newer issue UNMC goggles. While commonly found mounted atop M10 pattern helmets, they are also capable of preventing insects, dust, and other things from getting into one's eyes. This version has larger polarized lenses.
+  components:
+  - type: Sprite
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/orange_polarized_ballistic_goggles.rsi
+  - type: Clothing
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/orange_polarized_ballistic_goggles.rsi
+  - type: HelmetAccessory
+    rsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/orange_polarized_ballistic_goggles.rsi
+      state: helmet
+    toggledRsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/orange_polarized_ballistic_goggles.rsi
+      state: helmet-down
 
 - type: entity
   parent: RMCGogglesBallistic
   id: RMCGogglesM1A1Ballistic # TODO prescription variant
   name: M1A1 marine ballistic goggles
-  description: Newer issue UNMC goggles. While commonly found mounted atop M10 pattern helmets, they are also capable of preventing insects, dust, and other things from getting into one's eyes. This version has larger lenses.
+  description: Newer issue USCM goggles. While commonly found mounted atop M10 pattern helmets, they are also capable of preventing insects, dust, and other things from getting into one's eyes. This version has larger lenses.
   components:
   - type: Sprite
     sprite: _RMC14/Objects/Clothing/Eyes/Glasses/M1A1_Ballistic_goggles.rsi
@@ -212,18 +396,39 @@
     rsi:
       sprite: _RMC14/Objects/Clothing/Eyes/Glasses/M1A1_Ballistic_goggles.rsi
       state: helmet
+    toggledRsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/M1A1_Ballistic_goggles.rsi
+      state: helmet-down
 
 - type: entity
   parent: RMCGogglesBallistic
   id: RMCGogglesPrescriptionBallistic # TODO make this actually prescription
   name: prescription marine ballistic goggles
-  description: Standard issue UNMC goggles. Mostly used to decorate one's helmet. Contains prescription lenses in case you weren't sure if they were lame or not.
+  description: Standard issue USCM goggles. Mostly used to decorate one's helmet. Contains prescription lenses in case you weren't sure if they were lame or not.
+
+- type: entity
+  parent: RMCGogglesBallistic
+  id: RMCGogglesM1A1BallisticBlue # TODO prescription variant
+  name: blue marine ballistic goggles
+  description: Standard issue UNMC goggles. While commonly found mounted atop M10 pattern helmets, they are also capable of preventing insects, dust, and other things from getting into one's eyes. This one has blue colored day lenses.
+  components:
+  - type: Sprite
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/M1A1_Ballistic_goggles_blue.rsi
+  - type: Clothing
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/M1A1_Ballistic_goggles_blue.rsi
+  - type: HelmetAccessory
+    rsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/M1A1_Ballistic_goggles_blue.rsi
+      state: helmet
+    toggledRsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/M1A1_Ballistic_goggles_blue.rsi
+      state: helmet-down
 
 - type: entity
   parent: ClothingEyesBase
   id: RMCGogglesBallisticSquad
   name: Advanced ballistic goggles
-  description: Cutting edge UNMC goggles. Advanced polymers and expensive nanotechnology allow the goggles to link with the wearer's armor and change the color of the lenses to match their squad designation. The lenses are invisible when worn by the unworthy.
+  description: Cutting edge USCM goggles. Advanced polymers and expensive nanotechnology allow the goggles to link with the wearer's armor and change the color of the lenses to match their squad designation. The lenses are invisible when worn by the unworthy.
   components:
   - type: Item
     storedRotation: 0
@@ -288,7 +493,6 @@
     slots:
     - MASK
     - EYES
-  - type: FlashImmunity
 
 - type: entity
   parent: ClothingEyesBase
@@ -352,6 +556,29 @@
     - RMCWeldingGoggle
   - type: Item
     storedRotation: 0
+  - type: HelmetAccessory
+    rsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/welding_goggles.rsi
+      state: helmet
+    toggledRsi:
+      sprite: _RMC14/Objects/Clothing/Eyes/Glasses/welding_goggles.rsi
+      state: helmet-down
 
 - type: Tag
   id: RMCWeldingGoggle
+
+- type: entity
+  parent: ClothingEyesBase
+  id: RMCGogglesKutjevo
+  name: kutjevo goggles
+  description: Goggles used to shield the eyes of workers on Kutjevo. N95Z Rated Goggles.
+  components:
+  - type: Item
+    storedRotation: 0
+  - type: Sprite
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/kutjevo_goggles.rsi
+  - type: Clothing
+    sprite: _RMC14/Objects/Clothing/Eyes/Glasses/kutjevo_goggles.rsi
+    slots:
+    - MASK
+    - EYES

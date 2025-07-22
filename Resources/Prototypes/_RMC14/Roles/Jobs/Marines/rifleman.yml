@@ -3,6 +3,7 @@
   id: CMRifleman
   name: cm-job-name-rifleman
   description: cm-job-description-rifleman
+  setPreference: false
   playTimeTracker: CMJobRifleman
   startingGear: CMGearRifleman
   dummyStartingGear: CMGearRiflemanEquipped
@@ -18,15 +19,13 @@
   accessGroups:
   - Rifleman
   hasIcon: false
-  minimapIcon:
-    sprite: _RMC14/Interface/map_blips.rsi
-    state: private
   roleWeight: 1
   special:
   - !type:AddComponentSpecial
     components:
     - type: Skills
       skills:
+        RMCSkillEndurance: 1
         RMCSkillFirearms: 1
         RMCSkillConstruction: 2
         RMCSkillEngineer: 3
@@ -35,6 +34,10 @@
     - type: SquadArmorWearer
     - type: JobPrefix
       prefix: cm-job-prefix-rifleman
+    - type: TacticalMapIcon
+      icon:
+        sprite: _RMC14/Interface/map_blips.rsi
+        state: private
 
 - type: startingGear
   id: CMGearRifleman
@@ -118,3 +121,20 @@
   components:
   - type: Sprite
     state: rifleman
+
+- type: randomHumanoidSettings
+  parent: RMCRandomHumanoidBase
+  id: RMCRifleman
+  components:
+  - type: GhostRole
+    name: cm-job-name-rifleman
+    description: cm-job-description-rifleman
+    rules: ghost-role-information-nonantagonist-rules
+    reregister: false
+    raffle:
+      settings: default
+    job: CMRifleman
+    requirements:
+    - !type:RoleTimeRequirement
+      role: CMJobRifleman
+      time: 1

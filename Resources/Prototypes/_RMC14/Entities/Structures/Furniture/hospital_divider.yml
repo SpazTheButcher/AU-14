@@ -19,12 +19,15 @@
       fix1:
         shape:
           !type:PhysShapeCircle
-          radius: 0.2
+          radius: 0.03
         density: 155
         mask:
         - MachineMask
         layer:
         - MobMask
+  - type: Damageable
+    damageContainer: StructuralMarine
+    damageModifierSet: StructuralMarine 
   - type: Destructible
     thresholds:
     - trigger:

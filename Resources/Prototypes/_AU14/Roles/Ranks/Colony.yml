@@ -1,0 +1,34 @@
+- type: rank
+  id: AU14RankCMBProbDeputy
+  name: Probationary Deputy
+  prefix: Prob. Dep.
+
+- type: rank
+  id: AU14RankCMBSrDeputy
+  name: Senior Deputy
+  prefix: Sr. Dep.
+
+- type: rank
+  id: AU14RankColonyAdministrator
+  name: Administrator
+  prefix: Admin.
+
+- type: rank
+  id: AU14RankColonySeniorAdministrator
+  name: Senior Administrator
+  prefix: Sr. Admin.
+
+- type: rank
+  id: AU14RankCWPSRangerTrainee
+  name: Probationary Ranger
+  prefix: Prob. Ranger
+
+- type: rank
+  id: AU14RankCWPSRanger
+  name: Ranger
+  prefix: Ranger
+
+- type: rank
+  id: AU14RankCWPSSeniorRanger
+  name: Senior Ranger
+  prefix: Sr. Ranger

@@ -62,6 +62,12 @@
     interfaces:
       enum.RMCConstructionUpgradeUiKey.Key:
         type: RMCConstructionUpgradeBui
+  - type: XenoToggleChargingDamage
+    stop: true
+    sound: /Audio/_RMC14/Structures/metalhit.ogg
+    damage:
+      types:
+        Blunt: 22
 
 - type: entity
   parent: RMCBarricadeUpgradeBase
@@ -73,7 +79,7 @@
     upgradedEntity: CMBarricadeExplosive
   - type: Sprite
     state: explosive
-
+#
 - type: entity
   parent: RMCBarricadeUpgradeBase
   id: RMCBiohazardUpgrade
@@ -84,7 +90,7 @@
     upgradedEntity: CMBarricadeBurn
   - type: Sprite
     state: burn
-
+#
 - type: entity
   parent: RMCBarricadeUpgradeBase
   id: RMCBruteUpgrade
@@ -95,11 +101,12 @@
     upgradedEntity: CMBarricadeBrute
   - type: Sprite
     state: brute
-
+#
 - type: Tag
   id: RMCMetalBarricade
+#
 
-# Metal Barricade Tree
+
 - type: entity
   parent: CMBarricadeBase
   id: CMBarricadeMetal
@@ -131,7 +138,7 @@
     fuelUsed: 2
     repairableDamageLimit: 340
   - type: NailgunRepairable
-    # cm13 max_health%: 0.3, 0.45
+  #  cm13 max_health%: 0.3, 0.45
     repairMetal: 135
     repairPlasteel: 200
   - type: Destructible
@@ -160,16 +167,13 @@
     thornsDamage:
       types:
         Slash: 10
-  - type: Construction
-    graph: BarricadeMetalGraph
-    node: nodeMetal
   - type: RMCConstructionUpgradeTarget
     upgrades: ["RMCExplosiveUpgrade", "RMCBiohazardUpgrade", "RMCBruteUpgrade"]
   - type: Tag
     tags:
     - RMCMetalBarricade
-
-# Metal Barricade Upgrades
+#
+#Metal Barricade Upgrades
 - type: entity
   parent: CMBarricadeMetal
   id: CMBarricadeBurn
@@ -192,7 +196,7 @@
         sprite: _RMC14/Structures/Walls/Barricades/burn_barricade_cracks.rsi
     - type: RMCConstructionUpgradeTarget
       upgrades: null
-
+#
 - type: entity
   parent: CMBarricadeMetal
   id: CMBarricadeBrute
@@ -215,7 +219,7 @@
         sprite: _RMC14/Structures/Walls/Barricades/brute_barricade_cracks.rsi
     - type: RMCConstructionUpgradeTarget
       upgrades: null
-
+#
 - type: entity
   parent: CMBarricadeMetal
   id: CMBarricadeExplosive
@@ -238,7 +242,7 @@
     - type: RMCConstructionUpgradeTarget
       upgrades: null
 
-# Turnstile (not sure how to make a one-way door so for now it is a glorified fence)
+#Turnstile (not sure how to make a one-way door so for now it is a glorified fence)
 - type: entity
   parent: CMBarricadeBase
   id: CMBarricadeTurnstile
@@ -264,9 +268,6 @@
             collection: MetalBreak
         - !type:DoActsBehavior
           acts: [ "Destruction" ]
-    - type: Construction
-      graph: BarricadeTurnstileGraph
-      node: nodeTurnstile
 
 - type: entity
   parent: CMBarricadeTurnstile
@@ -279,11 +280,9 @@
       layers:
       - state: turnstile_med
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeTurnstileGraph
-      node: nodeTurnstile
 
-# Handrails
+
+#Handrails
 - type: entity
   parent: CMBarricadeBase
   id: RMCBarricadeHandrail
@@ -318,9 +317,7 @@
         - !type:DoActsBehavior
           acts: [ "Destruction" ]
     - type: Climbable
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
+
 
 - type: entity
   parent: RMCBarricadeHandrail
@@ -330,9 +327,7 @@
       layers:
       - state: handrail_b_0
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
+
 
 - type: entity
   parent: RMCBarricadeHandrail
@@ -342,9 +337,6 @@
       layers:
       - state: handrail_med
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
 
 - type: entity
   parent: RMCBarricadeHandrail
@@ -354,9 +346,7 @@
       layers:
       - state: handrail_strata
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
+
 
 - type: entity
   parent: RMCBarricadeHandrail
@@ -366,9 +356,7 @@
       layers:
       - state: hr_kutjevo
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
+
 
 - type: entity
   parent: RMCBarricadeHandrail
@@ -378,21 +366,6 @@
       layers:
       - state: wire_rail
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
-
-- type: entity
-  parent: RMCBarricadeHandrail
-  id: RMCBarricadeSmallWire
-  components:
-    - type: Sprite
-      layers:
-      - state: small_wire
-      - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
 
 - type: entity
   parent: RMCBarricadeHandrail
@@ -402,9 +375,6 @@
       layers:
       - state: handrail_hybrisa
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
 
 - type: entity
   parent: RMCBarricadeHandrail
@@ -414,9 +384,6 @@
       layers:
       - state: centerroadbarrier2
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
 
 - type: entity
   parent: RMCBarricadeHybrisaCenterRoad
@@ -439,9 +406,7 @@
       layers:
       - state: plasticroadbarrierred
       - map: [ "acided" ]
-    - type: Construction
-      graph: BarricadeHandrailGraph
-      node: nodeHandrail
+
 
 - type: entity
   parent: RMCBarricadeHybrisaPlasticRoadBarrier
@@ -461,7 +426,9 @@
       - state: plasticroadbarrierblack
       - map: [ "acided" ]
 
-# Metal Barricade Doors
+#Metal Barricade Doors
+
+#Metal Barricade Doors
 - type: entity
   parent: CMBarricadeBase
   id: CMBarricadeMetalDoor
@@ -488,7 +455,7 @@
     fuelUsed: 2
     repairableDamageLimit: 300
   - type: NailgunRepairable
-    # cm13 max_health%: 0.3, 0.45
+  #  cm13 max_health%: 0.3, 0.45
     repairMetal: 120
     repairPlasteel: 180
   - type: Destructible
@@ -539,7 +506,7 @@
     openTimeTwo: 0
     openingAnimationTime: 0
     closingAnimationTime: 0
-    # Allow you to close barricades while people are standing on them or multiple are wrenched in the same tile
+    #Allow you to close barricades while people are standing on them or multiple are wrenched in the same tile
     performCollisionCheck: false
     openSound:
       path: /Audio/Items/ratchet.ogg
@@ -549,12 +516,6 @@
     thornsDamage:
       types:
         Slash: 10
-  - type: Construction
-    graph: BarricadeMetalDoorGraph
-    node: nodeBarricadeMetalDoor
-  - type: InteractedBlacklist
-    blacklist:
-      components:
-      - Xeno
   - type: UseDelay
     delay: 0.3
+  - type: Climbable

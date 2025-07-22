@@ -18,7 +18,7 @@
   - type: DestroyedByExplosionType
     explosion: RMCOBXenoTunnel
   - type: XenoTunnel
-  - type: XenoMapTracked
+  - type: XenoStructureMapTracked
   - type: TacticalMapTracked
   - type: TacticalMapIcon
     icon:
@@ -30,6 +30,7 @@
         type: SelectDestinationTunnelBui
       enum.NameTunnelUI.Key:
         type: NameTunnelBui
+  - type: DeletedByWeedKiller
 
 - type: entity
   parent: XenoTunnel

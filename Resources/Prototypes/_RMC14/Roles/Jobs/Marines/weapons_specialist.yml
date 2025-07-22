@@ -26,12 +26,9 @@
   supervisors: cm-job-supervisors-sl
   accessGroups:
   - WeaponSpec
-  overwatchSortPriority: -3
+  overwatchSortPriority: -4
   overwatchShowName: true
   overwatchRoleName: Specialist
-  minimapIcon:
-    sprite: _RMC14/Interface/map_blips.rsi
-    state: spec
   roleWeight: 1
   special:
   - !type:AddComponentSpecial
@@ -54,6 +51,10 @@
     - type: SquadArmorWearer
     - type: JobPrefix
       prefix: cm-job-prefix-weapons-specialist
+    - type: TacticalMapIcon
+      icon:
+        sprite: _RMC14/Interface/map_blips.rsi
+        state: spec
 
 - type: startingGear
   id: CMGearWeaponsSpecialist
@@ -128,3 +129,19 @@
   - type: Sprite
     state: spec_spawn_delta
 
+- type: randomHumanoidSettings
+  parent: RMCRandomHumanoidBase
+  id: RMCWeaponsSpecialist
+  components:
+  - type: GhostRole
+    name: cm-job-name-weapons-specialist
+    description: cm-job-description-weapons-specialist
+    rules: ghost-role-information-nonantagonist-rules
+    reregister: false
+    raffle:
+      settings: default
+    job: CMWeaponsSpecialist
+    requirements:
+    - !type:RoleTimeRequirement
+      role: CMJobWeaponsSpecialist
+      time: 1

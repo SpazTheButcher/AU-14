@@ -3,7 +3,7 @@
   id: CMExecutiveOfficer
   name: cm-job-name-platoon-commander
   description: cm-job-description-platoon-commander
-  setPreference: true
+  setPreference: false
   playTimeTracker: CMJobExecutiveOfficer
   ranks:
     RMCRankFirstLT: []
@@ -15,12 +15,6 @@
   supervisors: cm-job-supervisors-coyco
   accessGroups:
   - MarineMain
-  minimapIcon:
-    sprite: _RMC14/Interface/map_blips.rsi
-    state: xo
-  minimapBackground:
-   sprite: _RMC14/Interface/map_blips.rsi
-   state: background_command
   roleWeight: 0.25
   special:
   - !type:AddComponentSpecial
@@ -51,17 +45,18 @@
       prefix: cm-job-prefix-executive-officer
     - type: ViewIntelObjectives
     - type: CommandAccent
+    - type: TacticalMapIcon
+      icon:
+        sprite: _RMC14/Interface/map_blips.rsi
+        state: xo
+      background:
+        sprite: _RMC14/Interface/map_blips.rsi
+        state: background_command
 
 - type: startingGear
   id: CMGearExecutiveOfficer
   equipment:
-    jumpsuit: CMJumpsuitBO
-    shoes: RMCShoesLaceup
-    head: CMHeadCap
     id: CMIDCardExecutiveOfficer
-    ears: CMHeadsetSeniorCommand
-    pocket1: RMCPouchGeneralLarge
-    pocket2: RMCPouchGeneralLarge
 
 - type: entity
   parent: CMSpawnPointJobBase
@@ -76,3 +71,13 @@
 - type: playTimeTracker
   id: CMJobExecutiveOfficer
   isHumanoid: true
+
+- type: entity
+  parent: CMGuidebookRole
+  id: RMCGuidebookRoleXO
+  name: The Executive Officer
+  description: The Executive Officer.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    state: executive_officer

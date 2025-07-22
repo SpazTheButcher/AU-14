@@ -1,9 +1,8 @@
 using Content.Server.Chat.Managers;
+using Content.Server.Chat.Systems;
 using Content.Server.Hands.Systems;
-using Content.Server.Popups;
 using Content.Server.Radio;
 using Content.Server.Speech;
-using Content.Server.Chat.Systems;
 using Content.Server.Speech.Components;
 using Content.Shared._RMC14.Communications;
 using Content.Shared._RMC14.Hands;
@@ -25,7 +24,7 @@ public sealed class RMCTelephoneSystem : SharedRMCTelephoneSystem
     [Dependency] private readonly IChatManager _chatManager = default!;
     [Dependency] private readonly CommunicationsTowerSystem _communicationsTower = default!;
     [Dependency] private readonly HandsSystem _hands = default!;
-    [Dependency] private readonly CMHandsSystem _rmcHands = default!;
+    [Dependency] private readonly RMCHandsSystem _rmcHands = default!;
     [Dependency] private readonly RMCPlanetSystem _rmcPlanet = default!;
     [Dependency] private readonly ChatSystem _chat = default!;
 
@@ -90,24 +89,7 @@ public sealed class RMCTelephoneSystem : SharedRMCTelephoneSystem
 
     private void OnListen(Entity<RMCTelephoneComponent> ent, ref ListenEvent args)
     {
-        if (HasComp<RMCTelephoneComponent>(args.Source) || HasComp<XenoComponent>(args.Source))
-            return;
-
-        if (!_hands.IsHolding(args.Source, ent))
-            return;
-
-        if (ent.Comp.RotaryPhone is not { } rotary ||
-            !TryGetOtherPhone(rotary, out var otherPhone) ||
-            !_rmcHands.TryGetHolder(otherPhone, out var holder) ||
-            !TryComp(holder, out ActorComponent? actor))
-        {
-            return;
-        }
-
-        var name = GetPhoneName(rotary);
-        var message = $"{name} says, \"{FormattedMessage.EscapeText(args.Message)}\"";
-        var sound = _audio.GetSound(ent.Comp.SpeakSound);
-        _chatManager.ChatMessageToOne(ChatChannel.Local, message, message, otherPhone, false, actor.PlayerSession.Channel, Color.FromHex("#9956D3"), true, sound, -12, hidePopup: true);
+        OnListen(ent, args.Source, args.Message);
     }
 
     protected override void PickupPhone(Entity<RotaryPhoneComponent> rotary, EntityUid telephone, EntityUid user)
@@ -121,9 +103,32 @@ public sealed class RMCTelephoneSystem : SharedRMCTelephoneSystem
         if (TryComp<RotaryPhoneBackpackComponent>(ev.Receiving, out var comp))
         {
             _chat.TrySendInGameICMessage(ev.Receiving, "rings vigorously!", InGameICChatType.Emote, false, ignoreActionBlocker: true);
-        }else
+        }
+        else
         {
             _chat.TrySendInGameICMessage(ev.Receiving, "phone rings vigorously!", InGameICChatType.Emote, false, ignoreActionBlocker: true);
         }
+    }
+
+    public void OnListen(Entity<RMCTelephoneComponent> ent, EntityUid source, string message)
+    {
+        if (HasComp<RMCTelephoneComponent>(source) || HasComp<XenoComponent>(source))
+            return;
+
+        if (!_hands.IsHolding(source, ent))
+            return;
+
+        if (ent.Comp.RotaryPhone is not { } rotary ||
+            !TryGetOtherPhone(rotary, out var otherPhone) ||
+            !_rmcHands.TryGetHolder(otherPhone, out var holder) ||
+            !TryComp(holder, out ActorComponent? actor))
+        {
+            return;
+        }
+
+        var name = GetPhoneName(rotary);
+        message = $"{name} says, \"{FormattedMessage.EscapeText(message)}\"";
+        var sound = _audio.GetSound(ent.Comp.SpeakSound);
+        _chatManager.ChatMessageToOne(ChatChannel.Local, message, message, otherPhone, false, actor.PlayerSession.Channel, Color.FromHex("#9956D3"), true, sound, -12, hidePopup: true);
     }
 }

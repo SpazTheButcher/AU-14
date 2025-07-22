@@ -3,9 +3,22 @@
   id: CMFireteamLeader
   name: cm-job-name-fireteam-leader
   description: cm-job-description-fireteam-leader
+  setPreference: false
   playTimeTracker: CMJobFireteamLeader
+  requirements:
+  - !type:DepartmentTimeRequirement
+    department: CMSquad
+    time: 36000 # 10 hours
   ranks:
-    RMCRankSergeant: []
+    RMCRankSergeant:
+    - !type:RoleTimeRequirement
+      role: CMJobFireteamLeader
+      time: 252000 # 70 hours
+    RMCRankCorporal:
+    - !type:RoleTimeRequirement
+      role: CMJobFireteamLeader
+      time: 36000 # 10 hours
+    RMCRankLanceCorporal: []
   startingGear: CMGearFireteamLeader
   dummyStartingGear: CMGearFireteamLeaderEquipped
   icon: "CMJobIconFireteamLeader"
@@ -13,11 +26,8 @@
   supervisors: cm-job-supervisors-sl
   accessGroups:
   - FTL
-  overwatchSortPriority: -4
+  overwatchSortPriority: -5
   overwatchRoleName: Fire Team Leaders
-  minimapIcon:
-    sprite: _RMC14/Interface/map_blips.rsi
-    state: tl
   roleWeight: 1
   special:
   - !type:AddComponentSpecial
@@ -25,7 +35,7 @@
     - type: Skills
       skills:
         RMCSkillConstruction: 2
-        RMCSkillEngineer: 3
+        RMCSkillEngineer: 2
         RMCSkillFirearms: 1
         RMCSkillFireman: 1
         RMCSkillJtac: 3
@@ -34,6 +44,10 @@
     - type: SquadArmorWearer
     - type: JobPrefix
       prefix: cm-job-prefix-fireteam-leader
+    - type: TacticalMapIcon
+      icon:
+        sprite: _RMC14/Interface/map_blips.rsi
+        state: tl
 
 - type: startingGear
   id: CMGearFireteamLeader
@@ -108,3 +122,20 @@
     role: CMFireteamLeader
   - type: Sprite
     state: tl_spawn_delta
+
+- type: randomHumanoidSettings
+  parent: RMCRandomHumanoidBase
+  id: RMCFireteamLeader
+  components:
+  - type: GhostRole
+    name: cm-job-name-fireteam-leader
+    description: cm-job-description-fireteam-leader
+    rules: ghost-role-information-nonantagonist-rules
+    reregister: false
+    raffle:
+      settings: default
+    job: CMFireteamLeader
+    requirements:
+    - !type:RoleTimeRequirement
+      role: CMJobFireteamLeader
+      time: 1

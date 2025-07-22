@@ -8,6 +8,9 @@
   },
   "states": [
     {
+        "name": "xeno_structure_node_indicator"
+    },
+    {
       "name": "plasma0"
     },
     {
@@ -605,6 +608,9 @@
     },
     {
       "name": "cap100"
+    },
+    {
+      "name": "fake_tall"
     }
   ]
 }

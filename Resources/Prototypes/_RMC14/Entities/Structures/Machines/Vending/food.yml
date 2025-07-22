@@ -9,6 +9,7 @@
   - type: Sprite
     sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/food.rsi
   - type: CMAutomatedVendor
+    hackable: true
     sections:
     - name: Festive Meals
       holidays:
@@ -52,6 +53,16 @@
         amount: 5
 
 - type: entity
+  parent: ColMarTechFood
+  id: RMCNutriCoVendor
+  name: NutriCo AutoChef
+  description: An autochef food dispenser, capable of distributing food containing all the essential vitamins and nutrients anyone could ever need. Inedible-looking sludge is passed through a variety of heaters, re-shapers, and solidifiers before being artificially flavored to create something that looks and tastes mostly edible.
+  components:
+  - type: Sprite
+    sprite: _RMC14/Structures/Machines/VendingMachines/NutriCo/food.rsi
+    offset: 0, 0.5
+
+- type: entity
   parent: ColMarTechBaseAnchorable
   id: CMVendorBooze
   name: Booze-O-Mat
@@ -67,6 +78,11 @@
     - [ "CMAccessKitchen" ]
     - [ "CMAccessColonyPublic" ]
   - type: CMAutomatedVendor
+    access:
+    - "CMAccessKitchen"
+    - "CMAccessColonyPublic"
+    hackable: true
+    scaling: false
     sections:
     - name: Alcohol
       entries:
@@ -79,7 +95,7 @@
 #      - id: DrinkTequilaBottleFull
 #        amount: 5
       - id: RMCDrinkAlcoholRum
-        amount: 5
+        amount: 27 # TODO RMC14 5
       - id: RMCDrinkAlcoholCognac
         amount: 5
       - id: RMCDrinkAlcoholWhiskey
@@ -91,13 +107,13 @@
 #      - id: DrinkVermouthBottleFull
 #        amount: 5
       - id: RMCDrinkAlcoholGin
-        amount: 5
+        amount: 10 # TODO RMC14 5
       - id: RMCDrinkAlcoholAbsinthe
         amount: 2
 #      - id: DrinkBlueCuracaoBottleFull
 #        amount: 2
       - id: RMCDrinkAlcoholVodka
-        amount: 5
+        amount: 12 # TODO RMC14 5
 #      - id: DrinkCoffeeLiqueurBottleFull
 #        amount: 5
     - name: Craft Beers
@@ -140,6 +156,7 @@
     - state: "off"
     - state: "normal-unshaded"
   - type: CMAutomatedVendor
+    hackable: true
     sections:
     - name: Chess
       entries:

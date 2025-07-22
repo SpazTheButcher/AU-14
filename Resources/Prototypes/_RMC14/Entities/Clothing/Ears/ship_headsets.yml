@@ -9,7 +9,7 @@
       key_slots: !type:Container
   - type: Headset
   - type: EncryptionKeyHolder
-    keySlots: 4
+    keySlots: 4 # TODO RMC14 3 when intrinsic channels are all done
   - type: Clothing
     slots:
     - ears
@@ -25,16 +25,11 @@
     interfaces:
       enum.RMCRadioFilterUI.Key:
         type: RMCRadioFilterBui
+  - type: HeadsetMultiBroadcast
+  - type: RMCHeadset
 
 - type: entity
-  abstract: true
-  parent: CMHeadset
-  id: RMCHeadsetIcons
-  components:
-  - type: GrantMarineIcons
-
-- type: entity
-  parent: RMCHeadsetIcons
+  parent: RMCHeadsetIconsUNMC
   id: RMCHeadsetShip
   name: marine radio headset
   description: A standard military radio headset. Bulkier than combat models.
@@ -43,7 +38,6 @@
     containers:
       key_slots:
       - CMEncryptionKeyCommon
-  - type: GrantMarineIcons
   - type: GrantTacMapAlert
 
 - type: entity
@@ -67,6 +61,10 @@
     - MarineDelta
     - MarineEcho
     - MarineFoxtrot
+  - type: HeadsetMultiBroadcast
+    cooldown: 60
+  - type: RMCHeadset
+    radioTextIncrease: 3
 
 - type: entity
   parent: RMCHeadsetShip
@@ -89,6 +87,10 @@
     - MarineDelta
     - MarineEcho
     - MarineFoxtrot
+  - type: HeadsetMultiBroadcast
+    cooldown: 60
+  - type: RMCHeadset
+    radioTextIncrease: 3
 
 - type: entity
   parent: RMCHeadsetShip
@@ -174,6 +176,10 @@
     - MarineEcho
     - MarineFoxtrot
     - MarineMedical
+  - type: HeadsetMultiBroadcast
+    cooldown: 60
+  - type: RMCHeadset
+    radioTextIncrease: 3
 
 - type: entity
   parent: RMCHeadsetShip
@@ -210,6 +216,8 @@
     - MarineDelta
     - MarineEcho
     - MarineFoxtrot
+  - type: RMCHeadset
+    radioTextIncrease: 3
 
 - type: entity
   parent: RMCHeadsetShip
@@ -224,6 +232,10 @@
       key_slots:
       - CMEncryptionKeyCommon
       - RMCEncryptionKeyMarineCommand
+  - type: HeadsetMultiBroadcast
+    cooldown: 60
+  - type: RMCHeadset
+    radioTextIncrease: 3
 
 - type: entity
   parent: RMCHeadsetMarineCommand
@@ -247,6 +259,10 @@
       key_slots:
       - CMEncryptionKeyCommon
       - CMEncryptionKeyPilot
+  - type: HeadsetMultiBroadcast
+    cooldown: 60
+  - type: RMCHeadset
+    radioTextIncrease: 3
 
 - type: entity
   parent: RMCHeadsetMarine
@@ -267,6 +283,8 @@
     - MarineDelta
     - MarineEcho
     - MarineFoxtrot
+  - type: RMCHeadset
+    radioTextIncrease: 3
 
 - type: entity
   parent: RMCHeadsetShip
@@ -281,6 +299,10 @@
       key_slots:
       - CMEncryptionKeyCommon
       - RMCEncryptionKeyLiaison
+  - type: GrantMarineIcons
+    factions:
+    - UNMC
+    - WeYa
 
 - type: entity
   parent: RMCHeadsetShip
@@ -307,6 +329,10 @@
       key_slots:
       - CMEncryptionKeyCommon
       - RMCEncryptionKeySeniorCommand
+  - type: HeadsetMultiBroadcast
+    cooldown: 60
+  - type: RMCHeadset
+    radioTextIncrease: 3
 
 - type: entity
   parent: RMCHeadsetShip
@@ -322,6 +348,16 @@
       - CMEncryptionKeyCommon
       - RMCEncryptionKeySeniorCommand
       - RMCEncryptionKeyHighCommand
+  - type: HeadsetMultiBroadcast
+    cooldown: 60
+  - type: RMCHeadset
+    radioTextIncrease: 3
+
+- type: entity
+  parent: CMHeadsetHighCommand
+  id: RMCHeadsetHighCommandProvostLead
+  components:
+  - type: GrantSquadLeaderTracker
 
 - type: entity
   parent: CMHeadsetSeniorCommand
@@ -336,3 +372,30 @@
       key_slots:
       - CMEncryptionKeyCommon
       - RMCEncryptionKeySeniorCommand
+  - type: HeadsetMultiBroadcast
+    cooldown: 60
+  - type: RMCHeadset
+    radioTextIncrease: 3
+
+- type: entity
+  parent: CMHeadsetSeniorCommand
+  id: RMCHeadsetSynth
+  name: marine synth headset
+  description: Issued only to UNMC synthetics.
+  components:
+  - type: Sprite
+    state: ms_headset
+  - type: ContainerFill
+    containers:
+      key_slots:
+      - CMEncryptionKeyCommon
+      - RMCEncryptionKeyMarineCommand
+  - type: HeadsetMultiBroadcast
+    cooldown: 60
+
+# Prisoner headset
+- type: entity
+  parent: RMCHeadsetShip
+  id: RMCHeadsetPrisoner
+  name: prisoner headset
+  description: Headset provided to prisoners as directed by marine law.
