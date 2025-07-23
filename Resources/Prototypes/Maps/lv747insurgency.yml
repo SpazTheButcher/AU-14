@@ -12,7 +12,7 @@
   platoonsGovfor:
     - LACN
     - USCM
-  defaultgovor: USCM
+  defaultgofvor: USCM
   defaultopfor: UPP
   stations:
     AU14Routerra:
