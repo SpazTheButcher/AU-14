@@ -27,7 +27,6 @@
         - FullTileMask
         layer:
         - TableLayer
-        - LowImpassable
         - BarricadeImpassable
   - type: RotationDrawDepth
     southDrawDepth: OverMobs
@@ -35,6 +34,11 @@
   - type: Damageable
     damageContainer: Inorganic
     damageModifierSet: CMBarricade
+  - type: DirectionalAttackBlocker
+  - type: RMCLeapProtection
+    inherentStunDuration: 3
+    fullProtection: true
+  - type: RMCLungeProtection
   - type: InteractionOutline
   - type: RMCDropshipBlocked
   - type: GenericVisualizer
@@ -68,6 +72,10 @@
     damage:
       types:
         Blunt: 22
+  - type: XenoCrusherChargable
+    setDamage:
+      types:
+        Blunt: 150
 
 - type: entity
   parent: RMCBarricadeUpgradeBase
@@ -519,3 +527,113 @@
   - type: UseDelay
     delay: 0.3
   - type: Climbable
+- type: constructionGraph
+  parent: RMC
+  id: BarricadeMetalGraph
+  start: start
+  graph:
+  - node: start
+    actions:
+    - !type:DeleteEntity
+    edges:
+    - to: nodeMetal
+      completed:
+      - !type:SnapToGrid
+      steps:
+      - material: CMSteel
+        amount: 4
+        doAfter: 2
+
+  - node: nodeMetal
+    entity: CMBarricadeMetal
+    edges:
+    - to: start
+      completed:
+      - !type:ConditionalAction
+        condition:
+          !type:MinHealth
+          threshold: 1
+          byProportion: true
+        action:
+          !type:SpawnPrototype
+          prototype: CMSheetMetal1
+          amount: 4
+        else:
+          !type:ConditionalAction
+          condition:
+            !type:MinHealth
+            threshold: 0.78
+            byProportion: true
+          action:
+            !type:SpawnPrototype
+            prototype: CMSheetMetal1
+            amount: 3
+          else:
+            !type:ConditionalAction
+            condition:
+              !type:MinHealth
+              threshold: 0.56
+              byProportion: true
+            action:
+              !type:SpawnPrototype
+              prototype: CMSheetMetal1
+              amount: 2
+      - !type:ConditionalAction
+        condition:
+          !type:IsBarbed
+        action:
+          !type:SpawnPrototype
+          prototype: BarbedWire1
+          amount: 1
+      - !type:DeleteEntity
+      conditions:
+      - !type:EntityAnchored
+        anchored: false
+      steps:
+      - tool: Screwing
+        doAfter: 1
+      - tool: Prying
+        doAfter: 2
+
+- type: constructionGraph
+  parent: RMC
+  id: BarricadeMetalDoorGraph
+  start: start
+  graph:
+  - node: start
+    actions:
+    - !type:DeleteEntity
+    edges:
+    - to: nodeBarricadeMetalDoor
+      completed:
+      - !type:SnapToGrid
+      steps:
+      - material: CMSteel
+        amount: 6
+        doAfter: 3
+
+  - node: nodeBarricadeMetalDoor
+    entity: CMBarricadeMetalDoor
+    edges:
+    - to: start
+      completed:
+      - !type:SpawnPrototype
+        prototype: CMSheetMetal1
+        amount: 6
+      - !type:ConditionalAction
+        condition:
+          !type:IsBarbed
+        action:
+          !type:SpawnPrototype
+          prototype: BarbedWire1
+      - !type:DeleteEntity
+      conditions:
+      - !type:EntityAnchored
+        anchored: false
+      steps:
+      - tool: Screwing
+        doAfter: 1
+      - tool: Prying
+        doAfter: 5
+
+

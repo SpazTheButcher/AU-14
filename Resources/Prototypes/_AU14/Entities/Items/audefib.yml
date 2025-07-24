@@ -1,7 +1,7 @@
 - type: entity
   parent: BaseItem
   id: AU14BaseDefibrillator
-  name: LifePak 15
+  name: LifePak 15F
   description: A portable emergency defibrillator and patient monitor designed for fibrillating patients, it delivers powerful defibrillation to restore normal heart rhythms in patients, sometimes even pulling them back from the brink of death.
   abstract: true
   components:
@@ -10,13 +10,13 @@
     layers:
     - state: defib
     - state: defib_on
-      map: [ "enum.ToggleVisuals.Layer" ]
+      map: [ "enum.ToggleableVisuals.Layer" ]
       visible: false
   - type: Appearance
   - type: GenericVisualizer
     visuals:
-      enum.ToggleVisuals.Toggled:
-        enum.ToggleVisuals.Layer:
+      enum.ToggleableVisuals.Enabled:
+        enum.ToggleableVisuals.Layer:
           True: { visible: true }
           False: { visible: false }
   - type: Item

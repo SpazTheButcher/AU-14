@@ -147,6 +147,7 @@
   - type: Sprite
     sprite: _RMC14/Structures/Machines/large_map_table.rsi
     offset: 1, 0.5
+    drawdepth: Objects
     layers:
     - state: maptable
     - state: maptable-on
@@ -260,6 +261,8 @@
       enum.LifeboatComputerUi.Key:
         type: LifeboatComputerBui
   - type: LifeboatComputer
+  - type: AccessReader
+    access: [ [ "CMAccessDropship" ], [ "CMAccessCommand" ] ] # replace Command with Senior access
   - type: ActivatableUIBlacklist
     blacklist:
       components:

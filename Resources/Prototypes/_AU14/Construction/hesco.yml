@@ -10,9 +10,6 @@
   objectType: Structure
   placementMode: SnapgridCenter
   canBuildInImpassable: false
-  icon:
-    sprite: _AU14/Structures/hesco.rsi
-    state: sand_wall
   conditions:
     - !type:TileNotBlocked
     - !type:TileBarricadeClear

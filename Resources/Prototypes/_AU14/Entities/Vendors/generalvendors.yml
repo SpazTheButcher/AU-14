@@ -191,11 +191,11 @@
         amount: 30
       - id: RMCGlassesAviators
         amount: 30
-      - id: RMCGlassesBiMexYellow
+      - id: RMCGlassesTriMaxYellow
         amount: 30
-      - id: RMCGlassesBiMexBlack
+      - id: RMCGlassesTriMaxBlack
         amount: 30
-      - id: RMCGlassesBiMexBronze
+      - id: RMCGlassesTriMaxBronze
         amount: 30
       - id: AU14GlassesBiMexOrange
         amount: 30

@@ -121,12 +121,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/RisingSun/CityIsDeath.ogg
-    - /Audio/_AU14/Cassette/RisingSun/Cult.ogg
-    - /Audio/_AU14/Cassette/RisingSun/Cosmonauts.ogg
-    - /Audio/_AU14/Cassette/RisingSun/FoundMe.ogg
-    - /Audio/_AU14/Cassette/RisingSun/MyType.ogg
-    - /Audio/_AU14/Cassette/RisingSun/Help.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -139,12 +137,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/BlueStripe/Beastie.ogg
-    - /Audio/_AU14/Cassette/BlueStripe/Tricky.ogg
-    - /Audio/_AU14/Cassette/BlueStripe/Message.ogg
-    - /Audio/_AU14/Cassette/BlueStripe/NoJoke.ogg
-    - /Audio/_AU14/Cassette/BlueStripe/Bells.ogg
-    - /Audio/_AU14/Cassette/BlueStripe/Jump.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -157,11 +153,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/Neon/After.ogg
-    - /Audio/_AU14/Cassette/Neon/Cop.ogg
-    - /Audio/_AU14/Cassette/Neon/Human.ogg
-    - /Audio/_AU14/Cassette/Neon/Running.ogg
-    - /Audio/_AU14/Cassette/Neon/Shame.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -174,12 +169,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/Galaxy/Southern.ogg
-    - /Audio/_AU14/Cassette/Galaxy/Closer.ogg
-    - /Audio/_AU14/Cassette/Galaxy/Drive.ogg
-    - /Audio/_AU14/Cassette/Galaxy/Get.ogg
-    - /Audio/_AU14/Cassette/Galaxy/Love.ogg
-    - /Audio/_AU14/Cassette/Galaxy/Sky.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -193,12 +186,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/PartyApproved/Lady.ogg
-    - /Audio/_AU14/Cassette/PartyApproved/Afghan.ogg
-    - /Audio/_AU14/Cassette/PartyApproved/Aporah.ogg
-    - /Audio/_AU14/Cassette/PartyApproved/Caravan.ogg
-    - /Audio/_AU14/Cassette/PartyApproved/Dushman.ogg
-    - /Audio/_AU14/GMMusic/BloodType.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -212,13 +203,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/Tan/TeenageDirtbag.ogg
-    - /Audio/_AU14/Cassette/Tan/Southtown.ogg
-    - /Audio/_AU14/Cassette/Tan/Serenity.ogg
-    - /Audio/_AU14/Cassette/Tan/WishYouWereHere.ogg
-    - /Audio/_AU14/Cassette/Tan/PrayerToGod.ogg
-    - /Audio/_AU14/Cassette/Tan/ItsBeenAwhile.ogg
-    - /Audio/_AU14/Cassette/Tan/FarFromAnyRoad.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -232,13 +220,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/TWE/london.ogg
-    - /Audio/_AU14/Cassette/TWE/Tactics.ogg
-    - /Audio/_AU14/Cassette/TWE/Falklands.ogg
-    - /Audio/_AU14/Cassette/TWE/Passenger.ogg
-    - /Audio/_AU14/Cassette/TWE/Malice.ogg
-    - /Audio/_AU14/Cassette/TWE/Rakuen.ogg
-    - /Audio/_AU14/Cassette/TWE/Killer.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -251,11 +236,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/WY/everything.ogg
-    - /Audio/_AU14/Cassette/WY/YMCA.ogg
-    - /Audio/_AU14/Cassette/WY/silence.ogg
-    - /Audio/_AU14/Cassette/WY/sultan.ogg
-    - /Audio/_AU14/Cassette/WY/exit.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -268,12 +252,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/Green/paranoid.ogg
-    - /Audio/_AU14/Cassette/Green/tide.ogg
-    - /Audio/_AU14/Cassette/Green/world.ogg
-    - /Audio/_AU14/Cassette/Green/worth.ogg
-    - /Audio/_AU14/Cassette/Green/confusion.ogg
-    - /Audio/_AU14/Cassette/Green/free.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -286,13 +268,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/Pink/come.ogg
-    - /Audio/_AU14/Cassette/Pink/countdown.ogg
-    - /Audio/_AU14/Cassette/Pink/forget.ogg
-    - /Audio/_AU14/Cassette/Pink/pressure.ogg
-    - /Audio/_AU14/Cassette/Pink/zone.ogg
-    - /Audio/_AU14/Cassette/Pink/beat.ogg
-
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 - type: entity
   parent: RMCCassetteTapeBase
   id: AU14CassetteTapeRainbow
@@ -304,12 +283,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/Rainbow/rio.ogg
-    - /Audio/_AU14/Cassette/Rainbow/love.ogg
-    - /Audio/_AU14/Cassette/Rainbow/me.ogg
-    - /Audio/_AU14/Cassette/Rainbow/record.ogg
-    - /Audio/_AU14/Cassette/Rainbow/dream.ogg
-    - /Audio/_AU14/Cassette/Rainbow/safety.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -322,12 +299,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/RedStripe/thing.ogg
-    - /Audio/_AU14/Cassette/RedStripe/sugar.ogg
-    - /Audio/_AU14/Cassette/RedStripe/pie.ogg
-    - /Audio/_AU14/Cassette/RedStripe/heart.ogg
-    - /Audio/_AU14/Cassette/RedStripe/dirty.ogg
-    - /Audio/_AU14/Cassette/RedStripe/deadly.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -340,13 +315,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/RedBlack/trooper.ogg
-    - /Audio/_AU14/Cassette/RedBlack/heavy.ogg
-    - /Audio/_AU14/Cassette/RedBlack/hills.ogg
-    - /Audio/_AU14/Cassette/RedBlack/panama.ogg
-    - /Audio/_AU14/Cassette/RedBlack/reach.ogg
-    - /Audio/_AU14/Cassette/RedBlack/rock.ogg
-    - /Audio/_AU14/Cassette/RedBlack/round.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -359,14 +331,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/Ocean/around.ogg
-    - /Audio/_AU14/Cassette/Ocean/bird.ogg
-    - /Audio/_AU14/Cassette/Ocean/city.ogg
-    - /Audio/_AU14/Cassette/Ocean/koko.ogg
-    - /Audio/_AU14/Cassette/Ocean/moto.ogg
-    - /Audio/_AU14/Cassette/Ocean/nice.ogg
-    - /Audio/_AU14/Cassette/Ocean/surf.ogg
-    - /Audio/_AU14/Cassette/Ocean/wipe.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -379,13 +347,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/White/forever.ogg
-    - /Audio/_AU14/Cassette/White/ring.ogg
-    - /Audio/_AU14/Cassette/White/spanish.ogg
-    - /Audio/_AU14/Cassette/White/loving.ogg
-    - /Audio/_AU14/Cassette/White/morning.ogg
-    - /Audio/_AU14/Cassette/White/cry.ogg
-    - /Audio/_AU14/Cassette/White/cats.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -398,12 +363,10 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/Flaming/cheat.ogg
-    - /Audio/_AU14/Cassette/Flaming/dirt.ogg
-    - /Audio/_AU14/Cassette/Flaming/horse.ogg
-    - /Audio/_AU14/Cassette/Flaming/sun.ogg
-    - /Audio/_AU14/Cassette/Flaming/you.ogg
-    - /Audio/_AU14/Cassette/Flaming/broken.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -416,9 +379,7 @@
     size: Small
   - type: CassetteTape
     songs:
-    - /Audio/_AU14/Cassette/CLF/tons.ogg
-    - /Audio/_AU14/Cassette/CLF/tans.ogg
-    - /Audio/_AU14/Cassette/CLF/prison.ogg
-    - /Audio/_AU14/Cassette/CLF/hard.ogg
-    - /Audio/_AU14/Cassette/CLF/copper.ogg
-    - /Audio/_AU14/Cassette/CLF/blues.ogg
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg

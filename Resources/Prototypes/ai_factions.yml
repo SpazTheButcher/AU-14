@@ -9,13 +9,6 @@
   - Revolutionary
   - AllHostile
   - Wizard
-  - UNMC
-  - SPP
-  - WeYa
-  - Survivor
-  - CLF
-  - Bureau
-  - RoyalMarines
 
 - type: npcFaction
   id: NanoTrasen
@@ -28,13 +21,7 @@
   - Dragon
   - AllHostile
   - Wizard
-  - UNMC
-  - SPP
-  - WeYa
-  - Survivor
-  - CLF
-  - Bureau
-  - RoyalMarines
+  - Xenoborg
 
 - type: npcFaction
   id: Mouse
@@ -66,16 +53,11 @@
   - PetsNT
   - Zombie
   - Revolutionary
+  - Dragon
+  - Xeno
   - AllHostile
   - Wizard
-  - Dragon
-  - UNMC
-  - SPP
-  - WeYa
-  - Survivor
-  - CLF
-  - Bureau
-  - RoyalMarines
+  - Xenoborg
 
 - type: npcFaction
   id: SimpleNeutral
@@ -91,13 +73,7 @@
   - Dragon
   - AllHostile
   - Wizard
-  - UNMC
-  - SPP
-  - WeYa
-  - Survivor
-  - CLF
-  - Bureau
-  - RoyalMarines
+  - Xenoborg
 
 - type: npcFaction
   id: Xeno
@@ -111,13 +87,7 @@
   - AllHostile
   - Wizard
   - Dragon
-  - UNMC
-  - SPP
-  - WeYa
-  - Survivor
-  - CLF
-  - Bureau
-  - RoyalMarines
+  - Xenoborg
 
 - type: npcFaction
   id: Zombie
@@ -132,13 +102,7 @@
   - AllHostile
   - Wizard
   - Dragon
-  - UNMC
-  - SPP
-  - WeYa
-  - Survivor
-  - CLF
-  - Bureau
-  - RoyalMarines
+  - Xenoborg
 
 - type: npcFaction
   id: Revolutionary
@@ -149,13 +113,7 @@
   - Dragon
   - AllHostile
   - Wizard
-  - UNMC
-  - SPP
-  - WeYa
-  - Survivor
-  - CLF
-  - Bureau
-  - RoyalMarines
+  - Xenoborg
 
 - type: npcFaction
   id: AllHostile
@@ -172,13 +130,7 @@
   - Zombie
   - Revolutionary
   - Wizard
-  - UNMC
-  - SPP
-  - WeYa
-  - Survivor
-  - CLF
-  - Bureau
-  - RoyalMarines
+  - Xenoborg
 
 - type: npcFaction
   id: Wizard
@@ -195,10 +147,20 @@
   - Zombie
   - Revolutionary
   - AllHostile
-  - UNMC
-  - SPP
-  - WeYa
-  - Survivor
-  - CLF
-  - Bureau
-  - RoyalMarines
+  - Xenoborg
+
+- type: npcFaction
+  id: Xenoborg
+  hostile:
+  # they have brains
+  - NanoTrasen
+  - Syndicate
+  - Zombie
+  - Revolutionary
+  - Wizard
+
+  - Xeno # rivalry
+
+  # cause they are hostile to them
+  - SimpleHostile 
+  - AllHostile

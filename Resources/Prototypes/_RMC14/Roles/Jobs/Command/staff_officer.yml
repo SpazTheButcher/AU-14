@@ -1,20 +1,31 @@
 ﻿- type: job
   parent: CMJobBase
   id: CMStaffOfficer
-  name: cm-job-name-platoon-operations-officer
-  description: cm-job-description-platoon-operations-officer
-  setPreference: false
+  name: cm-job-name-staff-officer
+  description: cm-job-description-staff-officer
   playTimeTracker: CMJobStaffOfficer
+  requirements:
+  - !type:RoleTimeRequirement
+    role: CMJobSquadLeader
+    time: 18000 # 5 hours
+  - !type:TotalDepartmentsTimeRequirement
+    group: CMDepartmentsHuman
+    time: 54000 # 15 hours
   ranks:
+    RMCRankFirstLT:
+    - !type:RoleTimeRequirement
+      role: CMJobStaffOfficer
+      time: 252000 # 70 hours
     RMCRankSecondLT: []
   weight: 5
   startingGear: CMGearStaffOfficer
   icon: "CMJobIconStaffOfficer"
   requireAdminNotify: true
-  joinNotifyCrew: true
-  supervisors: cm-job-supervisors-platco
+  joinNotifyCrew: false
+  marineAuthorityLevel: 12
+  supervisors: cm-job-supervisors-co
   accessGroups:
-  - MarineMain
+  - SO
   roleWeight: 0.25
   special:
   - !type:AddComponentSpecial
@@ -53,7 +64,15 @@
 - type: startingGear
   id: CMGearStaffOfficer
   equipment:
+    jumpsuit: CMJumpsuitBO
+    shoes: RMCShoesLaceup
+    head: CMHeadCapOfficer
     id: CMIDCardStaffOfficer
+    ears: RMCHeadsetMarineCommand
+    pocket1: RMCPouchGeneralLarge
+    pocket2: RMCPouchGeneralLarge
+  inhand:
+    - RMCRangefinder
 
 - type: entity
   parent: CMSpawnPointJobBase

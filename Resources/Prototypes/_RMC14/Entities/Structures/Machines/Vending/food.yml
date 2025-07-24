@@ -24,7 +24,7 @@
     - name: Prepared Meals
       entries:
       - id: CMMRE
-        name: USCM Meal Ready to Eat
+        name: UNMC Meal Ready to Eat
         amount: 15
       - id: CMMarinePreparedMealChicken
         amount: 15
@@ -83,22 +83,26 @@
     - "CMAccessColonyPublic"
     hackable: true
     scaling: false
+    randomUnstockAmount: 3 # between 1 and 3
+    randomEmptyChance: 0.25 # 25% chance
     sections:
     - name: Alcohol
       entries:
-#      - id: DrinkAleBottleFull
-#        amount: 6
-#      - id: DrinkBeerBottleFull
-#        amount: 6
-#      - id: DrinkGrenadineBottleFull
-#        amount: 5
-#      - id: DrinkTequilaBottleFull
-#        amount: 5
+      - id: CMDrinkCanAle
+        name: ale
+        amount: 6
+      - id: CMDrinkCanBeerLite
+        name: beer
+        amount: 6
+      - id: RMCDrinkAlcoholGrenadine
+        amount: 5
+      - id: RMCDrinkAlcoholTequila
+        amount: 5
       - id: RMCDrinkAlcoholRum
-        amount: 27 # TODO RMC14 5
+        amount: 5
       - id: RMCDrinkAlcoholCognac
         amount: 5
-      - id: RMCDrinkAlcoholWhiskey
+      - id: RMCDrinkAlcoholDavenport
         amount: 5
       - id: RMCDrinkAlcoholPurpleWine
         amount: 5
@@ -163,7 +167,25 @@
       - id: ChessBoard
         amount: 5
     - name: White Pieces
-      entries: []
+      entries:
+      - id: RMCDrinkAlcoholVodkaChessWhitePawn
+        name: Pawn
+        amount: 2
+      - id: RMCDrinkAlcoholVodkaChessWhiteBishop
+        name: Bishop
+        amount: 2
+      - id: RMCDrinkAlcoholVodkaChessWhiteKnight
+        name: Knight
+        amount: 2
+      - id: RMCDrinkAlcoholVodkaChessWhiteRook
+        name: Rook
+        amount: 2
+      - id: RMCDrinkAlcoholVodkaChessWhiteKing
+        name: King
+        amount: 2
+      - id: RMCDrinkAlcoholVodkaChessWhiteQueen
+        name: Queen
+        amount: 2
     - name: Black Pieces
       entries: []
     # TODO RMC14 vodka chess pieces
