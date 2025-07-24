@@ -7,9 +7,9 @@
   - type: Sprite
     sprite: _RMC14/Objects/Weapons/Guns/RocketLaunchers/hjra12/hjra12_inhands.rsi
     layers:
-      - state: base
-        sprite: _RMC14/Objects/Weapons/Guns/RocketLaunchers/hjra12/hjra12_icon.rsi
-        map: ["enum.GunVisualLayers.Base"]
+    - state: base
+      sprite: _RMC14/Objects/Weapons/Guns/RocketLaunchers/hjra12/hjra12_icon.rsi
+      map: ["enum.GunVisualLayers.Base"]
   - type: Clothing
     sprite: _RMC14/Objects/Weapons/Guns/RocketLaunchers/hjra12/hjra12_inhands.rsi
     quickEquip: true
@@ -23,7 +23,7 @@
   - type: BallisticAmmoProvider
     whitelist:
       tags:
-        - RMCProjectileRocketHJRA12
+      - RMCProjectileRocketHJRA12
     capacity: 1
     cycleable: true
     mayTransfer: false
