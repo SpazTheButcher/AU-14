@@ -92,8 +92,6 @@
     - id: BoxBeaker
     - id: BoxBeaker
       prob: 0.3
-    - id: BoxPillCanister
-    - id: BoxBottle
     - id: BoxVial
     - id: PlasmaChemistryVial
     - id: ChemBag
