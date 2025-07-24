@@ -51,7 +51,6 @@
     jumpsuit: AU14CivilianWorkwearBlue
     shoes: RMCShoesLaceup
     id: AU14IDCardColonyCorporateLiaison
-    ears: RMCHeadsetDistressWeYaColony
     outerClothing: AU14CivilianJacketOrangePufferJacket
 
 - type: entity

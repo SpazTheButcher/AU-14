@@ -6,15 +6,6 @@
   - AUGoo
 
 - type: npcFaction
-  id: RMCXeno
-  hostile:
-  - AUGovfor
-  - AUUpp
-  - AUWeYu
-  - AUColonist
-  - AUCLF
-
-- type: npcFaction
   id: AUGoo
   hostile:
   - AUGovfor

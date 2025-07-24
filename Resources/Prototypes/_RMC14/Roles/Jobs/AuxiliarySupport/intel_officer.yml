@@ -15,6 +15,7 @@
   dummyStartingGear: RMCGearIntelOfficerEquipped
   icon: "CMJobIconIntelOfficer"
   joinNotifyCrew: false
+  marineAuthorityLevel: 7
   supervisors: cm-job-supervisors-aso
   accessGroups:
   - IntelOfficer

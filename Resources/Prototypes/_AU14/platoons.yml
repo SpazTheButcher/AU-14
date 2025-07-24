@@ -1,0 +1,57 @@
+- type: platoon
+  id: LACN
+  name: LACN Platoon
+  VendorToMarker:
+    Rifleman: AU14USCMequipmentvendor
+    Corpsman: AU14USCMcorpsmanvendor
+    Arifleman: AU14USCMSGequipmentvendor
+    Dcc: AU14AircrewWeaponsVendor
+    OperationsOfficer: AU14USCMsectionleaderequipmentvendor
+    Rto: AU14RTOVendor
+    SectionSergeant: AU14USCMsectionleaderequipmentvendor
+    Pilot: AU14AircrewWeaponsVendor
+
+- type: platoon
+  id: USCM
+  name: USCM Platoon
+  VendorToMarker:
+    Rifleman: AU14USCMequipmentvendor
+    Corpsman: AU14USCMcorpsmanvendor
+    Arifleman: AU14USCMequipmentvendor
+    Dcc: AU14AircrewWeaponsVendor
+    OperationsOfficer: AU14USCMsectionleaderequipmentvendor
+    Rto: AU14RTOVendor
+    SectionSergeant: AU14USCMsectionleaderequipmentvendor
+    Pilot: AU14AircrewWeaponsVendor
+    ExtraVendor1: VMarkerOpforDeco5
+    Deco1: VMarkerOpforDeco5
+
+- type: platoon
+  id: UPP
+  name: UPP Platoon
+  VendorToMarker:
+    Rifleman: AU14USCMequipmentvendor
+    Corpsman: AU14USCMcorpsmanvendor
+    Arifleman: AU14USCMequipmentvendor
+    Dcc: AU14AircrewWeaponsVendor
+    OperationsOfficer: AU14USCMsectionleaderequipmentvendor
+    Rto: AU14RTOVendor
+    SectionSergeant: AU14USCMsectionleaderequipmentvendor
+    Pilot: AU14AircrewWeaponsVendor
+
+
+
+
+- type: platoon
+  id: WEYU
+  name: Weyland-Yutani Platoon
+  VendorToMarker:
+    Rifleman: AU14USCMequipmentvendor
+    Corpsman: AU14USCMcorpsmanvendor
+    Arifleman: AU14USCMequipmentvendor
+    Dcc: AU14AircrewWeaponsVendor
+    OperationsOfficer: AU14USCMsectionleaderequipmentvendor
+    Rto: AU14RTOVendor
+    SectionSergeant: AU14USCMsectionleaderequipmentvendor
+    Pilot: AU14AircrewWeaponsVendor
+# Add more platoons as needed

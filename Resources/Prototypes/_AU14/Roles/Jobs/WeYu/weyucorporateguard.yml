@@ -45,7 +45,6 @@
     belt: CMBeltSecurityMarshalFilled
     shoes: RMCBootsPMCFilled
     id: AU14IDCardColonyCorporateLiaison
-    ears: RMCHeadsetDistressWeYaColony
 
 - type: entity
   parent: CMSpawnPointJobBase
