@@ -7,6 +7,17 @@
   color: "#318779"
   longRange: true
 
+# High Command
+- type: radioChannel
+  id: colonyalert
+  name: chat-radio-alert
+  keycode: "2" #z in cm13
+  frequency: 1431
+  color: "#318779"
+  longRange: true
+
+
+
 - type: radioChannel #UNMC High Command, for events and such, basically CentComm channel
   id: opfor
   name: chat-radio-opfor

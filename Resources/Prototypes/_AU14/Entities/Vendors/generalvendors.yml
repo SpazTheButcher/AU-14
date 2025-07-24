@@ -205,10 +205,6 @@
         amount: 30
       - id: CMHandsLightBrown
         amount: 30
-    - name: Headsets
-      entries:
-      - id: CMHeadsetColony
-        amount: 30
     - name: Storage
       entries:
       - id: CMSatchel

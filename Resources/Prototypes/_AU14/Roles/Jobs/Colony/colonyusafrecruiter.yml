@@ -41,7 +41,7 @@
     jumpsuit: AU14UASFFatigues
     shoes: RMCBootsCorporate
     id: AU14IDCardColonyUSASFRecruiter
-    ears: CMHeadsetColony
+
     head: AU14USASFCap
 
 - type: entity

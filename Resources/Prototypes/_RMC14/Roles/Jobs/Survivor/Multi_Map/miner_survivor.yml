@@ -32,7 +32,7 @@
   id: RMCGearSurvivorMiner
   equipment:
     head: RMCHardhatOrange
-    ears: CMHeadsetColony
+
     gloves: RMCHandsBlack
     jumpsuit: CMJumpsuitLiaisonBlue
     outerClothing: RMCHazardVestYellow

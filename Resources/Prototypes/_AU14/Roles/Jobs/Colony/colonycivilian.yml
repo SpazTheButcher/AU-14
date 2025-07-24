@@ -38,7 +38,6 @@
     jumpsuit: CMJumpsuitColonist
     shoes: RMCShoesBlack
     id: AU14IDCardColonyColonist
-    ears: CMHeadsetColony
 
 - type: entity
   parent: CMSpawnPointJobBase

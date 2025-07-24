@@ -35,7 +35,7 @@
     head: ClothingHeadHatChef
     outerClothing: ClothingUniformJumpsuitChef
     id: CMIDCardColonist
-    ears: CMHeadsetColony
+
 #  storage:
 #    back:
 #    # radio
@@ -58,7 +58,7 @@
     eyes: RMCGlassesMedicalHUDGlasses
     gloves: CMHandsLatex
     id: CMIDCardColonist
-    ears: CMHeadsetColony
+
   storage:
     back:
     - RMCRadioHandheldColonyOff
@@ -83,7 +83,7 @@
     gloves: CMHandsInsulated
 #    outerClothing: hazard vest
     id: CMIDCardColonist
-    ears: CMHeadsetColony
+
     belt: CMBeltUtilityFilled
   storage:
     back:
@@ -107,7 +107,7 @@
     gloves: CMHandsLatex
     outerClothing: ClothingOuterCoatLab
     id: CMIDCardColonist
-    ears: CMHeadsetColony
+
   storage:
     back:
     - RMCRadioHandheldColonyOff
@@ -130,7 +130,7 @@
     gloves: CMHandsLatex
     outerClothing: ClothingOuterCoatLab
     id: RMCIDCardAegisIntel
-    ears: CMHeadsetColony
+
   storage:
     back:
     - RMCRadioHandheldColonyOff
@@ -153,7 +153,7 @@
     head: RMCHardHat
     outerClothing: RMCHazardVest
     id:  CMIDCardColonist
-    ears: CMHeadsetColony
+
     pocket1: RMCPouchToolsFill
   storage:
     back:
@@ -180,7 +180,7 @@
     eyes: CMGlassesSecurity
     gloves: CMHandsBlackMarine
     id: CMIDCardColonistSecurity
-    ears: CMHeadsetColony
+
     belt: CMBeltSecurityMPFilled
   storage:
     back:
@@ -206,7 +206,7 @@
     head: RMCHeadCapBureau
     eyes: CMGlassesSecurity
     id: RMCIDCardCMBDeputy
-    ears: CMHeadsetColony
+
     belt: RMCBeltHolsterPistolHandcannonFilled
 
 # Corporate Liaison
@@ -271,7 +271,7 @@
     shoes: RMCShoesJackboots
     gloves: CMHandsBlackMarine
     id: CMIDCardColonist
-    ears: CMHeadsetColony
+
   storage:
     back:
     - RMCRadioHandheldColonyOff
@@ -291,7 +291,7 @@
     back: CMSatchel
     shoes: CMBootsBlack
     id: CMIDCardColonist
-    ears: CMHeadsetColony
+
 
 - type: randomHumanoidSettings
   parent: RMCCorpseColonist
@@ -363,7 +363,7 @@
     gloves: RMCHandsVeteran
     shoes: RMCBootsCorporate
     id: RMCIDCardPMC
-    ears: CMHeadsetColony
+
     pocket1: RMCPouchFirstAidInjectors
   storage:
     back:

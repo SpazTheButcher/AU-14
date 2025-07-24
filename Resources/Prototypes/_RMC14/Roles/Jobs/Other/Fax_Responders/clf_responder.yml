@@ -45,7 +45,7 @@
     shoes: RMCShoesLaceup
     head: RMCHeadCapFlippable
     id: RMCIDCardCLFResponder
-    ears: CMHeadsetColony
+
     back: CMSatchel
     belt: CMClipboard
     pocket1: RMCPouchGeneralLarge

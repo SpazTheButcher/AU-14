@@ -34,7 +34,7 @@
   id: RMCGearSurvivorEngineer
   equipment:
     head: RMCHardhatWhite
-    ears: CMHeadsetColony
+
     eyes: RMCWeldingGoggles
     jumpsuit: CMJumpsuitLiaisonBrown
     outerClothing: RMCHazardVestYellow

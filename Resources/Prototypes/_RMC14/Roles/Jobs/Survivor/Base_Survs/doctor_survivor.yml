@@ -36,7 +36,7 @@
   id: RMCGearSurvivorDoctor
   equipment:
     mask: CMMaskSterile
-    ears: CMHeadsetColony
+
     jumpsuit: CMJumpsuitLiaisonBlue
     outerClothing: RMCLabcoat
     gloves: CMHandsLatex

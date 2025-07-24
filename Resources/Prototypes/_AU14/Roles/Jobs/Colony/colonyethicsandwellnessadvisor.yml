@@ -40,7 +40,6 @@
     jumpsuit: AU14CivilianWorkwearPink
     shoes: RMCShoesBlack
     id: AU14IDCardColonyEthicsAndWellnessAdvisor
-    ears: CMHeadsetColony
     outerClothing: AU14CivilianJacketGrayPufferJacket
 
 - type: entity

@@ -39,7 +39,6 @@
     jumpsuit: AU14CivilianWorkwearYellow
     shoes: RMCShoesBlack
     id: AU14IDCardFoodServiceWorker
-    ears: CMHeadsetColony
     outerClothing: RMCMedicalApron
 
 - type: entity
