@@ -287,6 +287,22 @@
       - tool: Prying
         doAfter: 2
 
+- type: constructionGraph
+  parent: RMC
+  id: BarricadePlasteelDoorGraph
+  start: start
+  graph:
+  - node: start
+    actions:
+    - !type:DeleteEntity
+    edges:
+    - to: nodeBarricadePlasteelDoor
+      completed:
+      - !type:SnapToGrid
+      steps:
+      - material: CMPlasteel
+        amount: 8
+        doAfter: 4
 
   - node: nodeBarricadePlasteelDoor
     entity: CMBarricadePlasteelDoor
