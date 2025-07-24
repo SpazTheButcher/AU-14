@@ -8,6 +8,10 @@
   requiresOpforVote: true
   requiresGovforVote: true
   supportedMaps: FoFmapPool
+  rules:
+  - PlatoonSpawn
+  - AddGovfor
+  - AddOpfor
 
 - type: gamePreset
   id: Insurgency
@@ -20,6 +24,8 @@
   supportedMaps: ColonyMapPool
   rules:
   - PlatoonSpawn
+  - AddGovfor
+  - AddClf
 
 - type: gamePreset
   id: ColonyFall
@@ -34,7 +40,7 @@
   alias:
     - jailbreak
   name: Jailbreak
-  showInVote: true
+  showInVote: false
   description: Jailbreak mode
 
 - type: gamePreset
@@ -42,7 +48,7 @@
   alias:
     - prometheus
   name: Prometheus
-  showInVote: true
+  showInVote: false
   description: Prometheus mode
 
 - type: gamePreset
@@ -50,19 +56,19 @@
   alias:
     - criminal
   name: Criminal
-  showInVote: true
+  showInVote: false
   description: Criminal mode
 
 
 - type: gameMapPool
   id: ColonyMapPool
   maps:
-  - lv747insurgencycompmap
+  - lv747
 
 - type: gameMapPool
   id: FoFmapPool
   maps:
-  - lv747insurgencycompmap
+  - lv747
 
 
 - type: entity
@@ -70,3 +76,47 @@
   parent: BaseGameRule
   components:
   - type: PlatoonSpawnRule
+
+- type: entity
+  id: AddGovfor
+  parent: BaseGameRule
+  components:
+  - type: AddJobsRule
+    jobs:
+      AU14JobGOVFORPlatCo: 1
+      AU14JobGOVFORPlatoonCorpsman: 3
+      AU14JobGOVFORDCC: 2
+      AU14JobGOVFORPlatOp: 1
+      AU14JobGOVFORDSPilot: 1
+      AU14JobGOVFORRadioTelephoneOperator: 1
+      AU14JobGOVFORSectionSergeant: 1
+      AU14JobGOVFORSquadAutomaticRifleman: 1
+      AU14JobGOVFORSquadRifleman: 14
+
+
+- type: entity
+  id: AddOpfor
+  parent: BaseGameRule
+  components:
+  - type: AddJobsRule
+    jobs:
+      AU14JobOpforPlatCo: 1
+      AU14JobOpforPlatoonCorpsman: 3
+      AU14JobOpforDCC: 2
+      AU14JobOpforPlatOp: 1
+      AU14JobOpforDSPilot: 1
+      AU14JobOpforRadioTelephoneOperator: 1
+      AU14JobOpforSectionSergeant: 1
+      AU14JobOpforSquadAutomaticRifleman: 1
+      AU14JobOpforSquadRifleman: 14
+
+- type: entity
+  id: AddClf
+  parent: BaseGameRule
+  components:
+  - type: AddJobsRule
+    jobs:
+      AU14JobCLFCellLeader: 1
+      AU14JobCLFPhysician: 1
+      AU14JobCLFGuerilla: 6
+      AU14JobCLFMachineGunner: 1

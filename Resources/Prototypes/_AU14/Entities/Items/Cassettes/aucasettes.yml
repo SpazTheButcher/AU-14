@@ -121,7 +121,10 @@
     size: Small
   - type: CassetteTape
     songs:
-
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -134,7 +137,10 @@
     size: Small
   - type: CassetteTape
     songs:
-
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -147,7 +153,10 @@
     size: Small
   - type: CassetteTape
     songs:
-
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -160,7 +169,10 @@
     size: Small
   - type: CassetteTape
     songs:
-
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -174,7 +186,10 @@
     size: Small
   - type: CassetteTape
     songs:
-
+    - /Audio/_RMC14/Lobby/enemy_is_unknown.ogg
+    - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
+    - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
+    - /Audio/_RMC14/Hijack/Last_Stand.ogg
 
 - type: entity
   parent: RMCCassetteTapeBase
@@ -192,7 +207,7 @@
     - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
     - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
     - /Audio/_RMC14/Hijack/Last_Stand.ogg
-    -
+
 - type: entity
   parent: RMCCassetteTapeBase
   id: AU14CassetteTapeTWE
@@ -209,7 +224,7 @@
     - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
     - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
     - /Audio/_RMC14/Hijack/Last_Stand.ogg
-    -
+
 - type: entity
   parent: RMCCassetteTapeBase
   id: AU14CassetteTapeWY
@@ -225,7 +240,7 @@
     - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
     - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
     - /Audio/_RMC14/Hijack/Last_Stand.ogg
-    -
+
 - type: entity
   parent: RMCCassetteTapeBase
   id: AU14CassetteTapeGreen
@@ -241,7 +256,7 @@
     - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
     - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
     - /Audio/_RMC14/Hijack/Last_Stand.ogg
-    -
+
 - type: entity
   parent: RMCCassetteTapeBase
   id: AU14CassetteTapePink
@@ -272,7 +287,7 @@
     - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
     - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
     - /Audio/_RMC14/Hijack/Last_Stand.ogg
-    -
+
 - type: entity
   parent: RMCCassetteTapeBase
   id: AU14CassetteTapeRedStripe
@@ -288,7 +303,7 @@
     - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
     - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
     - /Audio/_RMC14/Hijack/Last_Stand.ogg
-    -
+
 - type: entity
   parent: RMCCassetteTapeBase
   id: AU14CassetteTapeRedBlack
@@ -304,7 +319,7 @@
     - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
     - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
     - /Audio/_RMC14/Hijack/Last_Stand.ogg
-    -
+
 - type: entity
   parent: RMCCassetteTapeBase
   id: AU14CassetteTapeOcean
@@ -320,7 +335,7 @@
     - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
     - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
     - /Audio/_RMC14/Hijack/Last_Stand.ogg
-    -
+
 - type: entity
   parent: RMCCassetteTapeBase
   id: AU14CassetteTapeWhite
@@ -336,7 +351,7 @@
     - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
     - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
     - /Audio/_RMC14/Hijack/Last_Stand.ogg
-    -
+
 - type: entity
   parent: RMCCassetteTapeBase
   id: AU14CassetteTapeRedDirt
@@ -352,7 +367,7 @@
     - /Audio/_RMC14/Lobby/Time_Is_Running_Out.ogg
     - /Audio/_RMC14/Hijack/storm_the_iron_hive.ogg
     - /Audio/_RMC14/Hijack/Last_Stand.ogg
-    -
+
 - type: entity
   parent: RMCCassetteTapeBase
   id: AU14CassetteTapeCLF

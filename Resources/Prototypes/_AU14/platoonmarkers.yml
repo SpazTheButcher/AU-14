@@ -245,3 +245,123 @@
       govfor: true
       opfor: false
       class: ExtraVendor4
+
+- type: entity
+  name: Gov deco marker 1
+  id: VMarkerGovforDeco1
+  parent: Vmarker
+  components:
+    - type: VendorMarker
+      govfor: true
+      opfor: false
+      class: Deco1
+
+- type: entity
+  name: Gov deco marker 2
+  id: VMarkerGovforDeco2
+  parent: Vmarker
+  components:
+    - type: VendorMarker
+      govfor: true
+      opfor: false
+      class: Deco2
+
+- type: entity
+  name: Gov deco marker 3
+  id: VMarkerGovforDeco3
+  parent: Vmarker
+  components:
+    - type: VendorMarker
+      govfor: true
+      opfor: false
+      class: Deco3
+
+- type: entity
+  name: Gov deco marker 4
+  id: VMarkerGovforDeco4
+  parent: Vmarker
+  components:
+    - type: VendorMarker
+      govfor: true
+      opfor: false
+      class: Deco4
+
+- type: entity
+  name: Gov deco marker 5
+  id: VMarkerGovforDeco5
+  parent: Vmarker
+  components:
+    - type: VendorMarker
+      govfor: true
+      opfor: false
+      class: Deco5
+
+- type: entity
+  name: Gov deco marker 6
+  id: VMarkerGovforDeco6
+  parent: Vmarker
+  components:
+    - type: VendorMarker
+      govfor: true
+      opfor: false
+      class: Deco6
+
+- type: entity
+  name: Opfor deco marker 1
+  id: VMarkerOpforDeco1
+  parent: Vmarker
+  components:
+    - type: VendorMarker
+      govfor: false
+      opfor: true
+      class: Deco1
+
+- type: entity
+  name: Opfor deco marker 2
+  id: VMarkerOpforDeco2
+  parent: Vmarker
+  components:
+    - type: VendorMarker
+      govfor: false
+      opfor: true
+      class: Deco2
+
+- type: entity
+  name: Opfor deco marker 3
+  id: VMarkerOpforDeco3
+  parent: Vmarker
+  components:
+    - type: VendorMarker
+      govfor: false
+      opfor: true
+      class: Deco3
+
+- type: entity
+  name: Opfor deco marker 4
+  id: VMarkerOpforDeco4
+  parent: Vmarker
+  components:
+    - type: VendorMarker
+      govfor: false
+      opfor: true
+      class: Deco4
+
+- type: entity
+  name: Opfor deco marker 5
+  id: VMarkerOpforDeco5
+  parent: Vmarker
+  components:
+    - type: VendorMarker
+      govfor: false
+      opfor: true
+      class: Deco5
+
+- type: entity
+  name: Opfor deco marker 6
+  id: VMarkerOpforDeco6
+  parent: Vmarker
+  components:
+    - type: VendorMarker
+      govfor: false
+      opfor: true
+      class: Deco6

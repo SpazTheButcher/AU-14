@@ -1,3 +1,6 @@
+- type: Tag
+  id: Currency
+
 - type: entity
   parent: SpaceCash
   id: RMCSpaceCash
@@ -16,6 +19,7 @@
     tags:
     - Holdout
     - RMCSpaceCash
+    - Currency
   - type: Stack
     stackType: Dollar
     count: 1
