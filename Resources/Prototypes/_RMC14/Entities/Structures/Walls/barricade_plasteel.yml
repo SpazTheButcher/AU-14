@@ -22,7 +22,7 @@
 - type: Tag
   id: RMCPlasteelBarricade
 #
-Plasteel Barricade Tree
+#Plasteel Barricade Tree
 - type: entity
   parent: CMBarricadeBase
   id: RMCBarricadePlasteel
@@ -105,7 +105,7 @@ Plasteel Barricade Tree
     tags:
     - RMCPlasteelBarricade
 #
-Metal Barricade Upgrades
+#Metal Barricade Upgrades
 - type: entity
   parent: RMCBarricadePlasteel
   id: RMCBarricadeBurnPlasteel
@@ -242,7 +242,6 @@ Metal Barricade Upgrades
     openTimeTwo: 0
     openingAnimationTime: 0
     closingAnimationTime: 0
-    Allow you to close barricades while people are standing on them or multiple are wrenched in the same tile
     performCollisionCheck: false
     openSound:
       path: /Audio/Items/ratchet.ogg
