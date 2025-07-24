@@ -105,7 +105,7 @@
   name: Colony Intercom
   description: A public intercom for colony-wide announcements.
   components:
-  - type: IntrinsicRadioReceiverComponent
+  - type: IntrinsicRadioReceiver
   - type: Speech
   - type: ActiveRadio
     channels:
