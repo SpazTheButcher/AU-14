@@ -1327,9 +1327,9 @@ CableTerminal: RMCCableTerminal
 ClothingEyesGlassesChemical: RMCGlassesReagentHUDGlasses
 
 # 2025-07-08
-RMCGlassesBiMexYellow: RMCGlassesTriMaxYellow
-RMCGlassesBiMexBronze: RMCGlassesTriMaxBronze
-RMCGlassesBiMexBlack: RMCGlassesTriMaxBlack
+RMCGlassesTriMaxYellow: RMCGlassesTriMaxYellow
+RMCGlassesTriMaxBronze: RMCGlassesTriMaxBronze
+RMCGlassesTriMaxBlack: RMCGlassesTriMaxBlack
 
 # 2025-07-12
 FoamedIronMetal: RMCFoamedIronMetal

@@ -445,7 +445,7 @@
   - type: RMCHeadset
     radioTextIncrease: 3
     channels:
-    - MarineSOF
+    - MarineAlpha
   - type: GrantSquadLeaderTracker
     defaultMode: ProvostMarshal
     trackerModes:

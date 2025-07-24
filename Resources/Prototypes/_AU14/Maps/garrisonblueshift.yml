@@ -11,7 +11,7 @@
   platoonsGovfor:
   - LACN
   - USCM
-  defaultgofvor: USCM
+  defaultgovfor: USCM
   defaultopfor: UPP
   randomRotation: false
   stations:

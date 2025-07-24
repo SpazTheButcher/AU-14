@@ -68,7 +68,6 @@
     fuelUsed: 2
     repairableDamageLimit: 675
   - type: NailgunRepairable
-    cm13 max_health%: 0.45
     repairPlasteel: 400
   - type: Destructible
     thresholds:
@@ -194,7 +193,6 @@
     fuelUsed: 2
     repairableDamageLimit: 600
   - type: NailgunRepairable
-    cm13 max_health%: 0.3
     repairPlasteel: 240
   - type: Destructible
     thresholds:
@@ -287,6 +285,22 @@
       - tool: Prying
         doAfter: 2
 
+- type: constructionGraph
+  parent: RMC
+  id: BarricadePlasteelDoorGraph
+  start: start
+  graph:
+  - node: start
+    actions:
+    - !type:DeleteEntity
+    edges:
+    - to: nodeBarricadePlasteelDoor
+      completed:
+      - !type:SnapToGrid
+      steps:
+      - material: CMPlasteel
+        amount: 8
+        doAfter: 4
 
   - node: nodeBarricadePlasteelDoor
     entity: CMBarricadePlasteelDoor
