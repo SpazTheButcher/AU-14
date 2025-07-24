@@ -222,7 +222,7 @@
       - CMEncryptionKeyColony
   - type: RMCHeadset
     channels:
-    - MarineSOF
+    - MarineAlpha
   - type: GrantSquadLeaderTracker
     defaultMode: FORECONCommandingOfficer
     trackerModes:

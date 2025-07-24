@@ -90,18 +90,6 @@
     defaultChannel: SPP
 
 - type: entity
-  parent: CMEncryptionKey
-  id: RMCEncryptionKeyHalcyon
-  name: Halcyon radio encryption key
-  components:
-  - type: Sprite
-    state: upp_key
-  - type: EncryptionKey
-    channels:
-    - Halcyon
-    defaultChannel: Halcyon
-
-- type: entity
   abstract: true
   parent: RMCHeadsetIconsSPP
   id: RMCHeadsetSPPAbstract
@@ -186,4 +174,3 @@
     containers:
       key_slots:
       - CMEncryptionKeyColony
-      - RMCEncryptionKeyHalcyon
