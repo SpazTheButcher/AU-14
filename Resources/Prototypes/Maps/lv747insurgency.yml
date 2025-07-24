@@ -6,6 +6,14 @@
   maxPlayers: 75
   maxRandomOffset: 0
   randomRotation: false
+  platoonsOpfor:
+    - UPP
+    - WEYU
+  platoonsGovfor:
+    - LACN
+    - USCM
+  defaultgofvor: USCM
+  defaultopfor: UPP
   stations:
     AU14Routerra:
       stationProto: StandardUNMCWarship
