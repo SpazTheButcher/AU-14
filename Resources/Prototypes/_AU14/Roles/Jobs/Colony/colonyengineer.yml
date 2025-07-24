@@ -44,7 +44,6 @@
     outerClothing: AU14CivilianFullSuitWeYuEngineer
     shoes: RMCBootsCorporate
     id: AU14IDCardColonyEngineer
-    ears: CMHeadsetColony
 
 - type: entity
   parent: CMSpawnPointJobBase

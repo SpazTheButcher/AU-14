@@ -194,10 +194,6 @@
         amount: 30
       - id: CMHandsLightBrown
         amount: 30
-    - name: Headsets
-      entries:
-      - id: CMHeadsetColony
-        amount: 30
     - name: Storage
       entries:
       - id: CMSatchel
@@ -258,10 +254,6 @@
     - name: Gloves
       entries:
       - id: RMCHandsVeteranInsulated
-        amount: 8
-    - name: Headsets
-      entries:
-      - id: CMHeadsetColony
         amount: 8
     - name: Storage & Belts
       entries:
@@ -380,10 +372,7 @@
       entries:
       - id: CMMaskSterile
         amount: 3
-    - name: Headsets
-      entries:
-      - id: CMHeadsetColony
-        amount: 3
+
     - name: Medical Pouches
       entries:
       - id: RMCPouchAutoinjector
@@ -547,10 +536,6 @@
     - name: Masks
       entries:
       - id: CMMaskSterile
-        amount: 1
-    - name: Headsets
-      entries:
-      - id: CMHeadsetColony
         amount: 1
     - name: Pouches
       entries:
@@ -737,10 +722,6 @@
     - name: Gloves
       entries:
       - id: RMCHandsVeteranInsulated
-        amount: 1
-    - name: Headsets
-      entries:
-      - id: CMHeadsetColony
         amount: 1
     - name: Storage & Belts
       entries:

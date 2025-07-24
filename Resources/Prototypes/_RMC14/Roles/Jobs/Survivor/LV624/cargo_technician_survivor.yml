@@ -35,7 +35,7 @@
     head: RMCHeadYellowSoftCap
     shoes: RMCShoesLaceup
     id: CMIDCardColonistEngineer
-    ears: CMHeadsetColony
+
     pocket1: RMCPouchSurvivalFill
     pocket2: RMCPouchToolsFill
 # TODO RMC Meson Goggles

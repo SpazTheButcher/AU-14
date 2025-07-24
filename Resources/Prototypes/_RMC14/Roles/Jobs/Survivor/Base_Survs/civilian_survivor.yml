@@ -50,7 +50,7 @@
   id: RMCGearSurvivorBaseNoBackpack
   equipment:
     id: CMIDCardColonist
-    ears: CMHeadsetColony
+
     pocket1: RMCPouchSurvivalFill
 
 - type: startingGear

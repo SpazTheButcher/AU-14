@@ -37,7 +37,7 @@
   id: AU14GearCivilianScientist
   equipment:
     id: AU14IDCardCivilianScientist
-    ears: CMHeadsetColony
+
     jumpsuit: AU14CivilianWorkwearGreen
     shoes: RMCShoesBlack
     outerClothing: RMCLabcoatOpened
