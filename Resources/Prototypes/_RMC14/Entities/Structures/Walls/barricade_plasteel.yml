@@ -239,7 +239,7 @@
     closeTimeOne: 0
     closeTimeTwo: 0
     openTimeOne: 0
-    openTimeTwo: 0 q
+    openTimeTwo: 0
     openingAnimationTime: 0
     closingAnimationTime: 0
     performCollisionCheck: false
