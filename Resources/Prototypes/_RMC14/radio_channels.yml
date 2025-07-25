@@ -137,15 +137,7 @@
   longRange: true
   tower: true
 
-# Marine Special Forces
-- type: radioChannel
-  id: MarineSOF
-  name: chat-radio-marine-sof
-  keycode: "k"
-  frequency: 1724
-  color: "#400000"
-  longRange: true
-  tower: true
+
 
 # Non Marine
 - type: radioChannel

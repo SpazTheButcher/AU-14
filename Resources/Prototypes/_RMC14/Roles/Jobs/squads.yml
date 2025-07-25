@@ -275,7 +275,7 @@
     - Goggles
     - Armor
     - Gloves
-    radio: MarineSOF
+    radio: MarineAlpha
     minimapBackground:
       sprite: _RMC14/Interface/map_blips.rsi
       state: background_forecon
@@ -298,7 +298,7 @@
     background:
       sprite: _RMC14/Interface/cm_job_icons.rsi
       state: empty
-    radio: MarineSOF
+    radio: MarineAlpha
     accessLevels: []
     minimapBackground:
       sprite: _RMC14/Interface/map_blips.rsi
