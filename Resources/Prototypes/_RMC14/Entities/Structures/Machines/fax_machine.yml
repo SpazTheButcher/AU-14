@@ -104,3 +104,13 @@
   - type: FaxMachine
     name: "Three World Empire"
     notifyAdmins: true
+
+- type: entity
+  parent: CMFax
+  id: CMFaxColonyAdmin
+  name: colony administrator fax machine
+  suffix: Admin
+  components:
+  - type: FaxMachine
+    name: "Colony Administrator"
+    notifyAdmins: true

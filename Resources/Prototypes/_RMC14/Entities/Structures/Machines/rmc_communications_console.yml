@@ -92,7 +92,7 @@
     key: enum.OverwatchConsoleUI.Key
   - type: ActivatableUIRequiresAccess
   - type: AccessReader
-    access: [ [ "CMAccessCommand" ] ]
+    access: [ [ "CMAccessGovforCommand" ] ]
   - type: UserInterface
     interfaces:
       enum.OverwatchConsoleUI.Key:

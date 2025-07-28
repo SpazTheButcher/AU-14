@@ -60,7 +60,7 @@ public sealed partial class SynthComponent : Component
     [DataField, AutoNetworkedField]
     public Dictionary<RMCHealthIconTypes, ProtoId<HealthIconPrototype>> HealthIconOverrides = new()
     {
-        [RMCHealthIconTypes.Healthy] = "RMCHealthIconHealthySynth",
+        [RMCHealthIconTypes.Healthy] = "RMCHealthIconHealthySynth`",
         [RMCHealthIconTypes.DeadDefib] = "RMCHealthIconDeadSynth",
         [RMCHealthIconTypes.DeadClose] = "RMCHealthIconDeadSynth",
         [RMCHealthIconTypes.DeadAlmost] = "RMCHealthIconDeadSynth",
@@ -68,6 +68,12 @@ public sealed partial class SynthComponent : Component
         [RMCHealthIconTypes.Dead] = "RMCHealthIconDeadSynth",
         [RMCHealthIconTypes.HCDead] = "RMCHealthIconDeadSynth",
     };
+
+    /// <summary>
+    /// If false, do not spawn a brain organ for this synth.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public bool ChangeBrain = true;
 
     /// <summary>
     /// New brain organ to add when the synth is created.
@@ -110,4 +116,16 @@ public sealed partial class SynthComponent : Component
 
     [DataField, AutoNetworkedField]
     public string DamageVisualsColor = "#EEEEEE";
+
+
+    [DataField, AutoNetworkedField]
+    public bool HideGeneration = false;
+
+    /// <summary>
+    /// If true, use human health icons instead of synth icons.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public bool UseHumanHealthIcons = false;
+
+
 }

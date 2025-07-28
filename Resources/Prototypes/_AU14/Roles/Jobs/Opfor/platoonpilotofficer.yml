@@ -4,6 +4,8 @@
   name: au14-job-name-opfordspilot
   description: au14-job-description-opfordspilot
   setPreference: true
+  canBeAntag: false
+
   playTimeTracker: AU14JobOpforDSPilot
   ranks:
     RMCRankCaptain:

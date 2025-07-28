@@ -4,6 +4,7 @@
   name: au14-job-name-opforplatop
   description: au14-job-description-opforplatop
   setPreference: true
+  canBeAntag: false
   playTimeTracker: AU14JobOpforPlatOp
   ranks:
     RMCRankSecondLT: []

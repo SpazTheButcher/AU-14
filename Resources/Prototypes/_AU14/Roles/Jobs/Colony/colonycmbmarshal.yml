@@ -4,6 +4,8 @@
   name: au14-job-name-civiliancmbmarshal
   description: au14-job-description-civiliancmbmarshal
   setPreference: true
+  canBeAntag: false
+
   playTimeTracker: AU14JobCivilianCMBMarshal
   ranks:
     RMCRankCMBMarshal: []
@@ -49,7 +51,7 @@
     jumpsuit: AU14CMBUniform
     belt: CMBeltSecurityMarshalFilled
     shoes: RMCBootsPMCFilled
-    id: AU14IDCardColonyCMBMarshal
+    id: RMCIDCardCMBMarshal
     ears: AU14CMBHeadset
     outerClothing: AU14CMBMarshalWindbreaker
 
