@@ -138,7 +138,6 @@
 
 - type: entity
   parent: BaseMindRoleAntag
-  isCM: true
   id: MindRoleDrugDealer
   name: Drug Dealer Role
   components:
@@ -184,7 +183,6 @@
 
 - type: entity
   parent: BaseMindRoleAntag
-  isCM: true
   id: MindRoleCorporateSpy
   name: Corporate Spy Role
   components:
@@ -200,8 +198,7 @@
   category: Colony Antags
   setPreference: true
   objective: roles-antag-spy-objective
-  isCM: true
-
+  isCM: True
 
 - type: entity
   parent: RMCSatchelBlack
