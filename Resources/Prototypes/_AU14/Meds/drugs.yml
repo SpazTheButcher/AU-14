@@ -1,6 +1,6 @@
 - type: reagent
   id: AU14DrugSpeedDemon
-  name: Speed Demon
+  name: reagent-name-speed-demon
   desc: A dangerous street drug that greatly increases speed and reflexes, but is highly toxic.
   color: "#8A2BE2"
   overdose: 15
@@ -39,7 +39,7 @@
 - type: entity
   id: AU14DrugDealerDrugBottle
   parent: PillCanister
-  name: bottle of speed demon
+  name: name-bottle-speed-demon
   components:
     - type: Label
       currentLabel: Speed Demon
@@ -51,7 +51,7 @@
 - type: entity
   id: AU14PillSpeedDemon
   parent: CMPill
-  name: speed demon pill
+  name: name-pill-speed-demon
   description: A pill containing the dangerous street drug Speed Demon.
   components:
   - type: SolutionContainerManager
@@ -73,7 +73,7 @@
 - type: entity
   parent: PillCanister
   id: AU14PillBottleSpaceDrugs
-  name: Drugs bottle
+  name: name-drug-bottle
   components:
   - type: Label
     currentLabel: Drugs
@@ -86,7 +86,7 @@
 - type: entity
   id: AU14PillRMCPsilocybin
   parent: CMPill
-  name: Happy pills
+  name: name-pill-psilocybin
   description: A pill containing the psychoactive compound Psilocybin.
   components:
   - type: SolutionContainerManager
@@ -106,7 +106,7 @@
 - type: entity
   parent: PillCanister
   id: AU14PillBottleRMCPsilocybin
-  name: Happy Pills bottle
+  name: name-happy-pill-bottle
   components:
   - type: Label
     currentLabel: RMCPsilocybin

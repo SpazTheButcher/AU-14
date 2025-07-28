@@ -60,7 +60,7 @@ public sealed partial class SynthComponent : Component
     [DataField, AutoNetworkedField]
     public Dictionary<RMCHealthIconTypes, ProtoId<HealthIconPrototype>> HealthIconOverrides = new()
     {
-        [RMCHealthIconTypes.Healthy] = "RMCHealthIconHealthySynth`",
+        [RMCHealthIconTypes.Healthy] = "RMCHealthIconHealthySynth",
         [RMCHealthIconTypes.DeadDefib] = "RMCHealthIconDeadSynth",
         [RMCHealthIconTypes.DeadClose] = "RMCHealthIconDeadSynth",
         [RMCHealthIconTypes.DeadAlmost] = "RMCHealthIconDeadSynth",

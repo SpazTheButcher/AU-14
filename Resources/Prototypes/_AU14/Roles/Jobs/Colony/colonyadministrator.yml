@@ -20,7 +20,7 @@
   accessGroups:
   - auadmin
   - Colonist
-  - CMCargotech
+  - CMCargoTech
   roleWeight: 0.25
   special:
   - !type:AddComponentSpecial
