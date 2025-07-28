@@ -376,8 +376,6 @@
         type: WiresBoundUserInterface
   - type: ActivatableUI
     key: enum.CriminalRecordsConsoleKey.Key
-    sprite: _RMC14/Structures/Machines/computer.rsi
-    state: terminal
   - type: PointLight
     radius: 1.5
     energy: 1.6

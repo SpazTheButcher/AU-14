@@ -40,7 +40,6 @@
         - type: RMCSuicide
           damage: { }
         canUseGuns: true
-        generation: Unknown
         hideGeneration: true
         useHumanHealthIcons: true
   #    mindRoles:
@@ -50,7 +49,6 @@
 
 - type: entity
   parent: BaseMindRoleAntag
-  isCM: true
   id: MindRoleRunawaySynth
   name: Runaway Synth  Role
   components:
@@ -91,8 +89,6 @@
         sound: "/Audio/Ambience/Antag/headrev_start.ogg"
       components:
       - type: Fugitive
-        CanUseGuns: true
-        generation: tallballs
       mindRoles:
       - MindRoleFugitive
 
@@ -182,7 +178,6 @@
         text: spy-role-greeting
         color: DarkSlateGray
         sound: "/Audio/Ambience/Antag/headrev_start.ogg"
-      startingGear: AU14GearCorporateSpy
       components:
       - type: CorporateSpy
       mindRoles:

@@ -1,11 +1,11 @@
 - type: reagent
   id: AU14DrugSpeedDemon
   name: reagent-name-speed-demon
-  desc: A dangerous street drug that greatly increases speed and reflexes, but is highly toxic.
+  desc: reagent-desc-speed-demon
   color: "#8A2BE2"
   overdose: 15
   physicalDesc: reagent-physical-desc-glowing
-  flavor: flavor-base-bitter
+  flavor: bitter
   metabolisms:
     Narcotic:
       metabolismRate: 0.4
