@@ -109,7 +109,7 @@
 - type: entity
   parent: CMPill
   id: AU14PillAlbuterol
-`  components:
+  components:
   - type: SolutionContainerManager
     solutions:
       food:
@@ -122,7 +122,7 @@
     - state: pill2
       map: [ "enum.DamageStateVisualLayers.Base" ]
   - type: ExamineRequiresSkill
-    skilledExamine: cm-pill-contents-albuterol`
+    skilledExamine: cm-pill-contents-albuterol
 
 #pill bottles
 - type: entity

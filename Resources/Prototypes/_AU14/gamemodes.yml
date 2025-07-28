@@ -26,9 +26,8 @@
   - PlatoonSpawn
   - AddGovfor
   - AddClf
-  - RunawaySynth
-  - Fugitive
-  - DrugDealer
+  - ColonyAntags
+
 - type: gamePreset
   id: ColonyFall
   alias:
@@ -36,6 +35,9 @@
   name: Colony Fall
   showInVote: true
   description: Colony Fall mode
+  rules:
+    - ColonyAntags
+
 
 - type: gamePreset
   id: Jailbreak
@@ -261,3 +263,12 @@
   components:
     - type: DestroyOnPreset
       preset: ColonyFall
+
+- type: entity
+  id: ColonyAntags
+  parent: BaseGameRule
+  name: Colony Antags
+  description: Randomly rolls for each colony antag to be present this round.
+  components:
+  - type: GameRule
+  - type: ColonyAntagsRule

@@ -56,7 +56,7 @@
   components:
   - type: MindRole
     antagPrototype: RunawaySynthRole
-    exclusiveAntag: false
+    exclusiveAntag: true
     roleType: TeamAntagonist
 
 
