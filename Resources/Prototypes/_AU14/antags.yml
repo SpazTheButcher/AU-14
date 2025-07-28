@@ -96,7 +96,6 @@
 
 - type: entity
   parent: BaseMindRoleAntag
-  isCM: true
   id: MindRoleFugitive
   name: Fugitive  Role
   components:

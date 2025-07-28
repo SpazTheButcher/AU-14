@@ -39,7 +39,7 @@
 - type: entity
   id: AU14DrugDealerDrugBottle
   parent: PillCanister
-  name: name-bottle-speed-demon
+  name: Speed Demon Bottle
   components:
     - type: Label
       currentLabel: Speed Demon
@@ -51,7 +51,7 @@
 - type: entity
   id: AU14PillSpeedDemon
   parent: CMPill
-  name: name-pill-speed-demon
+  name: Speed Demon Pill
   description: A pill containing the dangerous street drug Speed Demon.
   components:
   - type: SolutionContainerManager
@@ -73,7 +73,7 @@
 - type: entity
   parent: PillCanister
   id: AU14PillBottleSpaceDrugs
-  name: name-drug-bottle
+  name: Bottle of LSD Pills
   components:
   - type: Label
     currentLabel: Drugs
@@ -86,7 +86,7 @@
 - type: entity
   id: AU14PillRMCPsilocybin
   parent: CMPill
-  name: name-pill-psilocybin
+  name: Grounded Mushrooms Pill
   description: A pill containing the psychoactive compound Psilocybin.
   components:
   - type: SolutionContainerManager
@@ -106,7 +106,7 @@
 - type: entity
   parent: PillCanister
   id: AU14PillBottleRMCPsilocybin
-  name: name-happy-pill-bottle
+  name: Bottle of Psilocybin Pills
   components:
   - type: Label
     currentLabel: RMCPsilocybin
