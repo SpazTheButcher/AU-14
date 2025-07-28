@@ -434,14 +434,14 @@ public sealed partial class RequisitionsSystem : SharedRequisitionsSystem
         var accounts = EntityQueryEnumerator<RequisitionsAccountComponent>();
         while (accounts.MoveNext(out var uid, out var account))
         {
-            if (time > account.NextGain)
-            {
-                account.NextGain = time + account.GainEvery;
-                account.Balance += _gain;
-                Dirty(uid, account);
-
-                updateUI = true;
-            }
+            // Disabled periodic budget gain
+            // if (time > account.NextGain)
+            // {
+            //     account.NextGain = time + account.GainEvery;
+            //     account.Balance += _gain;
+            //     Dirty(uid, account);
+            //     updateUI = true;
+            // }
 
             var xenos = _xeno.GetGroundXenosAlive();
             var randomCrates = CollectionsMarshal.AsSpan(account.RandomCrates);

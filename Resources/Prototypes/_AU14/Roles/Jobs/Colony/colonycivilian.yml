@@ -37,7 +37,6 @@
   equipment:
     jumpsuit: CMJumpsuitColonist
     shoes: RMCShoesBlack
-    id: AU14IDCardColonyColonist
 
 - type: entity
   parent: CMSpawnPointJobBase

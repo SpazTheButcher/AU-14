@@ -4,6 +4,7 @@
   name: au14-job-name-civiliancolonysynthetic
   description: au14-job-description-civiliancolonysynthetic
   setPreference: true
+  canBeAntag: false
   playTimeTracker: AU14JobCivilianColonySynthetic
   ranks:
     RMCRankSyntheticColonist: []
@@ -87,6 +88,7 @@
       - type: DamageForceSay
       - type: Dna
       - type: InjectableSolution
+      - type: Fingerprint
       - type: IVDripTarget
       - type: RMCSuicide
         damage: { }

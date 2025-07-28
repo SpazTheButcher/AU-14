@@ -4,6 +4,8 @@
   name: au14-job-name-govfordcc
   description: au14-job-description-govfordcc
   setPreference: true
+  canBeAntag: false
+
   playTimeTracker: AU14JobGOVFORDCC
   ranks:
     AU14RankUSASFCMSgt:

@@ -32,5 +32,6 @@
 
   <ItemGroup>
     <Folder Include="AU14\BlackGoo\" />
+    <Folder Include="AU14\Wanted\" />
   </ItemGroup>
 </Project>

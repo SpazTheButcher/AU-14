@@ -4,6 +4,7 @@
   name: au14-job-name-govforsquadsergeant
   description: au14-job-description-govforsquadsergeant
   setPreference: true
+  canBeAntag: false
   playTimeTracker: AU14JobGOVFORSquadSergeant
   ranks:
     RMCRankSergeant: []

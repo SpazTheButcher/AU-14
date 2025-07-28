@@ -4,6 +4,7 @@
   name: au14-job-name-civilianfreightsystemsspecialist
   description: au14-job-description-civilianfreightsystemsspecialist
   setPreference: true
+  canBeAntag: false
   playTimeTracker: AU14JobCivilianFreightSystemsSpecialist
   ranks:
     RMCRankCivilian: []

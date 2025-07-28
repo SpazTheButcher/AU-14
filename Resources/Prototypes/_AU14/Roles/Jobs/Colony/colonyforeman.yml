@@ -4,6 +4,7 @@
   name: au14-job-name-foreman
   description: au14-job-description-foreman
   setPreference: true
+  canBeAntag: false
   playTimeTracker: AU14JobCivilianForeman
   ranks:
     RMCRankCivilian: []

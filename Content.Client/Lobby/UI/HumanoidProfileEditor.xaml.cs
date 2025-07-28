@@ -491,8 +491,7 @@ namespace Content.Client.Lobby.UI
             #endregion Jobs
 
             TabContainer.SetTabTitle(2, Loc.GetString("humanoid-profile-editor-antags-tab"));
-            // TODO RMC14 antags
-            TabContainer.SetTabVisible(2, false);
+            TabContainer.SetTabVisible(2, true);
 
             RefreshTraits();
 
@@ -744,56 +743,75 @@ namespace Content.Client.Lobby.UI
                 ("humanoid-profile-editor-antag-preference-no-button", 1)
             };
 
-            foreach (var antag in _prototypeManager.EnumerateCM<AntagPrototype>().OrderBy(a => Loc.GetString(a.Name)))
+            // Group antags by category
+            var antagsByCategory = _prototypeManager.EnumerateCM<AntagPrototype>()
+                .Where(a => a.SetPreference)
+                .GroupBy(a => string.IsNullOrEmpty(a.Category) ? Loc.GetString("humanoid-profile-editor-antag-category-uncategorized") : Loc.GetString(a.Category))
+                .OrderBy(g => g.Key);
+
+            foreach (var categoryGroup in antagsByCategory)
             {
-                if (!antag.SetPreference)
-                    continue;
-
-                var antagContainer = new BoxContainer()
+                // Create a container for the category
+                var categoryContainer = new BoxContainer
                 {
-                    Orientation = LayoutOrientation.Horizontal,
+                    Orientation = LayoutOrientation.Vertical
                 };
-
-                var selector = new RequirementsSelector()
+                categoryContainer.AddChild(new Label
                 {
-                    Margin = new Thickness(3f, 3f, 3f, 0f),
-                };
-                selector.OnOpenGuidebook += OnOpenGuidebook;
-
-                var title = Loc.GetString(antag.Name);
-                var description = Loc.GetString(antag.Objective);
-                selector.Setup(items, title, 250, description, guides: antag.Guides);
-                selector.Select(Profile?.AntagPreferences.Contains(antag.ID) == true ? 0 : 1);
-
-                var requirements = _entManager.System<SharedRoleSystem>().GetAntagRequirement(antag);
-                if (!_requirements.CheckRoleRequirements(requirements, (HumanoidCharacterProfile?)_preferencesManager.Preferences?.SelectedCharacter, out var reason))
-                {
-                    selector.LockRequirements(reason);
-                    Profile = Profile?.WithAntagPreference(antag.ID, false);
-                    SetDirty();
-                }
-                else
-                {
-                    selector.UnlockRequirements();
-                }
-
-                selector.OnSelected += preference =>
-                {
-                    Profile = Profile?.WithAntagPreference(antag.ID, preference == 0);
-                    SetDirty();
-                };
-
-                antagContainer.AddChild(selector);
-
-                antagContainer.AddChild(new Button()
-                {
-                    Disabled = true,
-                    Text = Loc.GetString("loadout-window"),
-                    HorizontalAlignment = HAlignment.Right,
-                    Margin = new Thickness(3f, 0f, 0f, 0f),
+                    Text = categoryGroup.Key,
+                    StyleClasses = { StyleNano.StyleClassLabelHeadingBigger }
                 });
 
-                AntagList.AddChild(antagContainer);
+                foreach (var antag in categoryGroup.OrderBy(a => Loc.GetString(a.Name)))
+                {
+                    var antagContainer = new BoxContainer()
+                    {
+                        Orientation = LayoutOrientation.Horizontal,
+                    };
+
+                    var selector = new RequirementsSelector()
+                    {
+                        Margin = new Thickness(3f, 3f, 3f, 0f),
+                    };
+                    selector.OnOpenGuidebook += OnOpenGuidebook;
+
+                    var title = Loc.GetString(antag.Name);
+                    var description = Loc.GetString(antag.Objective);
+                    selector.Setup(items, title, 250, description, guides: antag.Guides);
+                    selector.Select(Profile?.AntagPreferences.Contains(antag.ID) == true ? 0 : 1);
+
+                    var requirements = _entManager.System<SharedRoleSystem>().GetAntagRequirement(antag);
+                    if (!_requirements.CheckRoleRequirements(requirements, (HumanoidCharacterProfile?)_preferencesManager.Preferences?.SelectedCharacter, out var reason))
+                    {
+                        selector.LockRequirements(reason);
+                        Profile = Profile?.WithAntagPreference(antag.ID, false);
+                        SetDirty();
+                    }
+                    else
+                    {
+                        selector.UnlockRequirements();
+                    }
+
+                    selector.OnSelected += preference =>
+                    {
+                        Profile = Profile?.WithAntagPreference(antag.ID, preference == 0);
+                        SetDirty();
+                    };
+
+                    antagContainer.AddChild(selector);
+
+                    antagContainer.AddChild(new Button()
+                    {
+                        Disabled = true,
+                        Text = Loc.GetString("loadout-window"),
+                        HorizontalAlignment = HAlignment.Right,
+                        Margin = new Thickness(3f, 0f, 0f, 0f),
+                    });
+
+                    categoryContainer.AddChild(antagContainer);
+                }
+
+                AntagList.AddChild(categoryContainer);
             }
         }
 

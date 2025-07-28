@@ -1,7 +1,6 @@
 ﻿[game]
 # Straight in-game baby
 lobbyenabled = true
-# Dev map for faster loading & convenience
 role_timers = false
 
 [events]

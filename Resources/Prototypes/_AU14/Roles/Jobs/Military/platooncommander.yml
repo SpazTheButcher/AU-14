@@ -4,6 +4,7 @@
   name: au14-job-name-govforplatco
   description: au14-job-description-govforplatco
   setPreference: true
+  canBeAntag: false
   playTimeTracker: AU14JobGOVFORPlatCo
   ranks:
     RMCRankCaptain:

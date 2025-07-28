@@ -2,7 +2,7 @@
   abstract: true
   id: CMJobBase
   isCM: true
-  canBeAntag: false
+  canBeAntag: true
   medals:
     Bronze: RMCMedalBronzeService
     Silver: RMCMedalSilverService

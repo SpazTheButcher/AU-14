@@ -15,10 +15,12 @@
   icon: "CMJobIconEmpty"
   requireAdminNotify: true
   joinNotifyCrew: false
+  canBeAntag: false
   supervisors: au14-job-supervisors-colonyadministrator
   accessGroups:
   - auadmin
   - Colonist
+  - CMCargoTech
   roleWeight: 0.25
   special:
   - !type:AddComponentSpecial

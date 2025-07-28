@@ -1,11 +1,13 @@
 using Content.Server.Body.Systems;
 using Content.Shared._RMC14.Humanoid;
+using Content.Shared._RMC14.Medical.HUD.Components;
 using Content.Shared._RMC14.Synth;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Organ;
 using Content.Shared.Body.Part;
 using Content.Shared.Body.Systems;
 using Content.Shared.Damage;
+using Content.Shared.Humanoid;
 
 namespace Content.Server._RMC14.Synth;
 
@@ -19,6 +21,10 @@ public sealed class SynthSystem : SharedSynthSystem
     {
         base.MakeSynth(ent);
 
+        // Remove DNA and Fingerprint components if present
+        RemComp<Content.Shared.Forensics.Components.DnaComponent>(ent.Owner);
+        RemComp<Content.Shared.Forensics.Components.FingerprintComponent>(ent.Owner);
+
         if (TryComp<DamageableComponent>(ent.Owner, out var damageable))
             _damageable.SetDamageModifierSetId(ent.Owner, ent.Comp.NewDamageModifier, damageable);
 
@@ -30,12 +36,33 @@ public sealed class SynthSystem : SharedSynthSystem
         }
 
         var repOverrideComp = EnsureComp<RMCHumanoidRepresentationOverrideComponent>(ent);
-        repOverrideComp.Species = ent.Comp.SpeciesName;
-        repOverrideComp.Age = ent.Comp.Generation;
+        if (!ent.Comp.HideGeneration)
+        {
+            repOverrideComp.Age = ent.Comp.Generation;
+            repOverrideComp.Species = ent.Comp.SpeciesName;
+
+        }
         Dirty(ent, repOverrideComp);
+
+        // If UseHumanHealthIcons is true, use the same health icons as a human
+        if (ent.Comp.UseHumanHealthIcons)
+        {
+            ent.Comp.HealthIconOverrides = new()
+            {
+                [RMCHealthIconTypes.Healthy] = "CMHealthIconHealthy",
+                [RMCHealthIconTypes.DeadDefib] = "CMHealthIconDeadDefib",
+                [RMCHealthIconTypes.DeadClose] = "CMHealthIconDeadClose",
+                [RMCHealthIconTypes.DeadAlmost] = "CMHealthIconDeadAlmost",
+                [RMCHealthIconTypes.DeadDNR] = "CMHealthIconDeadDNR",
+                [RMCHealthIconTypes.Dead] = "CMHealthIconDead",
+                [RMCHealthIconTypes.HCDead] = "CMHealthIconHCDead",
+            };
+        }
 
         if (!HasComp<BodyComponent>(ent.Owner))
             return;
+
+
 
         var organs = _body.GetBodyOrganEntityComps<OrganComponent>(ent.Owner);
 
@@ -48,6 +75,8 @@ public sealed class SynthSystem : SharedSynthSystem
 
         foreach (var part in headSlots)
         {
+            if (!ent.Comp.ChangeBrain)
+                return;
             var newBrain = SpawnNextToOrDrop(ent.Comp.NewBrain, ent);
             _body.AddOrganToFirstValidSlot(part.Id, newBrain);
         }

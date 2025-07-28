@@ -98,6 +98,7 @@
       - type: DamageForceSay
       - type: Dna
       - type: InjectableSolution
+      - type: Fingerprint
       - type: IVDripTarget
       - type: RMCSuicide
         damage: { }
