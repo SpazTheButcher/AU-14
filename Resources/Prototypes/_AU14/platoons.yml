@@ -2,24 +2,30 @@
   id: LACN
   name: LACN Platoon
   VendorToMarker:
-    Rifleman: AU14USCMequipmentvendor
-    Corpsman: AU14USCMcorpsmanvendor
-    Arifleman: AU14USCMSGequipmentvendor
-    Dcc: AU14AircrewWeaponsVendor
-    OperationsOfficer: AU14USCMsectionleaderequipmentvendor
+    Rifleman: AU14LACNequipmentvendor
+    Clothing: AU14LACNclothingequipmentvendor
+    Weapons: AU14LACNWeaponsVendor
+    SWeapons: AU14LACNSpecialWeaponsVendor
+    Corpsman: AU14LACNcorpsmanvendor
+    Arifleman: AU14LACNMGequipmentvendor
+    Dcc: AU14LACNaircrewvendor
+    OperationsOfficer: AU14LACNcommandequipmentvendor
     Rto: AU14RTOVendor
-    SectionSergeant: AU14USCMsectionleaderequipmentvendor
-    Pilot: AU14AircrewWeaponsVendor
+    SectionSergeant: AU14LACNsectionleaderequipmentvendor
+    Pilot: AU14LACNaircrewvendor
 
 - type: platoon
   id: USCM
   name: USCM Platoon
   VendorToMarker:
     Rifleman: AU14USCMequipmentvendor
+    Clothing: AU14USCMclothingequipmentvendor
+    Weapons: AU14USCMWeaponsVendor
+    SWeapons: AU14USCMSpecialWeaponsVendor
     Corpsman: AU14USCMcorpsmanvendor
-    Arifleman: AU14USCMequipmentvendor
-    Dcc: AU14AircrewWeaponsVendor
-    OperationsOfficer: AU14USCMsectionleaderequipmentvendor
+    Arifleman: AU14USCMSGequipmentvendor
+    Dcc: AU14USCMaircrewvendor
+    OperationsOfficer: AU14USCMcommandequipmentvendor
     Rto: AU14RTOVendor
     SectionSergeant: AU14USCMsectionleaderequipmentvendor
     Pilot: AU14AircrewWeaponsVendor
