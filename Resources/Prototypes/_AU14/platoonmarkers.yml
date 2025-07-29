@@ -137,6 +137,36 @@
       class: Corpsman
 
 - type: entity
+  name: Gov Clothing marker
+  id: VMarkerGovforClothing
+  parent: Vmarker
+  components:
+    - type: VendorMarker
+      govfor: true
+      opfor: false
+      class: Clothing
+
+- type: entity
+  name: Gov Weapons marker
+  id: VMarkerGovforWeapons
+  parent: Vmarker
+  components:
+    - type: VendorMarker
+      govfor: true
+      opfor: false
+      class: Weapons
+
+- type: entity
+  name: Gov special weapons marker
+  id: VMarkerGovforSWeapons
+  parent: Vmarker
+  components:
+    - type: VendorMarker
+      govfor: true
+      opfor: false
+      class: SWeapons
+
+- type: entity
   name: Gov Arifleman marker
   id: VMarkerGovforAutomaticRifleman
   parent: Vmarker
