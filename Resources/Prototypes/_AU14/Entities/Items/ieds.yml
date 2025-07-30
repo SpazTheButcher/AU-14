@@ -43,9 +43,9 @@
       - Timer
   - type: Explosive
     explosionType: RMC
-    totalIntensity: 400
-    intensitySlope: 5
-    maxIntensity: 100
+    totalIntensity: 2000
+    intensitySlope: 2
+    maxIntensity: 80
     canCreateVacuum: false
   - type: ExplodeOnTrigger
 
@@ -62,7 +62,7 @@
     - state: icon
       map: ["base"]
   - type: OnUseTimerTrigger
-    delay: 3
+    delay: 1
     delayOptions: [3, 4]
     initialBeepDelay: 2
     beepSound: /Audio/_AU14/IED/detonate.ogg
@@ -74,8 +74,8 @@
       - Timer
   - type: Explosive
     explosionType: RMC
-    totalIntensity: 600
-    intensitySlope: 5
+    totalIntensity: 6700
+    intensitySlope: 2.8
     maxIntensity: 100
     canCreateVacuum: false
   - type: ExplodeOnTrigger
@@ -112,9 +112,9 @@
       - Timer
   - type: Explosive
     explosionType: RMC
-    totalIntensity: 400
-    intensitySlope: 5
-    maxIntensity: 100
+    totalIntensity: 800
+    intensitySlope: 2.7
+    maxIntensity: 80
     canCreateVacuum: false
   - type: ExplodeOnTrigger
 

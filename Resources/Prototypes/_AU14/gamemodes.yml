@@ -7,8 +7,11 @@
   description: Force on Force mode
   requiresOpforVote: true
   requiresGovforVote: true
-  supportedMaps: FoFmapPool
+  supportedPlanets:
+    - AUPlanetLV747
+    - AUPlanetShepherdsPride
   rules:
+  - PlanetPlatoonVoteRule
   - PlatoonSpawn
   - AddGovfor
   - AddOpfor
@@ -21,8 +24,12 @@
   showInVote: true
   description: Insurgency mode
   requiresGovforVote: true
-  supportedMaps: ColonyMapPool
+  supportedPlanets:
+    - AUPlanetLV747
+    - AUPlanetShepherdsPride
+    - AUPlanetLV624
   rules:
+  - PlanetPlatoonVoteRule
   - PlatoonSpawn
   - AddGovfor
   - AddClf
@@ -36,8 +43,12 @@
   showInVote: true
   description: Colony Fall mode
   rules:
+    - PlanetPlatoonVoteRule
     - ColonyAntags
-
+  supportedPlanets:
+    - AUPlanetLV747
+    - AUPlanetShepherdsPride
+    - AUPlanetLV624
 
 - type: gamePreset
   id: Jailbreak
@@ -46,6 +57,8 @@
   name: Jailbreak
   showInVote: false
   description: Jailbreak mode
+  rules:
+    - PlanetPlatoonVoteRule
 
 - type: gamePreset
   id: Prometheus
@@ -54,6 +67,8 @@
   name: Prometheus
   showInVote: false
   description: Prometheus mode
+  rules:
+    - PlanetPlatoonVoteRule
 
 - type: gamePreset
   id: Criminal
@@ -62,17 +77,13 @@
   name: Criminal
   showInVote: false
   description: Criminal mode
+  rules:
+    - PlanetPlatoonVoteRule
 
 
-- type: gameMapPool
-  id: ColonyMapPool
-  maps:
-  - lv747
 
-- type: gameMapPool
-  id: FoFmapPool
-  maps:
-  - lv747
+
+
 
 
 - type: entity
@@ -86,6 +97,8 @@
   parent: BaseGameRule
   components:
   - type: AddJobsRule
+    addToShip: true
+    shipFaction: Govfor
     jobs:
       AU14JobGOVFORPlatCo: 1
       AU14JobGOVFORPlatoonCorpsman: 3
@@ -272,3 +285,21 @@
   components:
   - type: GameRule
   - type: ColonyAntagsRule
+
+
+- type: entity
+  id: PlanetPlatoonVoteRule
+  parent: BaseGameRule
+  name: Colony Antags
+  description: If you want your mode to load planets and platoons automatically
+  components:
+  - type: GameRule
+  - type: PlanetPlatoonVoteRule
+
+- type: GamePlanetPool
+  id: ColonyPlanetPool
+  planets:
+    - AUPlanetLV747
+    - AUPlanetShepherdsPride
+    - AUPlanetStableGarrison
+    - AUPlanetLV624

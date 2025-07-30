@@ -1,5 +1,7 @@
-
+using Content.Server.AU14;
 using Content.Server.Maps;
+using Content.Shared._RMC14.Rules;
+using Content.Shared.AU14;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype.List;
@@ -48,5 +50,19 @@ namespace Content.Server.GameTicking.Presets
         /// </summary>
         [DataField("supportedMaps", customTypeSerializer: typeof(PrototypeIdSerializer<GameMapPoolPrototype>))]
         public string? MapPool;
+
+        /// <summary>
+        /// If specified, only these planets (by prototype id, e.g. AUPlanetLV747) can be voted for this preset.
+        /// </summary>
+        [DataField("supportedPlanets")]
+        public List<string>? SupportedPlanets;
+
+        /// <summary>
+        /// If specified, use this planet pool prototype for planet voting.
+        /// </summary>
+        [DataField("planetPool", customTypeSerializer: typeof(PrototypeIdSerializer<GamePlanetPoolPrototype>))]
+        public string? PlanetPool;
+
+
     }
 }

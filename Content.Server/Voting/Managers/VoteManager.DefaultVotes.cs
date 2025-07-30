@@ -77,9 +77,7 @@ namespace Content.Server.Voting.Managers
                     timeoutVote = false; // Allows the timeout to be updated manually in the create method
                     CreateVotekickVote(initiator, args);
                     break;
-                case StandardVoteType.Platoon:
-                    CreatePlatoonVote(initiator,null);
-                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(voteType), voteType, null);
             }
@@ -703,85 +701,8 @@ namespace Content.Server.Voting.Managers
             return presets;
         }
 
-        public void CreatePlatoonVote(ICommonSession? initiator, GameMapPrototype ?picked)
-        {
-            if (picked == null)
-            {
-               picked = _gameMapManager.GetSelectedMap();
-            }
 
-            if (picked == null)
-            {
-                return;
-            }
-
-            var govforPlatoons = picked.PlatoonsGovfor.ToList();
-            var opforPlatoons = picked.PlatoonsOpfor.ToList();
-
-            var gameTicker = _entityManager.EntitySysManager.GetEntitySystem<GameTicker>();
-            var Preset = gameTicker.Preset;
-
-            // Get PlatoonSpawnRuleSystem instance
-            var platoonSpawnRuleSystem = _entityManager.EntitySysManager.GetEntitySystem<PlatoonSpawnRuleSystem>();
-
-            var duration = TimeSpan.FromSeconds((_cfg.GetCVar(CCVars.VotePlatoonDuration)));
-
-            if (Preset != null && picked is { } map )
-            {
-                if (Preset.RequiresGovforVote && govforPlatoons.Count > 0)
-                {
-                    var optionsplatoons = new List<(string text, object data)>();
-                    foreach (var platoonId in govforPlatoons)
-                    {
-                        var platoon = _prototypeManager.Index<PlatoonPrototype>(platoonId);
-                        optionsplatoons.Add((platoon.Name, platoon));
-                    }
-
-                    var voteopt = new VoteOptions
-                    {
-                        Title = "Govfor Vote",
-                        Options = optionsplatoons,
-                        Duration = duration
-                    };
-                    WirePresetVoteInitiator(voteopt, initiator);
-
-                    var handle = CreateVote(voteopt);
-                    handle.OnFinished += async (_, args) =>
-                    {
-                        if (args.Winner is PlatoonPrototype winnerId)
-                        {
-                            platoonSpawnRuleSystem.SelectedGovforPlatoon = winnerId;
-                        }
-                    };
-                }
-
-                if (Preset.RequiresOpforVote && opforPlatoons.Count > 0)
-                {
-                    var optionsplatoons = new List<(string text, object data)>();
-                    foreach (var platoonId in opforPlatoons)
-                    {
-                        var platoon = _prototypeManager.Index<PlatoonPrototype>(platoonId);
-                        optionsplatoons.Add((platoon.Name, platoon));
-                    }
-
-                    var voteopt = new VoteOptions
-                    {
-                        Title = "Opfor Vote",
-                        Options = optionsplatoons,
-                        Duration = duration
-                    };
-                    WirePresetVoteInitiator(voteopt, initiator);
-
-                    var handle = CreateVote(voteopt);
-                    handle.OnFinished += async (_, args) =>
-                    {
-                        if (args.Winner is PlatoonPrototype winnerId)
-                        {
-                            platoonSpawnRuleSystem.SelectedOpforPlatoon = winnerId;
-                        }
-                    };
-                }
-            }
-        }
     }
 }
+
+

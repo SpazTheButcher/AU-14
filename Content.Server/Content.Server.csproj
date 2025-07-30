@@ -35,15 +35,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="AU14\BlackGoo\GooZombieImmuneComponent.cs" />
-    <Compile Remove="AU14\BlackGoo\GooifyOnDeath.cs" />
-    <Compile Remove="AU14\BlackGoo\CauseAlphaInfection.cs" />
-    <Compile Remove="AU14\BlackGoo\GooZombieSystem.Transform.cs" />
-    <Compile Remove="AU14\BlackGoo\CauseGooInfection.cs" />
-    <Compile Remove="AU14\BlackGoo\IncurableGooZombieComponent.cs" />
+    <Folder Include="AU14\Objectives\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="AU14\BlackGoo\" />
-  </ItemGroup>
+
+
 </Project>
