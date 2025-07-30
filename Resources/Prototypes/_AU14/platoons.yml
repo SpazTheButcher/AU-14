@@ -12,7 +12,7 @@
     OperationsOfficer: AU14LACNcommandequipmentvendor
     Rto: AU14RTOVendor
     SectionSergeant: AU14USCMsectionleaderequipmentvendor
-    Pilot: AU14AircrewWeaponsndor
+    Pilot: AU14AircrewWeaponsVendor
   possibleships:
     - Riptide
 
