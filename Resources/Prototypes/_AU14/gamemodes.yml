@@ -97,7 +97,7 @@
   parent: BaseGameRule
   components:
   - type: AddJobsRule
-    addtoship: true
+    addToShip: true
     shipFaction: Govfor
     jobs:
       AU14JobGOVFORPlatCo: 1

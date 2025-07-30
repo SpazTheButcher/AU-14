@@ -105,11 +105,11 @@
       - cost: 100
         crate: RMCCrateHydro
       - cost: 40
-        crate: HydroponicsTray
+        crate: hydroponicsTray
       - cost: 30
-        crate: WorkCrate
+        crate: AU14CrateWorkTools
       - cost: 120
-        crate: ClothingCrate
+        crate: AU14CrateCivilianClothingRandomSelection
 #    - name: Vehicle Ammo
 #      entries: []
     - name: Weapons
