@@ -10,6 +10,8 @@
     Rto: AU14RTOVendor
     SectionSergeant: AU14USCMsectionleaderequipmentvendor
     Pilot: AU14AircrewWeaponsVendor
+  possibleships:
+    - Riptide
 
 - type: platoon
   id: USCM
@@ -25,6 +27,8 @@
     Pilot: AU14AircrewWeaponsVendor
     ExtraVendor1: VMarkerOpforDeco5
     Deco1: VMarkerOpforDeco5
+  possibleships:
+      - Riptide
 
 - type: platoon
   id: UPP
@@ -38,9 +42,8 @@
     Rto: AU14RTOVendor
     SectionSergeant: AU14USCMsectionleaderequipmentvendor
     Pilot: AU14AircrewWeaponsVendor
-
-
-
+  possibleships:
+  - Riptide
 
 - type: platoon
   id: WEYU

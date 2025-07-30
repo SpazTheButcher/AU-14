@@ -1,7 +1,7 @@
 - type: gameMap
   id: LV624
   mapName: LV-624
-  mapPath: /Maps/_AU14/lv624colonyfall.yml
+  mapPath: /Maps/_AU14/LV624.yml
   minPlayers: 0
   maxPlayers: 75
   maxRandomOffset: 0

@@ -127,8 +127,8 @@
   - type: Explosive
     explosionType: RMCMortar
     maxIntensity: 30.1 # max 150 brute, 150 burn
-    intensitySlope: 5
-    totalIntensity: 800
+    intensitySlope: 2
+    totalIntensity: 3400
     canCreateVacuum: false
   - type: CMExplosionEffect
   - type: RMCScorchEffect

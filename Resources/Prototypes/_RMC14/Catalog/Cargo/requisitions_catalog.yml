@@ -102,6 +102,14 @@
         crate: RMCCrateSupplyEvacuation
       - cost: 300
         crate: RMCCrateSupplyJanitor
+      - cost: 100
+        crate: RMCCrateHydro
+      - cost: 40
+        crate: HydroponicsTray
+      - cost: 30
+        crate: WorkCrate
+      - cost: 120
+        crate: ClothingCrate
 #    - name: Vehicle Ammo
 #      entries: []
     - name: Weapons

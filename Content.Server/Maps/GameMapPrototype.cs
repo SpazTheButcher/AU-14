@@ -55,17 +55,6 @@ public sealed partial class GameMapPrototype : IPrototype
     /// </summary>
     public IReadOnlyDictionary<string, StationConfig> Stations => _stations;
 
-    [DataField("platoonsGovfor"), AutoNetworkedField]
-    public List<ProtoId<PlatoonPrototype>> PlatoonsGovfor { get; private set; } = new();
-
-    [DataField("platoonsOpfor"),AutoNetworkedField]
-    public List<ProtoId<PlatoonPrototype>> PlatoonsOpfor { get; private set; }  = new();
-
-    [DataField("defaultgovfor", required: false)]
-    public string? DefaultGovforPlatoon { get; set; } // Prototype ID of the default govfor platoon
-    [DataField("defaultopfor", required: false)]
-    public string? DefaultOpforPlatoon { get; set; } // Prototype ID of the default opfor platoon
-
     /// <summary>
     /// Performs a shallow clone of this map prototype, replacing <c>MapPath</c> with the argument.
     /// </summary>

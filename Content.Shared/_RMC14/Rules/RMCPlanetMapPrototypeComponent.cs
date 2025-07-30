@@ -1,4 +1,5 @@
 using Content.Shared._RMC14.Item;
+using Content.Shared.AU14;
 using Content.Shared.Roles;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
@@ -11,8 +12,9 @@ namespace Content.Shared._RMC14.Rules;
 [Access(typeof(RMCPlanetSystem))]
 public sealed partial class RMCPlanetMapPrototypeComponent : Component
 {
+    // Changed from ResPath to string (GameMapPrototype ID)
     [DataField(required: true), AutoNetworkedField, Access(Other = AccessPermissions.ReadExecute)]
-    public ResPath Map;
+    public string MapId = string.Empty;
 
     [DataField, AutoNetworkedField]
     public CamouflageType Camouflage = CamouflageType.Jungle;
@@ -42,7 +44,7 @@ public sealed partial class RMCPlanetMapPrototypeComponent : Component
     /// Basically, if security survivor is overriden by forecon survivor, it will be as if sec survivor: high is forecon survivor: high
     /// </summary>
     [DataField, AutoNetworkedField]
-    public Dictionary<ProtoId<JobPrototype>, ProtoId<JobPrototype>>? SurvivorJobOverrides;
+    public Dictionary<ProtoId<JobPrototype>, ProtoId<JobPrototype>>? ColonyJobOverrides;
 
     /// <summary>
     /// Instead of using the limits of the insert, this will select a random insert and use the base job's limit when true.
@@ -57,6 +59,30 @@ public sealed partial class RMCPlanetMapPrototypeComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public List<RMCNightmareScenario>? NightmareScenarios;
+
+    [DataField, AutoNetworkedField]
+    public List<ProtoId<PlatoonPrototype>> PlatoonsGovfor = new();
+
+    [DataField, AutoNetworkedField]
+    public List<ProtoId<PlatoonPrototype>> PlatoonsOpfor = new();
+
+    [DataField("defaultgovfor")]
+    public string? DefaultGovforPlatoon;
+
+    [DataField("defaultopfor")]
+    public string? DefaultOpforPlatoon;
+
+    [DataField("daycycleenabled"), AutoNetworkedField]
+    public bool DaycycleEnabled = true;
+
+    [DataField("govforinship"), AutoNetworkedField]
+    public bool GovforInShip = false;
+
+    [DataField("opforinship"), AutoNetworkedField]
+    public bool OpforInShip = false;
+
+    [DataField("votename")]
+    public string? VoteName  = String.Empty;
 }
 
 [DataDefinition]
