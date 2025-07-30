@@ -3,6 +3,9 @@ namespace Content.Shared.AU14
     public enum PlatoonMarkerClass
     {
         Corpsman,
+        Clothing,
+        Weapons,
+        SWeapons,
         Arifleman,
         Rifleman,
         Dcc,
