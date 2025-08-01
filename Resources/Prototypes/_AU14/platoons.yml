@@ -56,12 +56,15 @@
   id: WEYU
   name: Weyland-Yutani Platoon
   VendorToMarker:
-    Rifleman: AU14USCMequipmentvendor
-    Corpsman: AU14USCMcorpsmanvendor
-    Arifleman: AU14USCMequipmentvendor
-    Dcc: AU14AircrewWeaponsVendor
-    OperationsOfficer: AU14USCMsectionleaderequipmentvendor
+    Rifleman: AU14WYequipmentvendor
+    Clothing: AU14WYclothingequipmentvendor
+    Weapons: AU14WYWeaponsVendor
+    SWeapons: AU14WYSpecialWeaponsVendor
+    Corpsman: AU14WYcorpsmanvendor
+    Arifleman: AU14WYSGequipmentvendor
+    Dcc: AU14WYaircrewvendor
+    OperationsOfficer: AU14WYdirectorequipmentvendor
     Rto: AU14RTOVendor
-    SectionSergeant: AU14USCMsectionleaderequipmentvendor
+    SectionSergeant: AU14WYsupervisorequipmentvendor
     Pilot: AU14AircrewWeaponsVendor
 # Add more platoons as needed
