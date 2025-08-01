@@ -7,6 +7,7 @@ using Content.Server.Ghost;
 using Content.Server.Maps;
 using Content.Server.Roles;
 using Content.Shared._RMC14.Prototypes;
+using Content.Shared._RMC14.TacticalMap;
 using Content.Shared.CCVar;
 using Content.Shared.Database;
 using Content.Shared.GameTicking;
@@ -98,33 +99,47 @@ namespace Content.Server.GameTicking
 
             var maps = new List<GameMapPrototype>();
 
-            // the map might have been force-set by something
-            // (i.e. votemap or forcemap)
-            var mainStationMap = _gameMapManager.GetSelectedMap();
-            if (mainStationMap == null)
+                // Check for voted planet from AuRoundSystem
+            var auRoundSystem = EntitySystem.Get<Content.Server.AU14.Round.AuRoundSystem>();
+            var selectedPlanet = auRoundSystem?.GetSelectedPlanet();
+            if (selectedPlanet != null)
             {
-                // otherwise set the map using the config rules
-                _gameMapManager.SelectMapByConfigRules();
-                mainStationMap = _gameMapManager.GetSelectedMap();
-            }
-
-            // Small chance the above could return no map.
-            // ideally SelectMapByConfigRules will always find a valid map
-            if (mainStationMap != null)
-            {
-                maps.Add(mainStationMap);
+                // Use the voted planet's map as the primary map
+                if (_prototypeManager.TryIndex<GameMapPrototype>(selectedPlanet.MapId, out var planetMapProto))
+                {
+                    maps.Add(planetMapProto);
+                }
             }
             else
             {
-                throw new Exception("invalid config; couldn't select a valid station map!");
+                // the map might have been force-set by something
+                // (i.e. votemap or forcemap)
+                var mainStationMap = _gameMapManager.GetSelectedMap();
+                if (mainStationMap == null)
+                {
+                    // otherwise set the map using the config rules
+                    _gameMapManager.SelectMapByConfigRules();
+                    mainStationMap = _gameMapManager.GetSelectedMap();
+                }
+
+                // Small chance the above could return no map.
+                // ideally SelectMapByConfigRules will always find a valid map
+                if (mainStationMap != null)
+                {
+                    maps.Add(mainStationMap);
+                }
+                else
+                {
+                    throw new Exception("invalid config; couldn't select a valid station map!");
+                }
             }
 
             if (CurrentPreset?.MapPool != null &&
                 _prototypeManager.TryIndex<GameMapPoolPrototype>(CurrentPreset.MapPool, out var pool) &&
-                !pool.Maps.Contains(mainStationMap.ID))
+                maps.Count > 0 && !pool.Maps.Contains(maps[0].ID))
             {
                 var msg = Loc.GetString("game-ticker-start-round-invalid-map",
-                    ("map", mainStationMap.MapName),
+                    ("map", maps[0].MapName),
                     ("mode", Loc.GetString(CurrentPreset.ModeTitle)));
                 Log.Debug(msg);
                 SendServerMessage(msg);
@@ -142,11 +157,24 @@ namespace Content.Server.GameTicking
 
             for (var i = 0; i < maps.Count; i++)
             {
-                LoadGameMap(maps[i], out var mapId);
+                var loadedEntities = LoadGameMap(maps[i], out var mapId);
                 DebugTools.Assert(!_map.IsInitialized(mapId));
 
                 if (i == 0)
+                {
                     DefaultMap = mapId;
+                    // If this is a planet map, add RMCPlanetComponent and TacticalMapComponent to the map entity (not just the grid), like CMDistress
+                    if (selectedPlanet != null)
+                    {
+                        // Get the map entity from the MapId
+                        var mapEntity = _mapManager.GetMapEntityId(mapId);
+                        if (!EntityManager.HasComponent<Content.Shared._RMC14.Rules.RMCPlanetComponent>(mapEntity))
+                            EntityManager.AddComponent<Content.Shared._RMC14.Rules.RMCPlanetComponent>(mapEntity);
+                        if (!EntityManager.HasComponent<TacticalMapComponent>((EntityUid)mapEntity))
+                            EntityManager.AddComponent<TacticalMapComponent>(mapEntity);
+
+                    }
+                }
             }
         }
 

@@ -15,6 +15,7 @@ using Content.Server.GameTicking;
 using Content.Server.GameTicking.Rules;
 using Content.Server.Ghost;
 using Content.Server.Ghost.Roles.Components;
+using Content.Server.Maps;
 using Content.Server.Mind;
 using Content.Server.Players.PlayTimeTracking;
 using Content.Server.Popups;
@@ -390,7 +391,7 @@ public sealed class CMDistressSignalRuleSystem : GameRuleSystem<CMDistressSignal
                     comp.SurvivorJobs = _serialization.CreateCopy(SelectedPlanetMap.Value.Comp.SurvivorJobs, notNullableOverride: true);
 
                 comp.SurvivorJobInserts = _serialization.CreateCopy(SelectedPlanetMap.Value.Comp.SurvivorJobInserts);
-                comp.SurvivorJobOverrides = _serialization.CreateCopy(SelectedPlanetMap.Value.Comp.SurvivorJobOverrides);
+                comp.ColonyJobOverrides = _serialization.CreateCopy(SelectedPlanetMap.Value.Comp.ColonyJobOverrides);
             }
 
             var survivorSpawnersLeft = new Dictionary<ProtoId<JobPrototype>, List<EntityUid>>();
@@ -724,9 +725,9 @@ public sealed class CMDistressSignalRuleSystem : GameRuleSystem<CMDistressSignal
 
                         var overriden = false;
 
-                        if (comp.SurvivorJobOverrides != null)
+                        if (comp.ColonyJobOverrides != null)
                         { // Override the job
-                            foreach (var (originalJob, overrideJob) in comp.SurvivorJobOverrides)
+                            foreach (var (originalJob, overrideJob) in comp.ColonyJobOverrides)
                             {
                                 if (profile.JobPriorities.TryGetValue(originalJob, out var originalPriority) &&
                                     originalPriority > JobPriority.Never && overrideJob == job)
@@ -1356,7 +1357,10 @@ public sealed class CMDistressSignalRuleSystem : GameRuleSystem<CMDistressSignal
             _lastPlanetMaps.Dequeue();
         }
 
-        if (!_mapLoader.TryLoadMap(planet.Comp.Map, out var mapNullable, out var grids))
+        if (!_prototypes.TryIndex<GameMapPrototype>(planet.Comp.MapId, out var mapProto))
+            return false;
+
+        if (!_mapLoader.TryLoadMap(mapProto.MapPath, out var mapNullable, out var grids))
             return false;
 
         var map = mapNullable.Value;
@@ -1764,7 +1768,7 @@ public sealed class CMDistressSignalRuleSystem : GameRuleSystem<CMDistressSignal
             if (votes > 0)
                 name = $"{name} [+{votes}]";
 
-            options.Add((name, planet.Comp.Map.ToString()));
+            options.Add((name, planet.Comp.MapId.ToString()));
         }
 
         var vote = new VoteOptions

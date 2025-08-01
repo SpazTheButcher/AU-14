@@ -119,7 +119,7 @@ public sealed partial class CMDistressSignalRuleComponent : Component
     public Dictionary<ProtoId<JobPrototype>, List<(ProtoId<JobPrototype> Insert, int Amount)>>? SurvivorJobInserts;
 
     [DataField]
-    public Dictionary<ProtoId<JobPrototype>, ProtoId<JobPrototype>>? SurvivorJobOverrides;
+    public Dictionary<ProtoId<JobPrototype>, ProtoId<JobPrototype>>? ColonyJobOverrides;
 
     [DataField]
     public TimeSpan AresGreetingDelay = TimeSpan.FromSeconds(5);

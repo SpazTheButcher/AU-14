@@ -5,14 +5,6 @@
   minPlayers: 0
   maxPlayers: 75
   maxRandomOffset: 0
-  platoonsOpfor:
-  - UPP
-  - WEYU
-  platoonsGovfor:
-  - LACN
-  - USCM
-  defaultgovfor: USCM
-  defaultopfor: UPP
   randomRotation: false
   stations:
     au14garrisonmapthingtemp:

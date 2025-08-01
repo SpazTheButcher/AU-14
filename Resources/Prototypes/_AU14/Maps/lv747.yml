@@ -1,19 +1,11 @@
 - type: gameMap
-  id: lv747
+  id: AU747
   mapName: LV-747 Solaris Gulch
   mapPath: /Maps/_AU14/Solaris.yml
   minPlayers: 0
   maxPlayers: 75
   maxRandomOffset: 0
   randomRotation: false
-  platoonsOpfor:
-    - UPP
-    - WEYU
-  platoonsGovfor:
-    - LACN
-    - USCM
-  defaultgovfor: USCM
-  defaultopfor: UPP
   stations:
     AU14Routerra:
       stationProto: StandardUNMCWarship
