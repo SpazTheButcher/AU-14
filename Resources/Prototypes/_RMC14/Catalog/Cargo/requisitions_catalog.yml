@@ -109,7 +109,7 @@
       - cost: 30
         crate: AU14CrateWorkTools
       - cost: 120
-        crate: AU14CrateCivilianClothingRandomSelection
+        crate: AU14CrateCivilianClothingRandom
 #    - name: Vehicle Ammo
 #      entries: []
     - name: Weapons
