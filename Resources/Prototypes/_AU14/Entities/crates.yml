@@ -1,107 +1,103 @@
 - type: entity
   parent: RMCCrateBase
   id: AU14CrateCivilianClothingRandom
-  name: Crate of Random Civilian Clothing
+  name: surplus civilian clothing (x15)
   description: Contains a random assortment of civilian clothing items, where did they come from?
   components:
-  - type: StorageFill
-    contents:
-    - id: AU14CrateCivilianClothingRandomSelection
-      amount: 15
-
+  - type: EntityTableContainerFill
+    containers:
+      entity_storage: !type:NestedSelector
+        tableId: AU14CrateCivilianClothingRandomSelection
+        rolls: 15
 
 # in Resources/Prototypes/_AU14/Entities/crates.yml
 
-- type: entity
+- type: entityTable
   id: AU14CrateCivilianClothingRandomSelection
-  name: Random Civilian Clothing
-  suffix: Random
-  components:
-  - type: RandomSpawner
-    prototypes:
-    - RMCShoesBlack
-    - RMCShoesBlue
-    - RMCShoesBrown
-    - RMCShoesGreen
-    - RMCShoesOrange
-    - RMCShoesPurple
-    - RMCShoesRed
-    - RMCShoesWhite
-    - RMCShoesYellow
-    - RMCBootsPMC
-    - RMCBootsVanBandolier
-    - RMCShoesLaceupBrown
-    - RMCShoesLaceup
-    - RMCShoesLeather
-    - AU14CivilianWorkwearYellow
-    - AU14CivilianWorkwearPink
-    - AU14CivilianWorkwearBlue
-    - AU14CivilianWorkwearGreen
-    - CMJumpsuitLiaisonBlack
-    - CMJumpsuitLiaisonBlue
-    - CMJumpsuitLiaisonBrown
-    - CMJumpsuitLiaisonField
-    - CMJumpsuitLiaisonIvy
-    - CMJumpsuitLiaisonCorporateFormal
-    - CMJumpsuitLiaisonFormal
-    - CMJumpsuitLiaison
-    - CMJumpsuitLiaisonBlazer
-    - CMJumpsuitLiaisonCharcoal
-    - RMCJumpsuitDutchBandolier
-    - RMCJumpsuitCivilian
-    - CMJumpsuitColonist
-    - CMJumpsuitTShirtWhite
-    - CMJumpsuitTShirtGray
-    - CMJumpsuitTShirtRed
-    - RMCJacketCorporateKhaki
-    - RMCJacketCorporateBlack
-    - RMCJacketCorporateBlue
-    - RMCJacketCorporateBrown
-    - AU14CivilianJacketGrayPufferVest
-    - AU14CivilianJacketKhakiPufferVest
-    - AU14CivilianJacketTanPufferVest
-    - AU14CivilianJacketGrayPufferJacket
-    - AU14CivilianJacketOrangePufferJacket
-    - AU14CivilianJacketKhakiPufferJacket
-    - AU14WindbreakerBlue
-    - AU14WindbreakerGray
-    - AU14WindbreakerGreen
-    - AU14WindbreakerKhakiGreenMix
-    - AU14WindbreakerKhaki
-    - AU14CivilianJacketBlueParka
-    - AU14CivilianJacketGreenParka
-    - AU14CivilianJacketRedParka
-    - AU14CivilianJacketYellowParka
-    - AU14CivilianTanTrenchCoat
-    - AU14CivilianBrownTrenchCoat
-    - AU14CivilianGrayTrenchCoat
-    - AU14CivilianJacketBomberJacket
-    - AU14CivilianJacketOldCoat
-    - AU14CivilianJacketSnowSuit
-    - AU14CivBallCapBlack
-    - AU14CivBallCapBlueTrucker
-    - AU14CivBallCapRedTrucker
-    - AU14USCMVeteranCap
-    - AU14CivFedoraTan
-    - AU14CivFedoraBrown
-    - AU14CivFedoraGray
-    - RMCSunglasses
-    - RMCHipsterGlasses
-    - RMCSunglassesBig
-    - AU14GlassesPersonalOrange
-    - RMCGlassesAviators
-    - RMCGlassesTriMaxYellow
-    - RMCGlassesTriMaxBlack
-    - RMCGlassesTriMaxBronze
-    - AU14GlassesBiMexOrange
-    - CMHandsBrown
-    - CMHandsLightBrown
-    - CMSatchel
-    - AU14SlingSatchelBlack
-    - AU14SlingSatchelBlue
-    - RMCBeltUtilityGeneral
-    - RMCPouchGeneral
-
+  table: !type:GroupSelector
+    children:
+    - id: RMCShoesBlack
+    - id: RMCShoesBlue
+    - id: RMCShoesBrown
+    - id: RMCShoesGreen
+    - id: RMCShoesOrange
+    - id: RMCShoesPurple
+    - id: RMCShoesRed
+    - id: RMCShoesWhite
+    - id: RMCShoesYellow
+    - id: RMCBootsPMC
+    - id: RMCBootsVanBandolier
+    - id: RMCShoesLaceupBrown
+    - id: RMCShoesLaceup
+    - id: RMCShoesLeather
+    - id: AU14CivilianWorkwearYellow
+    - id: AU14CivilianWorkwearPink
+    - id: AU14CivilianWorkwearBlue
+    - id: AU14CivilianWorkwearGreen
+    - id: CMJumpsuitLiaisonBlack
+    - id: CMJumpsuitLiaisonBlue
+    - id: CMJumpsuitLiaisonBrown
+    - id: CMJumpsuitLiaisonField
+    - id: CMJumpsuitLiaisonIvy
+    - id: CMJumpsuitLiaisonCorporateFormal
+    - id: CMJumpsuitLiaisonFormal
+    - id: CMJumpsuitLiaison
+    - id: CMJumpsuitLiaisonBlazer
+    - id: CMJumpsuitLiaisonCharcoal
+    - id: RMCJumpsuitDutchBandolier
+    - id: RMCJumpsuitCivilian
+    - id: CMJumpsuitColonist
+    - id: CMJumpsuitTShirtWhite
+    - id: CMJumpsuitTShirtGray
+    - id: CMJumpsuitTShirtRed
+    - id: RMCJacketCorporateKhaki
+    - id: RMCJacketCorporateBlack
+    - id: RMCJacketCorporateBlue
+    - id: RMCJacketCorporateBrown
+    - id: AU14CivilianJacketGrayPufferVest
+    - id: AU14CivilianJacketKhakiPufferVest
+    - id: AU14CivilianJacketTanPufferVest
+    - id: AU14CivilianJacketGrayPufferJacket
+    - id: AU14CivilianJacketOrangePufferJacket
+    - id: AU14CivilianJacketKhakiPufferJacket
+    - id: AU14WindbreakerBlue
+    - id: AU14WindbreakerGray
+    - id: AU14WindbreakerGreen
+    - id: AU14WindbreakerKhakiGreenMix
+    - id: AU14WindbreakerKhaki
+    - id: AU14CivilianJacketBlueParka
+    - id: AU14CivilianJacketGreenParka
+    - id: AU14CivilianJacketRedParka
+    - id: AU14CivilianJacketYellowParka
+    - id: AU14CivilianTanTrenchCoat
+    - id: AU14CivilianBrownTrenchCoat
+    - id: AU14CivilianGrayTrenchCoat
+    - id: AU14CivilianJacketBomberJacket
+    - id: AU14CivilianJacketOldCoat
+    - id: AU14CivilianJacketSnowSuit
+    - id: AU14CivBallCapBlack
+    - id: AU14CivBallCapBlueTrucker
+    - id: AU14CivBallCapRedTrucker
+    - id: AU14USCMVeteranCap
+    - id: AU14CivFedoraTan
+    - id: AU14CivFedoraBrown
+    - id: AU14CivFedoraGray
+    - id: RMCSunglasses
+    - id: RMCHipsterGlasses
+    - id: RMCSunglassesBig
+    - id: AU14GlassesPersonalOrange
+    - id: RMCGlassesAviators
+    - id: RMCGlassesTriMaxYellow
+    - id: RMCGlassesTriMaxBlack
+    - id: RMCGlassesTriMaxBronze
+    - id: AU14GlassesBiMexOrange
+    - id: CMHandsBrown
+    - id: CMHandsLightBrown
+    - id: CMSatchel
+    - id: AU14SlingSatchelBlack
+    - id: AU14SlingSatchelBlue
+    - id: RMCBeltUtilityGeneral
+    - id: RMCPouchGeneral
 
 - type: entity
   parent: RMCCrateBase
