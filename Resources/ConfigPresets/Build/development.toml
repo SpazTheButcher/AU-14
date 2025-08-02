@@ -1,4 +1,5 @@
 ﻿[game]
+defaultpreset = "ColonyFall"
 # Straight in-game baby
 lobbyenabled = true
 role_timers = false
@@ -41,9 +42,6 @@ preload_grids = false
 [admin]
 see_own_notes = true
 
-[rmc]
-automatic_commander_promotion = false
-planet_map_vote = false
 
 [ic]
 # random_characters = true

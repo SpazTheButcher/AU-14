@@ -36,6 +36,9 @@
 
   <ItemGroup>
     <Folder Include="AU14\Objectives\" />
+    <Folder Include="AU14\Round\Colony\" />
+    <Folder Include="AU14\Round\Utility\" />
+    <Folder Include="JobTitleChanger\" />
   </ItemGroup>
 
 

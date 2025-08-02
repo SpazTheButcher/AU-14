@@ -1,4 +1,5 @@
 using Content.Server.Access.Systems;
+using Content.Server.AU14.Round;
 using Content.Server.Humanoid;
 using Content.Server.IdentityManagement;
 using Content.Server.Mind.Commands;
@@ -22,6 +23,7 @@ using Robust.Shared.Map;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
+using Content.Shared.AU14.util;
 
 namespace Content.Server.Station.Systems;
 
@@ -41,6 +43,7 @@ public sealed class StationSpawningSystem : SharedStationSpawningSystem
     [Dependency] private readonly MetaDataSystem _metaSystem = default!;
     [Dependency] private readonly PdaSystem _pdaSystem = default!;
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
+    [Dependency] private readonly Content.Server.AU14.Round.PlatoonSpawnRuleSystem _platoonSpawnRuleSystem = default!;
 
     /// <summary>
     /// Attempts to spawn a player character onto the given station.
@@ -87,6 +90,47 @@ public sealed class StationSpawningSystem : SharedStationSpawningSystem
         EntityUid? station,
         EntityUid? entity = null)
     {
+        // --- Platoon job override logic start ---
+        if (job != null)
+        {
+            var jobId = job.ToString();
+            if (!string.IsNullOrEmpty(jobId))
+            {
+                PlatoonPrototype? platoon = null;
+                PlatoonJobClass? jobClass = null;
+                Dictionary<ProtoId<JobPrototype>, int>? slotOverride = null;
+                if (jobId.Contains("GOVFOR", StringComparison.OrdinalIgnoreCase))
+                {
+                    platoon = _platoonSpawnRuleSystem.SelectedGovforPlatoon;
+                    slotOverride = platoon?.JobSlotOverrideGovfor;
+                }
+                else if (jobId.Contains("Opfor", StringComparison.OrdinalIgnoreCase) || jobId.Contains("OPFOR", StringComparison.OrdinalIgnoreCase))
+                {
+                    platoon = _platoonSpawnRuleSystem.SelectedOpforPlatoon;
+                    slotOverride = platoon?.JobSlotOverrideOpfor;
+                }
+
+                // Only allow jobs in slotOverride if present
+                if (slotOverride != null && slotOverride.Count > 0 && !slotOverride.ContainsKey(job ?? string.Empty))
+                    return EntityUid.Invalid;
+
+                // --- JobClassOverride logic: match by suffix ---
+                if (platoon != null && platoon.JobClassOverride != null)
+                {
+                    foreach (var kvp in platoon.JobClassOverride)
+                    {
+                        // If the jobId ends with the enum name (e.g., AU14JobGOVFORSquadRifleman ends with SquadRifleman)
+                        if (jobId.EndsWith(kvp.Key.ToString(), StringComparison.OrdinalIgnoreCase))
+                        {
+                            job = kvp.Value;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        // --- Platoon job override logic end ---
+
         _prototypeManager.TryIndex(job ?? string.Empty, out var prototype, false);
         RoleLoadout? loadout = null;
 

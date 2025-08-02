@@ -12,7 +12,7 @@
       effects:
         - !type:MovespeedModifier
           walkSpeedModifier: 1.3
-          sprintSpeedModifier: 1.8
+          sprintSpeedModifier: 1.34
         - !type:HealthChange
           conditions:
             - !type:ReagentThreshold

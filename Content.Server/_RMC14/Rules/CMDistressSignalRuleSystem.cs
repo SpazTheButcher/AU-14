@@ -938,8 +938,7 @@ public sealed class CMDistressSignalRuleSystem : GameRuleSystem<CMDistressSignal
 
     private void OnRoundRestartCleanup(RoundRestartCleanupEvent ev)
     {
-        StartPlanetVote();
-        ResetSelectedPlanet();
+
         _config.SetCVar(CCVars.GameDisallowLateJoins, false);
 
         if (!_autoBalance)
