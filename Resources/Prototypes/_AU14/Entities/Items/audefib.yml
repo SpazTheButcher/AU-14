@@ -44,12 +44,12 @@
     allowDoAfterMovement: false
     canDefibCrit: false
     cmZapHeal:
-    - Brute: -5
-    - Burn: -5
-    - Toxin: -2
+    - Brute: -10
+    - Burn: -10
+    - Toxin: -4
     zapHeal:
       groups:
-        Airloss: -15
+        Airloss: -150
     zapSound:
       path: /Audio/_AU14/Medical/defib_release.ogg
       params:

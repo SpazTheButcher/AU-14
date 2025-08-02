@@ -17,7 +17,7 @@
     - USCM
     defaultgovfor: USCM
     defaultopfor: UPP
-    govforinship: false
+    govforinship: true
     opforinship: true
     daycycleenabled: true
 
@@ -79,6 +79,7 @@
     - LACN
     platoonsGovfor:
     - LACN
+    - UPP
     - USCM
     defaultgovfor: USCM
     defaultopfor: UPP
