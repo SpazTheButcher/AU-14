@@ -154,7 +154,7 @@
   name: Colony Antags
   description: If you want your mode to load planets and platoons automatically
   components:
-  - type: AuVoteGameRule
+  - type: AuVoteRule
 
 
 
