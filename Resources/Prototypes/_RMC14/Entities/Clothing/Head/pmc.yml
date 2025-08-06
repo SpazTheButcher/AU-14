@@ -166,8 +166,8 @@
 - type: entity
   parent: RMCHeadCapFlippable
   id: RMCHeadCapWestonYamadaDark
-  name: Weston-Yamada cap
-  description: A dark cap enscribed with the Weston-Yamada 'Wings' logo, representing corporate justice.
+  name: Weyland-Yutani cap
+  description: A dark cap enscribed with the Weyland-Yutani 'Wings' logo, representing corporate justice.
   components:
   - type: Sprite
     sprite: _RMC14/Objects/Clothing/Head/PMC/hybrisa_cap.rsi
