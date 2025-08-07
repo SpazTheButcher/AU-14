@@ -1,8 +1,8 @@
 ﻿- type: entity
   parent: ColMarTechBase
-  id: AU14LACNclothingequipmentvendor
-  name: LACN landing forces apparel vendor
-  description: An automated rack hooked up to a small storage of standard LACN apparel.
+  id: AU14LACNcommandoclothingequipmentvendor
+  name: LACN naval commandos apparel vendor
+  description: An automated rack hooked up to a small storage of special LACN apparel.
   components:
   - type: AccessReader
     access:
@@ -24,7 +24,7 @@
     - name: Gloves
       entries:
       - id: AU14LACNGloves
-        amount: 2
+        amount: 4
     - name: Webbings
       entries:
       - id: AU14WebbingMagazine
@@ -37,15 +37,15 @@
         amount: 15
       - id: AU14WebbingDropPouch
         amount: 15
-      - id: AU14WebbingKnivesFilled
-        amount: 1
     - name: Headgear
       entries:
-      - id: AU14LACNHelmetStandard
+      - id: AU14LACNCommandoBeanie
         amount: 25
       - id: AU14LACNNavyCap
         amount: 25
       - id: RMCM5CameraGear
+        amount: 25
+      - id: AU14JungleBoonieHat
         amount: 25
     - name: Headsets
       entries:
@@ -53,9 +53,9 @@
         amount: 20
     - name: Armor
       entries:
-      - id: AU14LACNArmorStandard
+      - id: AU14LACNCommandoArmorStandard
         amount: 25
-      - id: AU14LACNArmorStandardPadless
+      - id: AU14LACNCommandoArmorPointman
         amount: 25
     - name: Backpack
       entries:
@@ -77,9 +77,6 @@
         amount: 15
 #      - id: M276 Pattern M82F Holster Rig
 #        amount: 5
-      - id: CMBeltKnifeFilled
-        name: M276 Knife Rig (Full)
-        amount: 1
       - id: RMCBeltUtilityGeneral
         amount: 15
     - name: Pouches
@@ -118,8 +115,6 @@
 #        amount: 1
     - name: Mask
       entries:
-      - id: CMMaskGas
-        amount: 20
       - id: CMMaskCoif
         amount: 10
       - id: RMCMaskScarfBlack
@@ -138,7 +133,7 @@
         amount: 10
       - id: RMCMaskSmockBlack
         amount: 10
-      - id: RMCMaskNeckerchiefGray
+      - id: RMCMaskBalaclavaSkullBlack
         amount: 10
     - name: Glasses & Goggles
       entries:
@@ -164,469 +159,11 @@
         amount: 20
       - id: RMCGlassesTriMaxBronze
         amount: 20
-    - name: Helmet Garb
-      entries:
-      - id: RMCHelmetGarbGasmask
-        amount: 20
 
 - type: entity
   parent: ColMarTechBase
-  id: AU14LACNequipmentvendor
-  name: LACN landing forces equipment vendor
-  description: An automated rack hooked up to a small storage of standard LACN equipment.
-  components:
-  - type: AccessReader
-    access:
-    - [ "CMAccessMarinePrep" ]
-  - type: Sprite
-    sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/gear.rsi
-  - type: CMAutomatedVendor
-    sections:
-    - name: Food
-      entries:
-      - id: CMMRE
-        amount: 30
-      - id: RMCBoxMRE
-        amount: 5
-    - name: Tools
-      entries:
-      - id: RMCM5Bayonet
-        amount: 30
-      - id: CMM11Knife
-        amount: 15
-      - id: CMEntrenchingTool
-        amount: 15
-      - id: CMScrewdriver
-        amount: 5
-      - id: CMWirecutter
-        amount: 5
-      - id: CMCrowbar
-        amount: 5
-      - id: CMWrench
-        amount: 5
-      - id: CMMultitool
-        amount: 5
-      - id: CMWelder
-        amount: 5
-    - name: Flare and light
-      entries:
-      - id: RMCFlashlight # Combat Flashlight
-        amount: 15
-#      #- id: RMCBoxFlashlights
-#      #  amount: 1
-      - id: RMCBoxPackFlare
-        amount: 5
-      - id: CMPackFlare
-        amount: 5
-      - id: RMCPackFlareCAS
-        amount: 2
-    - name: Miscellaneous
-      entries:
-      - id: RMCEngineerKit
-        amount: 1
-      #- id: CMMap
-      #  amount: 5
-      - id: CMFireExtinguisher
-        amount: 2
-      - id: CMFireExtinguisherPortable
-        amount: 5
-      - id: CMRollerBedSpawnFolded
-        amount: 1
-      - id: RMCScabbardMacheteFilled
-        name: machete scabbard (Full)
-        amount: 5
-      - id: RMCBinoculars
-        amount: 2
-      #- id: CMFoldingBarricadesMB6x3
-      #  amount: 2
-      #- id: CMSparePDTLBattleBuddyKit
-      #  amount: 3
-      - id: CMSandbagEmpty25
-        amount: 30
-      - id: RMCPowerCellHigh
-        amount: 5
-      - id: RMCZipties
-        amount: 30
-    - name: Medical Supplies
-      entries:
-      - id: AU14HemostaticGauzePacket
-        amount: 40
-      - id: AU14Tourniquet
-        amount: 40
-      - id: CMOintment10
-        amount: 40
-      - id: CMPacketPillsTricordrazine
-        amount: 12
-      - id: AU14NaloxoneAutoInjector
-        amount: 2
-
-#corpsman
-- type: entity
-  parent: ColMarTechBase
-  id: AU14LACNcorpsmanvendor
-  name: LACN landing forces corpsman medical vendor
-  description: An automated rack hooked up to a small storage of medical supplies.
-  components:
-  - type: AccessReader
-    access:
-    - [ "CMAccessMarinePrep" ]
-  - type: Sprite
-    sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/medical_equipment.rsi
-  - type: CMAutomatedVendor
-    sections:
-    - name: Heads Up Display
-      entries:
-      - id: RMCVisorMedical
-        amount: 1
-    - name: Medical Pouches
-      entries:
-      - id: RMCPouchAutoinjector
-        amount: 2
-      - id: RMCPouchFirstResponder
-        amount: 2
-      - id: RMCPouchVialFill
-        name: vial pouch (Full)
-        amount: 2
-      - id: RMCPouchMedical
-        amount: 2
-      - id: RMCPouchSyringeFill
-        amount: 2
-      - id: RMCPouchFirstAidSplintsGauzeOintment
-        name: first-aid pouch (gauze, ointment) # TODO RMC14 splints
-        amount: 2
-      - id: RMCPouchFirstAidPills
-        name: first-aid pouch (pills)
-        amount: 2
-    - name: Medical Belts
-      entries:
-      - id: CMBeltMedical
-        amount: 1
-      - id: CMBeltMedicBag
-        amount: 1
-    - name: General Medical Supplies
-      entries:
-      - id: CMOintment10
-        amount: 60
-      - id: AU14HemostaticGauzePacket
-        amount: 60
-      - id: AU14Tourniquet
-        amount: 60
-      - id: CMBurnKit10
-        amount: 30
-      - id: CMTraumaKit10
-        amount: 30
-      - id: CMSurgicalLine
-        amount: 6
-      - id: CMSynthGraft
-        amount: 6
-      - id: CMSyringe
-        amount: 10
-    - name: Pill Bottles
-      entries:
-      - id: CMPillCanisterBicaridine
-        amount: 10
-      - id: CMPillCanisterDexalin
-        amount: 10
-      - id: CMPillCanisterDylovene
-        amount: 10
-      - id: CMPillCanisterInaprovaline
-        amount: 10
-      - id: CMPillCanisterKelotane
-        amount: 10
-      - id: CMPillCanisterTricordrazine
-        amount: 10
-      - id: AU14PillCanisterMeralyne
-        amount: 1
-      - id: AU14PillCanisterDermaline
-        amount: 1
-      - id: AU14PillCanisterImidazoline
-        amount: 1
-      - id: AU14PillCanisterEthylredoxrazine
-        amount: 1
-      - id: AU14PillCanisterAlbuterol
-        amount: 1
-#      - id: CMPillCanisterPeridaxon
-#      - id: CMPillCanisterTramadol
-    - name: Injectors
-      entries:
-      - id: CMEpinephrineAutoInjector
-        amount: 3
-      - id: AU14NaloxoneAutoInjector
-        amount: 2
-      - id: CMInaprovalineAutoInjector
-        amount: 8
-      - id: CMDexalinPlusAutoInjector
-        amount: 15
-      - id: CMTricordrazineAutoInjector
-        amount: 15
-    - name: Medical Utilities
-      entries:
-     #    CMMS11SmartRefillTank
-     # FixOVien
-      - id: AU14CMDefibrillator
-        amount: 1
-      - id: CMRollerBedSpawnFolded
-        amount: 3
-      - id: RMCBoxBodyBag
-        amount: 3
-      - id: RMCBoxSterileMask
-        amount: 1
-      - id: RMCBoxLatexGloves
-        amount: 1
-      - id: CMHealthAnalyzer
-        amount: 1
-      - id: RMCFlashlightPen
-        amount: 1
-      - id: ClothingNeckStethoscope
-        amount: 1
-      - id: RMCGlassesMedicalHUDGlasses
-        amount: 1
-      - id: RMCVial
-        amount: 10
-    - name: Medical Gloves
-      entries:
-      - id: CMHandsLatex
-        amount: 1
-      - id: ClothingHandsGlovesNitrile
-        amount: 1
-    - name: Medical Masks
-      entries:
-      - id: CMMaskSterile
-        amount: 1
-
-- type: entity
-  parent: ColMarTechBase
-  id: AU14LACNaircrewvendor
-  name: LACN aircrew vendor
-  description: An automated rack hooked up to a small storage of aircrew apparel and equipment.
-  components:
-  - type: AccessReader
-    access:
-    - [ "CMAccessPilot" ]
-  - type: Sprite
-    sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/clothing.rsi
-  - type: CMAutomatedVendor
-    sections:
-    - name: Clothing
-      entries:
-      - id: AU14LACNBoots
-        amount: 2
-      - id: AU14LACNPilotJumpsuit
-        amount: 2
-      - id: AU14LACNGloves
-        amount: 2
-      - id: AU14HeadsetSectionLeader
-        amount: 2
-    - name: Webbings
-      entries:
-      - id: AU14WebbingMagazine
-        amount: 25
-      - id: AU14WebbingUtility
-        amount: 25
-      - id: AU14WebbingDumpPouch
-        amount: 25
-      - id: AU14WebbingAdminPouch
-        amount: 15
-      - id: AU14WebbingDropPouch
-        amount: 15
-    - name: Helmets and Hats
-      entries:
-      - id: AU14LACNAirCrewHelmet
-        amount: 2
-      - id: AU14LACNNavyCap
-        amount: 2
-    - name: Armor
-      entries:
-      - id: AU14LACNICPS2
-        amount: 2
-    - name: Backpack
-      entries:
-      - id: CMSatchel
-        amount: 2
-    - name: Belts
-      entries:
-      - id: RMCBeltHolsterPistol
-        amount: 2
-      - id: RMCBeltHolsterRevolver
-        amount: 2
-#      - id: M276 Pattern M82F Holster Rig
-#        amount: 5
-      - id: RMCBeltUtilityGeneral
-        amount: 2
-    - name: Pouches
-      entries:
-      - id: RMCPouchBayonet
-        name: Bayonet Sheath
-        amount: 2
-      - id: RMCPouchFlareFilled
-        name: Flare Pouch (Full)
-        amount: 2
-      - id: RMCPouchDocumentSmall
-        amount: 2
-      - id: RMCPouchMagazine
-        amount: 2
-      - id: RMCPouchGeneralMedium
-        amount: 2
-      - id: RMCPouchPistol
-        amount: 2
-      - id: RMCPouchMagazinePistolLarge
-        amount: 2
-      - id: RMCPouchTools
-        amount: 2
-    - name: Mask
-      entries:
-      - id: AU14MaskUSASFPilotOxygen
-        amount: 2
-      - id: RMCMaskScarfBlack
-        amount: 2
-      - id: RMCMaskScarfGray
-        amount: 2
-      - id: RMCMaskScarfTan
-        amount: 2
-      - id: RMCMaskTornScarfBlack
-        amount: 2
-    - name: Miscellaneous
-      entries:
-      - id: AU14GogglesLACNLAH99VisorMirror
-        amount: 2
-      - id: AU14GogglesLAH99VisorHighTech
-        amount: 2
-      - id: AU14GogglesLACNLAH99VisorClear
-        amount: 2
-      - id: AU14GogglesLACNLAH99Visor
-        amount: 2
-      - id: RMCGlassesMarineRpg
-        amount: 2
-      - id: AU14GlassesBiMex
-        amount: 2
-      - id: AU14GlassesBiMexOrange
-        amount: 2
-      - id: RMCGlassesAviators
-        amount: 2
-#      - id: M5 Integrated Gas Mask
-#        amount: 10
-#      - id: M10 Helmet Netting
-#        amount: 10
-#      - id: M10 Helmet Rain Cover
-#        amount: 10
-#      - id: Firearm Lubricant
-#        amount: 15
-#      - id: Marine Flair
-#        amount: 15
-#      - id: Falling Falcons Shoulder Patch
-#        amount: 15
-#      - id: Marine Shoulder Patch
-#        amount:
-    - name: Heads Up Display
-      entries:
-      - id: RMCVisorMedical
-        amount: 2
-    - name: Medical Pouches
-      entries:
-      - id: RMCPouchAutoinjector
-        amount: 2
-      - id: RMCPouchFirstResponder
-        amount: 2
-      - id: RMCPouchVialFill
-        name: vial pouch (Full)
-        amount: 2
-      - id: RMCPouchMedical
-        amount: 2
-      - id: RMCPouchSyringeFill
-        amount: 2
-      - id: RMCPouchFirstAidSplintsGauzeOintment
-        name: first-aid pouch (gauze, ointment) # TODO RMC14 splints
-        amount: 2
-      - id: RMCPouchFirstAidPills
-        name: first-aid pouch (pills)
-        amount: 2
-    - name: Medical Belts
-      entries:
-      - id: CMBeltMedical
-        amount: 2
-      - id: CMBeltMedicBag
-        amount: 2
-    - name: General Medical Supplies
-      entries:
-      - id: CMOintment10
-        amount: 60
-      - id: CMGauze10
-        amount: 60
-      - id: CMBurnKit10
-        amount: 30
-      - id: CMTraumaKit10
-        amount: 30
-      - id: CMSurgicalLine
-        amount: 6
-      - id: CMSynthGraft
-        amount: 6
-      - id: CMSyringe
-        amount: 10
-    - name: Pill Bottles
-      entries:
-      - id: CMPillCanisterBicaridine
-        amount: 10
-      - id: CMPillCanisterDexalin
-        amount: 10
-      - id: CMPillCanisterDylovene
-        amount: 10
-      - id: CMPillCanisterInaprovaline
-        amount: 10
-      - id: CMPillCanisterKelotane
-        amount: 10
-      - id: CMPillCanisterTricordrazine
-        amount: 10
-#      - id: CMPillCanisterPeridaxon
-#      - id: CMPillCanisterTramadol
-    - name: Injectors
-      entries:
-      - id: CMEpinephrineAutoInjector
-        amount: 3
-      - id: CMInaprovalineAutoInjector
-        amount: 8
-      - id: CMDexalinPlusAutoInjector
-        amount: 15
-      - id: CMTricordrazineAutoInjector
-        amount: 15
-    - name: Medical Utilities
-      entries:
-     #    CMMS11SmartRefillTank
-     # FixOVien
-      - id: AU14CMDefibrillator
-        amount: 1
-      - id: CMRollerBedSpawnFolded
-        amount: 3
-      - id: RMCBoxBodyBag
-        amount: 3
-      - id: RMCBoxSterileMask
-        amount: 2
-      - id: RMCBoxLatexGloves
-        amount: 2
-      - id: CMHealthAnalyzer
-        amount: 2
-      - id: RMCFlashlightPen
-        amount: 2
-      - id: ClothingNeckStethoscope
-        amount: 2
-      - id: RMCGlassesMedicalHUDGlasses
-        amount: 2
-      - id: RMCVial
-        amount: 10
-    - name: Medical Gloves
-      entries:
-      - id: CMHandsLatex
-        amount: 2
-      - id: ClothingHandsGlovesNitrile
-        amount: 2
-    - name: Medical Masks
-      entries:
-      - id: CMMaskSterile
-        amount: 2
-
-- type: entity
-  parent: ColMarTechBase
-  id: AU14LACNcommandequipmentvendor
-  name: LACN landing forces command vendor
+  id: AU14LACNcommandocommandequipmentvendor
+  name: LACN naval commandos command vendor
   description: An automated rack hooked up to a small storage of command apparel and equipment.
   components:
   - type: AccessReader
@@ -650,9 +187,8 @@
       entries:
       - id: AU14LACNHelmetSL
         amount: 2
-      - id: RMCHeadBeretSquad
+      - id: AU14LACNCommandoBeanie
         amount: 2
-        name: Black Beret
       - id: AU14LACNNavyCap
         amount: 2
     - name: Headsets
@@ -678,32 +214,8 @@
 
 - type: entity
   parent: ColMarTechBase
-  id: AU14LACNMGequipmentvendor
-  name: LACN landing forces machine gunner equipment vendor
-  description: An automated rack hooked up to a small storage of machine gunner equipment.
-  components:
-  - type: AccessReader
-    access:
-    - [ "CMAccessMarinePrep" ]
-  - type: Sprite
-    sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/requisitions_ammo.rsi
-  - type: CMAutomatedVendor
-    sections:
-    - name: Essential Equipment
-      entries:
-      - id: AU14LACNAmmoBackpack
-        amount: 1
-      - id: CMBeltMarine
-        amount: 1
-      - id: AU14WeaponRifleKramerLSW
-        amount: 1
-      - id: AU14WeaponRifleKramerMagazineLSWStandard
-        amount: 7
-
-- type: entity
-  parent: ColMarTechBase
-  id: AU14LACNsectionleaderequipmentvendor
-  name: LACN landing forces section leader vendor
+  id: AU14LACNcommandosectionleaderequipmentvendor
+  name: LACN naval commandos section leader vendor
   description: An automated rack hooked up to a small storage of apparel and equipment for the section leader.
   components:
   - type: AccessReader
@@ -717,9 +229,8 @@
       entries:
       - id: AU14LACNHelmetSL
         amount: 1
-      - id: RMCHeadBeretSquad
+      - id: AU14LACNCommandoBeanie
         amount: 1
-        name: Black Beret
       - id: AU14LACNNavyCap
         amount: 1
     - name: Headsets
@@ -728,11 +239,23 @@
         amount: 1
     - name: Armor and Rigs
       entries:
-      - id: AU14LACNArmorSL
+      - id: AU14LACNCommandoArmorStandard
         amount: 1
     - name: Backpack
       entries:
       - id: RMCBackpackRTO
+        amount: 1
+    - name: Squad Lead Weapons
+      entries:
+      - id: AU14WeaponRifleKramerAR
+        amount: 1
+      - id: AU14WeaponRifleKramerMagazineStandard
+        amount: 7
+      - id: AU14WeaponRifleKramerMagazineAP
+        amount: 2
+      - id: RMCAttachmentRailFlashlight
+        amount: 1
+      - id: RMCAttachmentSuppressor
         amount: 1
     - name: Miscellaneous
       entries:
@@ -745,8 +268,8 @@
 
 - type: entity
   parent: ColMarTechBase
-  id: AU14LACNWeaponsVendor
-  name: LACN weapons rack
+  id: AU14LACNcommandoWeaponsVendor
+  name: LACN naval commandos weapons rack
   description: An automated rack hooked up to a small storage of weapons.
   components:
   - type: AccessReader
@@ -756,16 +279,20 @@
     sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/guns.rsi
   - type: CMAutomatedVendor
     sections:
-    - name: Rifles
+    - name: Small Arms
       entries:
-      - id: AU14WeaponRifleKramerAR
-        amount: 6
+      - id: RMCWeaponSMGP90
+        amount: 2
+      - id: RMCWeaponRifleMAR30
+        amount: 3
+      - id: RMCWeaponRifleMAR40
+        amount: 1
     - name: Rifle Ammunition
       entries:
-      - id: AU14WeaponRifleKramerMagazineStandard
-        amount: 42
-      - id: AU14WeaponRifleKramerMagazineAP
-        amount: 2
+      - id: RMCMagazineSMGP90
+        amount: 14
+      - id: RMCMagazineRifleMAR40
+        amount: 28
     - name: Handguns
       entries:
       - id: AU14WeaponPistolTPR23B
@@ -778,14 +305,20 @@
       entries:
       - id: RMCAttachmentRailFlashlight
         amount: 12
-      - id: AU14AttachmentTwoPointSling
+      - id: RMCAttachmentMagneticHarness
+        amount: 3
+      - id: RMCAttachmentSuppressor
         amount: 6
+      - id: RMCAttachmentS6ReflexSight
+        amount: 3
     - name: Explosives
       entries:
       - id: CMGrenadeFragOld
         amount: 24
       - id: CMGrenadeSmoke
         amount: 6
+      - id: RMCGrenadeFlashBang
+        amount: 4
       - id: RMCExplosivePlastic
         amount: 4
       - id: RMCExplosiveBreachingCharge
@@ -793,8 +326,8 @@
 
 - type: entity
   parent: ColMarTechBase
-  id: AU14LACNSpecialWeaponsVendor
-  name: LACN special weapons rack
+  id: AU14LACNcommandoSpecialWeaponsVendor
+  name: LACN commando special weapons rack
   description: An automated rack hooked up to a small storage of special weapons.
   components:
   - type: AccessReader
@@ -804,28 +337,10 @@
     sprite: _AU14/Structures/Vendors/genericweaponrack.rsi
   - type: CMAutomatedVendor
     sections:
-    - name: M79 grenade launcher
+    - name: Underbarrel Flamethrower
       entries:
-      - id: CMWeaponLauncherM79
+      - id: RMCAttachmentMiniFlamethrower
         amount: 1
-      - id: RMCPacketGrenadeM74AGMSHornetFilled
-        amount: 4
-      - id: RMCPacketGrenadeM74AGMFFilled
-        amount: 3
-      - id: RMCPacketGrenadeM74AGMSFilled
-        amount: 2
-      - id: RMCPacketGrenadeM74AGMIFilled
-        amount: 1
-      - id: RMCPacketGrenadeBatonSlugHIRRFilled
-        amount: 1
-      - id: RMCPacketGrenadeM74AGMSStarShellFilled
-        amount: 1
-      - id: CMPacketGrenadeFragFilled
-        amount: 1
-      - id: CMPacketGrenadeHighExplosiveFilled
-        amount: 1
-      - id: RMCPouchExplosive
-        amount: 2
     - name: M42A2 scout rifle
       entries:
       - id: AU14WeaponSniperRifleM42A2
@@ -838,13 +353,11 @@
         amount: 1
       - id: RMCScoutShoes
         amount: 1
-    - name: MOU53 break action shotgun
+    - name: AEGIS U7 underbarrel shotgun
       entries:
-      - id: WeaponShotgunMOU53
-        amount: 1
-      - id: RMCAttachmentMOU53Stock
-        amount: 1
-      - id: RMCBoxShotgunFlechette
-        amount: 7
-      - id: RMCBoxShotgunSlugs
-        amount: 5
+      - id: RMCAttachmentU7UnderbarrelShotgun
+        amount: 2
+      - id: RMCBoxShotgunBuckshot
+        amount: 6
+      - id: RMCBoxShotgunBreaching
+        amount: 4
