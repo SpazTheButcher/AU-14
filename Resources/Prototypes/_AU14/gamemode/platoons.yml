@@ -16,6 +16,23 @@
   possibleships:
     - Riptide
 
+- type: platoon
+  id: LACNcommando
+  name: LACN Navak Commando Platoon
+  VendorToMarker:
+    Rifleman: AU14LACNequipmentvendor
+    Clothing: AU14LACNcommandoclothingequipmentvendor
+    Weapons: AU14LACNcommandoWeaponsVendor
+    SWeapons: AU14LACNcommandoSpecialWeaponsVendor
+    Corpsman: AU14LACNcorpsmanvendor
+    Arifleman: AU14LACNMGequipmentvendor
+    Dcc: AU14LACNaircrewvendor
+    OperationsOfficer: AU14LACNcommandocommandequipmentvendor
+    Rto: AU14RTOVendor
+    SectionSergeant: AU14USCMcommandosectionleaderequipmentvendor
+    Pilot: AU14AircrewWeaponsVendor
+  possibleships:
+    - Riptide
 
 - type: platoon
   id: USCM
