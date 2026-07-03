@@ -57,6 +57,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Serialization;
 using Robust.Shared.Timing;
+using Content.Shared._CMU14.Xenomorphs.Larva;
 
 namespace Content.Shared._RMC14.Xenonids.Parasite;
 
@@ -66,7 +67,7 @@ public abstract partial class SharedXenoParasiteSystem : EntitySystem
     private static readonly string[] MajorPainSuffixes = ["chest", "breathing", "heart"];
     private static readonly string[] ThroatPainSuffixes = ["sore", "mucous"];
     private static readonly string[] MinorPainSuffixes = ["stomach", "chest"];
-
+    
     [Dependency] private SharedActionsSystem _action = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private SharedAppearanceSystem _appearance = default!;
@@ -93,6 +94,7 @@ public abstract partial class SharedXenoParasiteSystem : EntitySystem
     [Dependency] private RMCSizeStunSystem _size = default!;
     [Dependency] private RMCUnrevivableSystem _unrevivable = default!;
     [Dependency] private SharedRMCActionsSystem _rmcActions = default!;
+    [Dependency] private readonly BloodyLarvaSystem _bloodyLarva = default!;
 
     private const CollisionGroup LeapCollisionGroup = CollisionGroup.InteractImpassable;
     private const CollisionGroup ThrownCollisionGroup = CollisionGroup.InteractImpassable | CollisionGroup.BarricadeImpassable;
@@ -992,6 +994,10 @@ public abstract partial class SharedXenoParasiteSystem : EntitySystem
             foreach (var larva in larvae)
             {
                 RemCompDeferred<BursterComponent>(larva);
+
+                if (!HasComp<BloodyLarvaComponent>(larva))
+                    _bloodyLarva.SetBloody(larva); // inject SharedBloodyLarvaSystem dependency
+
                 var invc = EnsureComp<RMCTemporaryInvincibilityComponent>(larva);
                 invc.ExpiresAt = _timing.CurTime + ent.Comp.LarvaInvincibilityTime;
                 Dirty(larva, invc);

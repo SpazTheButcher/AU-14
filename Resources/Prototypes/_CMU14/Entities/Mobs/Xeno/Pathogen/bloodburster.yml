@@ -10,6 +10,13 @@
     name: cmu-job-name-pathogen-bloodburster
   - type: Sprite
     sprite: _CMU14/Mobs/Xenonids/Pathogen/bloodburster.rsi
+    layers:
+    - state: alive
+      map: [ "enum.XenoVisualLayers.Base" ]
+    - sprite: _CMU14/Mobs/Xenonids/Pathogen/bloodburster_bloody.rsi
+      state: alive_bloody
+      map: [ "bloody" ]
+      visible: false
   - type: Eye
     pvsScale: 1.5
   - type: MobState
@@ -20,7 +27,7 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      50: Critical # XENO_HEALTH_LESSER_DRONE equivalent
+      50: Critical
       100: Dead
     stateAlertDict:
       Alive: XenoHealth
@@ -37,7 +44,7 @@
     - ActionXenoRest
     - ActionXenoWatch
     - ActionXenoHide
-    - ActionXenoLeap # pounce — will be replaced by custom Pathogen pounce later
+    - ActionXenoLeap # pounce - will be replaced by custom Pathogen pounce later
   - type: XenoLeap
     delay: 0
     knockdownTime: 2
@@ -53,7 +60,7 @@
   - type: XenoEvolution
     canEvolveWithoutGranter: true
     requiresGranter: false
-    max: 100 # evolution threshold — matches CM-SS13 T0→T1 timing
+    max: 100 # evolution threshold
     evolvesTo:
     - CMUXenoSprinter
   - type: XenoDevolve
@@ -117,6 +124,9 @@
     name: cmu-job-name-pathogen-bloodburster
   - type: Speech
     speechSounds: Xenonid
+  - type: BloodyLarva
+    duration: 15
+  - type: Appearance
 
 - type: entity
   parent: CMU14XenoBloodbursterBase
@@ -127,4 +137,4 @@
     gibChance: 0.1
   - type: RMCSpawnEntitiesOnGib
     entities:
-    - CMUGibEffectPathogenBloodburster
+    - CMU14GibEffectPathogenBloodburster
