@@ -926,7 +926,7 @@ namespace Content.Server.GameTicking
                 EntityCoordinates spawn = _robustRandom.Pick(_possiblePositions);
                 var toMap = _transform.ToMapCoordinates(spawn);
 
-                if (!_mapManager.TryFindGridAt(toMap, out EntityUid gridUid, out _))
+                if (!_map.TryFindGridAt(toMap, out EntityUid gridUid, out _))
                     return spawn;
 
                 TransformComponent gridXform = Transform(gridUid);

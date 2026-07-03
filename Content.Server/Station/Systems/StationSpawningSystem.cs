@@ -79,6 +79,7 @@ public sealed partial class StationSpawningSystem : SharedStationSpawningSystem
         "MilitaryDoctor",
         "MilitaryPolice",
         "PlatoonCommander",
+        "VehicleCrewman",
     };
 
     private static readonly HashSet<string> AuxiliarySquadRoundRoles = new(StringComparer.OrdinalIgnoreCase)
@@ -633,6 +634,9 @@ public sealed partial class StationSpawningSystem : SharedStationSpawningSystem
                 return true;
             case "DropshipPilot":
                 jobClass = PlatoonJobClass.DSPilot;
+                return true;
+            case "VehicleCrewman":
+                jobClass = PlatoonJobClass.VehicleCrewman;
                 return true;
             case "JuniorOfficer":
                 jobClass = PlatoonJobClass.PlatOp;

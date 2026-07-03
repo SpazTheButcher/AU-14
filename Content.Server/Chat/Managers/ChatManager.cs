@@ -392,17 +392,24 @@ internal sealed partial class ChatManager : IChatManager
     // RMC14
     public void ChatMessageToOne(ChatChannel channel, string message, string wrappedMessage, EntityUid source, bool hideChat, INetChannel client, Color? colorOverride = null, bool recordReplay = false, string? audioPath = null, float audioVolume = 0, NetUserId? author = null, bool hidePopup = false,
         bool useEmoteSpeechBubble = false,
-        string? languageIcon = null)
+        string? languageIcon = null,
+        string? speechStyleClass = null)
     // RMC14
     {
         var user = author == null ? null : EnsurePlayer(author);
         var netSource = _entityManager.GetNetEntity(source);
         user?.AddEntity(netSource);
 
-        var speechStyleClass = _entityManager.GetComponentOrNull<RMCSpeechBubbleSpecificStyleComponent>(source)?.SpeechStyleClass;
+        speechStyleClass ??= _entityManager.GetComponentOrNull<RMCSpeechBubbleSpecificStyleComponent>(source)?.SpeechStyleClass;
         var repeatCheckSender = !_entityManager.HasComponent<ChatRepeatIgnoreSenderComponent>(source);
         // CMU14
-        var customWrappedMessage = AddGhostFollowButton(wrappedMessage, source, client);
+        var ghostFollowEntity = NetEntity.Invalid;
+        var customWrappedMessage = wrappedMessage;
+        if (TryCreateGhostFollowButton(wrappedMessage, source, client, out var wrappedWithFollowButton, out var followEntity))
+        {
+            customWrappedMessage = wrappedWithFollowButton;
+            ghostFollowEntity = followEntity;
+        }
 
         var msg = new ChatMessage(
             channel,
@@ -418,7 +425,8 @@ internal sealed partial class ChatManager : IChatManager
             useEmoteSpeechBubble,
             speechStyleClass: speechStyleClass,
             repeatCheckSender: repeatCheckSender,
-            languageIcon: languageIcon
+            languageIcon: languageIcon,
+            ghostFollowEntity: ghostFollowEntity
         );
 
         _netManager.ServerSendMessage(new MsgChatMessage() { Message = msg }, client);
@@ -462,8 +470,27 @@ internal sealed partial class ChatManager : IChatManager
         var repeatCheckSender = !_entityManager.HasComponent<ChatRepeatIgnoreSenderComponent>(source);
         foreach (var client in clients)
         {
-            var customWrappedMessage = AddGhostFollowButton(wrappedMessage, source, client);
-            var msg = new ChatMessage(channel, message, customWrappedMessage, netSource, user?.Key, hideChat, colorOverride, audioPath, audioVolume, speechStyleClass: speechStyleClass, repeatCheckSender: repeatCheckSender);
+            var ghostFollowEntity = NetEntity.Invalid;
+            var customWrappedMessage = wrappedMessage;
+            if (TryCreateGhostFollowButton(wrappedMessage, source, client, out var wrappedWithFollowButton, out var followEntity))
+            {
+                customWrappedMessage = wrappedWithFollowButton;
+                ghostFollowEntity = followEntity;
+            }
+
+            var msg = new ChatMessage(
+                channel,
+                message,
+                customWrappedMessage,
+                netSource,
+                user?.Key,
+                hideChat,
+                colorOverride,
+                audioPath,
+                audioVolume,
+                speechStyleClass: speechStyleClass,
+                repeatCheckSender: repeatCheckSender,
+                ghostFollowEntity: ghostFollowEntity);
             _netManager.ServerSendMessage(new MsgChatMessage { Message = msg }, client);
         }
         // CMU14

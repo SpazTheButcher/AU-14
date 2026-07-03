@@ -10,7 +10,9 @@ using Content.Shared._RMC14.Xenonids.Energy;
 using Content.Shared._RMC14.Xenonids.Eye;
 using Content.Shared._RMC14.Xenonids.Hive;
 using Content.Shared._RMC14.Xenonids.Parasite;
+using Content.Shared._RMC14.Xenonids.Pheromones;
 using Content.Shared._RMC14.Xenonids.Plasma;
+using Content.Shared._RMC14.Xenonids.Sunder;
 using Content.Shared._RMC14.Xenonids.Strain;
 using Content.Shared.Body.Systems;
 using Content.Shared.Coordinates;
@@ -53,6 +55,7 @@ public abstract partial class SharedXenoHealSystem : EntitySystem
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private SharedBodySystem _body = default!;
+    [Dependency] private XenoSunderSystem _sunder = default!;
     [Dependency] private XenoPlasmaSystem _xenoPlasma = default!;
     [Dependency] private XenoEnergySystem _xenoEnergy = default!;
     [Dependency] private SharedXenoAnnounceSystem _xenoAnnounce = default!;
@@ -63,6 +66,7 @@ public abstract partial class SharedXenoHealSystem : EntitySystem
     private static readonly ProtoId<DamageGroupPrototype> BruteGroup = "Brute";
     private static readonly ProtoId<DamageGroupPrototype> BurnGroup = "Burn";
     private static readonly ProtoId<DamageTypePrototype> BluntGroup = "Blunt";
+    private static readonly FixedPoint2 SunderHealMultiplier = 0.03;
 
     private readonly HashSet<Entity<XenoComponent>> _xenos = new();
 
@@ -126,6 +130,7 @@ public abstract partial class SharedXenoHealSystem : EntitySystem
             };
 
             heal.HealStacks.Add(healStack);
+            _sunder.HealSunder(xeno.Owner, GetQueenSunderHeal(xeno.Owner, ent.Comp, threshold.Value));
 
             if (_net.IsServer)
                 SpawnAttachedTo(ent.Comp.HealEffect, xeno.Owner.ToCoordinates());
@@ -184,8 +189,12 @@ public abstract partial class SharedXenoHealSystem : EntitySystem
         if (_flammable.IsOnFire(target))
             failureMessageId = "rmc-xeno-apply-salve-target-on-fire-failure";
 
-        if (TryComp(target, out DamageableComponent? damageComp) && damageComp.TotalDamage == 0)
+        if (TryComp(target, out DamageableComponent? damageComp) &&
+            damageComp.TotalDamage == 0 &&
+            !_sunder.HasSunder(target))
+        {
             failureMessageId = "rmc-xeno-apply-salve-target-full-health-failure";
+        }
 
         if (failureMessageId != null)
         {
@@ -394,6 +403,13 @@ public abstract partial class SharedXenoHealSystem : EntitySystem
         if (leftover > FixedPoint2.Zero)
             damage = _rmcDamageable.DistributeDamageCached(target, BurnGroup, leftover, damage);
         _damageable.TryChangeDamage(target, -damage, true);
+        _sunder.HealSunder(target, amount * SunderHealMultiplier);
+    }
+
+    private FixedPoint2 GetQueenSunderHeal(EntityUid target, XenoHealComponent heal, FixedPoint2 maxHealth)
+    {
+        var recovery = CompOrNull<XenoRecoveryPheromonesComponent>(target)?.Multiplier ?? FixedPoint2.Zero;
+        return heal.SunderHeal + recovery * maxHealth * heal.SunderHealRecoveryMultiplier;
     }
 
     public void CreateHealStacks(EntityUid target, FixedPoint2 healAmount, TimeSpan timeBetweenHeals, int charges, TimeSpan nextHealAt, bool ignoreFire = false)

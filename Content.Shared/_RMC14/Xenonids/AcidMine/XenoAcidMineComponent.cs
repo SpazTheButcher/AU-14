@@ -1,4 +1,4 @@
-﻿using Content.Shared._RMC14.Xenonids.DeployTraps;
+using Content.Shared._RMC14.Xenonids.DeployTraps;
 using Content.Shared.FixedPoint;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
@@ -11,7 +11,7 @@ namespace Content.Shared._RMC14.Xenonids.AcidMine;
 public sealed partial class XenoAcidMineComponent : Component
 {
     [DataField, AutoNetworkedField]
-    public int Range = 13;
+    public int Range = 8;
 
     [DataField, AutoNetworkedField]
     public FixedPoint2 PlasmaCost = 40;

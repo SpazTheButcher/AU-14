@@ -657,6 +657,8 @@
         Piercing: 30
   - type: CMArmorPiercing
     amount: 40
+  - type: XenoSundering
+    amount: 0.25
 
 - type: entity
   parent: BulletRifle10x24mm
@@ -670,6 +672,8 @@
         Piercing: 30
   - type: CMArmorPiercing
     amount: 40
+  - type: XenoSundering
+    amount: 0.25
   - type: RMCPenetratingProjectile
   - type: TimedDespawn #Otherwise your game goes all laggy from too many projectiles still flying after going beyond 0 damage
     lifetime: 0.2
@@ -705,6 +709,8 @@
       falloff: 4
   - type: CMArmorPiercing
     amount: 40
+  - type: XenoSundering
+    amount: 0.4
 
 - type: entity
   parent: RMCBaseBullet

@@ -6,7 +6,10 @@ using static Robust.Shared.Utility.SpriteSpecifier;
 namespace Content.Shared._RMC14.Xenonids.Pheromones;
 
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
-[Access(typeof(SharedXenoPheromonesSystem))]
+[Access(
+    typeof(Content.Shared._RMC14.Xenonids.Heal.SharedXenoHealSystem),
+    typeof(SharedXenoPheromonesSystem),
+    typeof(Content.Shared._RMC14.Xenonids.Sunder.XenoSunderSystem))]
 public sealed partial class XenoRecoveryPheromonesComponent : Component
 {
     [DataField, AutoNetworkedField]

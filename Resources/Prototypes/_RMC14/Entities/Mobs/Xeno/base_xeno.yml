@@ -192,6 +192,7 @@
   - type: Xeno
   - type: VehicleDamageMultiplier
   - type: XenoRegen
+  - type: XenoSunder
   - type: XenoStateVisuals
   - type: UserInterface
     interfaces:

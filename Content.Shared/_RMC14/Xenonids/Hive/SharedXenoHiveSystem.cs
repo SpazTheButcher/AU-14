@@ -153,7 +153,7 @@ public abstract partial class SharedXenoHiveSystem : EntitySystem
 
         foreach (var prototype in _prototypes.EnumeratePrototypes<EntityPrototype>())
         {
-            if (!prototype.TryGetComponent(out XenoComponent? xeno, _compFactory))
+            if (!prototype.TryComp(out XenoComponent? xeno, _compFactory))
                 continue;
 
             if (xeno.UnlockAt == TimeSpan.Zero || prototype.HasComponent<XenoHiddenComponent>(_compFactory))

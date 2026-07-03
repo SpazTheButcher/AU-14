@@ -1,31 +1,32 @@
-using System;
+using Content.Shared._RMC14.Announce.Animations;
 
 namespace Content.Client._RMC14.Announce.Animations;
 
 public sealed class ZoomAnimation : IAnnouncementAnimation
 {
+    private readonly ZoomAnimationConfig _config;
+    private float _timer;
+
+    public ZoomAnimation(ZoomAnimationConfig config) => _config = config;
+
     public void Reset(AnnouncementAnimationContext context)
     {
-        context.State.ZoomTimer = 0f;
+        _timer = 0f;
     }
 
     public AnnouncementAnimationStatus Update(AnnouncementAnimationContext context, float deltaTime)
     {
-        var enhancements = context.Style.AnimationConfig.AnimationEnhancements;
-        context.State.ZoomTimer += deltaTime;
-        var duration = enhancements?.ZoomDuration ?? 1.0f;
+        _timer += deltaTime;
+        var duration = _config.Duration;
         if (duration <= 0f)
         {
-            context.State.ZoomCurrentScale = 1f;
+            context.Output.ZoomCurrentScale = 1f;
             context.SetAllLabels();
             return AnnouncementAnimationStatus.Finished;
         }
 
-        var progress = Math.Min(context.State.ZoomTimer / duration, 1.0f);
-
-        var startScale = enhancements?.ZoomStartScale ?? 0.1f;
-        var currentScale = startScale + (1.0f - startScale) * progress;
-        context.State.ZoomCurrentScale = currentScale;
+        var progress = Math.Min(_timer / duration, 1.0f);
+        context.Output.ZoomCurrentScale = _config.StartScale + (1.0f - _config.StartScale) * progress;
 
         if (progress >= 1.0f)
         {
@@ -36,4 +37,3 @@ public sealed class ZoomAnimation : IAnnouncementAnimation
         return AnnouncementAnimationStatus.Running;
     }
 }
-

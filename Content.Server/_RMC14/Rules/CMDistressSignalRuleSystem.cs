@@ -377,7 +377,7 @@ public sealed partial class CMDistressSignalRuleSystem : GameRuleSystem<CMDistre
             EntityUid SpawnXenoEnt(EntProtoId ent, ICommonSession player, bool doBurst = false)
             {
                 var leader = _prototypes.TryIndex(ent, out var proto) &&
-                             proto.TryGetComponent(out XenoComponent? xeno, _compFactory) &&
+                             proto.TryComp(out XenoComponent? xeno, _compFactory) &&
                              xeno.SpawnAtLeaderPoint;
 
                 var point = _random.Pick(leader ? xenoLeaderSpawnPoints : xenoSpawnPoints);
@@ -1102,13 +1102,13 @@ public sealed partial class CMDistressSignalRuleSystem : GameRuleSystem<CMDistre
 
         foreach (var prototype in _prototypes.EnumeratePrototypes<EntityPrototype>())
         {
-            if (prototype.TryGetComponent(out RMCDistressSignalNamesComponent? names, _compFactory))
+            if (prototype.TryComp(out RMCDistressSignalNamesComponent? names, _compFactory))
                 _operationNames.UnionWith(names.Names);
 
-            if (prototype.TryGetComponent(out RMCDistressSignalPrefixesComponent? prefixes, _compFactory))
+            if (prototype.TryComp(out RMCDistressSignalPrefixesComponent? prefixes, _compFactory))
                 _operationPrefixes.UnionWith(prefixes.Prefixes);
 
-            if (prototype.TryGetComponent(out RMCDistressSignalSuffixesComponent? suffixes, _compFactory))
+            if (prototype.TryComp(out RMCDistressSignalSuffixesComponent? suffixes, _compFactory))
                 _operationSuffixes.UnionWith(suffixes.Suffixes);
         }
     }

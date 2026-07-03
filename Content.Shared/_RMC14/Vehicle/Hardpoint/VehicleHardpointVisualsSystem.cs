@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Content.Shared.Containers.ItemSlots;
-using Robust.Shared.GameStates;
+using Robust.Shared.GameObjects;
 using Robust.Shared.Network;
 
 namespace Content.Shared._RMC14.Vehicle;
@@ -9,13 +9,13 @@ namespace Content.Shared._RMC14.Vehicle;
 public sealed partial class VehicleHardpointVisualsSystem : EntitySystem
 {
     [Dependency] private ItemSlotsSystem _itemSlots = default!;
+    [Dependency] private SharedAppearanceSystem _appearance = default!;
     [Dependency] private INetManager _net = default!;
 
     public override void Initialize()
     {
         SubscribeLocalEvent<VehicleHardpointVisualsComponent, ComponentInit>(OnInit);
         SubscribeLocalEvent<VehicleHardpointVisualsComponent, MapInitEvent>(OnInit);
-        SubscribeLocalEvent<VehicleHardpointVisualsComponent, ComponentGetState>(OnGetState);
         SubscribeLocalEvent<HardpointSlotsChangedEvent>(OnHardpointSlotsChanged);
     }
 
@@ -44,15 +44,6 @@ public sealed partial class VehicleHardpointVisualsSystem : EntitySystem
             return;
 
         UpdateAppearance(args.Vehicle);
-    }
-
-    private void OnGetState(Entity<VehicleHardpointVisualsComponent> ent, ref ComponentGetState args)
-    {
-        if (_net.IsClient)
-            return;
-
-        var layers = new List<VehicleHardpointLayerState>(ent.Comp.Layers);
-        args.State = new VehicleHardpointVisualsComponentState(layers);
     }
 
     private void UpdateAppearance(
@@ -124,7 +115,8 @@ public sealed partial class VehicleHardpointVisualsSystem : EntitySystem
         }
 
         visuals.Layers = newLayers;
-        Dirty(vehicle, visuals);
+        var appearance = EnsureComp<AppearanceComponent>(vehicle);
+        _appearance.SetData(vehicle, VehicleHardpointVisualsVisuals.Layers, newLayers, appearance);
     }
 
     private string ResolveVisualState(EntityUid item, out bool usesOverlay, int depth = 0)

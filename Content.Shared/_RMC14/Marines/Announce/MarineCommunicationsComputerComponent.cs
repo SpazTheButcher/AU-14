@@ -37,6 +37,9 @@ public sealed partial class MarineCommunicationsComputerComponent : Component
     public bool CanInitiateEvac;
 
     [DataField, AutoNetworkedField]
+    public bool SendAnnouncementOverlay = true;
+
+    [DataField, AutoNetworkedField]
     public string? AnnounceName;
 
 

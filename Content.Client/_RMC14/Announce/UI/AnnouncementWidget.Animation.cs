@@ -1,8 +1,8 @@
+using System.Numerics;
 using Content.Client._RMC14.Announce.Animations;
 using Content.Client._RMC14.Announce.Effects;
-using Content.Client._RMC14.Announce.Styling;
 using Content.Shared._RMC14.Announce;
-using System.Numerics;
+using Content.Shared._RMC14.Announce.Animations;
 
 namespace Content.Client._RMC14.Announce;
 
@@ -16,8 +16,8 @@ public sealed partial class AnnouncementWidget
         if (ActiveAnnouncement == null)
             return;
 
-        var animation = AnnouncementAnimationFactory.Create(ActiveAnnouncement.Data.Style, _random);
-        var effects = AnnouncementEffectsRegistry.BuildEffects(ActiveAnnouncement.Data.Style);
+        var animation = AnnouncementAnimationFactory.Create(ActiveAnnouncement.ResolvedStyle);
+        var effects = AnnouncementEffectsRegistry.BuildEffects(ActiveAnnouncement.ResolvedStyle);
         _animationContext = CreateAnimationContext();
         _playback.Configure(animation, effects, _animationContext);
     }
@@ -32,7 +32,7 @@ public sealed partial class AnnouncementWidget
 
         _playback.Update(
             _animationContext,
-            ActiveAnnouncement.Data.Style,
+            ActiveAnnouncement.ResolvedStyle,
             ActiveAnnouncement,
             _richTextLabels,
             currentTime,
@@ -47,7 +47,7 @@ public sealed partial class AnnouncementWidget
     {
         return new AnnouncementAnimationContext(
             ActiveAnnouncement!,
-            ActiveAnnouncement!.Data.Style,
+            ActiveAnnouncement!.ResolvedStyle,
             ActiveAnnouncement!.Data.Text,
             ActiveAnnouncement!.CleanText,
             _richTextLabels,
@@ -60,12 +60,12 @@ public sealed partial class AnnouncementWidget
 
     private Vector2 GetSlideStartPosition(AnnouncementStyle style)
     {
-        if (style.AnimationConfig.Animation != AnnouncementAnimation.Slide)
+        if (style.AnimationConfig.Animation is not SlideAnimationConfig slideConfig)
             return Vector2.Zero;
 
         var screenSize = ResolveScreenSize();
 
-        return style.AnimationConfig.AnimationEnhancements?.SlideFrom switch
+        return slideConfig.From switch
         {
             SlideDirection.Left => new Vector2(-screenSize.X, 0),
             SlideDirection.Right => new Vector2(screenSize.X, 0),
@@ -81,7 +81,7 @@ public sealed partial class AnnouncementWidget
             return;
 
         var originalText = ActiveAnnouncement.Data.Text;
-        var style = ActiveAnnouncement.Data.Style;
+        var style = ActiveAnnouncement.ResolvedStyle;
 
         for (var i = _titleOffset; i < _richTextLabels.Length; i++)
         {
@@ -89,7 +89,7 @@ public sealed partial class AnnouncementWidget
             if (textIndex < originalText.Length)
             {
                 var message = CreateFormattedMessage(originalText[textIndex], style);
-                _richTextLabels[i].SetMessage(message, AnnouncementStyling.AnnouncementMarkupTags);
+                _richTextLabels[i].SetMessage(message);
             }
         }
     }

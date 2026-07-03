@@ -32,6 +32,9 @@
   - type: JobPrefix
     prefix: au14-job-prefix-govforplatco
   - type: AU14SilenceOrderAbility
+  - type: AU14CallToAttentionAbility
+    attentionFocusPriority: 300
+  - type: AU14CallToAttentionWhisperImmune
   - type: RMCSpeechBubbleSpecificStyle
     speechStyleClass: commanderSpeech
   - type: TacticalMapIcon
