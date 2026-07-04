@@ -933,6 +933,13 @@ public sealed partial class VehicleSupplySystem : EntitySystem
         if (!TryResolveLoadoutSlot(vehicle, option.Slot, out var slotOwner, out var slot))
             return false;
 
+        if (slot.Item is { } existing &&
+            TryComp(existing, out MetaDataComponent? meta) &&
+            meta.EntityPrototype?.ID == option.Item.Id)
+        {
+            return true;
+        }
+
         if (slot.Item is { })
         {
             if (!_itemSlots.TryEject(slotOwner, slot, null, out var removed, excludeUserAudio: true))

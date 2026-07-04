@@ -42,8 +42,9 @@ public sealed partial class XenoChargerMovementSystem : EntitySystem
         var stateComp = EnsureComp<XenoChargerStateComponent>(xeno);
 
         var currentRotation = _transform.GetWorldRotation(xeno);
-        stateComp.TargetHeading = currentRotation;
-        stateComp.CurrentHeading = currentRotation;
+        var currentHeading = currentRotation.ToWorldVec().ToAngle();
+        stateComp.TargetHeading = currentHeading;
+        stateComp.CurrentHeading = currentHeading;
 
         stateComp.MoveState = XenoChargerMoveState.Charging;
         stateComp.Stage = 0;
@@ -161,7 +162,7 @@ public sealed partial class XenoChargerMovementSystem : EntitySystem
         _physics.SetAwake((xeno, physics), true);
         _physics.SetLinearVelocity(xeno, vel, body: physics);
 
-        _transform.SetWorldRotation(xeno, stateComp.CurrentHeading.GetDir().ToAngle());
+        _transform.SetWorldRotation(xeno, GetWorldRotation(stateComp.CurrentHeading));
 
         // Stomp sound.
         stateComp.SoundDistanceAccumulator += distThisFrame;
@@ -186,6 +187,7 @@ public sealed partial class XenoChargerMovementSystem : EntitySystem
 
         _physics.SetAwake((xeno, physics), true);
         _physics.SetLinearVelocity(xeno, stateComp.LungeDirection * speed, body: physics);
+        _transform.SetWorldRotation(xeno, stateComp.LungeDirection.ToWorldAngle());
 
         stateComp.LungeDistanceRemaining -= speed * frameTime;
         Dirty(xeno, stateComp);
@@ -230,5 +232,10 @@ public sealed partial class XenoChargerMovementSystem : EntitySystem
     private void OnMoveInput(Entity<XenoChargerStateComponent> ent, ref MoveInputEvent args)
     {
         args.Entity.Comp.HeldMoveButtons &= ~MoveButtons.AnyDirection;
+    }
+
+    private static Angle GetWorldRotation(Angle heading)
+    {
+        return heading.ToVec().ToWorldAngle();
     }
 }

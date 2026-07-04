@@ -1039,6 +1039,10 @@ public sealed partial class ChatUIController : UIController
                 // RMC14
                 break;
 
+            case ChatChannel.Radio:
+                AddSpeechBubble(msg, SpeechBubble.SpeechType.Radio);
+                break;
+
             case ChatChannel.Dead:
                 if (_ghost is not {IsGhost: true})
                     break;

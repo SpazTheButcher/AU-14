@@ -20,6 +20,11 @@
       state: alive_bloody
       map: ["bloody"]
       visible: false
+  - type: FiremanCarriable
+    canThrow: true
+    carrierWhitelist:
+      components:
+      - Synth
   - type: MobState
     allowedStates:
     - Alive

@@ -216,7 +216,22 @@ namespace Content.Shared.Interaction
             if (target.Comp.ParentUid == user.Owner)
                 return true;
 
-            return InRangeAndAccessible(user, target, range) || _ignoreUiRangeQuery.HasComp(user);
+            if (TryUiRangeOverride(user.Owner, target.Owner, out var inRange))
+                return inRange;
+
+            if (InRangeAndAccessible(user, target, range) || _ignoreUiRangeQuery.HasComp(user))
+                return true;
+
+            return IsAccessible(user, target) && _transform.InRange(user.Owner, target.Owner, range);
+        }
+
+        private bool TryUiRangeOverride(EntityUid user, EntityUid target, out bool inRange)
+        {
+            var ev = new InRangeOverrideEvent(user, target);
+            RaiseLocalEvent(user, ref ev);
+
+            inRange = ev.InRange;
+            return ev.Handled;
         }
 
         /// <summary>
@@ -1488,7 +1503,7 @@ namespace Content.Shared.Interaction
 
         private void HandleUserInterfaceRangeCheck(ref BoundUserInterfaceCheckRangeEvent ev)
         {
-            if (ev.Result == BoundUserInterfaceRangeResult.Fail)
+            if (ev.Result != BoundUserInterfaceRangeResult.Default)
                 return;
 
             ev.Result = UiRangeCheck(ev.Actor!, ev.Target, ev.Data.InteractionRange)

@@ -32,6 +32,9 @@ public sealed partial class XenoSunderSystem : EntitySystem
     private EntityQuery<XenoRecoveryPheromonesComponent> _xenoRecoveryQuery;
     private EntityQuery<XenoRegenComponent> _xenoRegenQuery;
 
+    private readonly HashSet<EntityUid> _activeSundered = new();
+    private readonly List<EntityUid> _activeSunderedBuffer = new();
+
     public override void Initialize()
     {
         base.Initialize();
@@ -43,6 +46,7 @@ public sealed partial class XenoSunderSystem : EntitySystem
         SubscribeLocalEvent<XenoSunderComponent, MapInitEvent>(OnMapInit);
         SubscribeLocalEvent<XenoSunderComponent, NewXenoEvolvedEvent>(OnNewXenoEvolved);
         SubscribeLocalEvent<XenoSunderComponent, XenoDevolvedEvent>(OnXenoDevolved);
+        SubscribeLocalEvent<XenoSunderComponent, ComponentShutdown>(OnSunderShutdown);
         SubscribeLocalEvent<XenoSunderingComponent, AfterProjectileHitEvent>(OnProjectileHit);
 
         UpdatesAfter.Add(typeof(SharedXenoPheromonesSystem));
@@ -52,6 +56,7 @@ public sealed partial class XenoSunderSystem : EntitySystem
     {
         ent.Comp.NextRegenTime = _timing.CurTime + ent.Comp.RegenCooldown;
         DirtyField(ent, ent.Comp, nameof(XenoSunderComponent.NextRegenTime));
+        UpdateActiveSundered(ent);
     }
 
     private void OnNewXenoEvolved(Entity<XenoSunderComponent> newXeno, ref NewXenoEvolvedEvent args)
@@ -62,6 +67,11 @@ public sealed partial class XenoSunderSystem : EntitySystem
     private void OnXenoDevolved(Entity<XenoSunderComponent> newXeno, ref XenoDevolvedEvent args)
     {
         TransferSunder(args.OldXeno, newXeno);
+    }
+
+    private void OnSunderShutdown(Entity<XenoSunderComponent> ent, ref ComponentShutdown args)
+    {
+        _activeSundered.Remove(ent.Owner);
     }
 
     private void OnProjectileHit(Entity<XenoSunderingComponent> ent, ref AfterProjectileHitEvent args)
@@ -77,13 +87,24 @@ public sealed partial class XenoSunderSystem : EntitySystem
 
     public override void Update(float frameTime)
     {
-        if (_net.IsClient)
+        if (_net.IsClient ||
+            _activeSundered.Count == 0)
+        {
             return;
+        }
 
         var time = _timing.CurTime;
-        var query = EntityQueryEnumerator<XenoSunderComponent>();
-        while (query.MoveNext(out var uid, out var sunder))
+        _activeSunderedBuffer.Clear();
+        _activeSunderedBuffer.AddRange(_activeSundered);
+
+        foreach (var uid in _activeSunderedBuffer)
         {
+            if (!TryComp<XenoSunderComponent>(uid, out var sunder))
+            {
+                _activeSundered.Remove(uid);
+                continue;
+            }
+
             if (sunder.Amount <= FixedPoint2.Zero ||
                 time < sunder.NextRegenTime)
             {
@@ -104,6 +125,8 @@ public sealed partial class XenoSunderSystem : EntitySystem
             if (recovery > FixedPoint2.Zero)
                 AdjustSunder((uid, sunder), -recovery);
         }
+
+        _activeSunderedBuffer.Clear();
     }
 
     public bool HasSunder(EntityUid uid)
@@ -140,6 +163,7 @@ public sealed partial class XenoSunderSystem : EntitySystem
             return FixedPoint2.Zero;
 
         Dirty(ent);
+        UpdateActiveSundered((ent.Owner, ent.Comp));
         _armor.UpdateArmorValue(ent.Owner);
         return delta;
     }
@@ -154,7 +178,16 @@ public sealed partial class XenoSunderSystem : EntitySystem
 
         newXeno.Comp.Amount = FixedPoint2.Min(oldSunder.Amount, newXeno.Comp.Max);
         Dirty(newXeno);
+        UpdateActiveSundered(newXeno);
         _armor.UpdateArmorValue(newXeno.Owner);
+    }
+
+    private void UpdateActiveSundered(Entity<XenoSunderComponent> ent)
+    {
+        if (ent.Comp.Amount > FixedPoint2.Zero)
+            _activeSundered.Add(ent.Owner);
+        else
+            _activeSundered.Remove(ent.Owner);
     }
 
     private bool CanRegenerateSunder(EntityUid uid, out bool onFriendlyWeeds)

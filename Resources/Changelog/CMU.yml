@@ -5556,5 +5556,89 @@
   id: 392
   time: '2026-07-03T16:43:16.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1519
+- author: OmerF-afk
+  changes:
+  - message: Added a bunch of loadout options for synthetic roles.
+    type: Add
+  - message: Added a new recipe for medilathe
+    type: Add
+  - message: Makes telebaton similar to CM13
+    type: Tweak
+  - message: Missing functionality to windbreakers, they act as webbings now
+    type: Add
+  - message: Adds the required stuff to ponchos so they can be used in regular clothing
+      now.
+    type: Add
+  id: 393
+  time: '2026-07-04T11:27:37.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1522
+- author: OverusedMeme
+  changes:
+  - message: Colonist Loadouts now have a larger variety of choices for jumpsuits,
+      jackets, hats and glasses to choose from.
+    type: Add
+  id: 394
+  time: '2026-07-04T11:42:19.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1521
+- author: TheHellFireo
+  changes:
+  - message: Fixed lesser drones and runners being unable to alt-click Crushers to
+      ride them.
+    type: Fix
+  - message: Fixed flamer direct hits applying multiple times.
+    type: Fix
+  - message: Fixed directional tinted window visuals.
+    type: Fix
+  - message: Fixed hedgehog shield visuals.
+    type: Fix
+  - message: Fixed multiple vehicle issues.
+    type: Fix
+  - message: Fixed barricade damage visuals.
+    type: Fix
+  - message: Fixed sentries targeting entities inside containers.
+    type: Fix
+  - message: Fixed melee cooldown tracking.
+    type: Fix
+  - message: Fixed pheromone overlays offsetting targeting overlays.
+    type: Fix
+  - message: Fixed imaginary friends being able to talk over radio.
+    type: Fix
+  - message: Added synths being able to throw/interact with xenos.
+    type: Add
+  - message: Fixed DRGN flame offset.
+    type: Fix
+  - message: Fixed flamer tanks being refillable from any range.
+    type: Fix
+  - message: Fixed dazed overlays sometimes staying after the effect ended.
+    type: Fix
+  - message: Fixed Ent 0 resolution errors.
+    type: Fix
+  - message: Fixed area damage hitting entities inside containers.
+    type: Fix
+  - message: Fixed various weapon, storage, keybind, and armor issues.
+    type: Fix
+  - message: Added acid hole pry sounds.
+    type: Add
+  - message: Fixed dead mobs being able to learn languages.
+    type: Fix
+  - message: Fixed APC lights staying on after APCs were broken.
+    type: Fix
+  - message: Added examine text for grenadier helmet remaining hit protection.
+    type: Add
+  - message: Fixed vehicle state event handling.
+    type: Fix
+  - message: Improved fire alert server performance.
+    type: Fix
+  - message: Fixed missing universal recorder tag.
+    type: Fix
+  - message: Fixed vehicle door collision behavior.
+    type: Fix
+  - message: Fixed tile resource/path issues.
+    type: Fix
+  - message: Added assorted performance fixes.
+    type: Fix
+  id: 395
+  time: '2026-07-04T12:44:44.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1524
 Name: CMU
 Order: -1
