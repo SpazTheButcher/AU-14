@@ -55,9 +55,9 @@
     - CMU14ActionXenoPathogenPheromones
     - CMU14ActionXenoPathogenHeal
     - CMU14ActionXenoPathogenWordQueen
-    - CMU14ActionXenoParalyzingSlash
-    - CMU14ActionXenoBlightWave
-    - CMU14ActionXenoOvermindChangeForm
+    - CMU14ActionXenoPathogenParalyzingSlash
+    - CMU14ActionXenoPathogenBlightWave
+    - CMU14ActionXenoPathogenOvermindChangeForm
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 2.0
@@ -66,9 +66,11 @@
     maxPlasma: 500
     plasmaRegenOnWeeds: 12
   - type: XenoEvolution
+    actionId: CMU14ActionXenoPathogenEvolve
     canEvolveWithoutGranter: false
     evolvesTo: []
   - type: XenoDevolve
+    actionId: CMU14ActionXenoPathogenDevolve
     devolvesTo: []
     canBeDevolvedByOther: false
   - type: XenoPheromones
@@ -103,7 +105,7 @@
         Brute: 30
   - type: CMArmor
     explosionArmor: 25
-    armor: 15
+    xenoArmor: 15
   - type: Tackle
     min: 2
     max: 5

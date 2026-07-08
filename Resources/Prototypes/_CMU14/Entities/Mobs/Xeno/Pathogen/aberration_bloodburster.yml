@@ -58,12 +58,14 @@
     maxPlasma: 0
     plasmaRegenOnWeeds: 0
   - type: XenoEvolution
+    actionId: CMU14ActionXenoPathogenEvolve
     canEvolveWithoutGranter: true
     requiresGranter: false
     max: 100 # evolution threshold
     evolvesTo:
-    - CMU14XenoAberratio
+    - CMU14XenoAberration
   - type: XenoDevolve
+    actionId: CMU14ActionXenoPathogenDevolve
     devolvesTo: []
     canBeDevolvedByOther: false
   - type: XenoHide

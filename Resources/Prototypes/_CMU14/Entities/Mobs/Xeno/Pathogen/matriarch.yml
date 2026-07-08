@@ -39,9 +39,9 @@
     - CMU14ActionXenoPathogenSpikeShed
     - CMU14ActionXenoPathogenSpikeShield
     - CMU14ActionXenoPathogenBoneChips
-    - CMU14ActionXenoBlightWave
-    - CMU14ActionXenoParalyzingSlash
-    - CMU14ActionXenoMycotoxinInjectMatriarch
+    - CMU14ActionXenoPathogenBlightWave
+    - CMU14ActionXenoPathogenParalyzingSlash
+    - CMU14ActionXenoPathogenMycotoxinInjectMatriarch
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.4
@@ -50,9 +50,11 @@
     maxPlasma: 500
     plasmaRegenOnWeeds: 9
   - type: XenoEvolution
+    actionId: CMU14ActionXenoPathogenEvolve
     canEvolveWithoutGranter: false
     evolvesTo: []
   - type: XenoDevolve
+    actionId: CMU14ActionXenoPathogenDevolve
     devolvesTo: []
     canBeDevolvedByOther: false
   - type: XenoPheromones
@@ -99,7 +101,7 @@
         Brute: 48
   - type: CMArmor
     explosionArmor: 50
-    armor: 25
+    xenoArmor: 25
   - type: Tackle
     min: 2
     max: 5

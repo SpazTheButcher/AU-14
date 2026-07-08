@@ -791,3 +791,133 @@
   - type: TargetAction
     range: 3.0
     checkCanAccess: false
+
+- type: entity
+  parent: ActionXenoStomp
+  id: CMU14ActionXenoPathogenCrush
+  name: Crush (25)
+  description: Slam the ground with a 7x7 AOE, slowing down and disarming all enemies in range. Deals heavy damage to targets you are on top of.
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    icon:
+      sprite: _CMU14/Actions/actions_pathogen.rsi
+      state: stomp
+    useDelay: 12
+  - type: InstantAction
+    event: !type:XenoStompActionEvent
+
+- type: entity
+  id: CMU14ActionXenoPathogenDirectionalStomp
+  parent: ActionXenoBase
+  name: Stomp (30)
+  description: Slam the ground in a cone in front of you, dealing heavy damage and knocking back all enemies caught in the blast.
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    icon:
+      sprite: _CMU14/Actions/actions_pathogen.rsi
+      state: stomp
+    useDelay: 18
+  - type: TargetAction
+    range: 15
+    checkCanAccess: false
+  - type: WorldTargetAction
+    event: !type:XenoDirectionalStompActionEvent
+  - type: ActionBlockIfResting
+
+- type: entity
+  id: CMU14ActionXenoPathogenStomp
+  parent: ActionXenoBase
+  name: Stomp (30)
+  description: Slam the ground with a 5x5 AOE, slowing down and disarming all enemies in range. Deals heavy damage to targets you are on top of.
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    icon:
+      sprite: _CMU14/Actions/actions_pathogen.rsi
+      state: stomp
+    useDelay: 18
+  - type: InstantAction
+    event: !type:XenoStompActionEvent
+
+- type: entity
+  parent: ActionXenoBase
+  id: CMU14ActionXenoPathogenImpale
+  name: Impale (80)
+  description: Impales an adjacent enemy with your tail. Hits twice on a marked target and removes the mark. Pierces armor.
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    icon:
+      sprite: _CMU14/Actions/actions_pathogen.rsi
+      state: prae_impale
+    useDelay: 13
+  - type: TargetAction
+    range: 2
+    deselectOnMiss: false
+  - type: EntityTargetAction
+  - type: WorldTargetAction
+    event: !type:XenoImpaleActionEvent
+  - type: XenoOffensiveAction
+  - type: ActionBlockIfResting
+  - type: XenoActionPlasma
+    cost: 80
+  - type: RMCCooldownOnMiss
+    missCooldown: 0.7
+
+- type: entity
+  parent: ActionXenoBase
+  id: CMU14ActionXenoPathogenSpikeShed
+  name: Spike Shed (all shards)
+  description: Shred all of your shards to launch them all in all directions around yourself. Lose the bonus armor in the process while also gaining a speed boost. This will disable you from gaining any shards for 30 seconds. Requires 50 shards minimum
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    icon:
+      sprite: _CMU14/Actions/actions_pathogen.rsi
+      state: rav_shard_shed
+    useDelay: 30
+  - type: InstantAction
+    event: !type:ActionXenoSpikeShedEvent
+  - type: ActionBlockIfResting
+  - type: RMCDazeableAction
+
+- type: entity
+  id: CMU14ActionXenoPathogenBoneChips
+  parent: ActionXenoBase
+  name: Bone Chips
+  description: Launch a projectile that will damage and slow down the first enemy it hits.
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    icon:
+      sprite: _CMU14/Actions/actions_pathogen.rsi
+      state: runner_bonespur
+    useDelay: 12
+  - type: TargetAction
+    range: 15
+  - type: EntityTargetAction
+  - type: WorldTargetAction
+    event: !type:XenoBoneChipsActionEvent
+
+- type: entity
+  parent: ActionXenoBase
+  id: CMU14ActionXenoPathogenHeadbite
+  name: Headbite
+  description: Instantly kills unconscious targets and heals you for 150 HP.
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    icon:
+      sprite: _CMU14/Actions/actions_pathogen.rsi
+      state: headbite
+    useDelay: 10
+  - type: TargetAction
+    range: 1.5
+    checkCanAccess: false
+    deselectOnMiss: false
+  - type: EntityTargetAction
+    event: !type:XenoHeadbiteActionEvent
+  - type: ActionBlockIfResting
+  - type: XenoOffensiveAction

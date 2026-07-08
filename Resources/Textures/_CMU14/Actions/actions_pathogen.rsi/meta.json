@@ -143,9 +143,6 @@
             "name": "plant_weeds"
         },
         {
-            "name": "NEOMORPH"
-        },
-        {
             "name": "headbite"
         },
         {
@@ -155,13 +152,7 @@
             "name": "prae_impale"
         },
         {
-            "name": "BRUTE"
-        },
-        {
             "name": "punch"
-        },
-        {
-            "name": "HARBINGER"
         },
         {
             "name": "inject_walker"
@@ -171,9 +162,6 @@
         },
         {
             "name": "cyclone"
-        },
-        {
-            "name": "ABERRATION"
         },
         {
             "name": "rage"
@@ -522,9 +510,6 @@
         },
         {
             "name": "tail_harpoon"
-        },
-        {
-            "name": "UNUSED"
         },
         {
             "name": "fire_cannon"

@@ -38,6 +38,7 @@
     maxPlasma: 100
     plasmaRegenOnWeeds: 3
   - type: XenoEvolution
+    actionId: CMU14ActionXenoPathogenEvolve
     canEvolveWithoutGranter: true
     requiresGranter: false
     max: 200
@@ -45,6 +46,7 @@
     - CMU14XenoNeomorph
     - CMU14XenoBlight
   - type: XenoDevolve
+    actionId: CMU14ActionXenoPathogenDevolve
     devolvesTo:
     - CMU14XenoBloodburster
     canBeDevolvedByOther: false

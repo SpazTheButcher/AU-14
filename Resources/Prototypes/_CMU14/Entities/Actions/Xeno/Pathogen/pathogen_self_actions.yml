@@ -922,3 +922,32 @@
   - type: ActionBlockIfResting
   - type: ActionInRangeUnobstructed
     range: 7
+
+- type: entity
+  id: CMU14ActionXenoPathogenTurnInvisible
+  parent: ActionXenoBase
+  name: Turn Invisible (20)
+  description: Become partially invisible for 30 seconds, or until you either damage or attempt to devour an enemy. Can be toggled off to become visible again, with a refund of 90% remaining cloak time. Increases your movement speed by 15% until the ability expires.
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    icon:
+      sprite: _CMU14/Actions/actions_pathogen.rsi
+      state: invisibility
+  - type: InstantAction
+    event: !type:XenoTurnInvisibleActionEvent
+
+- type: entity
+  id: CMU14ActionXenoPathogenDefensiveShield
+  parent: ActionXenoBase
+  name: Defensive Shield (50)
+  description: Encase yourself in a protective shield that absorbs 100 damage for 7 seconds. Reduces incoming damage by 8 per hit. Reflects enemy projectiles while active. [color=red]Grants brief explosion immunity on activation.[/color]
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    icon:
+      sprite: _CMU14/Actions/actions_pathogen.rsi
+      state: soak
+    useDelay: 26
+  - type: InstantAction
+    event: !type:XenoDefensiveShieldActionEvent

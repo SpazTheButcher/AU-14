@@ -41,9 +41,11 @@
     maxPlasma: 500
     plasmaRegenOnWeeds: 10
   - type: XenoEvolution
+    actionId: CMU14ActionXenoPathogenEvolve
     canEvolveWithoutGranter: false
     evolvesTo: []
   - type: XenoDevolve
+    actionId: CMU14ActionXenoPathogenDevolve
     devolvesTo:
     - CMU14XenoNeomorph
     canBeDevolvedByOther: false
@@ -78,7 +80,7 @@
         Brute: 20
   - type: CMArmor
     explosionArmor: 10
-    armor: 10
+    xenoArmor: 10
   - type: Tackle
     min: 2
     max: 6
