@@ -26,13 +26,13 @@
     emoteSounds: Crusher
     countsForSlots: false
     actionIds:
-    - ActionXenoRest
-    - ActionXenoWatch
-    - ActionXenoTailStab
-    - ActionXenoRush
-    - ActionXenoHeadbutt
-    - ActionXenoCrush
-    - ActionXenoDirectionalStomp
+    - CMU14ActionXenoPathogenRest
+    - CMU14ActionXenoPathogenWatch
+    - CMU14ActionXenoPathogenTailStab
+    - CMU14ActionXenoPathogenRush
+    - CMU14ActionXenoPathogenHeadbutt
+    - CMU14ActionXenoPathogenCrush
+    - CMU14ActionXenoPathogenDirectionalStomp
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.6

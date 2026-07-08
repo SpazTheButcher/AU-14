@@ -25,12 +25,12 @@
     hudOffset: -0.1, 0.25
     emoteSounds: Crusher
     actionIds:
-    - ActionXenoRest
-    - ActionXenoWatch
-    - ActionXenoPheromones
-    - ActionXenoTailStab
-    - ActionXenoStomp
-    - ActionXenoDefensiveShield
+    - CMU14ActionXenoPathogenRest
+    - CMU14ActionXenoPathogenWatch
+    - CMU14ActionXenoPathogenPheromones
+    - CMU14ActionXenoPathogenTailStab
+    - CMU14ActionXenoPathogenStomp
+    - CMU14ActionXenoPathogenDefensiveShield
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.2

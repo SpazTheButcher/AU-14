@@ -26,9 +26,9 @@
     emoteSounds: Larva
     countsForSlots: false
     actionIds:
-    - ActionXenoRest
-    - ActionXenoWatch
-    - ActionXenoPheromones
+    - CMU14ActionXenoPathogenRest
+    - CMU14ActionXenoPathogenWatch
+    - CMU14ActionXenoPathogenPheromones
     - CMU14ActionXenoPlaceSporeSac
     - CMU14ActionXenoDirectSporeInfect
   - type: XenoRegen

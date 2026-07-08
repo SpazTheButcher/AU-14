@@ -41,10 +41,10 @@
     unlockAt: 0
     emoteSounds: Larva
     actionIds:
-    - ActionXenoRest
-    - ActionXenoWatch
-    - ActionXenoHide
-    - ActionXenoLeap # pounce - will be replaced by custom Pathogen pounce later
+    - CMU14ActionXenoPathogenRest
+    - CMU14ActionXenoPathogenWatch
+    - CMU14ActionXenoPathogenHide
+    - CMU14ActionXenoPathogenLeap # pounce - will be replaced by custom Pathogen pounce later
   - type: XenoLeap
     delay: 0
     knockdownTime: 2
@@ -62,7 +62,7 @@
     requiresGranter: false
     max: 100 # evolution threshold
     evolvesTo:
-    - CMUXenoSprinter
+    - CMU14XenoSprinter
   - type: XenoDevolve
     devolvesTo: []
     canBeDevolvedByOther: false

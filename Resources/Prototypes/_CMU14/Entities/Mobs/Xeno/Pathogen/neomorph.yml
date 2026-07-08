@@ -25,12 +25,12 @@
     hudOffset: -0.1, 0.25
     emoteSounds: Warrior
     actionIds:
-    - ActionXenoRest
-    - ActionXenoWatch
-    - ActionXenoHide
-    - ActionXenoLeap
-    - ActionXenoTailStab
-    - ActionXenoHeadbite
+    - CMU14ActionXenoPathogenRest
+    - CMU14ActionXenoPathogenWatch
+    - CMU14ActionXenoPathogenHide
+    - CMU14ActionXenoPathogenLeap
+    - CMU14ActionXenoPathogenTailStab
+    - CMU14ActionXenoPathogenHeadbite
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.0

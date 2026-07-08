@@ -32,13 +32,13 @@
     emoteSounds: Queen
     countsForSlots: false
     actionIds:
-    - ActionXenoRest
-    - ActionXenoWatch
-    - ActionXenoPheromones
-    - ActionXenoTailStab
-    - ActionXenoSpikeShed
-    - ActionXenoSpikeShield
-    - ActionXenoBoneChips
+    - CMU14ActionXenoPathogenRest
+    - CMU14ActionXenoPathogenWatch
+    - CMU14ActionXenoPathogenPheromones
+    - CMU14ActionXenoPathogenTailStab
+    - CMU14ActionXenoPathogenSpikeShed
+    - CMU14ActionXenoPathogenSpikeShield
+    - CMU14ActionXenoPathogenBoneChips
     - CMU14ActionXenoBlightWave
     - CMU14ActionXenoParalyzingSlash
     - CMU14ActionXenoMycotoxinInjectMatriarch

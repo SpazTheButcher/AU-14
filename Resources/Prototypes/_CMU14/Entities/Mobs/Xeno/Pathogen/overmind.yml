@@ -50,11 +50,11 @@
     emoteSounds: Queen
     countsForSlots: false
     actionIds:
-    - ActionXenoRest
-    - ActionXenoWatch
-    - ActionXenoPheromones
-    - ActionXenoHeal
-    - ActionXenoWordQueen
+    - CMU14ActionXenoPathogenRest
+    - CMU14ActionXenoPathogenWatch
+    - CMU14ActionXenoPathogenPheromones
+    - CMU14ActionXenoPathogenHeal
+    - CMU14ActionXenoPathogenWordQueen
     - CMU14ActionXenoParalyzingSlash
     - CMU14ActionXenoBlightWave
     - CMU14ActionXenoOvermindChangeForm
