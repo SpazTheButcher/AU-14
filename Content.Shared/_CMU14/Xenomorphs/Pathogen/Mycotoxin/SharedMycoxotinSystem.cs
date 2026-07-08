@@ -196,6 +196,8 @@ public sealed class SharedMycotoxinSystem : EntitySystem
         var victimComp = EnsureComp<VictimInfectedComponent>(victim);
         _parasite.SetBurstSpawn((victim, victimComp), exposure.EmbryoSpawn);
         _parasite.SetHive((victim, victimComp), exposure.SourceHive);
+        _parasite.SetBurstsFromBack((victim, victimComp), true); // Neomorph embryos always burst from the back
+        Dirty(victim, victimComp);
 
         RemCompDeferred<MycotoxinExposureComponent>(victim);
     }

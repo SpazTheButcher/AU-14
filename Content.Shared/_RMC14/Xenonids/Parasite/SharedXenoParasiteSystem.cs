@@ -961,7 +961,9 @@ public abstract partial class SharedXenoParasiteSystem : EntitySystem
                 _audio.PlayEntity(sound, filter, victim, true);
             }
 
-            EnsureComp<VictimBurstComponent>(burstFrom);
+            var burstComp = EnsureComp<VictimBurstComponent>(burstFrom);
+            burstComp.BurstsFromBack = comp.BurstsFromBack;
+            Dirty(burstFrom.Owner, burstComp);
             _appearance.SetData(burstFrom.Owner, BurstVisuals.Visuals, VictimBurstState.Bursting);
 
             var shakeFilter = Filter.PvsExcept(victim);
@@ -987,7 +989,9 @@ public abstract partial class SharedXenoParasiteSystem : EntitySystem
         if (_net.IsClient)
             return;
 
-        EnsureComp<VictimBurstComponent>(ent.Owner);
+        var burstComp = EnsureComp<VictimBurstComponent>(ent.Owner);
+        burstComp.BurstsFromBack = ent.Comp.BurstsFromBack;
+        Dirty(ent.Owner, burstComp);
         _appearance.SetData(ent.Owner, BurstVisuals.Visuals, VictimBurstState.Burst);
 
         if (TryComp(ent.Owner, out MobStateComponent? mobState))
@@ -1268,6 +1272,12 @@ public abstract partial class SharedXenoParasiteSystem : EntitySystem
 
         if (HasComp<XenoComponent>(spawned))
             _hive.SetHive(spawned, victim.Comp.Hive);
+    }
+
+    public void SetBurstsFromBack(Entity<VictimInfectedComponent> victim, bool burstsFromBack)
+    {
+        victim.Comp.BurstsFromBack = burstsFromBack;
+        Dirty(victim);
     }
 }
 
