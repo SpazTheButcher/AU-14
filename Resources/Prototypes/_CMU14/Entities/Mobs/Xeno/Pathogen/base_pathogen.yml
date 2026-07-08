@@ -12,6 +12,7 @@
   name: Pathogen Creature
   description: A creature of the Mycelial Confluence.
   components:
+  - type: CMUPathogenHiveMember
   - type: Language
     spokenLanguages:
     - Pathogen

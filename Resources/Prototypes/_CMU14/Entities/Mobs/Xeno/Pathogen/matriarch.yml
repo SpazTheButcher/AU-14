@@ -21,6 +21,10 @@
       Critical: XenoCrit
       Dead: XenoDead
     displayDamageInAlert: true
+  - type: CMUXenoMycotoxinInject
+    plasmaCost: 150
+    range: 3.0
+    canInjectLiving: true
   - type: Xeno
     role: CMU14JobPathogenMatriarch
     tier: 4
@@ -37,6 +41,7 @@
     - ActionXenoBoneChips
     - CMU14ActionXenoBlightWave
     - CMU14ActionXenoParalyzingSlash
+    - CMU14ActionXenoMycotoxinInjectMatriarch
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.4
@@ -51,10 +56,9 @@
     devolvesTo: []
     canBeDevolvedByOther: false
   - type: XenoPheromones
-  # Bone Shard counter system - reuses Hedgehog Ravager XenoEnergy/XenoShard
   - type: XenoEnergy
     gain: 5
-    gainAttack: 20 # more aggressive than hedgehog
+    gainAttack: 20
     gainAttackDowned: 20
     popupGain: rmc-xeno-shards-increase-user
     popupNotEnough: rmc-xeno-not-enough-shards
@@ -123,7 +127,6 @@
 - type: entity
   parent: CMU14XenoMatriarchBase
   id: CMU14XenoMatriarch
-  name: Matriarch
   components:
   - type: RMCGibOnDeath
     gibChance: 0

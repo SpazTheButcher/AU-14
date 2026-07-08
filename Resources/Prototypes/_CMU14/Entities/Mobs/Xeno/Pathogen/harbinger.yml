@@ -23,6 +23,7 @@
     plasmaCost: 75
     baseRange: 2
     baseDamage: 25
+  - type: CMUXenoMycotoxinInject
   - type: Xeno
     role: CMU14JobPathogenHarbinger
     tier: 3
@@ -35,7 +36,7 @@
     - ActionXenoLeap
     - ActionXenoImpale
     - CMU14ActionXenoCyclone
-    # Macro 4 — Mycotoxin: needs custom C# action (CMUActionXenoMycotoxin)
+    - CMU14ActionXenoMycotoxinInject
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.4
@@ -102,7 +103,7 @@
     name: cmu-job-name-pathogen-harbinger
   - type: Speech
     speechSounds: Xenonid
- 
+
 - type: entity
   parent: CMU14XenoHarbingerBase
   id: CMU14XenoHarbinger
