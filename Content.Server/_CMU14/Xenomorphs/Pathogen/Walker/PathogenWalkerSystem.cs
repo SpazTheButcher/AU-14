@@ -84,7 +84,7 @@ public sealed partial class CMUPathogenWalkerSystem : EntitySystem
         EnsureComp<IntrinsicRadioReceiverComponent>(target);
 
         var radio = EnsureComp<ActiveRadioComponent>(target);
-        radio.Channels = new HashSet<string>() { "Hivemind" };
+        radio.Channels = new HashSet<string>() { "MycelumLink" };
 
         EnsureComp<ActiveRadioComponent>(target);
 

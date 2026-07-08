@@ -24,6 +24,7 @@ chat-radio-CLF = CLF
 chat-radio-mob = FAMLY
 
 chat-radio-hivemind = HIVE
+chat-radio-mycelium-link = MYCEL
 chat-radio-ai = AI
 chat-radio-colony-softwave = SWAVE
 

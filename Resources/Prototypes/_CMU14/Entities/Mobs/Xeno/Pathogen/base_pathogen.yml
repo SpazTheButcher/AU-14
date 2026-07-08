@@ -67,4 +67,10 @@
         type: DialogBui
       enum.BlightCoreUiKey.Vote:
         type: BlightCoreVoteBui
+  - type: IntrinsicRadioTransmitter
+    channels:
+    - MycelumLink
+  - type: ActiveRadio
+    channels:
+    - MycelumLink
  
