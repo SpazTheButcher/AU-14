@@ -1,7 +1,7 @@
 { 
     "version": 1,
-    "license": null,
-    "copyright": null,
+    "license": "CC-BY-SA-3.0",
+    "copyright": "taken from cm13 https://github.com/realforest2001/forest-cm13/blob/ecb68c1e25fd4f02d19a9e940cd08e3d8fba7bd1/icons/mob/pathogen/pathogen_structures.dmi",
     "size": {
         "x": 32,
         "y": 32

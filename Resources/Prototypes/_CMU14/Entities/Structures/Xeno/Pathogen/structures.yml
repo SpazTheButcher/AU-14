@@ -43,18 +43,6 @@
     requiredVehicleTag: VehicleHeavy
     smashSound:
       collection: XenoResinBreak
-  - type: RMCDamageSound
-    soundGroups:
-      Blunt:
-        collection: XenoResinHit
-      Slash:
-        collection: XenoResinHit
-      Piercing:
-        collection: XenoResinHit
-      Heat:
-        collection: XenoResinHit
-      Explosive:
-        collection: XenoResinHit
   - type: XenoConstructionPlasmaCost
     plasma: 100
     scalingCost: true
@@ -66,6 +54,8 @@
       types:
         Slash: 200
   - type: AllowWeedSpread
+  - type: XenoNestSurface
+    nest: CMU14XenoMyceliumNest
 
 - type: entity
   parent: CMU14XenoMyceliumWall
@@ -163,18 +153,6 @@
     requiredVehicleTag: VehicleHeavy
     smashSound:
       collection: XenoResinBreak
-  - type: RMCDamageSound
-    soundGroups:
-      Blunt:
-        collection: XenoResinHit
-      Slash:
-        collection: XenoResinHit
-      Piercing:
-        collection: XenoResinHit
-      Heat:
-        collection: XenoResinHit
-      Explosive:
-        collection: XenoResinHit
   - type: Occluder
     enabled: false
   - type: XenoConstructionPlasmaCost
@@ -188,6 +166,8 @@
       types:
         Slash: 150
   - type: AllowWeedSpread
+  - type: XenoNestSurface
+    nest: CMU14XenoMyceliumNest
 
 - type: entity
   parent: CMU14XenoMyceliumMembrane
@@ -311,18 +291,6 @@
     requiredVehicleTag: VehicleHeavy
     smashSound:
       collection: XenoResinBreak
-  - type: RMCDamageSound
-    soundGroups:
-      Blunt:
-        collection: XenoResinHit
-      Slash:
-        collection: XenoResinHit
-      Piercing:
-        collection: XenoResinHit
-      Heat:
-        collection: XenoResinHit
-      Explosive:
-        collection: XenoResinHit
   - type: PlacementReplacement
     key: walls
   - type: IconSmooth
@@ -412,7 +380,6 @@
 # ── Nest ──────────────────────────────────────────────────────────────────────
 
 - type: entity
-  parent: CMBaseXenoStructure
   id: CMU14XenoMyceliumNest
   name: mycelium nest
   description: A cradle of pale, sticky mycelium fibres woven into a nest shape. A captured host would be held fast by its adhesive strands.
@@ -455,6 +422,9 @@
       - !type:DoActsBehavior
         acts: ["Destruction"]
   - type: XenoNest
+  - type: XenoFriendly
+  - type: RMCNightVisionVisible
+    priority: 1
 
 # ── Construction animation effects ────────────────────────────────────────────
 
