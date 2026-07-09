@@ -48,7 +48,6 @@
     <Folder Include="_CMU14\Ops\Allegiance\Origin\" />
     <Folder Include="_CMU14\Ops\Factions\Ambassador\" />
     <Folder Include="_CMU14\Ops\Radio\" />
-    <Folder Include="_CMU14\Round\Objectives\" />
     <Folder Include="_CMU14\Domain\Air\" />
     <Folder Include="_CMU14\Domain\Ground\" />
     <Folder Include="_CMU14\Jobs\Fishing\" />
