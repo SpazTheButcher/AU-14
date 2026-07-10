@@ -10,4 +10,29 @@ public abstract partial class ObjectiveSystem : EntitySystem
         int currentAmount,
         int requiredAmount)
         => currentAmount >= requiredAmount && (auComp.FactionNeutral || faction == auComp.Faction.ToLowerInvariant());
+
+    protected static string? GetCreditFaction(
+        CMUObjectiveComponent auComp,
+        IEnumerable<string> entityFactions,
+        string targetFaction,
+        string? presetId,
+        ObjectiveControlSystem ctrl)
+    {
+        if (auComp.FactionNeutral)
+        {
+            string? result = null;
+            foreach (var f in entityFactions)
+            {
+                var opposite = ctrl.GetOppositeFaction(f, presetId);
+                if (!string.IsNullOrEmpty(opposite))
+                    result = opposite;
+            }
+            return result;
+        }
+
+        if (!entityFactions.Contains(targetFaction.ToLowerInvariant()))
+            return null;
+
+        return auComp.Faction.ToLowerInvariant();
+    }
 }
