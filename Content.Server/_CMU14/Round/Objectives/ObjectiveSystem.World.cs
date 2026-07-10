@@ -1,4 +1,4 @@
-using Content.Shared.AU14.Objectives.Fetch; // FetchObjectiveMarkerComponent
+using Content.Shared.AU14.Objectives.Fetch;
 using Robust.Shared.Map;
 
 namespace Content.Server._CMU14.Round.Objectives;
@@ -10,7 +10,7 @@ public abstract partial class ObjectiveSystem
         var specific = new List<EntityUid>();
         var generic = new List<EntityUid>();
 
-        var query = AllEntityQuery<FetchObjectiveMarkerComponent, TransformComponent>();
+        var query = AllEntityQuery<CMUObjectiveMarkerComponent, TransformComponent>();
         while (query.MoveNext(out var markerUid, out var markerComp, out var markerXform))
         {
             if (markerComp.Used || markerXform.MapID != map)
@@ -33,7 +33,7 @@ public abstract partial class ObjectiveSystem
 
     protected void MarkMarkerUsed(EntityUid markerUid)
     {
-        if (TryComp(markerUid, out FetchObjectiveMarkerComponent? markerComp))
+        if (TryComp(markerUid, out CMUObjectiveMarkerComponent? markerComp))
             markerComp.Used = true;
     }
 
@@ -64,7 +64,7 @@ public abstract partial class ObjectiveSystem
         for (var i = 0; i < toSpawn; i++)
         {
             var markerUid = markers[i];
-            if (TryComp(markerUid, out FetchObjectiveMarkerComponent? markerComp) && markerComp.Used)
+            if (TryComp(markerUid, out CMUObjectiveMarkerComponent? markerComp) && markerComp.Used)
                 continue;
 
             var xform = Comp<TransformComponent>(markerUid);
