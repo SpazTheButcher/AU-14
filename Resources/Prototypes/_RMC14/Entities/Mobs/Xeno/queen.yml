@@ -339,4 +339,4 @@
   - type: MotionDetectorTracked
     isQueenEye: true
   - type: Visibility
-    layer: 32770
+    layer: 2

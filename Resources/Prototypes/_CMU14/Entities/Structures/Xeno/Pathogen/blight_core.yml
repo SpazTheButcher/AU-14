@@ -47,3 +47,10 @@
         type: BlightCoreAcceptBui
       enum.BlightCoreUiKey.Vote:
         type: BlightCoreVoteBui
+  - type: XenoWeeds
+    range: 7
+    spawns: CMU14XenoMyceliumHiveWeeds
+    level: 3
+    blockOtherWeeds: true
+    spreadsOnSemiWeedable: true
+  - type: XenoWeedsSpreading

@@ -67,10 +67,13 @@
         type: DialogBui
       enum.BlightCoreUiKey.Vote:
         type: BlightCoreVoteBui
+  - type: IntrinsicRadioReceiver
   - type: IntrinsicRadioTransmitter
     channels:
-    - MycelumLink
+    - Hivemind
+    - MyceliumLink
   - type: ActiveRadio
     channels:
-    - MycelumLink
- 
+    - Hivemind
+    - MyceliumLink
+    receiveAllChannels: false

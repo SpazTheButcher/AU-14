@@ -11,6 +11,8 @@ using Robust.Shared.Timing;
 using Robust.Shared.Prototypes;
 using Content.Shared._CMU14.Xenomorphs.Pathogen.SporeCloud;
 using Content.Shared.Mobs;
+using Robust.Shared.GameObjects;
+using Content.Shared.Popups;
 
 namespace Content.Shared._CMU14.Xenomorphs.Pathogen.Mycotoxin;
 
@@ -23,6 +25,7 @@ public sealed class SharedMycotoxinSystem : EntitySystem
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly SharedXenoHiveSystem _hive = default!;
     [Dependency] private readonly SharedXenoParasiteSystem _parasite = default!;
+    [Dependency] private readonly SharedPopupSystem _popup = default!;
 
     public override void Initialize()
     {
@@ -189,15 +192,19 @@ public sealed class SharedMycotoxinSystem : EntitySystem
         exposure.Infected = true;
         Dirty(victim, exposure);
 
-        // Reuses the normal larva incubation/symptom/burst pipeline in
-        // SharedXenoParasiteSystem.Update() - just points BurstSpawn at
-        // a Bloodburster instead of a regular larva. MapInit on
-        // VictimInfectedComponent sets BurstAt from BurstDelay automatically.
         var victimComp = EnsureComp<VictimInfectedComponent>(victim);
         _parasite.SetBurstSpawn((victim, victimComp), exposure.EmbryoSpawn);
         _parasite.SetHive((victim, victimComp), exposure.SourceHive);
-        _parasite.SetBurstsFromBack((victim, victimComp), true); // Neomorph embryos always burst from the back
+        _parasite.SetBurstsFromBack((victim, victimComp), true);
         Dirty(victim, victimComp);
+
+        // Show infection popups
+        _popup.PopupEntity(
+            Loc.GetString("cmu-xeno-spore-cloud-inhale-self"),
+            victim, victim, PopupType.MediumCaution);
+        _popup.PopupEntity(
+            Loc.GetString("cmu-xeno-spore-cloud-inhale-others", ("target", MetaData(victim).EntityName)),
+            victim, PopupType.LargeCaution);
 
         RemCompDeferred<MycotoxinExposureComponent>(victim);
     }

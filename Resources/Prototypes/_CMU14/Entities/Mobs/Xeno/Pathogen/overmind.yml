@@ -75,6 +75,10 @@
     canBeDevolvedByOther: false
   - type: XenoPheromones
   - type: CMUXenoOvermind
+  - type: XenoWordQueen
+  - type: XenoPsychicCommunication
+  - type: ManageHive
+  - type: HiveLeaderGranter
   - type: Fixtures
     fixtures:
       fix1:
@@ -129,7 +133,18 @@
     speechSounds: Xenonid
   - type: Physics
     canCollide: false
- 
+  - type: XenoEvolutionGranter
+  - type: IntrinsicRadioReceiver
+  - type: IntrinsicRadioTransmitter
+    channels:
+    - Hivemind
+    - MyceliumLink
+  - type: ActiveRadio
+    channels:
+    - Hivemind
+    - MyceliumLink
+    receiveAllChannels: false
+
 - type: entity
   parent: CMU14XenoOvermindBase
   id: CMU14XenoOvermind
@@ -140,3 +155,18 @@
   - type: RMCSpawnEntitiesOnGib
     entities:
     - CMU14GibEffectPathogenOvermind
+
+- type: entity
+  parent: StationAiHolo
+  id: CMU14XenoOvermindEye
+  name: overmind eye
+  categories: [ HideSpawnMenu, DoNotMap ]
+  components:
+  - type: Sprite
+    sprite: _CMU14/Mobs/Xenonids/Pathogen/overmind.rsi
+    layers:
+    - state: overmind_eye
+  - type: Eye
+    drawFov: false
+  - type: Visibility
+    layer: 32770
