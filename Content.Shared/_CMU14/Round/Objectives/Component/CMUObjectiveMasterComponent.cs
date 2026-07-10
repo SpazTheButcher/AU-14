@@ -3,7 +3,7 @@ using Robust.Shared.GameStates;
 namespace Content.Shared._CMU14.Round.Objectives.Component;
 
 [RegisterComponent, NetworkedComponent]
-public sealed partial class CMUObjectiveMasterComponent : Component
+public sealed partial class CMUObjectiveMasterComponent : Robust.Shared.GameObjects.Component
 {
     [DataDefinition]
     public sealed partial class FactionObjectiveData

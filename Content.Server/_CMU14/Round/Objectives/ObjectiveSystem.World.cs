@@ -1,10 +1,99 @@
+using Content.Shared.AU14.Objectives.Fetch; // FetchObjectiveMarkerComponent
+using Robust.Shared.Map;
+
 namespace Content.Server._CMU14.Round.Objectives;
 
-public partial class ObjectiveSystem
+public abstract partial class ObjectiveSystem
 {
-    // FindMarkers List<EntityUid> Specific, List<EntityUid> Generic
-    // ResolveMarkers Destroy/Fetch/Interact
-    // MarkMarkerUsed
-    //
-    // SpawnEntitiesAtMarkers
+    protected (List<EntityUid> Specific, List<EntityUid> Generic) FindMarkers(MapId map, string? markerId)
+    {
+        var specific = new List<EntityUid>();
+        var generic = new List<EntityUid>();
+
+        var query = AllEntityQuery<FetchObjectiveMarkerComponent, TransformComponent>();
+        while (query.MoveNext(out var markerUid, out var markerComp, out var markerXform))
+        {
+            if (markerComp.Used || markerXform.MapID != map)
+                continue;
+
+            if (!string.IsNullOrEmpty(markerId) && markerComp.FetchId == markerId)
+                specific.Add(markerUid);
+            else if (markerComp.Generic)
+                generic.Add(markerUid);
+        }
+
+        return (specific, generic);
+    }
+
+    protected List<EntityUid> ResolveMarkers(MapId map, string? markerId)
+    {
+        var (specific, generic) = FindMarkers(map, markerId);
+        return specific.Count > 0 ? specific : generic;
+    }
+
+    protected void MarkMarkerUsed(EntityUid markerUid)
+    {
+        if (TryComp(markerUid, out FetchObjectiveMarkerComponent? markerComp))
+            markerComp.Used = true;
+    }
+
+    protected List<EntityUid> SpawnEntitiesAtMarkers(
+        string? prototypeId,
+        int amountToSpawn,
+        List<EntityUid> markers,
+        bool shuffle = false)
+    {
+        var spawned = new List<EntityUid>();
+
+        if (string.IsNullOrEmpty(prototypeId) || markers.Count == 0 || amountToSpawn <= 0)
+            return spawned;
+
+        if (shuffle && markers.Count > 1)
+        {
+            var rng = new Random();
+            var n = markers.Count;
+            while (n > 1)
+            {
+                n--;
+                var k = rng.Next(n + 1);
+                (markers[n], markers[k]) = (markers[k], markers[n]);
+            }
+        }
+
+        var toSpawn = Math.Min(amountToSpawn, markers.Count);
+        for (var i = 0; i < toSpawn; i++)
+        {
+            var markerUid = markers[i];
+            if (TryComp(markerUid, out FetchObjectiveMarkerComponent? markerComp) && markerComp.Used)
+                continue;
+
+            var xform = Comp<TransformComponent>(markerUid);
+            var ent = Spawn(prototypeId, xform.Coordinates);
+            spawned.Add(ent);
+            MarkMarkerUsed(markerUid);
+        }
+
+        return spawned;
+    }
+
+    protected List<EntityUid> SpawnEntitiesAtMarkersWithReuse(
+        string? prototypeId,
+        int amountToSpawn,
+        List<EntityUid> markers)
+    {
+        var spawned = new List<EntityUid>();
+
+        if (string.IsNullOrEmpty(prototypeId) || markers.Count == 0 || amountToSpawn <= 0)
+            return spawned;
+
+        for (var i = 0; i < amountToSpawn; i++)
+        {
+            var markerUid = markers[i % markers.Count];
+            var xform = Comp<TransformComponent>(markerUid);
+            var ent = Spawn(prototypeId, xform.Coordinates);
+            spawned.Add(ent);
+        }
+
+        return spawned;
+    }
 }

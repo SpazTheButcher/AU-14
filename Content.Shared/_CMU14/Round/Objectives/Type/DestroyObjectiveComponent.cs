@@ -1,12 +1,10 @@
-using Robust.Shared.GameStates;
+namespace Content.Shared._CMU14.Round.Objectives.Type;
 
-namespace Content.Shared._CMU14.Round.Objectives;
-
-[RegisterComponent, NetworkedComponent]
-public sealed partial class DestroyObjectiveComponent : Component
+[RegisterComponent]
+public sealed partial class DestroyObjectiveComponent : Robust.Shared.GameObjects.Component
 {
     [DataField]
-    public bool UseAnyEntity { get; private set; } = false;
+    public bool UseAnyEntity { get; private set; }
 
     [DataField("spawnMarker")]
     public string SpawnMarkerId { get; private set; } = string.Empty;
