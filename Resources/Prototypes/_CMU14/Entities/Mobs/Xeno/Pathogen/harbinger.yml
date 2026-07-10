@@ -37,6 +37,7 @@
     - CMU14ActionXenoPathogenImpale
     - CMU14ActionXenoPathogenCyclone
     - CMU14ActionXenoPathogenMycotoxinInject
+    - CMU14ActionXenoPathogenDevolve
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.4

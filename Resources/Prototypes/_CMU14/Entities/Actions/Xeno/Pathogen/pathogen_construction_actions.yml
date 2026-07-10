@@ -12,6 +12,7 @@
     useDelay: 1
   - type: InstantAction
     event: !type:XenoPlantWeedsActionEvent
+      prototype: CMU14XenoMyceliumWeedsSource
   - type: SwappableAction
     swappedEventTemplate: !type:XenoExpandWeedsActionEvent
     originalEventTemplate: !type:XenoPlantWeedsActionEvent

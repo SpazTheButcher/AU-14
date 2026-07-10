@@ -1,14 +1,14 @@
 - type: entity
   abstract: true
   parent: CMU14XenoPathogenBase
-  id: CMU14XenoConditorBase
+  id: CMU14XenoConditorBase # conductor hehe
   name: Conditor
   description: A masterful cultivator of mycelium and death.
   components:
   - type: GhostRole
     name: cmu-job-name-pathogen-conditor
   - type: Sprite
-    sprite: _CMU14/Mobs/Xenonids/Pathogen/condictor.rsi
+    sprite: _CMU14/Mobs/Xenonids/Pathogen/conditor.rsi
   - type: MobThresholds
     thresholds:
       0: Alive
@@ -30,9 +30,22 @@
     - CMU14ActionXenoPathogenHide
     - CMU14ActionXenoPathogenPheromones
     - CMU14ActionXenoPathogenTailStab
-    - CMU14ActionXenoPathogenLeap
+    - CMU14ActionXenoPathogenPlantWeeds
     - CMU14ActionXenoPathogenSpit
+    - CMU14ActionXenoPathogenChooseStructure
+    - CMU14ActionXenoPathogenSecreteStructure
     - CMU14ActionXenoPathogenSlowingSpit
+    - CMU14ActionXenoPathogenParalyzingSlash
+    - CMU14ActionXenoPathogenDevolve
+  - type: XenoConstruction
+    buildDelay: 1
+    canBuild:
+    - CMU14XenoMyceliumWall
+    - CMU14XenoThickMyceliumWall
+    - CMU14XenoMyceliumMembrane
+    - CMU14XenoThickMyceliumMembrane
+    - CMU14XenoMyceliumDoor
+    - CMU14XenoThickMyceliumDoor
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.0
@@ -50,6 +63,7 @@
     - CMU14XenoNeomorph
     canBeDevolvedByOther: false
   - type: XenoHide
+  - type: XenoPheromones
   - type: Fixtures
     fixtures:
       fix1:
@@ -87,7 +101,6 @@
     chance: 0.3
     stunMin: 3
     stunMax: 4
-  - type: XenoPheromones
   - type: TacticalMapIcon
     icon:
       sprite: /Textures/_RMC14/Interface/map_blips.rsi
@@ -103,9 +116,14 @@
     name: cmu-job-name-pathogen-conditor
   - type: Speech
     speechSounds: Xenonid
- 
+
 - type: entity
   parent: CMU14XenoConditorBase
   id: CMU14XenoConditor
   name: Conditor
- 
+  components:
+  - type: RMCGibOnDeath
+    gibChance: 0.1
+  - type: RMCSpawnEntitiesOnGib
+    entities:
+    - CMU14GibEffectPathogenConditor

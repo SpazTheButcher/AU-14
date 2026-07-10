@@ -30,6 +30,7 @@
     - CMU14ActionXenoPathogenLeap
     - CMU14ActionXenoPathogenTailStab
     - CMU14ActionXenoPathogenTurnInvisible
+    - CMU14ActionXenoPathogenDevolve
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.2
