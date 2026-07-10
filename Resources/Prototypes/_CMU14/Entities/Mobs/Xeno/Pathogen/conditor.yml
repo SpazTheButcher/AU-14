@@ -37,6 +37,8 @@
     - CMU14ActionXenoPathogenSlowingSpit
     - CMU14ActionXenoPathogenParalyzingSlash
     - CMU14ActionXenoPathogenDevolve
+  - type: XenoSlowingSpit
+  - type: XenoSpit
   - type: XenoConstruction
     buildDelay: 1
     canBuild:

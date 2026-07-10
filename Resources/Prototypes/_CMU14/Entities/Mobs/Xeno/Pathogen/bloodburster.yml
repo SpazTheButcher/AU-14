@@ -44,7 +44,8 @@
     - CMU14ActionXenoPathogenRest
     - CMU14ActionXenoPathogenWatch
     - CMU14ActionXenoPathogenHide
-    - CMU14ActionXenoPathogenLeap # pounce - will be replaced by custom Pathogen pounce later
+    - CMU14ActionXenoPathogenLeap
+    - CMU14ActionXenoPathogenTailStab
   - type: XenoLeap
     delay: 0
     knockdownTime: 2

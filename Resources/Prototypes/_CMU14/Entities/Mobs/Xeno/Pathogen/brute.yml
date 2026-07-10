@@ -31,7 +31,26 @@
     - CMU14ActionXenoPathogenTailStab
     - CMU14ActionXenoPathogenStomp
     - CMU14ActionXenoPathogenDefensiveShield
+    - CMU14ActionXenoPathogenDislocate
     - CMU14ActionXenoPathogenDevolve
+  - type: XenoDislocate
+  - type: CrusherShield
+  - type: XenoStomp
+    directional: true
+    directionalRange: 4
+    directionalAngle: 90
+    paralyzeTime: 1
+    slowTime: 2.5
+    knockBackDistance: 2
+    screenShakeStrength: 4
+    directionalTileEffect: RMCEffectXenoTelegraphRed
+    damage:
+      types:
+        Blunt: 80
+    directionalMinDamage:
+      types:
+        Blunt: 65
+    selfEffect: CMEffectSelfStomp
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.2

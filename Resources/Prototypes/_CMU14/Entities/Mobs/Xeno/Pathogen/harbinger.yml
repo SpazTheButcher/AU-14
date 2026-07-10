@@ -38,6 +38,18 @@
     - CMU14ActionXenoPathogenCyclone
     - CMU14ActionXenoPathogenMycotoxinInject
     - CMU14ActionXenoPathogenDevolve
+  - type: XenoLeap
+    delay: 0
+    knockdownTime: 0
+    range: 5
+    moveDelayTime: 0
+    plasmaCost: 25
+    leapSound: /Audio/_RMC14/Xeno/alien_pounce.ogg
+    destroyObjects: true
+  - type: XenoImpale
+    damage:
+      groups:
+        Brute: 60
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.4

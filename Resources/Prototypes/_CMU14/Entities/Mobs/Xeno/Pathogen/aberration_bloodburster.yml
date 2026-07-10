@@ -45,6 +45,7 @@
     - CMU14ActionXenoPathogenWatch
     - CMU14ActionXenoPathogenHide
     - CMU14ActionXenoPathogenLeap
+    - CMU14ActionXenoPathogenTailStab
   - type: XenoLeap
     delay: 0
     knockdownTime: 2

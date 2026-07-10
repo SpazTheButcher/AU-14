@@ -29,8 +29,18 @@
     - CMU14ActionXenoPathogenWatch
     - CMU14ActionXenoPathogenTailStab
     - CMU14ActionXenoPathogenImpale
-    - CMU14ActionXenoPathogenTailSweep
+    - CMU14ActionXenoPathogenAbduct
+    - CMU14ActionXenoPathogenParalyzingSlash
+    - CMU14ActionXenoPathogenScissorCut
     - CMU14ActionXenoPathogenDevolve
+  - type: XenoScissorCut
+    damage:
+      types:
+        Slash: 40
+  - type: XenoHook
+  - type: XenoTailSeize
+  - type: XenoAbduct
+  - type: XenoImpale
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.4

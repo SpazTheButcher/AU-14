@@ -29,7 +29,16 @@
     - CMU14ActionXenoPathogenWatch
     - CMU14ActionXenoPathogenHide
     - CMU14ActionXenoPathogenLeap
+    - CMU14ActionXenoPathogenBoneChips
+    - CMU14ActionXenoPathogenParalyzingSlash
     - CMU14ActionXenoPathogenTailStab
+    - CMU14ActionXenoPathogenZoom
+  - type: XenoZoom
+  - type: XenoBoneChips
+  - type: XenoLeap
+    delay: 0
+    knockdownTime: 2
+    leapSound: /Audio/_RMC14/Xeno/alien_pounce.ogg
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.4
