@@ -23,7 +23,7 @@
     role: CMU14JobPathogenAberration
     tier: 1
     hudOffset: -0.1, 0.25
-    emoteSounds: Crusher
+    emoteSounds: PathogenAberration
     countsForSlots: false
     actionIds:
     - CMU14ActionXenoPathogenRest
@@ -38,7 +38,7 @@
     range: 4
     moveDelayTime: 0
     knockdownTime: 0
-    leapSound: /Audio/Weapons/Xeno/alien_claw_flesh3.ogg
+    leapSound: /Audio/_CMU14/Xeno/Pathogen/pathogen_pounce2.ogg
     hitEffect: RMCEffectExtraSlash
     targetJitterTime: 1
     targetCameraShakeStrength: 1
@@ -136,7 +136,12 @@
   - type: FixedIdentity
     name: cmu-job-name-pathogen-aberration
   - type: Speech
-    speechSounds: Xenonid
+    speechSounds: Pathogen
+  - type: SoundOnDeath
+    sound:
+      collection: PathogenAberrationDeath
+      params:
+        volume: -4
  
 - type: entity
   parent: CMU14XenoAberrationBase

@@ -77,3 +77,8 @@
     - Hivemind
     - MyceliumLink
     receiveAllChannels: false
+  - type: SoundOnDeath
+    sound:
+      collection: PathogenDeath
+      params:
+        volume: -4

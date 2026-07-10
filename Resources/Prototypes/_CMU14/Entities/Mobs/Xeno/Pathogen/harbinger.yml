@@ -28,7 +28,7 @@
     role: CMU14JobPathogenHarbinger
     tier: 3
     hudOffset: -0.1, 0.25
-    emoteSounds: Warrior
+    emoteSounds: Pathogen
     actionIds:
     - CMU14ActionXenoPathogenRest
     - CMU14ActionXenoPathogenWatch
@@ -44,7 +44,7 @@
     range: 5
     moveDelayTime: 0
     plasmaCost: 25
-    leapSound: /Audio/_RMC14/Xeno/alien_pounce.ogg
+    leapSound: /Audio/_CMU14/Xeno/Pathogen/pathogen_pounce1.ogg
     destroyObjects: true
   - type: XenoImpale
     damage:
@@ -117,7 +117,7 @@
   - type: FixedIdentity
     name: cmu-job-name-pathogen-harbinger
   - type: Speech
-    speechSounds: Xenonid
+    speechSounds: Pathogen
 
 - type: entity
   parent: CMU14XenoHarbingerBase

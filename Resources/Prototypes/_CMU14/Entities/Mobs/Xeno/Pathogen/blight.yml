@@ -23,7 +23,7 @@
     role: CMU14JobPathogenBlight
     tier: 2
     hudOffset: -0.1, 0.25
-    emoteSounds: Warrior
+    emoteSounds: Pathogen
     actionIds:
     - CMU14ActionXenoPathogenRest
     - CMU14ActionXenoPathogenWatch
@@ -37,7 +37,7 @@
     delay: 0
     moveDelayTime: 1.5
     knockdownTime: 5
-    leapSound: /Audio/_RMC14/Xeno/alien_pounce.ogg
+    leapSound: /Audio/_CMU14/Xeno/Pathogen/pathogen_pounce2.ogg
     knockdownRequiresInvisibility: true
     unrootOnMelee: true
   - type: XenoTurnInvisible
@@ -112,7 +112,7 @@
   - type: FixedIdentity
     name: cmu-job-name-pathogen-blight
   - type: Speech
-    speechSounds: Xenonid
+    speechSounds: Pathogen
     
  
 - type: entity

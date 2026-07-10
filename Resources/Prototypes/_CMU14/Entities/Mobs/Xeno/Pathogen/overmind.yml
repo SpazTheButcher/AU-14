@@ -47,7 +47,7 @@
     role: CMU14JobPathogenOvermind
     tier: 3
     hudOffset: -0.1, 0.25
-    emoteSounds: Queen
+    emoteSounds: Pathogen
     countsForSlots: false
     actionIds:
     - CMU14ActionXenoPathogenRest
@@ -130,7 +130,7 @@
   - type: FixedIdentity
     name: cmu-job-name-pathogen-overmind
   - type: Speech
-    speechSounds: Xenonid
+    speechSounds: Pathogen
   - type: Physics
     canCollide: false
   - type: XenoEvolutionGranter
@@ -144,6 +144,14 @@
     - Hivemind
     - MyceliumLink
     receiveAllChannels: false
+  - type: EmitSoundOnSpawn
+    sound:
+      path: /Audio/_CMU14/Xeno/Pathogen/announce_screech.ogg
+      params:
+        volume: -8
+  - type: XenoAnnounceDeath
+    message: cmu-xeno-death-overmind
+    color: "#8a8c50"
 
 - type: entity
   parent: CMU14XenoOvermindBase

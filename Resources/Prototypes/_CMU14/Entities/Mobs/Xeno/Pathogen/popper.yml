@@ -23,7 +23,7 @@
     role: CMU14JobPathogenPopper
     tier: 0
     hudOffset: -0.1, 0.25
-    emoteSounds: Larva
+    emoteSounds: Pathogen
     countsForSlots: false
     actionIds:
     - CMU14ActionXenoPathogenRest
@@ -102,7 +102,7 @@
   - type: FixedIdentity
     name: cmu-job-name-pathogen-popper
   - type: Speech
-    speechSounds: Xenonid
+    speechSounds: Pathogen
   - type: CMUXenoSporeSac
     sacPrototype: CMUPathogenSporeSac
     maxSacs: 3

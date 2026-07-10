@@ -44,6 +44,7 @@ cmu14-mycotoxin-inject-self = You skewer {$target} with your tail, injecting myc
 cmu14-mycotoxin-inject-target = {$xeno} skewers you with its tail!
 cmu14-mycotoxin-inject-start-self = You skewer { $target } with your tail and begin pumping mycotoxin into the corpse...
 cmu14-mycotoxin-inject-start-target = { $xeno } skewers the body with its tail...
+cmu14-mycotoxin-inject-already-infected = Person is already infected.
 
 # Walker
 cmu14-walker-rise = The body lurches upright, animated by mycelial spores!

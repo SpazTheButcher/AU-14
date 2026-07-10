@@ -23,7 +23,7 @@
     role: CMU14JobPathogenVenator
     tier: 3
     hudOffset: -0.1, 0.25
-    emoteSounds: Warrior
+    emoteSounds: Pathogen
     actionIds:
     - CMU14ActionXenoPathogenRest
     - CMU14ActionXenoPathogenWatch
@@ -108,7 +108,7 @@
   - type: FixedIdentity
     name: cmu-job-name-pathogen-venator
   - type: Speech
-    speechSounds: Xenonid
+    speechSounds: Pathogen
  
 - type: entity
   parent: CMU14XenoVenatorBase

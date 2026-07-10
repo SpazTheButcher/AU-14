@@ -23,7 +23,7 @@
     role: CMU14JobPathogenBrute
     tier: 3
     hudOffset: -0.1, 0.25
-    emoteSounds: Crusher
+    emoteSounds: Pathogen
     actionIds:
     - CMU14ActionXenoPathogenRest
     - CMU14ActionXenoPathogenWatch
@@ -121,7 +121,7 @@
   - type: FixedIdentity
     name: cmu-job-name-pathogen-brute
   - type: Speech
-    speechSounds: Xenonid
+    speechSounds: Pathogen
  
 - type: entity
   parent: CMU14XenoBruteBase
