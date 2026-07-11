@@ -147,3 +147,9 @@
   parent: CMU14XenoAberrationBase
   id: CMU14XenoAberration
   name: Aberration
+  components:
+  - type: RMCGibOnDeath
+    gibChance: 0.1
+  - type: RMCSpawnEntitiesOnGib
+    entities:
+    - CMU14GibEffectPathogenAberration

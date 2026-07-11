@@ -114,3 +114,9 @@
   parent: CMU14XenoVenatorBase
   id: CMU14XenoVenator
   name: Venator
+  components:
+  - type: RMCGibOnDeath
+    gibChance: 0.1
+  - type: RMCSpawnEntitiesOnGib
+    entities:
+    - CMU14GibEffectPathogenVenator

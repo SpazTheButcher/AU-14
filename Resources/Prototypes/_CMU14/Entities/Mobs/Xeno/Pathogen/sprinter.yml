@@ -119,3 +119,9 @@
   parent: CMU14XenoSprinterBase
   id: CMU14XenoSprinter
   name: Sprinter
+  components:
+  - type: RMCGibOnDeath
+    gibChance: 0.1
+  - type: RMCSpawnEntitiesOnGib
+    entities:
+    - CMU14GibEffectPathogenSprinter

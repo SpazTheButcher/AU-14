@@ -145,4 +145,4 @@
     gibChance: 0.1
   - type: RMCSpawnEntitiesOnGib
     entities:
-    - CMU14GibEffectPathogenBloodburster
+    - CMU14GibEffectPathogenAberrationBloodburster

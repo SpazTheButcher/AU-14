@@ -127,3 +127,9 @@
   parent: CMU14XenoBruteBase
   id: CMU14XenoBrute
   name: Brute
+  components:
+  - type: RMCGibOnDeath
+    gibChance: 0.1
+  - type: RMCSpawnEntitiesOnGib
+    entities:
+    - CMU14GibEffectPathogenBrute

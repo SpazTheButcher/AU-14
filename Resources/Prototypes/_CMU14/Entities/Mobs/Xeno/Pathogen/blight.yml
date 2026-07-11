@@ -119,3 +119,9 @@
   parent: CMU14XenoBlightBase
   id: CMU14XenoBlight
   name: Blight
+  components:
+  - type: RMCGibOnDeath
+    gibChance: 0.1
+  - type: RMCSpawnEntitiesOnGib
+    entities:
+    - CMU14GibEffectPathogenBlight

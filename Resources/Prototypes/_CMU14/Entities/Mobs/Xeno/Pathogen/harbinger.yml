@@ -123,3 +123,9 @@
   parent: CMU14XenoHarbingerBase
   id: CMU14XenoHarbinger
   name: Harbinger
+  components:
+  - type: RMCGibOnDeath
+    gibChance: 0.1
+  - type: RMCSpawnEntitiesOnGib
+    entities:
+    - CMU14GibEffectPathogenHarbinger

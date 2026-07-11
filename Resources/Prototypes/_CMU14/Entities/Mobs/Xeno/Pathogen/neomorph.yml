@@ -148,3 +148,9 @@
   parent: CMU14XenoNeomorphBase
   id: CMU14XenoNeomorph
   name: Neomorph
+  components:
+  - type: RMCGibOnDeath
+    gibChance: 0.1
+  - type: RMCSpawnEntitiesOnGib
+    entities:
+    - CMU14GibEffectPathogenNeomorph
