@@ -425,7 +425,7 @@
             "name": "place_blockade"
         },
         {
-            "name": "acid grenade"
+            "name": "acid_grenade"
         },
         {
             "name": "plant_gardener_weeds"
@@ -533,7 +533,7 @@
             "name": "ram"
         },
         {
-            "name": "resin nest"
+            "name": "resin_nest"
         },
         {
             "name": "morph_resin"
