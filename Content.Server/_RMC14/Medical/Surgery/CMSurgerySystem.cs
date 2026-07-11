@@ -1,11 +1,11 @@
-using Content.Server._CMU14.Medical.Surgery;
+using Content.Server._CMU14.Medical.Treatment.Surgery;
 using Content.Server._RMC14.Medical.Wounds;
 using Content.Server.Body.Systems;
 using Content.Server.Chat.Systems;
 using Content.Server.Popups;
-using Content.Shared._CMU14.Medical;
-using Content.Shared._CMU14.Medical.Surgery;
-using Content.Shared._CMU14.Medical.StatusEffects;
+using Content.Shared._CMU14.Medical.Core;
+using Content.Shared._CMU14.Medical.Treatment.Surgery;
+using Content.Shared._CMU14.Medical.Injuries.Pain;
 using Content.Shared._RMC14.Marines.Skills;
 using Content.Shared._RMC14.Medical.Surgery;
 using Content.Shared._RMC14.Medical.Surgery.Conditions;
@@ -21,7 +21,6 @@ using Content.Shared.Prototypes;
 using Content.Shared.Tools.Components;
 using Content.Shared.Tools.Systems;
 using Content.Shared.Body.Part;
-using Content.Shared.Body.Systems;
 using Robust.Server.GameObjects;
 using Robust.Shared.Containers;
 using Robust.Shared.Network;
@@ -34,7 +33,6 @@ public sealed partial class CMSurgerySystem : SharedCMSurgerySystem
 {
     private const string SynthSurgeryOpenQuality = "Screwing";
 
-    [Dependency] private BodySystem _body = default!;
     [Dependency] private ChatSystem _chat = default!;
     [Dependency] private SharedContainerSystem _container = default!;
     [Dependency] private INetManager _net = default!;
@@ -79,7 +77,6 @@ public sealed partial class CMSurgerySystem : SharedCMSurgerySystem
 
         if (IsSynthReattachStepTool(args.Used)
             && TryComp<CMUSurgeryArmedStepComponent>(ent.Owner, out var armed)
-            && armed.Surgeon == args.User
             && armed.LeafSurgeryId == "RMCSynthSurgeryReattachLimb")
         {
             if (!_cmuFlow.ToolMatchesCategory(args.Used, armed.RequiredToolCategory))
@@ -126,15 +123,15 @@ public sealed partial class CMSurgerySystem : SharedCMSurgerySystem
             if (isSynth != HasComp<RMCSynthSurgeryComponent>(surgeryEnt))
                 continue;
 
-            foreach (var part in _body.GetBodyChildren(body))
+            foreach (var part in MedicalIndex.GetBodyParts(body))
             {
-                var ev = new CMSurgeryValidEvent(body, part.Id);
+                var ev = new CMSurgeryValidEvent(body, part.Owner);
                 RaiseLocalEvent(surgeryEnt, ref ev);
 
                 if (ev.Cancelled)
                     continue;
 
-                surgeries.GetOrNew(GetNetEntity(part.Id)).Add(surgery);
+                surgeries.GetOrNew(GetNetEntity(part.Owner)).Add(surgery);
             }
         }
 
@@ -190,18 +187,15 @@ public sealed partial class CMSurgerySystem : SharedCMSurgerySystem
 
     private bool HasMissingSynthLimbSlot(EntityUid patient)
     {
-        if (_body.GetRootPartOrNull(patient) is not { } root)
+        if (!MedicalIndex.TryGetRootPart(patient, out var root))
             return false;
 
-        foreach (var (slotId, slot) in root.BodyPart.Children)
+        foreach (var slot in MedicalIndex.GetBodyPartSlots(root.Owner))
         {
             if (slot.Type is not (BodyPartType.Arm or BodyPartType.Leg))
                 continue;
 
-            var containerId = SharedBodySystem.GetPartSlotContainerId(slotId);
-            if (!_container.TryGetContainer(root.Entity, containerId, out var container))
-                return true;
-            if (container.ContainedEntities.Count == 0)
+            if (slot.Part is null)
                 return true;
         }
 
@@ -329,7 +323,7 @@ public sealed partial class CMSurgerySystem : SharedCMSurgerySystem
         if (!TryComp(args.Body, out TransformComponent? xform))
             return;
 
-        foreach (var entity in _body.GetBodyOrganEntityComps<XenoHeartComponent>(args.Body))
+        foreach (var entity in MedicalIndex.GetOrgans<XenoHeartComponent>(args.Body))
         {
             QueueDel(entity.Owner);
         }

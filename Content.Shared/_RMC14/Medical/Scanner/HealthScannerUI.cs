@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using Content.Shared._CMU14.Medical.Bones;
-using Content.Shared._CMU14.Medical.Organs;
-using Content.Shared._CMU14.Medical.Stabilizers;
-using Content.Shared._CMU14.Medical.Wounds;
+using Content.Shared._CMU14.Medical.Anatomy.Bones;
+using Content.Shared._CMU14.Medical.Anatomy.Organs;
+using Content.Shared._CMU14.Medical.Injuries.Wounds;
 using Content.Shared.Body.Part;
 using Content.Shared.Chemistry.Components;
 using Content.Shared.FixedPoint;
@@ -33,7 +32,6 @@ public sealed class HealthScannerBuiState(
     public List<CMUInternalBleedReadout>? CMUInternalBleeds;
     public int? CMUHeartBpm;
     public bool? CMUHeartStopped;
-    public CMUTraumaGovernorReadout? CMUTraumaGovernor;
     public CMUPainShockRisk? CMUPainShockRisk;
     public bool CMUPainShockSuppressed;
     public bool CMUExternalBleeding;
@@ -49,6 +47,12 @@ public sealed class HealthScannerBuiState(
     public bool VictimBurst;
     public bool VictimInfected;
     public bool HolocardXeno;
+}
+
+[Serializable, NetSerializable]
+public sealed class HealthScannerStateMessage(HealthScannerBuiState state) : BoundUserInterfaceMessage
+{
+    public HealthScannerBuiState State = state;
 }
 
 [Serializable, NetSerializable]
@@ -92,6 +96,7 @@ public readonly record struct CMUBodyPartReadout(
     FixedPoint2 Max,
     WoundSize? WoundDescriptor,
     WoundMechanism? WoundMechanism,
+    FixedPoint2 WoundDamage,
     int ShrapnelFragments,
     float ShrapnelSeverity,
     bool Eschar,

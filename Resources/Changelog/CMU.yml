@@ -3816,8 +3816,7 @@
       moving, with movement checks around 0.75 tile accumulated movement and a 1.25
       second pulse cooldown.
     type: Add
-  - message: "Fracture names changed. The old top tier was \u201CComminuted\u201D\
-      ; it is now \u201CShattered\u201D."
+  - message: Fracture top tier naming is now Shattered everywhere.
     type: Tweak
   - message: Fracture tiers are now Hairline, Simple, Compound, and Shattered.
     type: Tweak
@@ -3844,7 +3843,7 @@
       bone recovery over about 5 minutes.
     type: Tweak
   - message: 'Old fracture movement penalties used direct speed multipliers: Hairline
-      0.95, Simple 0.85, Compound 0.70, Comminuted 0.40.'
+      0.95, Simple 0.85, Compound 0.70, Shattered 0.40.'
     type: Tweak
   - message: New movement penalties use lighter slowdown points instead of harsh direct
       multipliers. Broken regions add 0.65 slowdown points, splinted/eschar regions
@@ -6004,5 +6003,215 @@
   id: 420
   time: '2026-07-10T17:19:35.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1556
+- author: OverusedMeme
+  changes:
+  - message: one syringe to colony medical staff
+    type: Add
+  - message: The unintended extra health analyzer, suture line, synth graft from filled
+      colony life saver bags
+    type: Remove
+  id: 421
+  time: '2026-07-10T20:01:29.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1570
+- author: TheHellFireo
+  changes:
+  - message: Added hands, feet, and the groin as fully supported medical targets for
+      damage, treatment, fractures, severance, scanning, surgery, and prosthetics.
+    type: Add
+  - message: Added expanded body-zone targeting for arms/hands, legs/feet, and chest/groin.
+    type: Add
+  - message: Added wound classifications with distinct cuts, bruises, burns, internal
+      bleeding, and stump wounds.
+    type: Add
+  - message: Wounds now develop descriptive stages such as clots, scabs, healing burns,
+      scars, and carbonised tissue as their damage changes.
+    type: Add
+  - message: Added embedded shrapnel from fragmenting projectiles, xeno spikes, bone
+      spikes, and sufficiently powerful explosions.
+    type: Add
+  - message: Moving while upright with embedded shrapnel can now inflict additional
+      piercing damage and pain. Staying prone or buckled prevents these movement pulses.
+    type: Add
+  - message: Splints and casts now show their remaining uses when examined.
+    type: Add
+  - message: Added locational armor coverage. Only armor covering the struck body
+      region now contributes protection.
+    type: Add
+  - message: Detailed armor examination now lists which regions the armor covers.
+    type: Add
+  - message: Added Sleen, a powerful experimental painkiller with toxic and disorienting
+      overdose effects.
+    type: Add
+  - message: Added Soporific, a sedative painkiller that causes drowsiness and can
+      induce sleep at surgical doses.
+    type: Add
+  - message: Added chemistry recipes for Sleen and Soporific.
+    type: Add
+  - message: Added functional anesthesia through connected internals.
+    type: Add
+  - message: Added an optional CMU setting to perform surgery directly through tool
+      use without opening the surgery interface.
+    type: Add
+  - message: Added the Fix-O-Vein surgical tool for repairing internal bleeding.
+    type: Add
+  - message: Fix-O-Veins are now stocked in medical vendors, surgical trays and cases,
+      and can be produced at the medilathe.
+    type: Add
+  - message: Surgical sites now expose their incision depth, access state, bleeding
+      state, and current procedure through examination.
+    type: Add
+  - message: Added persistent patient-owned surgery sessions, allowing another qualified
+      surgeon to seamlessly continue an operation.
+    type: Add
+  - message: Surgery interfaces and examination now identify the surgeon who performed
+      the most recent step.
+    type: Add
+  - message: Brain damage can now cause blurred vision and disorientation events such
+      as dropping held items, falling over, or becoming dazed.
+    type: Add
+  - message: Eye damage now causes progressively worsening vision impairment and eventual
+      blindness.
+    type: Add
+  - message: Damaged lungs can now cause escalating asphyxiation and bouts of coughing
+      up blood.
+    type: Add
+  - message: Heart damage now causes progressive circulatory consequences and can
+      prevent successful defibrillation.
+    type: Add
+  - message: Liver and kidney damage now cause progressive toxin buildup and reduced
+      metabolic function.
+    type: Add
+  - message: Stomach damage now causes persistent nausea and vomiting.
+    type: Add
+  - message: Missing vital organs now retain their associated medical consequences
+      until a replacement organ is installed.
+    type: Add
+  - message: Moving with an unstabilized serious fracture can now worsen internal
+      bleeding or damage nearby organs.
+    type: Add
+  - message: Added blood, xeno blood, and oil stains to items and worn clothing.
+    type: Add
+  - message: Weapons and tools can become stained when they inflict brute damage;
+      robotic limbs produce black oil instead of blood.
+    type: Add
+  - message: Xeno acid-blood splashes can stain exposed equipment green.
+    type: Add
+  - message: Blood and oil reagent spills can stain directly targeted items and exposed
+      clothing.
+    type: Add
+  - message: Blood puddles can stain equipped footwear
+    type: Add
+  - message: Stained items now display blood-stained or oil-stained examination text.
+    type: Add
+  - message: Water, soap, space cleaner, cleaning puddles, rags, and forensic-cleaning
+      tools can remove visual item stains.
+    type: Add
+  - message: Renamed the highest fracture tier from Comminuted to Shattered throughout
+      the medical system.
+    type: Tweak
+  - message: Wound treatment now prioritizes the selected body part before searching
+      for another valid injury.
+    type: Tweak
+  - message: Added an optional targeted-healing setting that prevents bandages and
+      medical kits from automatically moving to another body part.
+    type: Tweak
+  - message: Automatic wound searching now adds a short delay instead of instantly
+      jumping between unrelated body regions.
+    type: Tweak
+  - message: Repeated wound treatments now proceed through the treatment loop instead
+      of consuming every remaining use at once.
+    type: Tweak
+  - message: Field-treatment times and required supplies now scale with the wound's
+      actual severity.
+    type: Tweak
+  - message: Surgical lines and synth grafts now repair up to 10 damage and respect
+      both regional damage and wound-derived healing caps.
+    type: Tweak
+  - message: Field treatment can no longer immediately restore severely damaged regions
+      beyond their allowed wound-recovery cap.
+    type: Tweak
+  - message: Paracetamol, Tramadol, and Oxycodone now metabolize through the revised
+      pain-suppression system and have clearer overdose and critical-overdose consequences.
+    type: Tweak
+  - message: Surgery on a conscious patient can be interrupted by severe uncontrolled
+      pain.
+    type: Tweak
+  - message: Merely being buckled to a bed or operating table no longer counts as
+      pain control; use anesthesia, unconsciousness, or sufficient painkillers.
+    type: Tweak
+  - message: Disconnecting anesthesia internals now clears anesthesia-induced sleep
+      instead of leaving the patient permanently sedated.
+    type: Tweak
+  - message: Internal bleeding surgery now uses the Fix-O-Vein rather than ordinary
+      hemostats.
+    type: Tweak
+  - message: Closing an incision over uncontrolled surgical bleeding now converts
+      it into internal bleeding.
+    type: Tweak
+  - message: Brain and eye repair now require their vessels to be clamped before repair.
+    type: Tweak
+  - message: Defibrillation now causes a small amount of cardiac trauma and fails
+      when the heart is already too damaged.
+    type: Tweak
+  - message: Stasis now suspends relevant missing-organ and organ-failure damage while
+      the patient cannot metabolize.
+    type: Tweak
+  - message: A melee strike against an incised and retracted chest can shatter exposed
+      ribs, opening a dangerous alternative to sawing the ribcage.
+    type: Tweak
+  - message: Surgery now permits only one active step on a patient at a time, while
+      preserving the operation for handoff between surgeons.
+    type: Tweak
+  - message: Medical scanners now present focused state, damage, blood, heart, missing-organ,
+      and organ-damage information.
+    type: Tweak
+  - message: 'Item stains use a single-stain model: a later blood, xeno blood, or
+      oil stain replaces the previous stain.'
+    type: Tweak
+  - message: Removed trauma governors, their armor integration, their scanner interface,
+      and stabilizer bypass vials.
+    type: Remove
+  - message: Removed ears as a separately tracked damageable organ and surgery target.
+    type: Remove
+  - message: Fixed wound treatment losing or changing its selected body part during
+      repeated applications.
+    type: Fix
+  - message: Fixed wound treatment incorrectly continuing when the selected body part
+      had no eligible wounds.
+    type: Fix
+  - message: Fixed stale and overlapping surgery actions allowing procedures to desynchronize
+      or complete against the wrong session.
+    type: Fix
+  - message: Fixed surgery handoffs incorrectly attributing an entire operation to
+      its first surgeon.
+    type: Fix
+  - message: Fixed surgery pain interruptions completing without appropriate patient
+      feedback.
+    type: Fix
+  - message: Fixed anesthesia state failing to update promptly when internals were
+      connected, changed, or removed.
+    type: Fix
+  - message: Fixed client startup failures involving the medical scheduler.
+    type: Fix
+  - message: Fixed malformed tactical-map settings failing to escape or recover deterministically.
+    type: Fix
+  - message: Fixed medical displays and overlays refreshing from stale or incomplete
+      state.
+    type: Fix
+  - message: Reorganized CMU medical code into clearer anatomy, injury, diagnosis,
+      presentation, treatment, and surgery domains.
+    type: Code
+  - message: Rebuilt medical runtime state around indexed anatomy, centralized change
+      events, snapshots, and scheduled processing.
+    type: Code
+  - message: Reduced repeated medical processing for healthy bodies and mass-casualty
+      situations.
+    type: Code
+  - message: Reduced unnecessary medical networking and UI refreshes while retaining
+      detailed scanner and examination data.
+    type: Code
+  id: 422
+  time: '2026-07-11T16:10:36.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1572
 Name: CMU
 Order: -1

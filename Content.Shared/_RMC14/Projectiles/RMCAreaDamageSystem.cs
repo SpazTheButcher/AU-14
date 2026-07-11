@@ -1,7 +1,7 @@
 using Content.Shared._RMC14.Armor;
 using Content.Shared._RMC14.Stun;
 using Content.Shared._RMC14.Weapons.Ranged.Prediction;
-using Content.Shared._CMU14.Medical.BodyPart;
+using Content.Shared._CMU14.Medical.Anatomy.BodyParts;
 using Content.Shared.Damage;
 using Content.Shared.Effects;
 using Content.Shared.FixedPoint;
