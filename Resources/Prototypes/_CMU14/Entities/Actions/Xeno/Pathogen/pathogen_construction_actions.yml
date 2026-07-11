@@ -212,6 +212,8 @@
     deselectOnMiss: false
   - type: WorldTargetAction
     event: !type:XenoExpandWeedsActionEvent
+      source: CMU14XenoMyceliumWeedsSource
+      expand: CMU14XenoMyceliumWeeds
 
 - type: entity
   id: CMU14ActionXenoPathogenDesignerSelectedDesign

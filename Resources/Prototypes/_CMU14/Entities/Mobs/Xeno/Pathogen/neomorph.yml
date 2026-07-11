@@ -37,6 +37,7 @@
     - CMU14ActionXenoPathogenParalyzingSlash
     - CMU14ActionXenoPathogenDigTunnel
     - CMU14ActionXenoPathogenDevolve
+    - CMU14ActionXenoPathogenOrderConstruction
   - type: TunnelRenamer
   - type: XenoBurrow
   - type: XenoConstruction
@@ -48,6 +49,12 @@
     - CMU14XenoThickMyceliumMembrane
     - CMU14XenoMyceliumDoor
     - CMU14XenoThickMyceliumDoor
+    canOrderConstruction:
+    - CMU14PathogenBlightCoreConstructionNode
+    - CMU14PathogenClusterConstructionNode
+    - CMU14PathogenPlasmaTreeConstructionNode
+    - CMU14PathogenRecoveryNodeConstructionNode
+    - CMU14PathogenSporecasterConstructionNode
   - type: XenoHeadbite
     damage:
       groups:
