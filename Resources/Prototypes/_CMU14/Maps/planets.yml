@@ -31,6 +31,8 @@
     - cultistThreat
     - XenoThreat
     - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
     - wendigoThreat
     - abominationsThreatDistress
 #    - badBloodClanThreat
@@ -145,6 +147,8 @@
     - cultistThreat
     - XenoThreat
     - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
     - wendigoThreat
     - abominationsThreat
     - abominationsThreatDistress
@@ -215,6 +219,7 @@
     threats:
     - cultistThreat
     - XenoThreatCF
+    - NeomorphsThreatCF
     - wendigoThreat
     - abominationsThreat
     - abominationsThreatDistress
@@ -355,6 +360,7 @@
     daycycleenabled: true
     threats:
     - XenoThreat
+    - NeomorphsThreat
     - abominationsThreatDistress
     thirdparties:
     - USArmy
@@ -396,6 +402,7 @@
     faction: ua
     threats:
     - XenoThreatCF
+    - NeomorphsThreatCF
     - wendigoThreat
     - abominationsThreatDistress
 
@@ -463,6 +470,8 @@
     - cultistThreat
     - XenoThreat
     - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
     - wendigoThreat
     - abominationsThreatDistress
 #    - badBloodClanThreat
@@ -530,6 +539,8 @@
     - cultistThreat
     - XenoThreat
     - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
 #    - badBloodClanThreat
 
     thirdparties:
@@ -606,6 +617,8 @@
     - cultistThreatOnMarker
     - XenoThreat
     - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
     - wendigoThreat
     - abominationsThreat
     - abominationsThreatDistress
@@ -669,6 +682,7 @@
     threats:
     - cultistThreat
     - XenoThreat
+    - NeomorphsThreat
     - wendigoThreat
  #   - TribalsThreat
     - abominationsThreatDistress
@@ -732,6 +746,7 @@
     - abominationThirdParty
     threats:
     - XenoThreat
+    - NeomorphsThreat
     #- TribalsThreat
 #    - badBloodClanThreat
 
@@ -790,6 +805,7 @@
     - abominationThirdParty
     threats:
     - XenoThreat
+    - NeomorphsThreat
  #   - TribalsThreat
 #    - badBloodClanThreat
 
@@ -848,6 +864,7 @@
     - abominationThirdParty
     threats:
     - XenoThreat
+    - NeomorphsThreat
 #    - TribalsThreat
 #    - badBloodClanThreat
 
@@ -908,6 +925,7 @@
     threats:
     - abominationsThreatDistress
     - XenoThreat
+    - NeomorphsThreat
 #    - badBloodClanThreat
     jobScalingFof: DefaultGovforOpforScale
     jobScalingIns: DefaultInsurgencyScale
@@ -964,6 +982,7 @@
     threats:
     - abominationsThreatDistress
     - XenoThreat
+    - NeomorphsThreat
 #    - badBloodClanThreat
 
     jobScalingFof: DefaultGovforOpforScale
@@ -1097,6 +1116,7 @@
     - WEYUSurvSmall
     threats:
     - XenoThreat
+    - NeomorphsThreat
     - cultistThreatOnMarker
     - abominationsThreat
     - abominationsThreatDistress
