@@ -55,7 +55,6 @@
     - CMU14XenoNeomorph
     - CMU14XenoBlight
   - type: XenoDevolve
-    actionId: CMU14ActionXenoPathogenDevolve
     devolvesTo:
     - CMU14XenoBloodburster
     canBeDevolvedByOther: false

@@ -40,7 +40,7 @@
     tags:
     - GasMask
   - type: MycotoxinProtection
-    fullprotection: false
+    fullProtection: false
 
 - type: entity
   parent: [CMBaseMask, CMUBaseGasMaskFilterSlot]
@@ -64,7 +64,7 @@
     tags:
     - GasMask
   - type: MycotoxinProtection
-    fullprotection: true
+    fullProtection: true
 
 - type: Tag
   id: GasMask
@@ -101,7 +101,7 @@
   - type: Clothing
     sprite: _RMC14/Objects/Clothing/Mask/medical.rsi
   - type: MycotoxinProtection
-    fullprotection: true
+    fullProtection: true
 
 - type: entity
   parent: CMBaseMask
@@ -118,7 +118,7 @@
   - type: Item
     size: Small
   - type: MycotoxinProtection
-    fullprotection: false
+    fullProtection: false
 
 - type: entity
   parent: [CMBaseMask, CMUBaseGasMaskFilterSlot]
@@ -135,7 +135,7 @@
   - type: Item
     size: Small
   - type: MycotoxinProtection
-    fullprotection: false
+    fullProtection: false
 
 - type: entity
   parent: [CMBaseMask, CMUBaseGasMaskFilterSlot]
@@ -152,7 +152,7 @@
   - type: Item
     size: Small
   - type: MycotoxinProtection
-    fullprotection: false
+    fullProtection: false
 
 # Coifs
 - type: entity
@@ -322,7 +322,7 @@
   - type: Item
     size: Small
   - type: MycotoxinProtection
-    fullprotection: true
+    fullProtection: true
 
 - type: entity
   parent: [CMBaseMask, RMCHelmetGarbToggleableBase]

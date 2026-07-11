@@ -24,7 +24,6 @@
     tier: 0
     hudOffset: -0.1, 0.25
     emoteSounds: Pathogen
-    countsForSlots: false
     actionIds:
     - CMU14ActionXenoPathogenRest
     - CMU14ActionXenoPathogenWatch
@@ -35,7 +34,6 @@
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.0
-    needsWeeds: true
   - type: XenoPlasma
     plasma: 400
     maxPlasma: 400

@@ -62,7 +62,6 @@
     canEvolveWithoutGranter: false
     evolvesTo: []
   - type: XenoDevolve
-    actionId: CMU14ActionXenoPathogenDevolve
     devolvesTo:
     - CMU14XenoBlight
     canBeDevolvedByOther: false

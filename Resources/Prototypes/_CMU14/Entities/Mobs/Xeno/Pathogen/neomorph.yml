@@ -87,7 +87,6 @@
     - CMU14XenoConditor
     - CMU14XenoBrute
   - type: XenoDevolve
-    actionId: CMU14ActionXenoPathogenDevolve
     devolvesTo:
     - CMU14XenoSprinter
     canBeDevolvedByOther: false

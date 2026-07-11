@@ -57,7 +57,6 @@
     - CMU14XenoVenator
     - CMU14XenoHarbinger
   - type: XenoDevolve
-    actionId: CMU14ActionXenoPathogenDevolve
     devolvesTo:
     - CMU14XenoSprinter
     canBeDevolvedByOther: false

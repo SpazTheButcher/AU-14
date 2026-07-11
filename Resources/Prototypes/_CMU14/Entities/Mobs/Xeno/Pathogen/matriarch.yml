@@ -65,7 +65,6 @@
     canEvolveWithoutGranter: false
     evolvesTo: []
   - type: XenoDevolve
-    actionId: CMU14ActionXenoPathogenDevolve
     devolvesTo: []
     canBeDevolvedByOther: false
   - type: XenoPheromones
@@ -124,7 +123,10 @@
   - type: TacticalMapIcon
     icon:
       sprite: /Textures/_RMC14/Interface/map_blips.rsi
-      state: queen
+      state: xenoqueen
+    background:
+      sprite: /Textures/_RMC14/Interface/map_blips.rsi
+      state: xeno_ruler
   - type: Tag
     tags:
     - DoorBumpOpener
