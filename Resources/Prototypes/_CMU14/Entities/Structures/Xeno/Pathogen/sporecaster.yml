@@ -44,8 +44,11 @@
   - type: TacticalMapTracked
   - type: TacticalMapIcon
     icon:
-      sprite: /Textures/_RMC14/Interface/map_blips.rsi
-      state: cluster
+      sprite: /Textures/_CMU14/Interface/neo_blips.rsi
+      state: fogger
+    background:
+      sprite: /Textures/_CMU14/Interface/neo_blips.rsi
+      state: background_pathogen
   - type: GhostRole
     name: cmu-job-name-pathogen-popper
     description: cmu-job-description-pathogen-popper

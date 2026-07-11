@@ -99,8 +99,11 @@
     size: SmallXeno
   - type: TacticalMapIcon
     icon:
-      sprite: /Textures/_RMC14/Interface/map_blips.rsi
-      state: runner
+      sprite: /Textures/_CMU14/Interface/neo_blips.rsi
+      state: sprinter
+    background:
+      sprite: /Textures/_CMU14/Interface/neo_blips.rsi
+      state: background_pathogen
   - type: Tag
     tags:
     - DoorBumpOpener

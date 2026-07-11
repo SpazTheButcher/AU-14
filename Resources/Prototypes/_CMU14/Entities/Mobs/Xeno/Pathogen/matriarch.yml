@@ -121,11 +121,11 @@
     size: Immobile
   - type: TacticalMapIcon
     icon:
-      sprite: /Textures/_RMC14/Interface/map_blips.rsi
-      state: xenoqueen
+      sprite: /Textures/_CMU14/Interface/neo_blips.rsi
+      state: matriarch
     background:
-      sprite: /Textures/_RMC14/Interface/map_blips.rsi
-      state: xeno_ruler
+      sprite: /Textures/_CMU14/Interface/neo_blips.rsi
+      state: background_pathogen
   - type: Tag
     tags:
     - DoorBumpOpener
