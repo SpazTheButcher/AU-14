@@ -27,7 +27,7 @@ public sealed partial class ObjectiveControlSystem
         if (objective.ObjectiveLevel == 3)
         {
             if (objective.FinalType == CMUObjectiveComponent.FinalObjectiveType.InstantWin)
-                EndRound(completingFaction, objective.RoundEndMessage);
+                DeclareObjectiveVictory(completingFaction, objective.RoundEndMessage);
             else
                 _logs.Info($"[OBJ-FINAL] Final objective '{objective.ObjectiveDescription}' completed for faction '{completingFaction}' as Boon (not ending the round).");
         }
@@ -179,7 +179,7 @@ public sealed partial class ObjectiveControlSystem
             _logs.Warning($"[OBJ-TIER] Spawned prototype {protoIdStr} but it does not contain a CMUObjectiveComponent!");
     }
 
-    private void EndRound(string faction, string? roundEndMessage)
+    public void DeclareObjectiveVictory(string faction, string? roundEndMessage)
     {
         var message = roundEndMessage ?? string.Empty;
         var roundEndText = Loc.GetString("objectives-system-round-end",
