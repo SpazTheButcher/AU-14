@@ -24,7 +24,6 @@
     tier: 1
     hudOffset: -0.1, 0.25
     emoteSounds: PathogenAberration
-    countsForSlots: false
     actionIds:
     - CMU14ActionXenoPathogenRest
     - CMU14ActionXenoPathogenWatch

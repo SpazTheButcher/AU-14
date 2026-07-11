@@ -48,7 +48,6 @@
     tier: 3
     hudOffset: -0.1, 0.25
     emoteSounds: Pathogen
-    countsForSlots: false
     actionIds:
     - CMU14ActionXenoPathogenRest
     - CMU14ActionXenoPathogenWatch
@@ -137,7 +136,10 @@
   - type: TacticalMapIcon
     icon:
       sprite: /Textures/_RMC14/Interface/map_blips.rsi
-      state: queen
+      state: xenoqueen
+    background:
+      sprite: /Textures/_RMC14/Interface/map_blips.rsi
+      state: xeno_ruler
   - type: Tag
     tags:
     - DoorBumpOpener
@@ -175,12 +177,6 @@
   parent: CMU14XenoOvermindBase
   id: CMU14XenoOvermind
   name: Overmind
-  components:
-  - type: RMCGibOnDeath
-    gibChance: 0.1
-  - type: RMCSpawnEntitiesOnGib
-    entities:
-    - CMU14GibEffectPathogenOvermind
 
 - type: entity
   parent: StationAiHolo

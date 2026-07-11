@@ -43,7 +43,6 @@
     canEvolveWithoutGranter: false
     evolvesTo: []
   - type: XenoDevolve
-    actionId: CMU14ActionXenoPathogenDevolve
     devolvesTo: []
     canBeDevolvedByOther: false
   - type: XenoPheromones

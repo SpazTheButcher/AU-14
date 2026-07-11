@@ -121,7 +121,7 @@
   - type: VentCrawler
     ventCrawlIcon: larva
   - type: RMCActionOrder
-    id: CMUXenoBloodburster
+    id: CMU14XenoBloodburster
   - type: FixedIdentity
     name: cmu-job-name-pathogen-bloodburster
   - type: Speech
