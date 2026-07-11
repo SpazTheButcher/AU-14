@@ -14,6 +14,7 @@ public sealed partial class CMURoundStatisticsSystem : EntitySystem
     private const string DistressSignalPreset = "DistressSignal";
     private const string InsurgencyPreset = "Insurgency";
     private const string ColonyFallPreset = "ColonyFall";
+    private const string NoPendingOutcomeSource = "NoPendingOutcome";
 
     [Dependency] private AuRoundSystem _auRound = default!;
     [Dependency] private GameTicker _gameTicker = default!;
@@ -120,6 +121,38 @@ public sealed partial class CMURoundStatisticsSystem : EntitySystem
         }
     }
 
+    public void RecordWithdrawal(string? faction, bool isStalemate)
+    {
+        switch (GetCurrentPreset())
+        {
+            case CMURoundStatisticsPreset.DistressSignal:
+                TrySetPendingOutcome(GetDistressWithdrawalOutcome(faction, isStalemate));
+                break;
+            case CMURoundStatisticsPreset.Insurgency:
+                TrySetPendingOutcome(GetInsurgencyWithdrawalOutcome(faction, isStalemate));
+                break;
+            case CMURoundStatisticsPreset.ColonyFall:
+                TrySetPendingOutcome(GetColonyFallWithdrawalOutcome(faction, isStalemate));
+                break;
+        }
+    }
+
+    public void RecordObjectiveVictory(string? faction)
+    {
+        switch (GetCurrentPreset())
+        {
+            case CMURoundStatisticsPreset.DistressSignal:
+                TrySetPendingOutcome(GetDistressObjectiveOutcome(faction));
+                break;
+            case CMURoundStatisticsPreset.Insurgency:
+                TrySetPendingOutcome(GetInsurgencyObjectiveOutcome(faction));
+                break;
+            case CMURoundStatisticsPreset.ColonyFall:
+                TrySetPendingOutcome(GetColonyFallObjectiveOutcome(faction));
+                break;
+        }
+    }
+
     private void TrySetPendingOutcome(PendingRoundOutcome outcome)
     {
         _pendingOutcome ??= outcome;
@@ -155,7 +188,7 @@ public sealed partial class CMURoundStatisticsSystem : EntitySystem
         outcome ??= new PendingRoundOutcome(
             CMURoundStatisticsWinner.Unknown,
             CMURoundStatisticsOutcome.Unknown,
-            "RoundEndMessageEvent");
+            NoPendingOutcomeSource);
 
         var record = new CMURoundOutcomeRecord(
             ev.RoundId,
@@ -241,6 +274,192 @@ public sealed partial class CMURoundStatisticsSystem : EntitySystem
             CMURoundStatisticsWinner.Govfor,
             CMURoundStatisticsOutcome.MarineMajorXenoWipe,
             source);
+    }
+
+    private PendingRoundOutcome GetDistressWithdrawalOutcome(string? faction, bool isStalemate)
+    {
+        var source = GetWithdrawalSource(faction, isStalemate);
+        if (isStalemate)
+        {
+            return new PendingRoundOutcome(
+                CMURoundStatisticsWinner.Draw,
+                CMURoundStatisticsOutcome.Stalemate,
+                source);
+        }
+
+        return new PendingRoundOutcome(
+            CMURoundStatisticsWinner.Xeno,
+            CMURoundStatisticsOutcome.XenoMinorHijackLoss,
+            source);
+    }
+
+    private PendingRoundOutcome GetInsurgencyWithdrawalOutcome(string? faction, bool isStalemate)
+    {
+        var source = GetWithdrawalSource(faction, isStalemate);
+        if (isStalemate)
+        {
+            return new PendingRoundOutcome(
+                CMURoundStatisticsWinner.Draw,
+                CMURoundStatisticsOutcome.Stalemate,
+                source);
+        }
+
+        if (IsGovforFaction(faction))
+        {
+            return new PendingRoundOutcome(
+                CMURoundStatisticsWinner.Clf,
+                CMURoundStatisticsOutcome.InsurgencyClfVictory,
+                source);
+        }
+
+        if (IsOpforFaction(faction))
+        {
+            return new PendingRoundOutcome(
+                CMURoundStatisticsWinner.Govfor,
+                CMURoundStatisticsOutcome.InsurgencyGovforVictory,
+                source);
+        }
+
+        return new PendingRoundOutcome(
+            CMURoundStatisticsWinner.Unknown,
+            CMURoundStatisticsOutcome.Unknown,
+            source);
+    }
+
+    private PendingRoundOutcome GetColonyFallWithdrawalOutcome(string? faction, bool isStalemate)
+    {
+        var source = GetWithdrawalSource(faction, isStalemate);
+        if (isStalemate)
+        {
+            return new PendingRoundOutcome(
+                CMURoundStatisticsWinner.Draw,
+                CMURoundStatisticsOutcome.Stalemate,
+                source);
+        }
+
+        if (IsColonyFaction(faction))
+        {
+            return new PendingRoundOutcome(
+                CMURoundStatisticsWinner.Colonists,
+                CMURoundStatisticsOutcome.ColonyFallSurvivorVictory,
+                source);
+        }
+
+        return new PendingRoundOutcome(
+            CMURoundStatisticsWinner.Unknown,
+            CMURoundStatisticsOutcome.Unknown,
+            source);
+    }
+
+    private PendingRoundOutcome GetInsurgencyObjectiveOutcome(string? faction)
+    {
+        var source = GetObjectiveSource(faction);
+        if (IsGovforFaction(faction))
+        {
+            return new PendingRoundOutcome(
+                CMURoundStatisticsWinner.Govfor,
+                CMURoundStatisticsOutcome.ObjectiveVictory,
+                source);
+        }
+
+        if (IsOpforFaction(faction))
+        {
+            return new PendingRoundOutcome(
+                CMURoundStatisticsWinner.Clf,
+                CMURoundStatisticsOutcome.ObjectiveVictory,
+                source);
+        }
+
+        return new PendingRoundOutcome(
+            CMURoundStatisticsWinner.Unknown,
+            CMURoundStatisticsOutcome.ObjectiveVictory,
+            source);
+    }
+
+    private PendingRoundOutcome GetColonyFallObjectiveOutcome(string? faction)
+    {
+        var source = GetObjectiveSource(faction);
+        if (IsColonyFaction(faction) || IsGovforFaction(faction))
+        {
+            return new PendingRoundOutcome(
+                CMURoundStatisticsWinner.Colonists,
+                CMURoundStatisticsOutcome.ObjectiveVictory,
+                source);
+        }
+
+        if (IsThreatFaction(faction) || IsOpforFaction(faction))
+        {
+            return new PendingRoundOutcome(
+                CMURoundStatisticsWinner.Threat,
+                CMURoundStatisticsOutcome.ObjectiveVictory,
+                source);
+        }
+
+        return new PendingRoundOutcome(
+            CMURoundStatisticsWinner.Unknown,
+            CMURoundStatisticsOutcome.ObjectiveVictory,
+            source);
+    }
+
+    private PendingRoundOutcome GetDistressObjectiveOutcome(string? faction)
+    {
+        var source = GetObjectiveSource(faction);
+        if (IsGovforFaction(faction) || IsColonyFaction(faction))
+        {
+            return new PendingRoundOutcome(
+                CMURoundStatisticsWinner.Govfor,
+                CMURoundStatisticsOutcome.ObjectiveVictory,
+                source);
+        }
+
+        if (IsThreatFaction(faction))
+        {
+            return new PendingRoundOutcome(
+                CMURoundStatisticsWinner.Xeno,
+                CMURoundStatisticsOutcome.ObjectiveVictory,
+                source);
+        }
+
+        return new PendingRoundOutcome(
+            CMURoundStatisticsWinner.Unknown,
+            CMURoundStatisticsOutcome.ObjectiveVictory,
+            source);
+    }
+
+    private static string GetObjectiveSource(string? faction)
+    {
+        return $"AuObjective:{faction ?? "unknown"}";
+    }
+
+    private static string GetWithdrawalSource(string? faction, bool isStalemate)
+    {
+        if (isStalemate)
+            return "WithdrawConsoleStalemate";
+
+        return $"WithdrawConsole:{faction ?? "unknown"}";
+    }
+
+    private static bool IsGovforFaction(string? faction)
+    {
+        return string.Equals(faction, "govfor", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsOpforFaction(string? faction)
+    {
+        return string.Equals(faction, "opfor", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(faction, "clf", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsColonyFaction(string? faction)
+    {
+        return string.Equals(faction, "colony", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(faction, "colonist", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsThreatFaction(string? faction)
+    {
+        return string.Equals(faction, "threat", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(faction, "xeno", StringComparison.OrdinalIgnoreCase);
     }
 
     private CMURoundStatisticsPreset? GetCurrentPreset()

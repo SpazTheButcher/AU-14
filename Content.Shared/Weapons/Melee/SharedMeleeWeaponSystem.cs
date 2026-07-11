@@ -758,7 +758,10 @@ public abstract partial class SharedMeleeWeaponSystem : EntitySystem
         if (!TryComp(user, out TransformComponent? userXform))
             return false;
 
-        var targetMap = TransformSystem.ToMapCoordinates(GetCoordinates(ev.Coordinates));
+        if (!TryGetAttackCoordinates(ev.Coordinates, out var targetCoordinates))
+            return false;
+
+        var targetMap = TransformSystem.ToMapCoordinates(targetCoordinates);
 
         if (targetMap.MapId != userXform.MapID)
             return false;
@@ -768,7 +771,7 @@ public abstract partial class SharedMeleeWeaponSystem : EntitySystem
         var distance = Math.Min(component.Range, direction.Length());
 
         var damage = GetDamage(meleeUid, user, component);
-        var entities = GetEntityList(ev.Entities);
+        var entities = GetValidAttackEntities(ev.Entities);
 
         if (entities.Count == 0)
         {
@@ -869,7 +872,7 @@ public abstract partial class SharedMeleeWeaponSystem : EntitySystem
                 continue;
             }
 
-            var attackedEvent = new AttackedEvent(meleeUid, user, GetCoordinates(ev.Coordinates));
+            var attackedEvent = new AttackedEvent(meleeUid, user, targetCoordinates);
             RaiseLocalEvent(entity, attackedEvent);
             var modifiedDamage = DamageSpecifier.ApplyModifierSets(damage + hitEvent.BonusDamage + attackedEvent.BonusDamage, hitEvent.ModifiersList);
 
@@ -917,6 +920,43 @@ public abstract partial class SharedMeleeWeaponSystem : EntitySystem
         }
 
         return true;
+    }
+
+    private bool TryGetAttackCoordinates(NetCoordinates netCoordinates, out EntityCoordinates coordinates)
+    {
+        coordinates = default;
+
+        if (!float.IsFinite(netCoordinates.Position.X) ||
+            !float.IsFinite(netCoordinates.Position.Y) ||
+            !TryGetEntity(netCoordinates.NetEntity, out var entity) ||
+            entity == null ||
+            TerminatingOrDeleted(entity.Value) ||
+            !HasComp<TransformComponent>(entity.Value))
+        {
+            return false;
+        }
+
+        coordinates = new EntityCoordinates(entity.Value, netCoordinates.Position);
+        return true;
+    }
+
+    private List<EntityUid> GetValidAttackEntities(List<NetEntity> netEntities)
+    {
+        var entities = new List<EntityUid>(netEntities.Count);
+
+        foreach (var netEntity in netEntities)
+        {
+            if (!TryGetEntity(netEntity, out var entity) ||
+                entity == null ||
+                TerminatingOrDeleted(entity.Value))
+            {
+                continue;
+            }
+
+            entities.Add(entity.Value);
+        }
+
+        return entities;
     }
 
     public HashSet<EntityUid> ArcRayCast(Vector2 position, Angle angle, Angle arcWidth, float range, MapId mapId, EntityUid ignore)

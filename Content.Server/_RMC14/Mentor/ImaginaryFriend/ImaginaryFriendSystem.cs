@@ -42,8 +42,9 @@ public sealed partial class ImaginaryFriendSystem : SharedImaginaryFriendSystem
     private static readonly EntProtoId ImaginaryFriendPrototype = "RMCImaginaryFriendHumanoid";
     private static readonly EntProtoId XenoImaginaryFriendPrototype = "RMCImaginaryFriendXeno";
 
-    private static readonly ProtoId<StartingGearPrototype> XenoImaginaryFriendGear = "RMCMobXippyGear";
     private static readonly ProtoId<JobPrototype> ImaginaryFriendJobPrototype = "AU14JobGOVFORadvisor";
+    private static readonly ProtoId<StartingGearPrototype> ImaginaryFriendGear = "AU14GearImaginaryAdvisor";
+    private static readonly ProtoId<StartingGearPrototype> XenoImaginaryFriendGear = "RMCMobXippyGear";
 
     public override void Initialize()
     {
@@ -190,12 +191,14 @@ public sealed partial class ImaginaryFriendSystem : SharedImaginaryFriendSystem
                     break;
                 }
             }
+
             EquipStartingGear(friend);
         }
         else
         {
-            var startingGear = _prototypeManager.Index(XenoImaginaryFriendGear);
-            _stationSpawning.EquipStartingGear(friend, startingGear, raiseEvent: false);
+            _prototypeManager.TryIndex(XenoImaginaryFriendGear, out var startingGear);
+            if (startingGear != null)
+                _stationSpawning.EquipStartingGear(friend, startingGear, raiseEvent: false);
         }
 
         _mind.UnVisit(mindId);
@@ -247,27 +250,36 @@ public sealed partial class ImaginaryFriendSystem : SharedImaginaryFriendSystem
         if (TerminatingOrDeleted(friend))
             return;
 
+        if (_mind.TryGetMind(friend, out var mindId, out var mind)
+                && mind.OriginalOwnedEntity is { } originalEntNet
+                && TryGetEntity(originalEntNet, out var originalEntity))
+            _mind.TransferTo(mindId, originalEntity.Value, mind: mind);
+
         QueueDel(friend);
     }
 
     private void EquipStartingGear(EntityUid friend)
     {
-        if (!_prototypeManager.TryIndex(ImaginaryFriendJobPrototype, out var jobProto))
-            return;
+        bool usedAdvisorGear = _prototypeManager.TryIndex(ImaginaryFriendGear, out var startingGear);
 
-        if (jobProto.StartingGear != null)
-        {
-            var startingGear = _prototypeManager.Index<StartingGearPrototype>(jobProto.StartingGear);
+        if (!usedAdvisorGear
+            && _prototypeManager.TryIndex(ImaginaryFriendJobPrototype, out var jobProto)
+            && jobProto.StartingGear is { } jobGearId)
+            _prototypeManager.TryIndex(jobGearId, out startingGear);
+
+        if (startingGear != null)
             _stationSpawning.EquipStartingGear(friend, startingGear, raiseEvent: false);
-        }
 
-        // Remove the satchel & stamp + add the drill instructor hat
-        if (_inventory.TryGetSlotEntity(friend, "back", out var backItem))
-            Del(backItem.Value);
-        if (_inventory.TryGetSlotEntity(friend, "pocket1", out var pocket1Item))
-            Del(pocket1Item.Value);
-        var hat = Spawn("CMHeadCapDrill", Transform(friend).Coordinates);
-        _inventory.TryEquip(friend, hat, "head");
+        if (!usedAdvisorGear)
+        {
+            // Remove the satchel & stamp + add the drill instructor hat
+            if (_inventory.TryGetSlotEntity(friend, "back", out var backItem))
+                Del(backItem.Value);
+            if (_inventory.TryGetSlotEntity(friend, "pocket1", out var pocket1Item))
+                Del(pocket1Item.Value);
+            var hat = Spawn("CMHeadCapDrill", Transform(friend).Coordinates);
+            _inventory.TryEquip(friend, hat, "head");
+        }
 
         var ev = new StartingGearEquippedEvent(friend);
         RaiseLocalEvent(friend, ref ev);

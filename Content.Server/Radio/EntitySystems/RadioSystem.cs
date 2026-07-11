@@ -233,9 +233,12 @@ public sealed partial class RadioSystem : EntitySystem
 
             var listenerEntity = ResolveRadioListener(receiver);
 
-            if (listenerEntity.HasValue && !_language.CanUnderstand(listenerEntity.Value, currentLanguage))
+            if (listenerEntity.HasValue &&
+                listenerEntity.Value != messageSource &&
+                !_language.CanUnderstand(listenerEntity.Value, currentLanguage))
             {
                 actualName = _chat.GetSpeakerNameForListener(messageSource, listenerEntity, name);
+                actualMessage = _language.ObfuscateMessageForListener(listenerEntity.Value, message, currentLanguage);
 
                 actualWrappedMessage = Loc.GetString(
                     speech.Bold ? "chat-radio-message-wrap-bold" : "chat-radio-message-wrap",
@@ -260,7 +263,7 @@ public sealed partial class RadioSystem : EntitySystem
 
             var chatMsg = new MsgChatMessage { Message = chat };
             var ev = new RadioReceiveEvent(
-                actualMessage,
+                message,
                 messageSource,
                 channel,
                 radioSource,

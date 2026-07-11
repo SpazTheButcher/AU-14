@@ -60,8 +60,14 @@ public abstract partial class SharedOnCollideSystem : EntitySystem
 
     private void OnCollide(Entity<DamageOnCollideComponent> ent, EntityUid other)
     {
+        if (TerminatingOrDeleted(other))
+            return;
+
         if (ent.Comp.Disabled)
             return;
+
+        if (ent.Comp.Chain is { } chain && TerminatingOrDeleted(chain))
+            ent.Comp.Chain = null;
 
         if (ent.Comp.Damaged.Contains(other))
             return;
@@ -169,9 +175,13 @@ public abstract partial class SharedOnCollideSystem : EntitySystem
             while (query.MoveNext(out var uid, out var comp))
             {
                 if (comp.InitDamaged)
+                {
+                    PruneDamaged(comp);
                     continue;
+                }
 
                 comp.InitDamaged = true;
+                PruneDamaged(comp);
                 _damageOnCollide.Add((uid, comp));
             }
 
@@ -187,5 +197,13 @@ public abstract partial class SharedOnCollideSystem : EntitySystem
         {
             _damageOnCollide.Clear();
         }
+    }
+
+    private void PruneDamaged(DamageOnCollideComponent comp)
+    {
+        comp.Damaged.RemoveWhere(uid => TerminatingOrDeleted(uid));
+
+        if (comp.Chain is { } chain && TerminatingOrDeleted(chain))
+            comp.Chain = null;
     }
 }

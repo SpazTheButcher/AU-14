@@ -1,5 +1,5 @@
 - type: entity
-  id: AU14LanguagePresetXeno
+  id: AU14LanguagePresetXenoCultist
   name: Xenoish Language
   categories: [ HideSpawnMenu ]
   components:
@@ -7,9 +7,11 @@
     spokenLanguages:
     - English
     - Xeno
+    - Latin
     understoodLanguages:
     - English
     - Xeno
+    - Latin
     currentLanguage: English
     defaultLanguage: English
 
@@ -42,16 +44,3 @@
     - Arcturian
     currentLanguage: Arcturian
     defaultLanguage: Arcturian
-
-- type: entity
-  id: CMUPathogenLanguagePreset
-  name: Pathogen Language
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Language
-    spokenLanguages:
-    - Pathogen
-    understoodLanguages:
-    - Pathogen
-    currentLanguage: Pathogen
-    defaultLanguage: Pathogen
