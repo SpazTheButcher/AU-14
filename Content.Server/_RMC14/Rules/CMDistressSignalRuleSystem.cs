@@ -233,6 +233,7 @@ public sealed partial class CMDistressSignalRuleSystem : GameRuleSystem<CMDistre
         SubscribeLocalEvent<RoundEndMessageEvent>(OnRoundEndMessage);
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestartCleanup);
         SubscribeLocalEvent<DropshipLandedOnPlanetEvent>(OnDropshipLandedOnPlanet);
+        SubscribeLocalEvent<DropshipHijackDeclinedEvent>(OnDropshipHijackDeclined);
         SubscribeLocalEvent<DropshipHijackStartEvent>(OnDropshipHijackStart);
         SubscribeLocalEvent<DropshipHijackLandedEvent>(OnDropshipHijackLanded);
 
@@ -846,6 +847,13 @@ public sealed partial class CMDistressSignalRuleSystem : GameRuleSystem<CMDistre
             _config.SetCVar(RMCCVars.CMMarinesPerXeno, value);
             break;
         }
+    }
+
+    private void OnDropshipHijackDeclined(ref DropshipHijackDeclinedEvent ev)
+    {
+        ev.Handled = TryEndActiveDistressRound(
+            DistressSignalRuleResult.MinorXenoVictory,
+            "cmu-distress-signal-minorxenovictory-no-hijack");
     }
 
     private void OnDropshipHijackStart(ref DropshipHijackStartEvent ev)

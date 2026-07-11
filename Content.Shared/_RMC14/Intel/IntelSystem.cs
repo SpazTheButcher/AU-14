@@ -536,6 +536,10 @@ public sealed partial class IntelSystem : EntitySystem
 
     private void OnConsoleInteractHand(Entity<IntelConsoleComponent> ent, ref InteractHandEvent args)
     {
+        // CMU14 - claimable enemy intel consoles handle this interaction first.
+        if (args.Handled)
+            return;
+
         var msg = "You start typing in intel into the computer...";
         if (!TryComp(args.User, out IntelKnowledgeComponent? knowledge) ||
             !knowledge.Read.TryFirstOrNull(out var read))

@@ -6213,5 +6213,47 @@
   id: 422
   time: '2026-07-11T16:10:36.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1572
+- author: Crime481
+  changes:
+  - message: Added HUD and menu icons for the Vehicle Crewman role.
+    type: Add
+  - message: Fixed GOVFOR Vehicle Crewman having it's tactical map icon exceeding
+      the background borders.
+    type: Fix
+  id: 423
+  time: '2026-07-11T16:56:38.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1571
+- author: TheHellFireo
+  changes:
+  - message: Allows the queen to not hijack the dropship and end the round as a minor
+      xeno victory.
+    type: Add
+  id: 424
+  time: '2026-07-11T21:48:14.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1575
+- author: TheHellFireo
+  changes:
+  - message: Allow armed SHARP mines to collide with and detonate from bullets or
+      xeno spit.
+    type: Fix
+  - message: Make SHARP darts inherit the operator's IFF so they pass through friendlies.
+    type: Fix
+  id: 425
+  time: '2026-07-11T21:48:27.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1577
+- author: TheHellFireo
+  changes:
+  - message: Medical Hud resets after no injuries left
+    type: Add
+  id: 426
+  time: '2026-07-11T21:48:29.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1576
+- author: TheHellFireo
+  changes:
+  - message: Govfor can seize the CLF's intel console to end the round and win.
+    type: Add
+  id: 427
+  time: '2026-07-11T21:49:19.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1578
 Name: CMU
 Order: -1
