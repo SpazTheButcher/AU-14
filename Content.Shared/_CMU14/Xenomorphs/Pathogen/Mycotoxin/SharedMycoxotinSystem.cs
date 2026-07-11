@@ -29,6 +29,7 @@ public sealed class SharedMycotoxinSystem : EntitySystem
     [Dependency] private readonly SharedXenoParasiteSystem _parasite = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly SharedBodySystem _body = default!;
+    [Dependency] private readonly SharedCMUWoundsSystem _wounds = default!;
 
     public override void Initialize()
     {
@@ -112,14 +113,8 @@ public sealed class SharedMycotoxinSystem : EntitySystem
     {
         foreach (var (partUid, _) in _body.GetBodyChildren(target))
         {
-            if (!TryComp<BodyPartWoundComponent>(partUid, out var wounds))
-                continue;
-
-            foreach (var entry in wounds.Entries)
-            {
-                if (!entry.Wound.Treated)
-                    return true;
-            }
+            if (_wounds.HasOpenWound(partUid))
+                return true;
         }
 
         return false;
