@@ -284,7 +284,7 @@
             "name": "crest_defense"
         },
         {
-            "name": "acid_mine _UNUSED_"
+            "name": "acid_mine_UNUSED_"
         },
         {
             "name": "burrow"
@@ -416,7 +416,7 @@
             "name": "warden_rejuvenate"
         },
         {
-            "name": "reflective resin wall (OLD)"
+            "name": "reflective_resin_wall_(OLD)"
         },
         {
             "name": "place_queen_beacon"
@@ -455,7 +455,7 @@
             "name": "apply_salve"
         },
         {
-            "name": "christmas festivizer"
+            "name": "christmas_festivizer"
         },
         {
             "name": "soak"
@@ -521,7 +521,7 @@
             "name": "grow_ovipositor"
         },
         {
-            "name": "reflective resin wall"
+            "name": "reflective_resin_wall"
         },
         {
             "name": "ready_charge"
