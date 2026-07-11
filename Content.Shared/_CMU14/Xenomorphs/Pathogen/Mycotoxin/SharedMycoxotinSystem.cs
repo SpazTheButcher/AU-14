@@ -13,6 +13,8 @@ using Content.Shared._CMU14.Xenomorphs.Pathogen.SporeCloud;
 using Content.Shared.Mobs;
 using Robust.Shared.GameObjects;
 using Content.Shared.Popups;
+using Content.Shared._CMU14.Medical.Wounds;
+using Content.Shared.Body.Systems;
 
 namespace Content.Shared._CMU14.Xenomorphs.Pathogen.Mycotoxin;
 
@@ -26,6 +28,7 @@ public sealed class SharedMycotoxinSystem : EntitySystem
     [Dependency] private readonly SharedXenoHiveSystem _hive = default!;
     [Dependency] private readonly SharedXenoParasiteSystem _parasite = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private readonly SharedBodySystem _body = default!;
 
     public override void Initialize()
     {
@@ -74,6 +77,10 @@ public sealed class SharedMycotoxinSystem : EntitySystem
     /// </summary>
     private bool IsProtected(EntityUid target)
     {
+        // Open wounds let mycotoxin in directly, bypassing mask/head protection.
+        if (HasOpenWound(target))
+            return false;
+
         MycotoxinProtectionComponent? single = null;
         var protectiveItemCount = 0;
 
@@ -85,7 +92,6 @@ public sealed class SharedMycotoxinSystem : EntitySystem
             if (!TryComp(item, out MycotoxinProtectionComponent? protection))
                 continue;
 
-            // A single fully-protective item always blocks outright.
             if (protection.FullProtection)
                 return true;
 
@@ -93,13 +99,28 @@ public sealed class SharedMycotoxinSystem : EntitySystem
             single = protection;
         }
 
-        // Two or more partial-protection items together count as full protection.
         if (protectiveItemCount >= 2)
             return true;
 
-        // Exactly one partial-protection item: roll its chance as before.
         if (protectiveItemCount == 1 && single != null)
             return _random.Prob(single.PartialBlockChance);
+
+        return false;
+    }
+
+    private bool HasOpenWound(EntityUid target)
+    {
+        foreach (var (partUid, _) in _body.GetBodyChildren(target))
+        {
+            if (!TryComp<BodyPartWoundComponent>(partUid, out var wounds))
+                continue;
+
+            foreach (var wound in wounds.Wounds)
+            {
+                if (!wound.Treated)
+                    return true;
+            }
+        }
 
         return false;
     }

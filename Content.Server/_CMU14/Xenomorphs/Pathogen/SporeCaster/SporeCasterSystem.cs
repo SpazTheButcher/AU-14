@@ -15,6 +15,9 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Content.Shared.Interaction;
+using Content.Shared.Body.Systems;
+using Content.Shared._CMU14.Medical.BodyPart;
+using Content.Shared._CMU14.Medical.Wounds;
 
 namespace Content.Server._CMU14.Xenomorphs.Pathogen.Sporecaster;
 
@@ -28,7 +31,8 @@ public sealed class CMUPathogenSporecasterSystem : EntitySystem
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly InventorySystem _inventory = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
-
+    [Dependency] private readonly SharedBodySystem _body = default!;
+    
     private readonly HashSet<Entity<MobStateComponent>> _nearby = new();
 
     public override void Initialize()
@@ -153,6 +157,9 @@ public sealed class CMUPathogenSporecasterSystem : EntitySystem
 
     private bool IsProtected(EntityUid target)
     {
+        if (HasOpenWound(target))
+            return false;
+
         MycotoxinProtectionComponent? single = null;
         var count = 0;
 
@@ -176,6 +183,23 @@ public sealed class CMUPathogenSporecasterSystem : EntitySystem
 
         if (count == 1 && single != null)
             return _random.Prob(single.PartialBlockChance);
+
+        return false;
+    }
+
+    private bool HasOpenWound(EntityUid target)
+    {
+        foreach (var (partUid, _) in _body.GetBodyChildren(target))
+        {
+            if (!TryComp<BodyPartWoundComponent>(partUid, out var wounds))
+                continue;
+
+            foreach (var wound in wounds.Wounds)
+            {
+                if (!wound.Treated)
+                    return true;
+            }
+        }
 
         return false;
     }

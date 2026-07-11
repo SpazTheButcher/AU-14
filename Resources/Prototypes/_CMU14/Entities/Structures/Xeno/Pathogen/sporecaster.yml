@@ -79,3 +79,12 @@
     id: CMU14PathogenSporecaster
   - type: WarpPoint
     location: sporecaster
+  - type: GhostRole
+    name: cmu-job-name-pathogen-popper
+    description: cmu-job-description-pathogen-popper
+    raffle:
+      settings: short
+  - type: GhostRoleMobSpawner
+    availableTakeovers: 2
+    deleteOnSpawn: false
+    prototype: CMU14XenoPopper
