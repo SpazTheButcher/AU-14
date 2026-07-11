@@ -13,7 +13,7 @@ using Content.Shared._CMU14.Xenomorphs.Pathogen.SporeCloud;
 using Content.Shared.Mobs;
 using Robust.Shared.GameObjects;
 using Content.Shared.Popups;
-using Content.Shared._CMU14.Medical.Wounds;
+using Content.Shared._CMU14.Medical.Injuries.Wounds;
 using Content.Shared.Body.Systems;
 
 namespace Content.Shared._CMU14.Xenomorphs.Pathogen.Mycotoxin;
@@ -115,9 +115,9 @@ public sealed class SharedMycotoxinSystem : EntitySystem
             if (!TryComp<BodyPartWoundComponent>(partUid, out var wounds))
                 continue;
 
-            foreach (var wound in wounds.Wounds)
+            foreach (var entry in wounds.Entries)
             {
-                if (!wound.Treated)
+                if (!entry.Wound.Treated)
                     return true;
             }
         }

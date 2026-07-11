@@ -16,8 +16,7 @@ using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Content.Shared.Interaction;
 using Content.Shared.Body.Systems;
-using Content.Shared._CMU14.Medical.BodyPart;
-using Content.Shared._CMU14.Medical.Wounds;
+using Content.Shared._CMU14.Medical.Injuries.Wounds;
 
 namespace Content.Server._CMU14.Xenomorphs.Pathogen.Sporecaster;
 
@@ -32,7 +31,7 @@ public sealed class CMUPathogenSporecasterSystem : EntitySystem
     [Dependency] private readonly InventorySystem _inventory = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly SharedBodySystem _body = default!;
-    
+
     private readonly HashSet<Entity<MobStateComponent>> _nearby = new();
 
     public override void Initialize()
@@ -194,9 +193,9 @@ public sealed class CMUPathogenSporecasterSystem : EntitySystem
             if (!TryComp<BodyPartWoundComponent>(partUid, out var wounds))
                 continue;
 
-            foreach (var wound in wounds.Wounds)
+            foreach (var entry in wounds.Entries)
             {
-                if (!wound.Treated)
+                if (!entry.Wound.Treated)
                     return true;
             }
         }
