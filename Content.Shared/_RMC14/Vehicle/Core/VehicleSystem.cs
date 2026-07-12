@@ -160,24 +160,27 @@ public sealed partial class VehicleSystem : EntitySystem
             PruneTrackedOccupants(ent.Owner, interior);
 
         var isXeno = HasComp<XenoComponent>(user);
-        if (!isGhost && isXeno)
+        if (!isGhost)
         {
-            if (ent.Comp.MaxXenos > 0 &&
-                !interior.Xenos.Contains(user) &&
-                CountLivingOccupants(interior.Xenos) >= ent.Comp.MaxXenos)
+            if (isXeno)
             {
-                _popup.PopupEntity(Loc.GetString("rmc-vehicle-enter-xeno-full"), user, user);
-                return false;
+                if (ent.Comp.MaxXenos > 0 &&
+                    !interior.Xenos.Contains(user) &&
+                    CountLivingOccupants(interior.Xenos) >= ent.Comp.MaxXenos)
+                {
+                    _popup.PopupEntity(Loc.GetString("rmc-vehicle-enter-xeno-full"), user, user);
+                    return false;
+                }
             }
-        }
-        else
-        {
-            if (ent.Comp.MaxPassengers > 0 &&
-                !interior.Passengers.Contains(user) &&
-                CountLivingOccupants(interior.Passengers) >= ent.Comp.MaxPassengers)
+            else
             {
-                _popup.PopupEntity(Loc.GetString("rmc-vehicle-enter-passenger-full"), user, user);
-                return false;
+                if (ent.Comp.MaxPassengers > 0 &&
+                    !interior.Passengers.Contains(user) &&
+                    CountLivingOccupants(interior.Passengers) >= ent.Comp.MaxPassengers)
+                {
+                    _popup.PopupEntity(Loc.GetString("rmc-vehicle-enter-passenger-full"), user, user);
+                    return false;
+                }
             }
         }
 

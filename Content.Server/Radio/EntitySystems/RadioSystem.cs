@@ -4,7 +4,6 @@ using Content.Server.Chat.Systems;
 using Content.Server.Power.Components;
 using Content.Server.Radio.Components;
 using Content.Shared._CMU14.Yautja;
-// RMC14
 using Content.Server._RMC14.Language.Systems;
 using Content.Shared._RMC14.Chat;
 using Content.Shared._RMC14.Language.Prototypes;
@@ -92,7 +91,7 @@ public sealed partial class RadioSystem : EntitySystem
             return;
 
         // CMU14
-        var msg = AddGhostFollowButton(args.ChatMsg, args.MessageSource, actor.PlayerSession.Channel);
+        var msg = AddChatActionButtons(args.ChatMsg, args.MessageSource, actor.PlayerSession.Channel);
         _netMan.ServerSendMessage(msg, actor.PlayerSession.Channel);
         // CMU14
     }
@@ -161,7 +160,7 @@ public sealed partial class RadioSystem : EntitySystem
             speech = _chat.GetSpeechVerb(messageSource, message);
 
         var content = escapeMarkup
-            ? FormattedMessage.EscapeText(message)
+            ? _chat.ResolveBoldSentinels(FormattedMessage.EscapeText(message))
             : message;
 
         // RMC14
@@ -248,7 +247,7 @@ public sealed partial class RadioSystem : EntitySystem
                     ("verb", verb),
                     ("channel", $"\\[{channel.LocalizedName}\\]"),
                     ("name", FormattedMessage.EscapeText(actualName)),
-                    ("message", escapeMarkup ? FormattedMessage.EscapeText(actualMessage) : actualMessage));
+                    ("message", escapeMarkup ? _chat.ResolveBoldSentinels(FormattedMessage.EscapeText(actualMessage)) : actualMessage));
             }
 
             var chat = new ChatMessage(
@@ -319,14 +318,18 @@ public sealed partial class RadioSystem : EntitySystem
     {
         foreach (var session in Filter.Empty().AddWhereAttachedEntity(HasComp<GhostHearingComponent>).Recipients)
         {
-            _netMan.ServerSendMessage(AddGhostFollowButton(chatMsg, messageSource, session.Channel), session.Channel);
+            _netMan.ServerSendMessage(AddChatActionButtons(chatMsg, messageSource, session.Channel), session.Channel);
         }
     }
 
-    private MsgChatMessage AddGhostFollowButton(MsgChatMessage chatMsg, EntityUid messageSource, INetChannel recipient)
+    private MsgChatMessage AddChatActionButtons(MsgChatMessage chatMsg, EntityUid messageSource, INetChannel recipient)
     {
-        var wrappedMessage = _chatManager.AddGhostFollowButton(
+        var ghostWrappedMessage = _chatManager.AddGhostFollowButton(
             chatMsg.Message.WrappedMessage,
+            messageSource,
+            recipient);
+        var wrappedMessage = _chatManager.AddXenoWatchButton(
+            ghostWrappedMessage,
             messageSource,
             recipient);
 
@@ -338,7 +341,12 @@ public sealed partial class RadioSystem : EntitySystem
             Message = new ChatMessage(chatMsg.Message)
             {
                 WrappedMessage = wrappedMessage,
-                GhostFollowEntity = GetNetEntity(messageSource),
+                GhostFollowEntity = ghostWrappedMessage != chatMsg.Message.WrappedMessage
+                    ? GetNetEntity(messageSource)
+                    : NetEntity.Invalid,
+                XenoWatchEntity = wrappedMessage != ghostWrappedMessage
+                    ? GetNetEntity(messageSource)
+                    : NetEntity.Invalid,
             },
         };
     }

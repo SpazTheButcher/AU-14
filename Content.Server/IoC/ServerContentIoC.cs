@@ -1,4 +1,5 @@
 using Content.Server._CMU14.Administration.Console;
+using Content.Server._CMU14.Diagnostics.Performance;
 using Content.Server._RMC14.Actions;
 using Content.Server._RMC14.Admin;
 using Content.Server._RMC14.Commendations;
@@ -91,6 +92,7 @@ namespace Content.Server.IoC
 
             // CMU14
             IoCManager.Register<ServerLogsDownloadManager>();
+            IoCManager.Register<ICMUServerPerformanceDiagnostics, CMUServerPerformanceDiagnosticsManager>();
 
             // RMC14
             IoCManager.Register<LinkAccountManager>();

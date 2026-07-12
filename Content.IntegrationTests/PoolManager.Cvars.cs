@@ -1,4 +1,5 @@
 #nullable enable
+using Content.Shared._CMU14.BalanceRating;
 using Content.Shared.CCVar;
 using Robust.Shared;
 using Robust.Shared.Configuration;
@@ -40,6 +41,7 @@ public static partial class PoolManager
         (CCVars.InteractionRateLimitCount.Name, "9999999"),
         (CCVars.InteractionRateLimitPeriod.Name, "0.1"),
         (CCVars.MovementMobPushing.Name, "false"),
+        (CMUBalanceRatingCVars.AutomaticEnabled.Name, "false"),
     };
 
     public static async Task SetupCVars(RobustIntegrationTest.IntegrationInstance instance, PoolSettings settings)

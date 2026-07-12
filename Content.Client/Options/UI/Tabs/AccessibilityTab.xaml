@@ -12,6 +12,12 @@
                 <Label Name="AnnouncementPresetOverridesLabel" Text="{Loc 'rmc-ui-options-announcements-style-per-announcement'}"
                         StyleClasses="LabelKeyText"/>
                 <BoxContainer Name="AnnouncementPresetOverridesContainer" Orientation="Vertical" />
+                <ui:OptionDropDown Name="RMCNightVisionColorDropDown" Title="{Loc 'rmc-ui-options-night-vision-color'}" />
+                <Label Text="{Loc 'ui-options-accessability-header-cmu'}"
+                       StyleClasses="LabelKeyText"/>
+                <CheckBox Name="ExplosionScreenShakeEnabledCheckBox" Text="{Loc 'ui-options-explosion-screen-shake-enabled'}" />
+                <CheckBox Name="ExplosionScreenShakeIgnoreFarCheckBox" Text="{Loc 'ui-options-explosion-screen-shake-ignore-far'}" />
+                <CheckBox Name="FirearmScreenShakeEnabledCheckBox" Text="{Loc 'ui-options-firearm-screen-shake-enabled'}" />
                 <Label Text="{Loc 'ui-options-accessability-header-visuals'}"
                        StyleClasses="LabelKeyText"/>
                 <CheckBox Name="ReducedMotionCheckBox" Text="{Loc 'ui-options-reduced-motion'}" />

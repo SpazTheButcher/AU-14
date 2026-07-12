@@ -20,13 +20,10 @@ public sealed partial class FootPrintsSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private SharedXenoWeedsSystem _weeds = default!;
 
-    private EntityQuery<DecalGridComponent> _decalGridQuery;
     private EntityQuery<MapGridComponent> _gridQuery;
     private EntityQuery<MobThresholdsComponent> _mobThresholdQuery;
     private EntityQuery<TransformComponent> _transformQuery;
 
-    // Cap how many footprint decals can coexist on a single tile.
-    private const int MaxFootprintsPerTile = 8;
     private static readonly Vector2 DecalCenterOffset = new(-0.5f, -0.5f);
     private static readonly Angle DraggingRotationOffset = Angle.FromDegrees(-90f);
     private static readonly Angle StepRotationOffset = Angle.FromDegrees(180f);
@@ -39,7 +36,6 @@ public sealed partial class FootPrintsSystem : EntitySystem
     {
         base.Initialize();
 
-        _decalGridQuery = GetEntityQuery<DecalGridComponent>();
         _gridQuery = GetEntityQuery<MapGridComponent>();
         _mobThresholdQuery = GetEntityQuery<MobThresholdsComponent>();
         _transformQuery = GetEntityQuery<TransformComponent>();
@@ -82,16 +78,10 @@ public sealed partial class FootPrintsSystem : EntitySystem
 
         if (!dragging)
         {
-            if (IsFootprintTileAtCap(gridUid, spawnCoords, component, gridComp, draggingOnly: false))
-                return;
-
             SpawnStepFootprintDecal(component, transform, gridUid, spawnCoords, gridComp);
             component.StepPos = transform.LocalPosition;
             return;
         }
-
-        if (IsFootprintTileAtCap(gridUid, spawnCoords, component, gridComp, draggingOnly: true))
-            return;
 
         var stepColor = GetFootprintColor(component, gridUid, spawnCoords, gridComp);
 
@@ -170,70 +160,5 @@ public sealed partial class FootPrintsSystem : EntitySystem
     private static ProtoId<DecalPrototype> PickStepDecal(FootPrintsComponent component)
     {
         return component.RightStep ? component.RightBareDecal : component.LeftBareDecal;
-    }
-
-    private bool IsFootprintTileAtCap(
-        EntityUid gridUid,
-        EntityCoordinates spawnCoords,
-        FootPrintsComponent component,
-        MapGridComponent? gridComp,
-        bool draggingOnly)
-    {
-        if (gridComp == null ||
-            !_decalGridQuery.TryComp(gridUid, out var decalGrid))
-        {
-            return false;
-        }
-
-        var tile = _map.CoordinatesToTile(gridUid, gridComp, spawnCoords);
-        return IsFootprintTileAtCap(gridUid, tile, component, decalGrid, draggingOnly);
-    }
-
-    private bool IsFootprintTileAtCap(
-        EntityUid gridUid,
-        Vector2i tile,
-        FootPrintsComponent component,
-        DecalGridComponent decalGrid,
-        bool draggingOnly)
-    {
-        var min = new Vector2(tile.X, tile.Y);
-        var bounds = new Box2(min, min + Vector2.One);
-        var chunkCollection = decalGrid.ChunkCollection.ChunkCollection;
-        var chunks = new Robust.Shared.Map.Enumerators.ChunkIndicesEnumerator(bounds, SharedDecalSystem.ChunkSize);
-        var count = 0;
-
-        while (chunks.MoveNext(out var chunkOrigin))
-        {
-            if (!chunkCollection.TryGetValue(chunkOrigin.Value, out var chunk))
-                continue;
-
-            foreach (var (_, decal) in chunk.Decals)
-            {
-                if (!bounds.Contains(decal.Coordinates))
-                    continue;
-
-                if (!IsFootprintDecal(decal.Id, component, draggingOnly))
-                    continue;
-
-                count++;
-
-                if (count >= MaxFootprintsPerTile)
-                    return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static bool IsFootprintDecal(string id, FootPrintsComponent component, bool draggingOnly)
-    {
-        if (component.DraggingDecals.Contains(id))
-            return true;
-
-        return !draggingOnly &&
-               (id == component.LeftBareDecal ||
-                id == component.RightBareDecal ||
-                id == component.ShoesDecal ||
-                id == component.SuitDecal);
     }
 }

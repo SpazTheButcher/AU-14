@@ -4,7 +4,9 @@ using Content.Client._RMC14.Attachable.Systems;
 using Content.Client.Clothing;
 using Content.Client.Items.Systems;
 using Content.Shared._RMC14.Attachable.Components;
+using Content.Shared._RMC14.Clothing;
 using Content.Shared._RMC14.Item;
+using Content.Shared._RMC14.UniformAccessories;
 using Content.Shared.Clothing.Components;
 using Content.Shared.Item;
 using Content.Shared.Hands;
@@ -171,6 +173,47 @@ public sealed partial class ItemCamouflageVisualizerSystem : VisualizerSystem<It
                 {
                     _attachableHolderVisuals.RefreshVisuals((container.Owner, holder), (uid, visuals), visuals.LastSlotId, visuals.LastSuffix);
                 }
+            }
+
+            if (TryComp(uid, out HelmetAccessoryComponent? accessory))
+            {
+#pragma warning disable RA0002
+                accessory.Rsi = new SpriteSpecifier.Rsi(rsi, accessory.Rsi.RsiState);
+
+                if (accessory.HatRsi != null)
+                    accessory.HatRsi = new SpriteSpecifier.Rsi(rsi, accessory.HatRsi.RsiState);
+
+                if (accessory.ToggledRsi != null)
+                    accessory.ToggledRsi = new SpriteSpecifier.Rsi(rsi, accessory.ToggledRsi.RsiState);
+
+                if (accessory.HatToggledRsi != null)
+                    accessory.HatToggledRsi = new SpriteSpecifier.Rsi(rsi, accessory.HatToggledRsi.RsiState);
+#pragma warning restore RA0002
+
+                if (_container.TryGetContainingContainer((uid, null), out var accessoryContainer))
+                    _item.VisualsChanged(accessoryContainer.Owner);
+            }
+
+            if (TryComp(uid, out OuterClothingAccessoryComponent? outerAccessory))
+            {
+#pragma warning disable RA0002
+                outerAccessory.Rsi = new SpriteSpecifier.Rsi(rsi, outerAccessory.Rsi.RsiState);
+
+                if (outerAccessory.ToggledRsi != null)
+                    outerAccessory.ToggledRsi = new SpriteSpecifier.Rsi(rsi, outerAccessory.ToggledRsi.RsiState);
+#pragma warning restore RA0002
+
+                if (_container.TryGetContainingContainer((uid, null), out var outerAccessoryContainer))
+                    _item.VisualsChanged(outerAccessoryContainer.Owner);
+            }
+
+            if (TryComp(uid, out UniformAccessoryComponent? uniformAccessory) &&
+                uniformAccessory.PlayerSprite != null)
+            {
+                uniformAccessory.PlayerSprite = new SpriteSpecifier.Rsi(rsi, uniformAccessory.PlayerSprite.RsiState);
+
+                if (_container.TryGetContainingContainer((uid, null), out var uniformAccessoryContainer))
+                    _item.VisualsChanged(uniformAccessoryContainer.Owner);
             }
         }
 

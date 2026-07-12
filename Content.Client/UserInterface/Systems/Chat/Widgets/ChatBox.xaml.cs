@@ -1163,7 +1163,7 @@ public partial class ChatBox : UIWidget
 
     private FormattedMessage CreateFormattedMessage(ChatMessage message, Color color, ChatStyleSettings? style = null)
     {
-        var markup = StripGhostFollowCommandLink(message.WrappedMessage, message);
+        var markup = StripChatActionCommandLink(message.WrappedMessage, message);
         markup = StripDuplicateChannelPrefix(markup, message);
         markup = _colorWholeMessage
             ? ChatUserSettings.ApplyStyleMarkup(markup, style, ChatUserSettings.DefaultFontSize)
@@ -1181,9 +1181,9 @@ public partial class ChatBox : UIWidget
         return FilterProblematicTags(formatted, allowCommandLinks: false);
     }
 
-    private static string StripGhostFollowCommandLink(string markup, ChatMessage message)
+    private static string StripChatActionCommandLink(string markup, ChatMessage message)
     {
-        if (!message.GhostFollowEntity.Valid ||
+        if ((!message.GhostFollowEntity.Valid && !message.XenoWatchEntity.Valid) ||
             !markup.StartsWith("[cmdlink=", StringComparison.OrdinalIgnoreCase))
         {
             return markup;

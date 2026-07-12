@@ -75,7 +75,9 @@
   - type: Appearance
 
 - type: entity
-  parent: ClothingEyesBase
+  parent: 
+  - ClothingEyesBase
+  - ShowMedicalIcons
   id: RMCGlassesSmartGunSight
   name: M56B head mounted sight # TODO RMC14 meson tile vision see description below
   description: A headset and goggles system for the M56B Smart Gun. # TODO RMC14 Has a low-res short-range imager, allowing for view of terrain.

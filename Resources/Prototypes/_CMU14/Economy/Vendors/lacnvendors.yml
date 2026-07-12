@@ -104,8 +104,6 @@
         amount: 3
       - id: RMCPouchMagazine
         amount: 50
-      - id: RMCPouchMagazineLarge
-        amount: 8
       - id: RMCPouchShotgunLarge
         amount: 8
       - id: RMCPouchGeneralMedium
@@ -114,8 +112,6 @@
         amount: 4
       - id: RMCPouchMagazinePistol
         amount: 25
-      - id: RMCPouchMagazinePistolLarge
-        amount: 6
       - id: RMCPouchPistol
         amount: 20
       - id: AU14PouchIFAKFill
@@ -130,10 +126,6 @@
         amount: 15
     - name: Mask
       entries:
-      - id: CMMaskGas
-        amount: 40
-      - id: CMUGasMaskFilter
-        amount: 80
       - id: CMMaskCoif
         amount: 20
       - id: RMCMaskScarfBlack
@@ -214,6 +206,8 @@
         amount: 15
       - id: CMEntrenchingTool
         amount: 15
+      - id: RMCShovel
+        amount: 10
       - id: CMScrewdriver
         amount: 5
       - id: CMWirecutter
@@ -238,6 +232,14 @@
         amount: 5
       - id: RMCPackFlareCAS
         amount: 2
+    - name: Gas Mask
+      entries:
+      - id: CMMaskGas
+        amount: 40
+      - id: CMUGasMaskFilter
+        amount: 80
+      - id: AU14PouchGasMaskBag
+        amount: 20
     - name: Miscellaneous
       entries:
       - id: RMCEngineerKit
@@ -267,6 +269,10 @@
         amount: 30
     - name: Medical Supplies
       entries:
+      - id: AU14PouchIFAKFill
+        name: infantry first aid kit (Full)
+        recommended: true
+        amount: 30
       - id: AU14HemostaticGauzePacket
         amount: 40
       - id: AU14Tourniquet
@@ -277,6 +283,12 @@
         amount: 12
       - id: AU14NaloxoneAutoInjector
         amount: 2
+      - id: AU14PacketPillsTramadol
+        amount: 40
+      - id: AU14FirstAidAutoInjectorNoSkill
+        amount: 20
+      - id: CMUSplintItem
+        amount: 40
 
 - type: entity
   parent: ColMarTechBase
@@ -292,7 +304,13 @@
   - type: Sprite
     sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/medical_equipment.rsi
   - type: CMAutomatedVendor
-    jobs: [ AU14JobPlatoonCorpsmanBase, AU14JobGOVFORPlatoonCorpsman, AU14JobOPFORPlatoonCorpsman, AU14JobGOVFOROfficerMedical, AU14JobOPFOROfficerMedical ]
+    jobs:
+    - AU14JobGOVFORPlatoonCorpsman
+    - AU14JobGOVFOROfficerMedical
+    - AU14JobGOVFORAuxSupportSynth
+    - AU14JobOPFORPlatoonCorpsman
+    - AU14JobOPFOROfficerMedical
+    - AU14JobOPFORAuxSupportSynth
     sections:
     - name: Essential Equipment
       takeAll: CMUEssentialEquipment
@@ -953,6 +971,18 @@
         amount: 100
       - id: RMCSpeedLoader44Marksman
         amount: 10
+    - name: Magazine Boxes
+      entries:
+      - id: CMUBoxMagazineRifleKramer
+        amount: 2
+      - id: RMCBoxMagazinePistolM1984
+        amount: 2
+    - name: Ammo Boxes
+      entries:
+      - id: RMCBoxBulletsRifle
+        amount: 5
+      - id: CMUBoxBulletsPistol9MM
+        amount: 5
     - name: explosives
       entries:
       - id: CMPacketGrenadeHighExplosiveFilled
@@ -963,6 +993,8 @@
         amount: 6
       - id: RMCPacketGrenadeSmokeFilled
         amount: 6
+      - id: RMCPacketGrenadeWhitePhosphorusFilled
+        amount: 3
       - id: CMPacketGrenadeFragOldFilled
         amount: 2
       - id: RMCBoxClaymoreMineFilled
@@ -1021,6 +1053,12 @@
         amount: 4
       - id: RMCOuterClothingExternalWebbing
         amount: 4
+    - name: Pouches
+      entries:
+      - id: RMCPouchMagazineLarge
+        amount: 10
+      - id: RMCPouchMagazinePistolLarge
+        amount: 10
     - name: Devices
       entries:
       - id: RMCIntelDetector

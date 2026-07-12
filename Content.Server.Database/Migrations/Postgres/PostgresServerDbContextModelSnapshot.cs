@@ -1050,6 +1050,109 @@ namespace Content.Server.Database.Migrations.Postgres
                     b.ToTable("profile_role_loadout", (string)null);
                 });
 
+            modelBuilder.Entity("Content.Server.Database.CMUBalanceRatingPoll", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("cmu_balance_rating_polls_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("closed_at");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<string>("Metric")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("metric");
+
+                    b.Property<DateTime>("OpenedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("opened_at");
+
+                    b.Property<int>("RoundId")
+                        .HasColumnType("integer")
+                        .HasColumnName("round_id");
+
+                    b.Property<string>("Target")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("target");
+
+                    b.Property<string>("TargetId")
+                        .IsRequired()
+                        .HasMaxLength(96)
+                        .HasColumnType("character varying(96)")
+                        .HasColumnName("target_id");
+
+                    b.HasKey("Id")
+                        .HasName("PK_cmu_balance_rating_polls");
+
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("IX_cmu_balance_rating_polls_created_by_id");
+
+                    b.HasIndex("OpenedAt")
+                        .HasDatabaseName("IX_cmu_balance_rating_polls_opened_at");
+
+                    b.HasIndex("RoundId")
+                        .HasDatabaseName("IX_cmu_balance_rating_polls_round_id");
+
+                    b.HasIndex("Target", "TargetId", "Metric")
+                        .HasDatabaseName("IX_cmu_balance_rating_polls_target_target_id_metric");
+
+                    b.ToTable("cmu_balance_rating_polls", null, t =>
+                        {
+                            t.HasCheckConstraint("CMUBalanceRatingMapMetric", "target <> 'Map' OR metric = 'Fun'");
+
+                            t.HasCheckConstraint("CMUBalanceRatingPollMetric", "metric IN ('Power', 'Fun')");
+
+                            t.HasCheckConstraint("CMUBalanceRatingPollTarget", "target IN ('Weapon', 'Xeno', 'Map')");
+
+                            t.HasCheckConstraint("CMUBalanceRatingPollTimes", "closed_at IS NULL OR closed_at >= opened_at");
+                        });
+                });
+
+            modelBuilder.Entity("Content.Server.Database.CMUBalanceRatingResponse", b =>
+                {
+                    b.Property<long>("PollId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("poll_id");
+
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("player_id");
+
+                    b.Property<byte>("Rating")
+                        .HasColumnType("smallint")
+                        .HasColumnName("rating");
+
+                    b.Property<DateTime>("RecordedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("recorded_at");
+
+                    b.HasKey("PollId", "PlayerId")
+                        .HasName("PK_cmu_balance_rating_responses");
+
+                    b.HasIndex("PlayerId")
+                        .HasDatabaseName("IX_cmu_balance_rating_responses_player_id");
+
+                    b.HasIndex("RecordedAt")
+                        .HasDatabaseName("IX_cmu_balance_rating_responses_recorded_at");
+
+                    b.ToTable("cmu_balance_rating_responses", null, t =>
+                        {
+                            t.HasCheckConstraint("CMUBalanceRatingResponseValue", "rating >= 1 AND rating <= 5");
+                        });
+                });
+
             modelBuilder.Entity("Content.Server.Database.CMURoundOutcome", b =>
                 {
                     b.Property<int>("RoundId")
@@ -2397,6 +2500,49 @@ namespace Content.Server.Database.Migrations.Postgres
                     b.Navigation("Profile");
                 });
 
+            modelBuilder.Entity("Content.Server.Database.CMUBalanceRatingPoll", b =>
+                {
+                    b.HasOne("Content.Server.Database.Player", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .HasPrincipalKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("FK_cmu_balance_rating_polls_player_created_by_id");
+
+                    b.HasOne("Content.Server.Database.Round", "Round")
+                        .WithMany()
+                        .HasForeignKey("RoundId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_cmu_balance_rating_polls_round_round_id");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Round");
+                });
+
+            modelBuilder.Entity("Content.Server.Database.CMUBalanceRatingResponse", b =>
+                {
+                    b.HasOne("Content.Server.Database.Player", "Player")
+                        .WithMany()
+                        .HasForeignKey("PlayerId")
+                        .HasPrincipalKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_cmu_balance_rating_responses_player_player_id");
+
+                    b.HasOne("Content.Server.Database.CMUBalanceRatingPoll", "Poll")
+                        .WithMany("Responses")
+                        .HasForeignKey("PollId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_cmu_balance_rating_responses_cmu_balance_rating_polls_poll_~");
+
+                    b.Navigation("Player");
+
+                    b.Navigation("Poll");
+                });
+
             modelBuilder.Entity("Content.Server.Database.CMURoundOutcome", b =>
                 {
                     b.HasOne("Content.Server.Database.Round", "Round")
@@ -2929,6 +3075,11 @@ namespace Content.Server.Database.Migrations.Postgres
                     b.Navigation("Admins");
 
                     b.Navigation("Flags");
+                });
+
+            modelBuilder.Entity("Content.Server.Database.CMUBalanceRatingPoll", b =>
+                {
+                    b.Navigation("Responses");
                 });
 
             modelBuilder.Entity("Content.Server.Database.ConnectionLog", b =>

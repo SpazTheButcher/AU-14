@@ -32,6 +32,15 @@ public sealed partial class CCVars
     public static readonly CVarDef<float> ScreenShakeIntensity =
         CVarDef.Create("accessibility.screen_shake_intensity", 1f, CVar.REPLICATED | CVar.SERVER); // TODO RMC14 leave this be then ignore it in code for people playing other servers
 
+    public static readonly CVarDef<bool> ExplosionScreenShakeEnabled =
+        CVarDef.Create("accessibility.explosion_screen_shake_enabled", true, CVar.REPLICATED | CVar.CLIENT | CVar.ARCHIVE);
+
+    public static readonly CVarDef<bool> ExplosionScreenShakeIgnoreFar =
+        CVarDef.Create("accessibility.explosion_screen_shake_ignore_far", true, CVar.REPLICATED | CVar.CLIENT | CVar.ARCHIVE);
+
+    public static readonly CVarDef<bool> FirearmScreenShakeEnabled =
+        CVarDef.Create("accessibility.firearm_screen_shake_enabled", false, CVar.CLIENTONLY | CVar.ARCHIVE);
+
     /// <summary>
     ///     A generic toggle for various visual effects that are color sensitive.
     ///     As of 2/16/24, only applies to progress bar colors.

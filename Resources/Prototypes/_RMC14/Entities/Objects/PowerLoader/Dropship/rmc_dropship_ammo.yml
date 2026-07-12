@@ -133,7 +133,7 @@
   parent: RMCDropshipAttachmentAmmoRocket
   id: RMCDropshipAttachmentAmmoRocketWidowmaker
   name: AIM-224A 'Widowmaker'
-  description: The AIM-224B missile is a retrofit of the latest in air-to-air missile technology. Earning the nickname of 'Widowmaker' from various dropship pilots after improvements to its guidance warhead prevents it from being jammed leading to its high kill rate. Not well suited for ground bombardment but its high velocity makes it reach its target quickly. This one has been modified to be a free-fall bomb as a result of dropship ammo shortages. Can be loaded into the LAU-444 Guided Missile Launcher.
+  description: The AIM-224A missile is a retrofit of the latest in air-to-air missile technology. Earning the nickname of 'Widowmaker' from various dropship pilots after improvements to its guidance warhead prevents it from being jammed leading to its high kill rate. Not well suited for ground bombardment but its high velocity makes it reach its target quickly. This one has been modified to be a free-fall bomb as a result of dropship ammo shortages. Can be loaded into the LAU-444 Guided Missile Launcher.
   components:
   - type: DropshipAmmo
     travelTime: 3
@@ -503,8 +503,8 @@
 - type: entity
   parent: RMCDropshipAttachmentAmmoRocket
   id: AU14DropshipAttachmentAmmoRocketWidowmakerDouble
-  name: AIM-224B 'Double Widow' Rack
-  description: A two round launch rack of the AIM-224B missile. Earning the nickname of 'Double Widow' due to it being two Widow Makers stacked on top of each other. Both rockets are fired at the same time and are highly unpredictable. Not well suited for ground bombardment but its high velocity makes it reach its target quickly. This one has been modified to be a two round free-fall bomb as a result of dropship ammo shortages. Can be loaded into the LAU-444 Guided Missile Launcher.
+  name: AIM-224A 'Double Widow' Rack
+  description: A two round launch rack of the AIM-224A missile. Earning the nickname of 'Double Widow' due to it being two Widow Makers stacked on top of each other. Both rockets are fired at the same time and are highly unpredictable. Not well suited for ground bombardment but its high velocity makes it reach its target quickly. This one has been modified to be a two round free-fall bomb as a result of dropship ammo shortages. Can be loaded into the LAU-444 Guided Missile Launcher.
   components:
   - type: Sprite
     layers:

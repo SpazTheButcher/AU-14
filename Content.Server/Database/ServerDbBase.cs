@@ -10,6 +10,7 @@ using Content.Server._RMC14.LinkAccount;
 using Content.Server.Administration.Logs;
 using Content.Server.Administration.Managers;
 using Content.Server.IP;
+using Content.Shared._CMU14.BalanceRating;
 using Content.Shared._RMC14.NamedItems;
 using Content.Shared.Administration.Logs;
 using Content.Shared.AU14.Allegiance;
@@ -1049,6 +1050,218 @@ namespace Content.Server.Database
 
             await db.DbContext.SaveChangesAsync(cancel);
         }
+
+        #region CMU Balance Rating
+
+        public async Task<long> CreateCMUBalanceRatingPoll(
+            int roundId,
+            CMUBalanceRatingTarget target,
+            string targetId,
+            CMUBalanceRatingMetric metric,
+            Guid? createdBy,
+            DateTime openedAt)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(roundId);
+
+            if (!Enum.IsDefined(target))
+                throw new ArgumentOutOfRangeException(nameof(target), target, "Unknown balance rating target type.");
+
+            if (!Enum.IsDefined(metric))
+                throw new ArgumentOutOfRangeException(nameof(metric), metric, "Unknown balance rating metric.");
+
+            if (target == CMUBalanceRatingTarget.Map && metric != CMUBalanceRatingMetric.Fun)
+                throw new ArgumentException("Map balance ratings only support the fun metric.", nameof(metric));
+
+            if (string.IsNullOrWhiteSpace(targetId))
+                throw new ArgumentException("A balance rating target ID is required.", nameof(targetId));
+
+            if (targetId.Length > CMUBalanceRatingPoll.TargetIdMaxLength)
+            {
+                throw new ArgumentException(
+                    $"A balance rating target ID cannot exceed {CMUBalanceRatingPoll.TargetIdMaxLength} characters.",
+                    nameof(targetId));
+            }
+
+            await using var db = await GetDb();
+
+            var poll = new CMUBalanceRatingPoll
+            {
+                RoundId = roundId,
+                Target = target.ToString(),
+                TargetId = targetId,
+                Metric = metric.ToString(),
+                CreatedById = createdBy,
+                OpenedAt = NormalizeInputTime(openedAt),
+            };
+
+            db.DbContext.CMUBalanceRatingPolls.Add(poll);
+            await db.DbContext.SaveChangesAsync();
+
+            return poll.Id;
+        }
+
+        public async Task AddCMUBalanceRatingResponse(
+            long pollId,
+            Guid playerId,
+            byte rating,
+            DateTime recordedAt)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(pollId);
+
+            if (rating is < 1 or > 5)
+                throw new ArgumentOutOfRangeException(nameof(rating), rating, "A balance rating must be from 1 to 5.");
+
+            await using var db = await GetDb();
+
+            var pollExists = await db.DbContext.CMUBalanceRatingPolls
+                .AsNoTracking()
+                .AnyAsync(poll => poll.Id == pollId);
+
+            if (!pollExists)
+                return;
+
+            var alreadyRecorded = await db.DbContext.CMUBalanceRatingResponses
+                .AsNoTracking()
+                .AnyAsync(response => response.PollId == pollId && response.PlayerId == playerId);
+
+            if (alreadyRecorded)
+                return;
+
+            db.DbContext.CMUBalanceRatingResponses.Add(new CMUBalanceRatingResponse
+            {
+                PollId = pollId,
+                PlayerId = playerId,
+                Rating = rating,
+                RecordedAt = NormalizeInputTime(recordedAt),
+            });
+
+            try
+            {
+                await db.DbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                var duplicate = await db.DbContext.CMUBalanceRatingResponses
+                    .AsNoTracking()
+                    .AnyAsync(response => response.PollId == pollId && response.PlayerId == playerId);
+
+                if (!duplicate)
+                    throw;
+            }
+        }
+
+        public async Task CloseCMUBalanceRatingPoll(long pollId, DateTime closedAt)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(pollId);
+
+            await using var db = await GetDb();
+
+            var poll = await db.DbContext.CMUBalanceRatingPolls
+                .SingleOrDefaultAsync(candidate => candidate.Id == pollId);
+
+            if (poll == null || poll.ClosedAt != null)
+                return;
+
+            var normalizedClosedAt = NormalizeInputTime(closedAt);
+            if (normalizedClosedAt < poll.OpenedAt)
+                throw new ArgumentException("A balance rating poll cannot close before it opened.", nameof(closedAt));
+
+            poll.ClosedAt = normalizedClosedAt;
+            await db.DbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteCMUBalanceRatingPoll(long pollId)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(pollId);
+
+            await using var db = await GetDb();
+
+            var poll = await db.DbContext.CMUBalanceRatingPolls
+                .SingleOrDefaultAsync(candidate => candidate.Id == pollId);
+
+            if (poll == null)
+                return;
+
+            db.DbContext.CMUBalanceRatingPolls.Remove(poll);
+            await db.DbContext.SaveChangesAsync();
+        }
+
+        public async Task<CMUBalanceRatingDashboard> GetCMUBalanceRatingDashboard(
+            CancellationToken cancel = default)
+        {
+            await using var db = await GetDb(cancel);
+
+            var pollGroups = await db.DbContext.CMUBalanceRatingPolls
+                .AsNoTracking()
+                .GroupBy(poll => new { poll.Target, poll.TargetId, poll.Metric })
+                .Select(group => new
+                {
+                    group.Key.Target,
+                    group.Key.TargetId,
+                    group.Key.Metric,
+                    Polls = group.Count(),
+                    LastPolledAt = group.Max(poll => poll.OpenedAt),
+                })
+                .ToListAsync(cancel);
+
+            var responseGroups = await db.DbContext.CMUBalanceRatingResponses
+                .AsNoTracking()
+                .GroupBy(response => new
+                {
+                    response.Poll.Target,
+                    response.Poll.TargetId,
+                    response.Poll.Metric,
+                })
+                .Select(group => new
+                {
+                    group.Key.Target,
+                    group.Key.TargetId,
+                    group.Key.Metric,
+                    Rating1 = group.Count(response => response.Rating == 1),
+                    Rating2 = group.Count(response => response.Rating == 2),
+                    Rating3 = group.Count(response => response.Rating == 3),
+                    Rating4 = group.Count(response => response.Rating == 4),
+                    Rating5 = group.Count(response => response.Rating == 5),
+                    LastRatedAt = group.Max(response => response.RecordedAt),
+                })
+                .OrderBy(group => group.Target)
+                .ThenBy(group => group.TargetId)
+                .ThenBy(group => group.Metric)
+                .ToListAsync(cancel);
+
+            var responsesByTarget = responseGroups.ToDictionary(
+                group => (group.Target, group.TargetId, group.Metric));
+
+            var entries = new List<CMUBalanceRatingStatisticsEntry>(pollGroups.Count);
+            foreach (var group in pollGroups
+                         .OrderBy(group => group.Target)
+                         .ThenBy(group => group.TargetId)
+                         .ThenBy(group => group.Metric))
+            {
+                responsesByTarget.TryGetValue(
+                    (group.Target, group.TargetId, group.Metric),
+                    out var responses);
+
+                entries.Add(new CMUBalanceRatingStatisticsEntry(
+                    Enum.Parse<CMUBalanceRatingTarget>(group.Target),
+                    Enum.Parse<CMUBalanceRatingMetric>(group.Metric),
+                    group.TargetId,
+                    group.TargetId,
+                    group.Polls,
+                    responses?.Rating1 ?? 0,
+                    responses?.Rating2 ?? 0,
+                    responses?.Rating3 ?? 0,
+                    responses?.Rating4 ?? 0,
+                    responses?.Rating5 ?? 0,
+                    NormalizeDatabaseTime(responses?.LastRatedAt ?? group.LastPolledAt)));
+            }
+
+            var totalResponses = entries.Sum(entry => entry.Responses);
+            var totalPolls = pollGroups.Sum(group => group.Polls);
+            return new CMUBalanceRatingDashboard(entries, totalPolls, totalResponses);
+        }
+
+        #endregion
 
         public async Task<int> AddNewRound(Server server, params Guid[] playerIds)
         {
@@ -2942,6 +3155,17 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
         #endregion
 
         public abstract Task SendNotification(DatabaseNotification notification);
+
+        private static DateTime NormalizeInputTime(DateTime time)
+        {
+            return time.Kind switch
+            {
+                DateTimeKind.Utc => time,
+                DateTimeKind.Local => time.ToUniversalTime(),
+                DateTimeKind.Unspecified => DateTime.SpecifyKind(time, DateTimeKind.Utc),
+                _ => throw new ArgumentOutOfRangeException(nameof(time)),
+            };
+        }
 
         // SQLite returns DateTime as Kind=Unspecified, Npgsql actually knows for sure it's Kind=Utc.
         // Normalize DateTimes here so they're always Utc. Thanks.

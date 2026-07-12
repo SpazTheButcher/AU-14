@@ -25,6 +25,11 @@
                           Text="{Loc 'cmu-ui-options-ui-less-surgery'}"
                           ToolTip="{Loc 'cmu-ui-options-ui-less-surgery-tooltip'}" />
 
+                <Label Text="{Loc 'cmu-ui-options-vocal'}" StyleClasses="LabelKeyText" />
+                <CheckBox Name="ScreamOnHotbarCheckBox"
+                          Text="{Loc 'cmu-ui-options-scream-on-hotbar'}"
+                          ToolTip="{Loc 'cmu-ui-options-scream-on-hotbar-tooltip'}" />
+
                 <Label Text="{Loc 'ui-options-cmu-zlevels'}" StyleClasses="LabelKeyText" />
                 <ui:OptionSlider Name="ZLevelBlurSlider" Title="{Loc 'ui-options-zlevel-blur'}" />
             </BoxContainer>

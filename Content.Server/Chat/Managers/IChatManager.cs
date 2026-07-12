@@ -57,6 +57,7 @@ namespace Content.Server.Chat.Managers
 
         // CMU14
         string AddGhostFollowButton(string wrappedMessage, EntityUid source, INetChannel recipient);
+        string AddXenoWatchButton(string wrappedMessage, EntityUid source, INetChannel recipient);
         // CMU14
     }
 }

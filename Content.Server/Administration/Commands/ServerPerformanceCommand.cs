@@ -34,6 +34,7 @@ public sealed class ServerPerformanceCommand : IConsoleCommand
         "systems",
         "profile",
         "metrics",
+        "clear",
         "help",
     ];
 
@@ -53,6 +54,7 @@ public sealed class ServerPerformanceCommand : IConsoleCommand
         "  serverperf systems [top=20] [filter]\n" +
         "  serverperf profile on|off|top|systems|engine [frames=10] [top=20] [filter]\n" +
         "  serverperf metrics on|off|status\n" +
+        "  serverperf clear\n" +
         "\n" +
         "For before/after lag hunts: serverperf baseline, trigger the action, then serverperf deep 40 120.\n" +
         "Use 'serverperf profile on' during lag, wait a few seconds, then run 'serverperf profile systems'.";
@@ -94,6 +96,10 @@ public sealed class ServerPerformanceCommand : IConsoleCommand
                 break;
             case "metrics":
                 RunMetrics(shell, args);
+                break;
+            case "clear":
+                LastSnapshot = null;
+                shell.WriteLine("Cleared the retained serverperf comparison snapshot.");
                 break;
             case "help":
                 shell.WriteLine(Help);

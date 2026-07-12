@@ -65,6 +65,8 @@ namespace Content.Server.Database
         public DbSet<RMCChatBans> RMCPlayerChatBans { get; set; } = default!;
 
         // CMU14
+        public DbSet<CMUBalanceRatingPoll> CMUBalanceRatingPolls { get; set; } = default!;
+        public DbSet<CMUBalanceRatingResponse> CMUBalanceRatingResponses { get; set; } = default!;
         public DbSet<CMURoundOutcome> CMURoundOutcomes { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -173,6 +175,53 @@ namespace Content.Server.Database
 
             modelBuilder.Entity<Round>()
                 .HasIndex(round => round.StartDate);
+
+            modelBuilder.Entity<CMUBalanceRatingPoll>()
+                .HasOne(poll => poll.Round)
+                .WithMany()
+                .HasForeignKey(poll => poll.RoundId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CMUBalanceRatingPoll>()
+                .HasOne(poll => poll.CreatedBy)
+                .WithMany()
+                .HasForeignKey(poll => poll.CreatedById)
+                .HasPrincipalKey(player => player.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<CMUBalanceRatingPoll>().ToTable(table =>
+            {
+                table.HasCheckConstraint(
+                    "CMUBalanceRatingPollTimes",
+                    "closed_at IS NULL OR closed_at >= opened_at");
+                table.HasCheckConstraint(
+                    "CMUBalanceRatingPollTarget",
+                    "target IN ('Weapon', 'Xeno', 'Map')");
+                table.HasCheckConstraint(
+                    "CMUBalanceRatingPollMetric",
+                    "metric IN ('Power', 'Fun')");
+                table.HasCheckConstraint(
+                    "CMUBalanceRatingMapMetric",
+                    "target <> 'Map' OR metric = 'Fun'");
+            });
+
+            modelBuilder.Entity<CMUBalanceRatingResponse>()
+                .HasOne(response => response.Poll)
+                .WithMany(poll => poll.Responses)
+                .HasForeignKey(response => response.PollId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CMUBalanceRatingResponse>()
+                .HasOne(response => response.Player)
+                .WithMany()
+                .HasForeignKey(response => response.PlayerId)
+                .HasPrincipalKey(player => player.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CMUBalanceRatingResponse>().ToTable(table =>
+                table.HasCheckConstraint(
+                    "CMUBalanceRatingResponseValue",
+                    "rating >= 1 AND rating <= 5"));
 
             modelBuilder.Entity<CMURoundOutcome>()
                 .HasOne(outcome => outcome.Round)

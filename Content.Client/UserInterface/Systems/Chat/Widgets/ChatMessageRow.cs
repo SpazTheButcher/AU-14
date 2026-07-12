@@ -3,6 +3,7 @@ using System.Numerics;
 using Content.Client.Stylesheets;
 using Content.Client.Resources;
 using Content.Shared._CMU14.Ghost;
+using Content.Shared._CMU14.Xenonids.Watch;
 using Content.Shared.Chat;
 using Robust.Client.Console;
 using Robust.Client.Graphics;
@@ -73,6 +74,12 @@ public sealed partial class ChatMessageRow : PanelContainer
             row.AddChild(followButton);
         }
 
+        if (message.XenoWatchEntity.Valid)
+        {
+            var watchButton = CreateXenoWatchButton(message, metrics, textColor);
+            row.AddChild(watchButton);
+        }
+
         _messageLabel = new RichTextLabel
         {
             HorizontalExpand = true,
@@ -118,6 +125,41 @@ public sealed partial class ChatMessageRow : PanelContainer
         followButton.Label.FontColorOverride = followButtonColor;
         followButton.OnPressed += _ => _consoleHost.ExecuteCommand($"{CMUGhostFollowCommand.CommandName} {message.GhostFollowEntity}");
         return followButton;
+    }
+
+    private Button CreateXenoWatchButton(ChatMessage message, RowMetrics metrics, Color textColor)
+    {
+        var watchButton = CreateChatActionButton(
+            Loc.GetString("cmu-chat-manager-xeno-watch-button"),
+            Loc.GetString("cmu-chat-manager-xeno-watch-button-tooltip"),
+            metrics,
+            textColor);
+        watchButton.OnPressed += _ => _consoleHost.ExecuteCommand($"{CMUXenoWatchCommand.CommandName} {message.XenoWatchEntity}");
+        return watchButton;
+    }
+
+    private Button CreateChatActionButton(string text, string toolTip, RowMetrics metrics, Color textColor)
+    {
+        var buttonSize = new Vector2(metrics.FollowButtonSize, metrics.FollowButtonSize);
+        var buttonColor = textColor.WithAlpha(1f);
+        var button = new Button
+        {
+            Text = text,
+            ToolTip = toolTip,
+            MinSize = buttonSize,
+            MaxSize = buttonSize,
+            Margin = new Thickness(2, 5, 2, 0),
+            ModulateSelfOverride = buttonColor,
+            VerticalAlignment = VAlignment.Top,
+            StyleClasses = { StyleNano.StyleClassChatGhostFollowButton }
+        };
+
+        button.Label.HorizontalExpand = true;
+        button.Label.HorizontalAlignment = HAlignment.Center;
+        button.Label.VerticalAlignment = VAlignment.Center;
+        button.Label.Align = Label.AlignMode.Center;
+        button.Label.FontColorOverride = buttonColor;
+        return button;
     }
 
     public void SetRepeatCount(int count)
@@ -171,7 +213,7 @@ public sealed partial class ChatMessageRow : PanelContainer
         return message.Channel switch
         {
             ChatChannel.Radio => "RAD",
-            ChatChannel.LOOC => "LOOC",
+            ChatChannel.LOOC => "HELP",
             ChatChannel.OOC => "OOC",
             ChatChannel.Dead => "DEAD",
             ChatChannel.Admin => "ADMIN",

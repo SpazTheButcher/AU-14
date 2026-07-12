@@ -245,6 +245,7 @@ namespace Content.Server.GameTicking
                     return;
 
                 _roundStartCountdownHasNotStartedYetDueToNoPlayers = true;
+                ResetDistressSignalSurvivorAnnouncement();
                 _roundStartTime = TimeSpan.Zero;
             }
             else
@@ -253,6 +254,7 @@ namespace Content.Server.GameTicking
                     return;
 
                 _roundStartCountdownHasNotStartedYetDueToNoPlayers = false;
+                ResetDistressSignalSurvivorAnnouncement();
                 _roundStartTime = _gameTiming.CurTime + LobbyDuration;
             }
 

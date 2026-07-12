@@ -447,6 +447,8 @@ namespace Content.Server.GameTicking
                 return;
             }
 
+            EnsureDistressSignalSurvivorAnnouncement();
+
             if (RoundId == 0)
                 IncrementRoundNumber();
             ReplayStartRound();
@@ -1123,6 +1125,8 @@ namespace Content.Server.GameTicking
         /// </summary>
         private void ResettingCleanup()
         {
+            ResetDistressSignalSurvivorAnnouncement();
+
             // Move everybody currently in the server to lobby.
             foreach (var player in _playerManager.Sessions)
             {
@@ -1167,6 +1171,9 @@ namespace Content.Server.GameTicking
 
             _roundStartTime += time;
 
+            if (_roundStartTime - _gameTiming.CurTime > DistressSignalSurvivorAnnouncementLeadTime)
+                ResetDistressSignalSurvivorAnnouncement();
+
             RaiseNetworkEvent(new TickerLobbyCountdownEvent(_roundStartTime, Paused));
 
             _chatManager.DispatchServerAnnouncement(Loc.GetString("game-ticker-delay-start", ("seconds", time.TotalSeconds)));
@@ -1194,6 +1201,8 @@ namespace Content.Server.GameTicking
                 UpdateLobbyCountdownForPlayerCount();
                 return;
             }
+
+            TryAnnounceDistressSignalSurvivors();
 
             if (_roundStartTime == TimeSpan.Zero ||
                 RunLevel != GameRunLevel.PreRoundLobby ||

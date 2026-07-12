@@ -175,6 +175,7 @@ public abstract partial class SharedXenoHiveSystem : EntitySystem
 
     /// <summary>
     /// Tries to get the hive from a member, returning null if it has no hive or it is invalid.
+    /// This runs through CMDistressSignalRuleSystem, and therefor will return null on Insurgency/CF.
     /// </summary>
     public Entity<HiveComponent>? GetHive(Entity<HiveMemberComponent?> member)
     {

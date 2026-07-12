@@ -1,12 +1,11 @@
 [build]
-engine_version = "v277.0.0"
+engine_version = "v278.0.0"
 
 [game]
 defaultpreset = "ColonyFall"
 # Straight in-game baby
-# map= "USSBushRedux"
-# lobbyenabled = false
-lobbyenabled = true
+map = "USSBushRedux"
+lobbyenabled = false
 role_timers = false
 
 [rmc]

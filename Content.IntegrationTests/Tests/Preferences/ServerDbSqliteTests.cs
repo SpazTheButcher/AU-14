@@ -18,7 +18,7 @@ using Robust.UnitTesting;
 namespace Content.IntegrationTests.Tests.Preferences
 {
     [TestFixture]
-    public sealed class ServerDbSqliteTests
+    public sealed partial class ServerDbSqliteTests
     {
         [TestPrototypes]
         private const string Prototypes = @"
