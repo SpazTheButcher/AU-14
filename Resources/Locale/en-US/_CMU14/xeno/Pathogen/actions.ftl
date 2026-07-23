@@ -50,3 +50,6 @@ cmu14-mycotoxin-inject-already-infected = Person is already infected.
 cmu14-walker-rise = The body lurches upright, animated by mycelial spores!
 cmu14-walker-death-reviving = The body falls... but the spores begin knitting it back together.
 cmu14-walker-permanent-death = The mycotoxin burns out. The body will not rise again.
+
+
+cmu-pathogen-ui-overmind-needed-label = [bold][color=red]There must be an Overmind for you to gain points![/color][/bold]
