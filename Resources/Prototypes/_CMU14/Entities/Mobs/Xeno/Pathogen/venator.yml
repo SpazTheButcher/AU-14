@@ -1,6 +1,6 @@
 - type: entity
   abstract: true
-  parent: CMU14XenoPathogenBase
+  parent: CMU14XenoPathogenMatureBase
   id: CMU14XenoVenatorBase
   name: Venator
   description: A wandering ball of death.

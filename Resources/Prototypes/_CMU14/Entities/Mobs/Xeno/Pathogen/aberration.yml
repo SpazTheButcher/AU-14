@@ -1,6 +1,6 @@
 - type: entity
   abstract: true
-  parent: CMU14XenoPathogenBase
+  parent: CMU14XenoPathogenMatureBase
   id: CMU14XenoAberrationBase
   name: Aberration
   description: If you believe in a god, now would be a good time for prayer...

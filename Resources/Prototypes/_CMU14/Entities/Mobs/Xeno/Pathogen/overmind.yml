@@ -1,6 +1,6 @@
 - type: entity
   abstract: true
-  parent: CMU14XenoPathogenBase
+  parent: CMU14XenoPathogenMatureBase
   id: CMU14XenoOvermindBase
   name: Overmind
   description: The mind that connects the Confluence. You are everywhere and nowhere.

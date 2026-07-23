@@ -1,6 +1,6 @@
 - type: entity
   abstract: true
-  parent: CMU14XenoPathogenBase
+  parent: CMU14XenoPathogenMatureBase
   id: CMU14XenoHarbingerBase
   name: Harbinger
   description: Doom is walking.

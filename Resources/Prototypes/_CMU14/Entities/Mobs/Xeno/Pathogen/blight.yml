@@ -1,6 +1,6 @@
 - type: entity
   abstract: true
-  parent: CMU14XenoPathogenBase
+  parent: CMU14XenoPathogenMatureBase
   id: CMU14XenoBlightBase
   name: Blight
   description: A sleek and stealthy hunter, always watching.

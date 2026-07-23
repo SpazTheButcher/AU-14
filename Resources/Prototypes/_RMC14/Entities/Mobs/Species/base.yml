@@ -204,8 +204,6 @@
       enum.FactionLanguageUiKey.Key:
         type: FactionLanguageBoundUserInterface
         requireInputValidation: false
-      enum.CMUPathogenWalkerUiKey.Key:
-        type: CMUPathogenWalkerBui
   - type: Infectable
   - type: Tackleable
   - type: XenoNestable

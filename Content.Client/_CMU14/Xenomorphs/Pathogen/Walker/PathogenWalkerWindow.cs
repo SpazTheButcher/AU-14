@@ -1,5 +1,6 @@
 using Robust.Client.UserInterface.Controls;
 using Robust.Client.UserInterface.CustomControls;
+using System.Numerics;
 
 namespace Content.Client._CMU14.Xenomorphs.Pathogen.Walker;
 
@@ -13,7 +14,7 @@ public sealed class CMUPathogenWalkerWindow : DefaultWindow
     public CMUPathogenWalkerWindow()
     {
         Title = Loc.GetString("cmu14-walker-offer-title");
-        MinSize = (400, 180);
+        MinSize = new Vector2(400, 180);
 
         var vbox = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Vertical, Margin = new Thickness(12) };
 

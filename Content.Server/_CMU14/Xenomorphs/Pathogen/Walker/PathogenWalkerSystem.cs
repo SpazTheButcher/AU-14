@@ -24,10 +24,11 @@ using Content.Shared.StatusEffectNew;
 using Content.Server._RMC14.Language.Systems;
 using Content.Server.Radio.Components;
 using Content.Server.Ghost.Roles.Components;
-using Content.Server.UserInterface;
-using Robust.Server.GameObjects;
 using Robust.Shared.Player;
 using Content.Server.Mind;
+using Content.Shared._RMC14.TacticalMap;
+using Content.Shared.Examine;
+using Content.Shared.IdentityManagement;
 
 namespace Content.Server._CMU14.Xenomorphs.Pathogen.Walker;
 
@@ -47,7 +48,6 @@ public sealed partial class CMUPathogenWalkerSystem : EntitySystem
     [Dependency] private readonly SharedBodySystem _body = default!;
     [Dependency] private readonly SharedStatusEffectsSystem _status = default!;
     [Dependency] private readonly LanguageSystem _language = default!;
-    [Dependency] private readonly UserInterfaceSystem _ui = default!;
     [Dependency] private readonly ISharedPlayerManager _player = default!;
     [Dependency] private readonly MindSystem _mind = default!;
 
@@ -66,8 +66,9 @@ public sealed partial class CMUPathogenWalkerSystem : EntitySystem
     {
         SubscribeLocalEvent<CMUMycotoxinInjectDoReanimateEvent>(OnReanimate);
         SubscribeLocalEvent<CMUPathogenWalkerComponent, MobStateChangedEvent>(OnWalkerDeath);
-        SubscribeLocalEvent<CMUPathogenWalkerComponent, CMUPathogenWalkerAcceptMsg>(OnAccept);
-        SubscribeLocalEvent<CMUPathogenWalkerComponent, CMUPathogenWalkerDeclineMsg>(OnDecline);
+        SubscribeLocalEvent<CMUPathogenWalkerComponent, ExaminedEvent>(OnWalkerExamined);
+        SubscribeNetworkEvent<CMUPathogenWalkerAcceptNetEvent>(OnAcceptNet);
+        SubscribeNetworkEvent<CMUPathogenWalkerDeclineNetEvent>(OnDeclineNet);
     }
 
     private void OnReanimate(CMUMycotoxinInjectDoReanimateEvent ev)
@@ -92,23 +93,21 @@ public sealed partial class CMUPathogenWalkerSystem : EntitySystem
         EnsureComp<IntrinsicRadioReceiverComponent>(target);
         var radio = EnsureComp<ActiveRadioComponent>(target);
         radio.Channels = new HashSet<string>() { "MycelumLink" };
-        EnsureComp<CMUPathogenWalkerHiveIconComponent>(target);
+        var tacIcon = EnsureComp<TacticalMapIconComponent>(target);
 
         EquipMarker(target, walker);
 
         // If the victim has a connected player, show the offer popup.
         // Otherwise skip straight to ghost role.
-        if (_player.TryGetSessionByEntity(target, out _))
+        if (_player.TryGetSessionByEntity(target, out var session))
         {
             walker.OfferExpiresAt = _timing.CurTime + walker.OfferTimeout;
             walker.OfferResolved = false;
             Dirty(target, walker);
 
-            _ui.OpenUi(target, CMUPathogenWalkerUiKey.Key, target);
-            _ui.SetUiState(target, CMUPathogenWalkerUiKey.Key,
-                new CMUPathogenWalkerBuiState(walker.OfferTimeout.TotalSeconds));
-
-            _popup.PopupEntity(Loc.GetString("cmu14-walker-offer"), target, target, PopupType.LargeCaution);
+            RaiseNetworkEvent(new CMUPathogenWalkerOfferEvent(
+                GetNetEntity(target),
+                walker.OfferTimeout.TotalSeconds), session);
         }
         else
         {
@@ -118,30 +117,28 @@ public sealed partial class CMUPathogenWalkerSystem : EntitySystem
         Dirty(target, walker);
     }
 
-    private void OnAccept(Entity<CMUPathogenWalkerComponent> walker, ref CMUPathogenWalkerAcceptMsg args)
+    private void OnAcceptNet(CMUPathogenWalkerAcceptNetEvent ev, EntitySessionEventArgs args)
     {
-        if (walker.Comp.OfferResolved)
+        var uid = GetEntity(ev.Target);
+        if (!TryComp<CMUPathogenWalkerComponent>(uid, out var walker) || walker.OfferResolved)
             return;
 
-        walker.Comp.OfferResolved = true;
-        walker.Comp.OfferExpiresAt = null;
-        _ui.CloseUi(walker, CMUPathogenWalkerUiKey.Key);
-        Dirty(walker);
-
-        ActivateWalker(walker, walker.Comp);
+        walker.OfferResolved = true;
+        walker.OfferExpiresAt = null;
+        Dirty(uid, walker);
+        ActivateWalker(uid, walker);
     }
 
-    private void OnDecline(Entity<CMUPathogenWalkerComponent> walker, ref CMUPathogenWalkerDeclineMsg args)
+    private void OnDeclineNet(CMUPathogenWalkerDeclineNetEvent ev, EntitySessionEventArgs args)
     {
-        if (walker.Comp.OfferResolved)
+        var uid = GetEntity(ev.Target);
+        if (!TryComp<CMUPathogenWalkerComponent>(uid, out var walker) || walker.OfferResolved)
             return;
 
-        walker.Comp.OfferResolved = true;
-        walker.Comp.OfferExpiresAt = null;
-        _ui.CloseUi(walker, CMUPathogenWalkerUiKey.Key);
-        Dirty(walker);
-
-        MakeGhostRole(walker, walker.Comp);
+        walker.OfferResolved = true;
+        walker.OfferExpiresAt = null;
+        Dirty(uid, walker);
+        MakeGhostRole(uid, walker);
     }
 
     private void ActivateWalker(EntityUid uid, CMUPathogenWalkerComponent walker)
@@ -159,9 +156,19 @@ public sealed partial class CMUPathogenWalkerSystem : EntitySystem
         ghostRole.RoleName = Loc.GetString("cmu14-walker-ghost-role-name");
         ghostRole.RoleDescription = Loc.GetString("cmu14-walker-ghost-role-desc");
 
-        EnsureComp<GhostRoleMobSpawnerComponent>(uid); // marks it takeable
+        EnsureComp<GhostTakeoverAvailableComponent>(uid);
 
         Revive(uid, walker); // body is still alive/animated even before someone takes it
+    }
+
+    private void OnWalkerExamined(Entity<CMUPathogenWalkerComponent> walker, ref ExaminedEvent args)
+    {
+        if (!args.IsInDetailsRange)
+            return;
+
+        var locUser = ("user", Identity.Entity(walker, EntityManager));
+
+        args.PushMarkup($"[color=red][bold]{Loc.GetString("cmu14-walker-examine-fungal-growth", locUser)}[/bold][/color]");
     }
 
     private void EquipMarker(EntityUid target, CMUPathogenWalkerComponent walker)
@@ -216,7 +223,6 @@ public sealed partial class CMUPathogenWalkerSystem : EntitySystem
             {
                 walker.OfferResolved = true;
                 walker.OfferExpiresAt = null;
-                _ui.CloseUi(uid, CMUPathogenWalkerUiKey.Key);
                 Dirty(uid, walker);
 
                 MakeGhostRole(uid, walker);

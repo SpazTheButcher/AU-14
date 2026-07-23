@@ -260,9 +260,6 @@ public sealed partial class LanguageSystem : SharedLanguageSystem
         if (!Resolve(ent, ref ent.Comp))
             return;
 
-        var spoken = ent.Comp.SpokenLanguages.Contains(language);
-        var understood = ent.Comp.UnderstoodLanguages.Contains(language);
-
         ent.Comp.SpokenLanguages.Clear();
         ent.Comp.UnderstoodLanguages.Clear();
 
@@ -273,6 +270,7 @@ public sealed partial class LanguageSystem : SharedLanguageSystem
         ent.Comp.DefaultLanguage = language;
 
         UpdateEntityLanguages(ent);
+    }
 
     private string ObfuscateMessageSisterLanguageWithLearning(
         string message,
@@ -362,5 +360,4 @@ public sealed partial class LanguageSystem : SharedLanguageSystem
 
         return result.ToString();
     }
-}
 }

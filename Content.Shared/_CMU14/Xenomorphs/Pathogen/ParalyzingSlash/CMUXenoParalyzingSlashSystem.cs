@@ -6,6 +6,7 @@ using Content.Shared.Actions;
 using Content.Shared.Popups;
 using Content.Shared.Weapons.Melee.Events;
 using Robust.Shared.Network;
+using Content.Shared.Stunnable;
 
 namespace Content.Shared._CMU14.Xenonids.ParalyzingSlash;
 

@@ -1,6 +1,6 @@
 - type: entity
   abstract: true
-  parent: CMU14XenoPathogenBase
+  parent: CMU14XenoPathogenMatureBase
   id: CMU14XenoNeomorphBase
   name: Neomorph
   description: A sleek, fast alien with sharp claws.

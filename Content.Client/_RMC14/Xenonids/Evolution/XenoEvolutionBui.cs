@@ -139,6 +139,9 @@ public sealed partial class XenoEvolutionBui : BoundUserInterface
             return;
 
         _window.PointsLabel.Visible = xeno.Max > FixedPoint2.Zero;
+        _window.PointsLabel.Text = Loc.GetString("rmc-xeno-ui-evolution-points",
+            ("points", (int)Math.Floor(((FixedPoint2)xeno.Points).Double())),
+            ("maxPoints", xeno.Max));
 
         foreach (var control in _evolutionControls.Values)
             control.Visible = false;
@@ -177,10 +180,10 @@ public sealed partial class XenoEvolutionBui : BoundUserInterface
         bool showOviLabel = false;
         bool showOvermindLabel = false;
 
-        if (lackingOvipositor && xeno.Max > FixedPoint2.Zero)
+        if (lackingOvipositor)
         {
             if (IsPathogenHive())
-                showOvermindLabel = true;  // Pathogen hive -> always show overmind label instead
+                showOvermindLabel = true;
             else
                 showOviLabel = true;
         }
@@ -199,7 +202,7 @@ public sealed partial class XenoEvolutionBui : BoundUserInterface
             _window.OvipositorNeededLabel.Visible = false;
         }
 
-        // OvermindNeededLabel — add this RichTextLabel to XenoEvolutionWindow.xaml alongside OvipositorNeededLabel
+        // OvermindNeededLabel - add this RichTextLabel to XenoEvolutionWindow.xaml alongside OvipositorNeededLabel
         if (showOvermindLabel)
         {
             if (!_window.OvermindNeededLabel.Visible)
@@ -243,22 +246,19 @@ public sealed partial class XenoEvolutionBui : BoundUserInterface
     private bool PathogenHiveHasLivingOvermind()
     {
         if (!EntMan.TryGetComponent(Owner, out HiveMemberComponent? member) ||
-            member.Hive is not { } hive ||
-            !EntMan.TryGetComponent(hive, out HiveComponent? hiveComp))
+            member.Hive is not { } hive)
         {
             return false;
         }
 
-        // Find the overmind among hive members — same pattern as CurrentQueen
-        // If HiveComponent tracks a CurrentOvermind field, use that directly.
-        // Otherwise scan hive members for CMU14XenoOvermind prototype:
-        foreach (var memberUid in hiveComp.Members)
+        var query = EntMan.AllEntityQueryEnumerator<HiveMemberComponent, MetaDataComponent>();
+        while (query.MoveNext(out var uid, out var hiveMember, out var meta))
         {
-            if (EntMan.GetComponent<MetaDataComponent>(memberUid).EntityPrototype?.ID == "CMU14XenoOvermind"
-                && !_mobState.IsDead(memberUid))
-            {
+            if (hiveMember.Hive != hive)
+                continue;
+
+            if (meta.EntityPrototype?.ID == "CMU14XenoOvermind" && !_mobState.IsDead(uid))
                 return true;
-            }
         }
 
         return false;

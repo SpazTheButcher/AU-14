@@ -518,8 +518,12 @@ public abstract partial class SharedXenoParasiteSystem : EntitySystem
 
     private void OnVictimBurstExamine(Entity<VictimBurstComponent> burst, ref ExaminedEvent args)
     {
+        var locId = burst.Comp.BurstsFromBack
+            ? "cmu-xeno-infected-bursted-back"
+            : "rmc-xeno-infected-bursted";
+
         using (args.PushGroup(nameof(VictimBurstComponent)))
-            args.PushMarkup($"[color=red][bold]{Loc.GetString("rmc-xeno-infected-bursted", ("victim", burst))}[/bold][/color]");
+            args.PushMarkup($"[color=red][bold]{Loc.GetString(locId, ("victim", burst))}[/bold][/color]");
     }
 
     private bool StartInfect(Entity<XenoParasiteComponent> parasite, EntityUid victim, EntityUid user)
@@ -976,7 +980,11 @@ public abstract partial class SharedXenoParasiteSystem : EntitySystem
                 _jitter.DoJitter(victim, comp.JitterTime / 1.2, true, 14f, 5f, true); // violent jitter
             }
 
-            var messageLarva = Loc.GetString("rmc-xeno-infection-burst-now-xeno", ("victim", Identity.Entity(victim, EntityManager)));
+            var burstLocId = comp.BurstsFromBack
+                ? "cmu-xeno-infection-burst-now-xeno-back"
+                : "rmc-xeno-infection-burst-now-xeno";
+
+            var messageLarva = Loc.GetString(burstLocId, ("victim", Identity.Entity(victim, EntityManager)));
             _popup.PopupClient(messageLarva, spawnedLarva, spawnedLarva, PopupType.MediumCaution);
         }
     }

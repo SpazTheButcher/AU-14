@@ -1,6 +1,6 @@
 - type: entity
   abstract: true
-  parent: CMU14XenoPathogenBase
+  parent: CMU14XenoPathogenMatureBase
   id: CMU14XenoHazeBase
   name: Haze
   description: A supportive strain of the Confluence, tending wounds and spreading spores in equal measure.
