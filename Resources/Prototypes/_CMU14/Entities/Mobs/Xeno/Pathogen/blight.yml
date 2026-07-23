@@ -56,9 +56,11 @@
     evolvesTo:
     - CMU14XenoVenator
     - CMU14XenoHarbinger
+    - CMU14XenoRoot
   - type: XenoDevolve
     devolvesTo:
     - CMU14XenoSprinter
+    - CMU14XenoHaze
     canBeDevolvedByOther: false
   - type: Fixtures
     fixtures:

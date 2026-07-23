@@ -65,6 +65,7 @@
     max: 100 # evolution threshold
     evolvesTo:
     - CMU14XenoSprinter
+    - CMU14XenoHaze
   - type: XenoDevolve
     devolvesTo: []
     canBeDevolvedByOther: false

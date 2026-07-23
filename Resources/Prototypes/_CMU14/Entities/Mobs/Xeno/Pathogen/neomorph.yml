@@ -86,9 +86,11 @@
     evolvesTo:
     - CMU14XenoConditor
     - CMU14XenoBrute
+    - CMU14XenoRoot
   - type: XenoDevolve
     devolvesTo:
     - CMU14XenoSprinter
+    - CMU14XenoHaze
     canBeDevolvedByOther: false
   - type: XenoHide
   - type: Fixtures

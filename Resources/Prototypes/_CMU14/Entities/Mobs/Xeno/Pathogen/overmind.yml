@@ -68,13 +68,6 @@
     plasma: 2000
     maxPlasma: 2000
     plasmaRegenOnWeeds: 12
-  - type: XenoEvolution
-    actionId: CMU14ActionXenoPathogenEvolve
-    canEvolveWithoutGranter: false
-    evolvesTo: []
-  - type: XenoDevolve
-    devolvesTo: []
-    canBeDevolvedByOther: false
   - type: XenoPheromones
   - type: CMUXenoOvermind
   - type: XenoWordQueen
