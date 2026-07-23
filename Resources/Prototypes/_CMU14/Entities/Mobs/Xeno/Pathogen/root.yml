@@ -104,6 +104,7 @@
     prefix: root
   - type: XenoClaws
     clawType: VerySharp
+  - type: XenoDevour
   - type: XenoPheromones
     pheromonesMultiplier: 3
     pheroSuffix: strong

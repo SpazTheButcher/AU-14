@@ -30,6 +30,7 @@
     - CMU14ActionXenoPathogenPheromones
     - CMU14ActionXenoPathogenPlaceSporeSac
     - CMU14ActionXenoPathogenDirectSporeInfect
+  - type: XenoDevour
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.0

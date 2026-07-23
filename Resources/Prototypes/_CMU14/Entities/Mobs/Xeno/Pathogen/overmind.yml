@@ -69,6 +69,7 @@
     maxPlasma: 2000
     plasmaRegenOnWeeds: 12
   - type: XenoPheromones
+    pheromonesMultiplier: 4
   - type: CMUXenoOvermind
   - type: XenoWordQueen
   - type: XenoPsychicCommunication

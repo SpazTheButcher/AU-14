@@ -29,6 +29,7 @@ using Content.Server.Mind;
 using Content.Shared._RMC14.TacticalMap;
 using Content.Shared.Examine;
 using Content.Shared.IdentityManagement;
+using Content.Shared._RMC14.Synth;
 
 namespace Content.Server._CMU14.Xenomorphs.Pathogen.Walker;
 
@@ -77,6 +78,9 @@ public sealed partial class CMUPathogenWalkerSystem : EntitySystem
         var injector = ev.Injector;
 
         if (HasComp<CMUPathogenWalkerComponent>(target))
+            return;
+
+        if (HasComp<SynthComponent>(target))
             return;
 
         var walker = EnsureComp<CMUPathogenWalkerComponent>(target);

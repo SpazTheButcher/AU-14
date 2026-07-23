@@ -357,12 +357,14 @@ public sealed partial class XenoHiveSystem : SharedXenoHiveSystem
 
     private void OnPathogenSpawn(Entity<CMUPathogenHiveMemberComponent> ent, ref MapInitEvent args)
     {
+        var found = false;
         var hives = EntityQueryEnumerator<HiveComponent, MetaDataComponent>();
         while (hives.MoveNext(out var hiveUid, out _, out var meta))
         {
             if (meta.EntityPrototype?.ID != "CMUPathogenHive")
                 continue;
 
+            found = true;
             SetHive(ent.Owner, hiveUid);
             break;
         }
