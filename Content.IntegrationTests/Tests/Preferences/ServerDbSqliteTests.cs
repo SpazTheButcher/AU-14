@@ -52,7 +52,11 @@ namespace Content.IntegrationTests.Tests.Preferences
                     Color.Aquamarine,
                     Color.Azure,
                     Color.Beige,
-                    new ())
+                    new (),
+                    HairStyles.DefaultHairStyle,
+                    Color.Black,
+                    HairStyles.DefaultFacialHairStyle,
+                    Color.Black)
             };
         }
 

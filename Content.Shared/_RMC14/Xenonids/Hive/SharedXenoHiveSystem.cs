@@ -224,6 +224,13 @@ public abstract partial class SharedXenoHiveSystem : EntitySystem
         {
             hive.Allies.Remove(faction);
         }
+        //just made some BULLSHIT!!
+        var factionsQuery = EntityQueryEnumerator<NpcFactionMemberComponent>();
+        while (factionsQuery.MoveNext(out EntityUid ent, out var comp))
+        {
+            if (comp.Factions.Contains(faction))
+                DirtyEntity(ent);
+        }
     }
 
     public void SetHiveIndividualAlly(EntityUid ent, EntityUid hiveEnt, bool alliance)
@@ -238,13 +245,18 @@ public abstract partial class SharedXenoHiveSystem : EntitySystem
         {
             hive.IndividualAllies.Remove(ent);
         }
+        DirtyEntity(ent);
     }
 
     public void ClearHiveIndividualAllies(EntityUid hiveEnt)
     {
         if (!TryComp<HiveComponent>(hiveEnt, out var hive))
             return;
-        hive.IndividualAllies.Clear();
+        foreach (var item in hive.IndividualAllies)
+        {
+            hive.IndividualAllies.Remove(item);
+            DirtyEntity(item);
+        }
     }
 
     /// <summary>

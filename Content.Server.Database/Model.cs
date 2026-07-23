@@ -64,6 +64,10 @@ namespace Content.Server.Database
         public DbSet<RMCPlayerActionOrder> RMCPlayerActionOrder { get; set; } = default!;
         public DbSet<RMCChatBans> RMCPlayerChatBans { get; set; } = default!;
 
+        // AU14 INSFOR faction featureset
+        public DbSet<AU14FactionDefinition> AU14FactionDefinitions { get; set; } = default!;
+        // AU14 building overhaul: admin-generated construction-menu entries (see AU14ConstructionModel.cs)
+        public DbSet<AU14CustomConstructionEntry> AU14CustomConstructionEntries { get; set; } = default!;
         // CMU14
         public DbSet<CMUBalanceRatingPoll> CMUBalanceRatingPolls { get; set; } = default!;
         public DbSet<CMUBalanceRatingResponse> CMUBalanceRatingResponses { get; set; } = default!;
@@ -639,6 +643,10 @@ namespace Content.Server.Database
         public string HairColor { get; set; } = null!;
         public string FacialHairName { get; set; } = null!;
         public string FacialHairColor { get; set; } = null!;
+        public string? RegulationHairName { get; set; }
+        public string? RegulationHairColor { get; set; }
+        public string? RegulationFacialHairName { get; set; }
+        public string? RegulationFacialHairColor { get; set; }
         public string EyeColor { get; set; } = null!;
         public string SkinColor { get; set; } = null!;
         public int SpawnPriority { get; set; } = 0;
@@ -660,6 +668,8 @@ namespace Content.Server.Database
         public string XenoPostfix { get; set; } = string.Empty;
         public string? Allegiance { get; set; }
         public string? Origin { get; set; }
+        public string? Platoon { get; set; }
+        public bool Synthetic { get; set; }
         public string? ThreatPreference { get; set; }
         public string? GamemodeJobPriorities { get; set; }
         public string? GamemodeAntagPreferences { get; set; }

@@ -175,8 +175,8 @@
 - type: entity
   parent: RMCGunCaseBase
   id: RMCGunCasePistolM1984Custom
-  name: Custom M1984 service pistol case
-  description: A case containing a loaded custom M1984 service pistol and two magazines for it.
+  name: Custom M4A3 service pistol case
+  description: A case containing a loaded custom M4A3 service pistol and two magazines for it.
   components:
    - type: Sprite
      noRot: false

@@ -18,6 +18,7 @@ using Content.Shared._RMC14.Xenonids.Spray;
 using Content.Shared._RMC14.Xenonids.Abduct;
 using Content.Shared._RMC14.Xenonids.Charge;
 using Content.Shared._RMC14.Xenonids.Pierce;
+using Content.Shared._RMC14.Xenonids.Sentinel;
 using Content.Shared._RMC14.Xenonids.Stomp;
 using Content.Shared._RMC14.Xenonids.Weeds;
 using Content.Shared._RMC14.Xenonids.Despoiler;
@@ -58,10 +59,12 @@ public sealed class XenoAbilityPreviewOverlay : Overlay
     private static readonly Color BlockerOutlineColor = new Color(0.65f, 0.65f, 0.65f);
     private static readonly Color AcidMineOutlineColor = new Color(0.6f, 0.9f, 0.2f);
     private static readonly Color DeployTrapsOutlineColor = new Color(0.8f, 0.6f, 0.2f);
+    private static readonly Color SentinelToxinOutlineColor = new Color(0.34f, 0.95f, 0.24f);
 
     private const float OutlineAlpha = 0.8f;
     private const float OutlineThickness = 0.1f;
     private const int BombardDefaultRadius = 3;
+    private const float ToxicSpitDefaultRange = 7f;
 
     private readonly IInputManager _input;
     private readonly IEyeManager _eye;
@@ -79,6 +82,7 @@ public sealed class XenoAbilityPreviewOverlay : Overlay
     private readonly EntityQuery<ActionsComponent> _actionsQ;
     private readonly EntityQuery<TargetActionComponent> _targetActionQ;
     private readonly EntityQuery<WorldTargetActionComponent> _worldTargetQ;
+    private readonly EntityQuery<EntityTargetActionComponent> _entityTargetQ;
     private readonly EntityQuery<XenoSprayAcidComponent> _sprayQ;
     private readonly EntityQuery<XenoBombardComponent> _bombardQ;
     private readonly EntityQuery<XenoBurrowComponent> _burrowQ;
@@ -95,6 +99,7 @@ public sealed class XenoAbilityPreviewOverlay : Overlay
     private readonly EntityQuery<TransformComponent> _xformQ;
     private readonly EntityQuery<XenoDespoilerCausticEmbraceActionComponent> _causticEmbraceQ;
     private readonly EntityQuery<XenoDespoilerComponent> _despoilerQ;
+    private readonly EntityQuery<XenoToxicSpitComponent> _toxicSpitQ;
 
     public XenoAbilityPreviewOverlay(IEntityManager ents)
     {
@@ -114,6 +119,7 @@ public sealed class XenoAbilityPreviewOverlay : Overlay
         _actionsQ = ents.GetEntityQuery<ActionsComponent>();
         _targetActionQ = ents.GetEntityQuery<TargetActionComponent>();
         _worldTargetQ = ents.GetEntityQuery<WorldTargetActionComponent>();
+        _entityTargetQ = ents.GetEntityQuery<EntityTargetActionComponent>();
         _sprayQ = ents.GetEntityQuery<XenoSprayAcidComponent>();
         _bombardQ = ents.GetEntityQuery<XenoBombardComponent>();
         _burrowQ = ents.GetEntityQuery<XenoBurrowComponent>();
@@ -130,6 +136,7 @@ public sealed class XenoAbilityPreviewOverlay : Overlay
         _xformQ = ents.GetEntityQuery<TransformComponent>();
         _causticEmbraceQ = ents.GetEntityQuery<XenoDespoilerCausticEmbraceActionComponent>();
         _despoilerQ = ents.GetEntityQuery<XenoDespoilerComponent>();
+        _toxicSpitQ = ents.GetEntityQuery<XenoToxicSpitComponent>();
     }
 
     protected override void Draw(in OverlayDrawArgs args)
@@ -165,12 +172,12 @@ public sealed class XenoAbilityPreviewOverlay : Overlay
         if (originMap.MapId != mousePos.MapId)
             return;
 
-        if (!_worldTargetQ.TryComp(action, out var worldTarget) || worldTarget.Event == null)
-            return;
-
         if (args.Space == OverlaySpace.WorldSpace)
         {
-            if (worldTarget.Event is not XenoBurrowActionEvent ||
+            if (!_worldTargetQ.TryComp(action, out var worldSpaceTarget) || worldSpaceTarget.Event == null)
+                return;
+
+            if (worldSpaceTarget.Event is not XenoBurrowActionEvent ||
                 !_burrowQ.TryComp(player.Value, out burrow) ||
                 !IsBurrowed(burrow))
             {
@@ -185,8 +192,22 @@ public sealed class XenoAbilityPreviewOverlay : Overlay
         if (args.Space != OverlaySpace.WorldSpaceBelowFOV)
             return;
 
+        if (_entityTargetQ.TryComp(action, out var entityTarget) &&
+            entityTarget.Event is XenoDrainStingActionEvent &&
+            _targetActionQ.TryComp(action, out var targetAction))
+        {
+            DrawTileRangeIntersecting(args, originMap, targetAction.Range, SentinelToxinOutlineColor.WithAlpha(OutlineAlpha));
+            return;
+        }
+
+        if (!_worldTargetQ.TryComp(action, out var worldTarget) || worldTarget.Event == null)
+            return;
+
         switch (worldTarget.Event)
         {
+            case XenoToxicSpitActionEvent:
+                DrawToxicSpit(args, player.Value, xform, originMap, mousePos);
+                break;
             case XenoSprayAcidActionEvent:
                 if (!_sprayQ.TryComp(player.Value, out var spray))
                     return;
@@ -294,6 +315,22 @@ public sealed class XenoAbilityPreviewOverlay : Overlay
 
         var color = SprayOutlineColor.WithAlpha(OutlineAlpha);
         DrawLinePreview(args, player, xform.Coordinates, mousePos, spray.Range, color);
+    }
+
+    private void DrawToxicSpit(
+        in OverlayDrawArgs args,
+        EntityUid player,
+        TransformComponent xform,
+        MapCoordinates originMap,
+        MapCoordinates mousePos)
+    {
+        var range = GetToxicSpitRange(player);
+        var direction = mousePos.Position - originMap.Position;
+        if (direction.Length() > range)
+            mousePos = originMap.Offset(direction.Normalized() * range);
+
+        var color = SentinelToxinOutlineColor.WithAlpha(OutlineAlpha);
+        DrawTileRange(args, originMap, range, color);
     }
 
     private void DrawSquareAoE(
@@ -655,6 +692,38 @@ public sealed class XenoAbilityPreviewOverlay : Overlay
         DrawTileBorder(args.WorldHandle, gridUid, grid, tiles, color);
     }
 
+    private void DrawTileRangeIntersecting(
+        in OverlayDrawArgs args,
+        MapCoordinates originMap,
+        float range,
+        Color color)
+    {
+        if (!_mapSystem.TryFindGridAt(originMap, out var gridUid, out var grid))
+            return;
+
+        var center = _mapSystem.CoordinatesToTile(gridUid, grid, originMap);
+        var tileSize = grid.TileSize;
+        var halfTile = tileSize / 2f;
+        var maxTiles = (int) MathF.Ceiling((range + halfTile) / tileSize);
+        var tiles = new HashSet<Vector2i>();
+        for (var x = -maxTiles; x <= maxTiles; x++)
+        {
+            for (var y = -maxTiles; y <= maxTiles; y++)
+            {
+                var indices = center + new Vector2i(x, y);
+                var tileCenter = _mapSystem.GridTileToWorld(gridUid, grid, indices).Position;
+                var delta = Vector2.Abs(tileCenter - originMap.Position);
+                var closest = Vector2.Max(delta - new Vector2(halfTile, halfTile), Vector2.Zero);
+                if (closest.Length() > range)
+                    continue;
+
+                tiles.Add(indices);
+            }
+        }
+
+        DrawTileBorder(args.WorldHandle, gridUid, grid, tiles, color);
+    }
+
     private void DrawBurrowTarget(
         in OverlayDrawArgs args,
         MapCoordinates originMap,
@@ -869,6 +938,18 @@ public sealed class XenoAbilityPreviewOverlay : Overlay
             if (!tiles.Contains(new Vector2i(indices.X - 1, indices.Y)))
                 DrawEdge(handle, p00, p01, color);
         }
+    }
+
+    private float GetToxicSpitRange(EntityUid player)
+    {
+        if (!_toxicSpitQ.TryComp(player, out var toxicSpit) ||
+            !_prototypes.TryIndex<EntityPrototype>(toxicSpit.ProjectileId, out var projectileProto) ||
+            !projectileProto.TryComp<ProjectileMaxRangeComponent>(out var maxRange, _componentFactory))
+        {
+            return ToxicSpitDefaultRange;
+        }
+
+        return maxRange.Max;
     }
 
     private int GetBombardRadius(EntProtoId projectile)

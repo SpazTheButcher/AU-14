@@ -658,6 +658,7 @@
       - !type:EqualHealthChange
         damage:
         - Airloss: -4
+      - !type:ClearRespiratoryStrain
       - !type:HealthChange
         conditions:
         - !type:ReagentThreshold
@@ -687,6 +688,7 @@
       effects:
       - !type:RemoveDamage
         group: Toxin
+      - !type:CureDrugAllergyReaction
       - !type:HealthChange
         conditions:
         - !type:ReagentThreshold
@@ -702,6 +704,54 @@
           groups:
             Brute: 1.5
             Toxin: 3
+      - !type:ChemVomit
+        conditions:
+        - !type:ReagentThreshold
+          reagent: CMUParacetamol
+          min: 1
+      - !type:AdjustReagent
+        reagent: CMUParacetamol
+        amount: -1000
+      - !type:ChemVomit
+        conditions:
+        - !type:ReagentThreshold
+          reagent: CMUTramadol
+          min: 1
+      - !type:AdjustReagent
+        reagent: CMUTramadol
+        amount: -1000
+      - !type:ChemVomit
+        conditions:
+        - !type:ReagentThreshold
+          reagent: CMUOxycodone
+          min: 1
+      - !type:AdjustReagent
+        reagent: CMUOxycodone
+        amount: -1000
+      - !type:ChemVomit
+        conditions:
+        - !type:ReagentThreshold
+          reagent: CMUFentanyl
+          min: 1
+      - !type:AdjustReagent
+        reagent: CMUFentanyl
+        amount: -1000
+      - !type:ChemVomit
+        conditions:
+        - !type:ReagentThreshold
+          reagent: CMUSleen
+          min: 1
+      - !type:AdjustReagent
+        reagent: CMUSleen
+        amount: -1000
+      - !type:ChemVomit
+        conditions:
+        - !type:ReagentThreshold
+          reagent: CMUSoporific
+          min: 1
+      - !type:AdjustReagent
+        reagent: CMUSoporific
+        amount: -1000
 
 #injectors
 - type: entity
@@ -737,6 +787,67 @@
     doAfter: 0
   - type: IconLabel
     labelTextLocId: AU14-naloxone-medicine-container-label-text
+
+- type: entity
+  parent: CMAutoInjector
+  id: CMUEpinephrineAutoInjector
+  name: epinephrine autoinjector
+  description: An autoinjector loaded with epinephrine, sometimes referred to as an 'EpiPen'. It is used to treat severe allergic reactions, though it can also be used to help restart someone's heart. Doesn't require any training to use.
+  components:
+  - type: Sprite
+    sprite: _AU14/Items/naloxone_auto_injector.rsi
+    layers:
+    - state: autoinjector
+    - state: autoinjector1
+      map: ["enum.SolutionContainerLayers.Fill"]
+      visible: false
+  - type: Item
+    sprite: null
+  - type: Hypospray
+    transferAmount: 3
+    injectSound: /Audio/_RMC14/Medical/air_release.ogg
+  - type: SolutionContainerManager
+    solutions:
+      pen:
+        maxVol: 3
+        reagents:
+        - ReagentId: CMEpinephrine
+          Quantity: 3
+  - type: SolutionContainerVisuals
+    maxFillLevels: 1
+    changeColor: false
+  - type: MedicallyUnskilledDoAfter
+    min: 0
+    doAfter: 0
+  - type: IconLabel
+    labelTextLocId: cmu-epinephrine-container-label-text
+
+- type: entity
+  parent: CMAutoInjector
+  id: CMUAsthmaInhaler
+  name: inhaler
+  description: A small, sealed inhaler pre-loaded with a single dose of albuterol. It cannot be refilled or have its medication removed.
+  components:
+  - type: Item
+    sprite: null
+  - type: Hypospray
+    transferAmount: 20
+    injectSound: /Audio/_RMC14/Medical/air_release.ogg
+  - type: SolutionContainerManager
+    solutions:
+      pen:
+        maxVol: 20
+        reagents:
+        - ReagentId: AU14Albuterol
+          Quantity: 20
+  - type: SolutionContainerVisuals
+    maxFillLevels: 1
+    changeColor: false
+  - type: MedicallyUnskilledDoAfter
+    min: 0
+    doAfter: 0
+  - type: IconLabel
+    labelTextLocId: cmu-inhaler-container-label-text
 
 - type: entity
   parent: CMTricordrazineAutoInjector
@@ -936,6 +1047,48 @@
       CMUParacetamol: 60
   - type: IconLabel
     labelTextLocId: rmc-paracetamol-container-label-text
+
+- type: entity
+  parent: CMAutoInjector
+  id: CMUFentanylAutoInjector
+  name: fentanyl autoinjector
+  description: An autoinjector loaded with 3 uses of Fentanyl.
+  components:
+  - type: Hypospray
+    transferAmount: 10
+  - type: SolutionContainerManager
+    solutions:
+      pen:
+        maxVol: 30
+        reagents:
+        - ReagentId: CMUFentanyl
+          Quantity: 30
+  - type: CMRefillableSolution
+    reagents:
+      CMUFentanyl: 30
+  - type: IconLabel
+    labelTextLocId: rmc-fentanyl-container-label-text
+
+- type: entity
+  parent: CMAutoInjector
+  id: CMUMethamphetamineAutoInjector
+  name: methamphetamine autoinjector
+  description: An autoinjector loaded with 3 uses of Methamphetamine.
+  components:
+  - type: Hypospray
+    transferAmount: 15
+  - type: SolutionContainerManager
+    solutions:
+      pen:
+        maxVol: 45
+        reagents:
+        - ReagentId: CMUMethamphetamine
+          Quantity: 45
+  - type: CMRefillableSolution
+    reagents:
+      CMUMethamphetamine: 45
+  - type: IconLabel
+    labelTextLocId: rmc-methamphetamine-container-label-text
 
 #gauze
 

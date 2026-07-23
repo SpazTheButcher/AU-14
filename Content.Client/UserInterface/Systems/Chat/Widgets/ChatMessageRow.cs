@@ -213,7 +213,7 @@ public sealed partial class ChatMessageRow : PanelContainer
         return message.Channel switch
         {
             ChatChannel.Radio => "RAD",
-            ChatChannel.LOOC => "HELP",
+            ChatChannel.LOOC => "LOOC",
             ChatChannel.OOC => "OOC",
             ChatChannel.Dead => "DEAD",
             ChatChannel.Admin => "ADMIN",

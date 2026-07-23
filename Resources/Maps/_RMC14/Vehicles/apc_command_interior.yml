@@ -652,4 +652,11 @@ entities:
       fixtures: {}
     missingComponents:
     - InteractionTransparency
+- proto: AU14VehicleRadioSet
+  entities:
+  - uid: 500
+    components:
+    - type: Transform
+      pos: 0.5,1.5
+      parent: 2
 ...

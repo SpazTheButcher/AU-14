@@ -479,4 +479,11 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 0.5,-3.5
       parent: 2
+- proto: AU14VehicleRadioSet
+  entities:
+  - uid: 500
+    components:
+    - type: Transform
+      pos: 3.5,-0.5
+      parent: 2
 ...

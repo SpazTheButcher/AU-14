@@ -137,6 +137,12 @@
     - neck
 
 - type: entity
+  parent: RMCInformationDogtag
+  id: CMUAllergyDogtag
+  name: medical alert tag
+  description: A tag listing a medical condition its wearer needs treated carefully.
+
+- type: entity
   id: RMCDogtagProp
   name: dog tag
   description: A fallen marine's dog tag, no body in sight.

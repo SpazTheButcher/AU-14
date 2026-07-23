@@ -101,7 +101,11 @@ internal static class GhostPreviewHelper
             GetMarkingColor(facialHair, humanoid.CachedFacialHairColor ?? defaults.FacialHairColor),
             humanoid.EyeColor,
             humanoid.SkinColor,
-            markings);
+            markings,
+            defaults.RegulationHairStyleId,
+            defaults.RegulationHairColor,
+            defaults.RegulationFacialHairStyleId,
+            defaults.RegulationFacialHairColor);
     }
 
     private static Marking? GetFirstMarking(MarkingSet markingSet, MarkingCategories category)

@@ -109,6 +109,25 @@
       whitelist:
         components:
         - XenoHeavy
+  - type: DrawableSolution
+    solution: blood
+  - type: SolutionContainerManager
+    solutions:
+      blood:
+        maxVol: 600
+        reagents:
+        - ReagentId: CMUXenoBlood
+          Quantity: 300
+        - ReagentId: CMUXenoPlasmaNeuro
+          Quantity: 300
+  - type: SolutionRegeneration
+    solution: blood
+    generated:
+      reagents:
+      - ReagentId: CMUXenoBlood
+        Quantity: 1
+      - ReagentId: CMUXenoPlasmaNeuro
+        Quantity: 1
   - type: RMCXenoDamageVisuals
     prefix: spitter
   - type: TacticalMapIcon

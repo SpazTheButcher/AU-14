@@ -9,7 +9,7 @@ namespace Content.Shared._RMC14.Language.Systems;
 
 public abstract partial class SharedLanguageSystem : EntitySystem
 {
-    [Dependency] protected IPrototypeManager _prototypeManager = default!;
+    [Dependency] private IPrototypeManager _prototypeManager = default!;
     [Dependency] private IRobustRandom _random = default!;
 
     public static readonly ProtoId<LanguagePrototype> CommonLanguage = "English";
@@ -158,8 +158,54 @@ public abstract partial class SharedLanguageSystem : EntitySystem
 
         var random = CreateRandom(seed, randomize);
         if (max == int.MaxValue)
-            return (int) random.NextInt64(min, (long) max + 1);
+            return (int)random.NextInt64(min, (long)max + 1);
 
         return random.Next(min, max + 1);
+    }
+
+    /// <summary>
+    /// Returns the highest sister language similarity between the listener's known languages
+    /// and the target language. Returns 0 if no sister language relationship exists.
+    /// Bidirectional — checks both the target's SisterLanguages and the listener's spoken languages' SisterLanguages.
+    /// </summary>
+    public float GetSisterLanguageSimilarity(EntityUid listener, ProtoId<LanguagePrototype> language)
+    {
+        if (!_prototypeManager.TryIndex(language, out var targetProto))
+            return 0f;
+
+        var comp = CompOrNull<LanguageComponent>(listener);
+
+        // merge spoken + understood — pamphlets may only add to one of them
+        var knownLanguages = new HashSet<ProtoId<LanguagePrototype>>();
+        if (comp != null)
+        {
+            knownLanguages.UnionWith(comp.UnderstoodLanguages);
+            knownLanguages.UnionWith(comp.SpokenLanguages);
+        }
+        else
+        {
+            knownLanguages.Add(CommonLanguage);
+        }
+
+        float best = 0f;
+
+        // target's SisterLanguages → check if listener knows any of them
+        foreach (var (sisterLang, similarity) in targetProto.SisterLanguages)
+        {
+            if (knownLanguages.Contains(sisterLang))
+                best = MathF.Max(best, similarity);
+        }
+
+        // listener's known languages' SisterLanguages → check if any point to target
+        foreach (var knownLang in knownLanguages)
+        {
+            if (!_prototypeManager.TryIndex(knownLang, out var knownProto))
+                continue;
+
+            if (knownProto.SisterLanguages.TryGetValue(language, out var similarity))
+                best = MathF.Max(best, similarity);
+        }
+
+        return best;
     }
 }

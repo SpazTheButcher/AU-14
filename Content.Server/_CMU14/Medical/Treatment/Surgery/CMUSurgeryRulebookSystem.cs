@@ -81,14 +81,14 @@ public sealed partial class CMUSurgeryRulebookSystem : EntitySystem
                 eligible));
         }
 
-        if (_medicalIndex.TryGetRootPart(patient, out var root))
+        var patientNetEntity = GetNetEntity(patient);
+        foreach (var (parentId, parentComp) in _medicalIndex.GetBodyParts(patient))
         {
-            var patientNetEntity = GetNetEntity(patient);
-            foreach (var slot in _medicalIndex.GetBodyPartSlots(root.Owner))
+            foreach (var slot in _medicalIndex.GetBodyPartSlots(parentId))
             {
-                if (slot.Type is not (BodyPartType.Arm or BodyPartType.Leg))
+                if (!CMUBodyPartSlots.IsReportableMissingPart(slot.Type))
                     continue;
-                if (!CMUBodyPartSlots.TryGetSymmetry(slot.SlotId, BodyPartSymmetry.None, out var symmetry))
+                if (!CMUBodyPartSlots.TryGetSymmetry(slot.SlotId, parentComp.Symmetry, out var symmetry))
                     continue;
                 if (slot.Part is not null)
                     continue;
@@ -202,7 +202,7 @@ public sealed partial class CMUSurgeryRulebookSystem : EntitySystem
             if (resolveTarget is null
                 && SharedCMUSurgeryFlowSystem.IsReattachSurgeryId(surgery.Id.Id))
             {
-                if (!_flowSurgery.TryGetReattachAnchorPart(patient, out var anchor))
+                if (!_flowSurgery.TryGetReattachAnchorPart(patient, partType, symmetry, out var anchor))
                     continue;
 
                 resolveTarget = anchor;
@@ -256,7 +256,12 @@ public sealed partial class CMUSurgeryRulebookSystem : EntitySystem
 
     private static bool IsSurgicallySupportedPart(BodyPartType type)
     {
-        return type is BodyPartType.Head or BodyPartType.Torso or BodyPartType.Arm or BodyPartType.Leg;
+        return type is BodyPartType.Head
+            or BodyPartType.Torso
+            or BodyPartType.Arm
+            or BodyPartType.Hand
+            or BodyPartType.Leg
+            or BodyPartType.Foot;
     }
 
     private string BuildConditionSummary(EntityUid part, BodyPartType partType)
@@ -549,16 +554,13 @@ public sealed partial class CMUSurgeryRulebookSystem : EntitySystem
 
     private bool ReattachHasAnyMissingSlot(EntityUid patient)
     {
-        if (!_medicalIndex.TryGetRootPart(patient, out var root))
-            return false;
-
-        foreach (var slot in _medicalIndex.GetBodyPartSlots(root.Owner))
+        foreach (var (parentId, _) in _medicalIndex.GetBodyParts(patient))
         {
-            if (slot.Type is not (BodyPartType.Arm or BodyPartType.Leg))
-                continue;
-
-            if (slot.Part is null)
-                return true;
+            foreach (var slot in _medicalIndex.GetBodyPartSlots(parentId))
+            {
+                if (CMUBodyPartSlots.IsReportableMissingPart(slot.Type) && slot.Part is null)
+                    return true;
+            }
         }
 
         return false;

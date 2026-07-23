@@ -10,6 +10,7 @@
     - state: stunbaton_off
       map: [ "enum.ToggleableVisuals.Layer" ]
   - type: Clothing
+    quickEquip: false
     sprite: _RMC14/Objects/Weapons/Melee/stun_baton.rsi
     slots:
     - Belt

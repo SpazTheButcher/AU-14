@@ -232,6 +232,7 @@
       entries:
       - id: AU14SmartGunMinigunHAZOPS
       - id: AU14HAZOPSBatteryMinigunGAU19Backpack
+      - id: RMCScabbardMacheteSGFilled
     - name: Munitions
       entries:
       - id: AU14MagazineMinigunHAZOPS
@@ -264,9 +265,12 @@
       choices: { CMUHandgunsWeapon: 1 }
       entries:
       - id: AU14KitWeaponM4A3
+      - id: AU14GunCasePistolM50HAZOPS
     - name: Handgun Ammunition
       entries:
       - id: CMMagazinePistolM1984
+        amount: 60
+      - id: AU14MagazinePistolM50
         amount: 60
     - name: Attachments
       choices: { CMUAttachmentsVendor: 1 }
@@ -633,6 +637,28 @@
         amount: 1
       - id: AU14BackpackRTOPackGray
         amount: 1
+    - name: Materials
+      entries:
+      - id: CMSheetMetal
+        amount: 4
+      - id: CMSheetPlasteel50
+        amount: 4
+      - id: CMSandbagEmpty50
+        amount: 8
+      - id: AU14HescoKit
+        amount: 30
+      - id: RMCSheetPlastic
+        amount: 4
+      - id: RMCSheetAluminum
+        amount: 4
+      - id: CMSheetGlass
+        amount: 5
+      - id: RMCSheetCardboard
+        amount: 5
+      - id: CMSheetPhoron
+        amount: 1
+      - id: SheetUranium
+        amount: 1
     - name: Tents
       entries:
       - id: RMCTentUNMCStandardFolded
@@ -651,3 +677,54 @@
       entries:
       - id: AU14FlagCarriableUA
         amount: 1
+
+- type: entity
+  parent: ColMarTechBase
+  id: AU14HAZOPSShipsideUniformVendor
+  name: HAZOPS shipside uniform vendor
+  description: A stripped-down dispenser rack stocked with off-duty uniforms, footwear, and light personal gear for wear aboard ship.
+  components:
+  - type: Sprite
+    sprite: _AU14/Structures/Vendors/uscmgearrack.rsi
+  - type: CMAutomatedVendor
+    sections:
+    - name: Softcovers
+      entries:
+      - id: AU14JungleBoonieHat
+        amount: 20
+      - id: AU14JunglePatrolCap
+        amount: 25
+      - id: AU14HeadCommandoBeanie
+        amount: 10
+    - name: Fatigues
+      entries:
+      - id: AU14HAZOPUrbanFatigues
+        amount: 40
+    - name: Footwear
+      entries:
+      - id: CMBootsBlack
+        amount: 40
+    - name: Mask
+      entries:
+      - id: CMMaskCoif
+        amount: 20
+      - id: RMCMaskTornScarfGreen
+        amount: 20
+      - id: RMCMaskTornScarfSnow
+        amount: 20
+      - id: RMCMaskTornScarfBlack
+        amount: 20
+    - name: Glasses
+      entries:
+      - id: RMCGlassesMarineRpg
+        amount: 25
+      - id: AU14GlassesBiMex
+        amount: 25
+      - id: AU14GlassesBiMexOrange
+        amount: 25
+      - id: RMCGlassesTriMaxBronze
+        amount: 25
+    - name: Bag
+      entries:
+      - id: CMSatchelMarine
+        amount: 40

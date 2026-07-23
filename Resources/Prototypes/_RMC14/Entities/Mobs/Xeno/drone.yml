@@ -28,6 +28,25 @@
     tags:
     - DoorBumpOpener
     - RMCSynthGrabbable
+  - type: DrawableSolution
+    solution: blood
+  - type: SolutionContainerManager
+    solutions:
+      blood:
+        maxVol: 600
+        reagents:
+        - ReagentId: CMUXenoBlood
+          Quantity: 300
+        - ReagentId: CMUXenoPlasmaPurple
+          Quantity: 300
+  - type: SolutionRegeneration
+    solution: blood
+    generated:
+      reagents:
+      - ReagentId: CMUXenoBlood
+        Quantity: 1
+      - ReagentId: CMUXenoPlasmaPurple
+        Quantity: 1
   - type: MeleeWeapon
     damage:
       groups:
@@ -151,6 +170,7 @@
     - DoorXenoResin
     - XenoStickyResin
     - XenoFastResin
+    - XenoCollapseResin
     - XenoResinSpikes
   - type: VentCrawler
     ventCrawlIcon: drone

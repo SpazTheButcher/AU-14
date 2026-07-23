@@ -158,7 +158,7 @@
 - type: entity
   parent: VehicleAmmoBoxBase
   id: VehicleAmmoBoxLTBCannon
-  name: LTB cannon ammo crate
+  name: LTB APHE cannon shell
   description: Ammunition for light tank cannons.
   components:
   - type: Sprite
@@ -169,14 +169,11 @@
     visuals:
       enum.BulletBoxLayers.Fill:
         enum.BulletBoxLayers.Fill:
-          Empty: { state: ltbcannon_0, visible: true }
-          Low: { state: ltbcannon_1, visible: true }
-          Medium: { state: ltbcannon_2, visible: true }
-          High: { state: ltbcannon_3, visible: true }
-          Full: { state: ltbcannon_4, visible: true }
+          Empty: { state: lbtshell_0, visible: true }
+          Full: { state: lbtshell_1, visible: true }
   - type: BulletBox
-    amount: 4
-    max: 4
+    amount: 1
+    max: 1
     bulletType: VehicleAmmoBoxLTBCannon
     usedIn: Tank LTB cannon
 

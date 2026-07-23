@@ -93,6 +93,9 @@
     - CMUProstheticRightArm
     - CMUProstheticLeftLeg
     - CMUProstheticRightLeg
+    - SlowRunner
+    - Anemic
+    - Asthmatic
   ranks:
     RMCRankCivilian: []
   chevrons:
@@ -147,7 +150,7 @@
   points: 7
   groups:
   - MarineBackpack
-  - EyewearRMC
+  - EyewearRMCPVE
   - MasksRMCPVE
   - HeadwearRMCPVE
   - HelmetGarbsRMCPVE

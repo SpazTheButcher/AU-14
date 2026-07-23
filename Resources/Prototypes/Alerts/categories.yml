@@ -20,6 +20,18 @@
   id: Stamina
 
 - type: alertCategory
+  id: RespiratoryStrain
+
+- type: alertCategory
+  id: Panic
+
+- type: alertCategory
+  id: DrugAllergy
+
+- type: alertCategory
+  id: NicotineCraving
+
+- type: alertCategory
   id: Piloting
 
 - type: alertCategory

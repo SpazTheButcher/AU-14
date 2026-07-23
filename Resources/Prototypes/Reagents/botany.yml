@@ -25,6 +25,8 @@
   flavor: bitter
   color: "#5b406c"
   physicalDesc: reagent-physical-desc-heterogeneous
+  #TODO VVV GET RID OF WHEN REAL HYDRO CHEMS ARE ADDED
+  class: Hydro
   plantMetabolism:
     - !type:PlantAdjustNutrition
       amount: 1

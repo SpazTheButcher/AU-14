@@ -98,6 +98,7 @@
   color: "#e2972e"
   overdose: 15
   criticalOverdose: 25
+  class: Uncommon
   metabolisms:
     Medicine:
       metabolismRate: 0.1
@@ -113,12 +114,14 @@
   color: "#1f28a7"
   overdose: 30
   criticalOverdose: 50
+  class: Common
   metabolisms:
     Medicine:
       metabolismRate: 0.1
       effects:
       - !type:Oxygenating
         potency: 4
+      - !type:ClearRespiratoryStrain
 
 - type: reagent
   parent: [ CMReagentMedicine, DexalinPlus ]
@@ -128,12 +131,14 @@
   color: "#5887D5"
   overdose: 15
   criticalOverdose: 25
+  class: Uncommon
   metabolisms:
     Medicine:
       metabolismRate: 0.1
       effects:
       - !type:Oxygenating
         potency: 6
+      - !type:ClearRespiratoryStrain
 
 # TODO RMC14 other effects (pain)
 # TODO RMC14 injected only
@@ -151,6 +156,7 @@
       effects:
       - !type:Electrogenetic
         potency: 2
+      - !type:CureDrugAllergyReaction
       - !type:CMUApplyPainSuppressionEffect
         accumulationSuppression: 0.15
         tierSuppression: 1
@@ -182,10 +188,12 @@
   desc: reagent-desc-cminaprovaline
   color: "#fe33cb"
   overdose: 110
+  class: Common
   metabolisms:
     Medicine:
       metabolismRate: 0.5
       effects:
+      - !type:Allergenic
       - !type:HealthChange
         conditions:
         - !type:MobStateCondition
@@ -200,10 +208,6 @@
         reductionDecreaseRate: 0
         durationPerUnit: 8
         additive: true
-      - !type:Jitter
-        conditions:
-        - !type:ReagentThreshold
-          min: 110
       - !type:GenericStatusEffect
         conditions:
         - !type:ReagentThreshold
@@ -222,6 +226,7 @@
   color: "#f5e123"
   overdose: 30
   criticalOverdose: 50
+  class: Common
   metabolisms:
     Medicine:
       metabolismRate: 0.1
@@ -254,6 +259,7 @@
   color: "#d87f2b"
   overdose: 30
   criticalOverdose: 50
+  class: Uncommon
   metabolisms:
     Medicine:
       metabolismRate: 0.1
@@ -438,6 +444,7 @@
   color: "#BBEDA4"
   overdose: 30
   criticalOverdose: 50
+  class: Uncommon
   metabolisms:
     Medicine:
       metabolismRate: 0.1

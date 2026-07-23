@@ -206,7 +206,7 @@ public sealed partial class ChatSystem
 
             var listenerMessage = listener == source
                 ? speakerMessage
-                : _language.ObfuscateMessageForListener(listener, speakerMessage, language);
+                : _language.ObfuscateMessageForListener(listener, speakerMessage, language, source);
             var listenerName = FormattedMessage.EscapeText(GetSpeakerNameForListener(source, listener, transformedName));
             var listenerIdentityName = FormattedMessage.EscapeText(GetSpeakerNameForListener(source, listener, transformedIdentityName));
 
@@ -349,7 +349,7 @@ public sealed partial class ChatSystem
 
             var listenerMessage = listener == source
                 ? message
-                : _language.ObfuscateMessageForListener(listener, message, language);
+                : _language.ObfuscateMessageForListener(listener, message, language, source);
             var listenerName = FormattedMessage.EscapeText(GetRadioSpeakerNameForListener(source, listener, transformedName, originalSpeaker));
 
             string actualWrappedMessage;
@@ -485,7 +485,7 @@ public sealed partial class ChatSystem
             var canUnderstand = _language.CanUnderstand(listener, language);
             var listenerMessage = listener == source
                 ? speakerMessage
-                : _language.ObfuscateMessageForListener(listener, speakerMessage, language);
+                : _language.ObfuscateMessageForListener(listener, speakerMessage, language, source);
             var useEmoteSpeechBubble = visibleLanguage && !canUnderstand;
             var listenerName = FormattedMessage.EscapeText(GetSpeakerNameForListener(
                 source,

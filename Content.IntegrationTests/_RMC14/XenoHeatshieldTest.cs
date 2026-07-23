@@ -26,31 +26,35 @@ public sealed class XenoHeatshieldTest
         EntityUid behind = default;
         Entity<ActionComponent> action = default;
 
-        await server.WaitPost(() =>
+        try
         {
-            var entMan = server.EntMan;
-            xeno = entMan.SpawnEntity("CMXenoDefenderHeatshield", map.GridCoords);
-            targetNorth = entMan.SpawnEntity("CMMobHuman", map.GridCoords.Offset(new Vector2(1, 1)));
-            targetCenter = entMan.SpawnEntity("CMMobHuman", map.GridCoords.Offset(new Vector2(1, 0)));
-            targetSouth = entMan.SpawnEntity("CMMobHuman", map.GridCoords.Offset(new Vector2(1, -1)));
-            behind = entMan.SpawnEntity("CMMobHuman", map.GridCoords.Offset(new Vector2(-1, 0)));
-            action = SpawnAction(entMan);
-
-            var flammable = entMan.GetComponent<FlammableComponent>(xeno);
-            flammable.OnFire = true;
-            entMan.Dirty(xeno, flammable);
-        });
-
-        await server.WaitRunTicks(1);
-
-        await server.WaitAssertion(() =>
-        {
-            var entMan = server.EntMan;
-
-            try
+            await server.WaitPost(() =>
             {
-                RaiseVomitBile(entMan, xeno, map.GridCoords.Offset(new Vector2(1, 0)), action);
+                var entMan = server.EntMan;
+                xeno = entMan.SpawnEntity("CMXenoDefenderHeatshield", map.GridCoords);
+                targetNorth = entMan.SpawnEntity("CMMobHuman", map.GridCoords.Offset(new Vector2(1, 1)));
+                targetCenter = entMan.SpawnEntity("CMMobHuman", map.GridCoords.Offset(new Vector2(1, 0)));
+                targetSouth = entMan.SpawnEntity("CMMobHuman", map.GridCoords.Offset(new Vector2(1, -1)));
+                behind = entMan.SpawnEntity("CMMobHuman", map.GridCoords.Offset(new Vector2(-1, 0)));
+                action = SpawnAction(entMan);
 
+                var flammable = entMan.GetComponent<FlammableComponent>(xeno);
+                flammable.OnFire = true;
+                entMan.Dirty(xeno, flammable);
+            });
+
+            // await server.WaitRunTicks(1);
+            await server.WaitPost(() => { RaiseVomitBile(server.EntMan, xeno, map.GridCoords.Offset(new Vector2(1, 0)), action); });
+
+            await PoolManager.WaitUntil(server, ()
+                => CountPrototype(server.EntMan, FireSpewEffectPrototype) == 3
+                && IsOnFire(server.EntMan, targetNorth)
+                && IsOnFire(server.EntMan, targetCenter)
+                && IsOnFire(server.EntMan, targetSouth));
+
+            await server.WaitAssertion(() =>
+            {
+                var entMan = server.EntMan;
                 Assert.Multiple(() =>
                 {
                     Assert.That(IsOnFire(entMan, targetNorth), Is.True);
@@ -59,20 +63,30 @@ public sealed class XenoHeatshieldTest
                     Assert.That(IsOnFire(entMan, behind), Is.False);
                     Assert.That(CountPrototype(entMan, FireSpewEffectPrototype), Is.EqualTo(3));
                 });
-            }
-            finally
+            });
+        }
+        finally
+        {
+            await server.WaitPost(() =>
             {
+                var entMan = server.EntMan;
                 DeletePrototypeEntities(entMan, FireSpewEffectPrototype);
-                entMan.DeleteEntity(xeno);
-                entMan.DeleteEntity(targetNorth);
-                entMan.DeleteEntity(targetCenter);
-                entMan.DeleteEntity(targetSouth);
-                entMan.DeleteEntity(behind);
-                entMan.DeleteEntity(action.Owner);
-            }
-        });
+                DeleteIfUidValid(entMan, xeno);
+                DeleteIfUidValid(entMan, targetNorth);
+                DeleteIfUidValid(entMan, targetCenter);
+                DeleteIfUidValid(entMan, targetSouth);
+                DeleteIfUidValid(entMan, behind);
+                DeleteIfUidValid(entMan, action.Owner);
+            });
+        }
 
         await pair.CleanReturnAsync();
+    }
+
+    private static void DeleteIfUidValid(IEntityManager entMan, EntityUid uid)
+    {
+        if (uid != default && entMan.EntityExists(uid))
+            entMan.DeleteEntity(uid);
     }
 
     private static Entity<ActionComponent> SpawnAction(IEntityManager entMan)

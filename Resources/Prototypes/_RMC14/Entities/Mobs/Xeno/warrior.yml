@@ -58,6 +58,25 @@
     plasma: 0
     maxPlasma: 0
     plasmaRegenOnWeeds: 0
+  - type: DrawableSolution
+    solution: blood
+  - type: SolutionContainerManager
+    solutions:
+      blood:
+        maxVol: 600
+        reagents:
+        - ReagentId: CMUXenoBlood
+          Quantity: 300
+        - ReagentId: CMUXenoPlasmaChitin
+          Quantity: 300
+  - type: SolutionRegeneration
+    solution: blood
+    generated:
+      reagents:
+      - ReagentId: CMUXenoBlood
+        Quantity: 1
+      - ReagentId: CMUXenoPlasmaChitin
+        Quantity: 1
   - type: XenoEvolution
     max: 500
     evolvesTo:

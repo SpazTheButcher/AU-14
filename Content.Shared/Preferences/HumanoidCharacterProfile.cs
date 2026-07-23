@@ -22,6 +22,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Serialization;
 using Robust.Shared.Utility;
+using Content.Shared.AU14.util;
 
 namespace Content.Shared.Preferences
 {
@@ -213,6 +214,19 @@ namespace Content.Shared.Preferences
         [DataField]
         public ProtoId<OriginPrototype>? Origin { get; private set; } = "UAAmerica";
 
+        /// <summary>
+        /// The platoon selected for this character.
+        /// </summary>
+        [DataField]
+        public ProtoId<PlatoonPrototype>? Platoon { get; private set; } = null;
+
+        /// <summary>
+        /// Whether this character is a synthetic. Requires the synthetic job whitelist to
+        /// set to true; if true, the character will only be resolved into synthetic jobs.
+        /// </summary>
+        [DataField]
+        public bool Synthetic { get; private set; } = false;
+
         public HumanoidCharacterProfile(
             string name,
             string flavortext,
@@ -235,6 +249,8 @@ namespace Content.Shared.Preferences
             string xenoPostfix,
             ProtoId<AllegiancePrototype>? allegiance = null,
             ProtoId<OriginPrototype>? origin = null,
+            ProtoId<PlatoonPrototype>? platoon = null,
+            bool synthetic = false,
             HashSet<ProtoId<ThreatPrototype>>? threatPreferences = null,
             Dictionary<string, Dictionary<ProtoId<JobPrototype>, JobPriority>>? gamemodeJobPriorities = null,
             Dictionary<string, HashSet<ProtoId<AntagPrototype>>>? gamemodeAntagPreferences = null,
@@ -262,6 +278,8 @@ namespace Content.Shared.Preferences
             XenoPostfix = xenoPostfix;
             Allegiance = allegiance;
             Origin = origin;
+            Platoon = platoon;
+            Synthetic = synthetic;
             _threatPreferences = threatPreferences ?? new();
             _gamemodeJobPriorities = NormalizeGamemodeJobPriorities(gamemodeJobPriorities);
             _gamemodeAntagPreferences = NormalizeGamemodeSetPreferences(gamemodeAntagPreferences);
@@ -381,6 +399,8 @@ namespace Content.Shared.Preferences
                 other.XenoPostfix,
                 other.Allegiance,
                 other.Origin,
+                other.Platoon,
+                other.Synthetic,
                 new HashSet<ProtoId<ThreatPrototype>>(other.ThreatPreferences),
                 other.GamemodeJobPriorities.ToDictionary(
                     pair => pair.Key,
@@ -547,6 +567,22 @@ namespace Content.Shared.Preferences
         public HumanoidCharacterProfile WithOrigin(ProtoId<OriginPrototype>? origin)
         {
             return new(this) { Origin = origin };
+        }
+
+        public HumanoidCharacterProfile WithPlatoon(ProtoId<PlatoonPrototype>? platoon)
+        {
+            return new(this)
+            {
+                Platoon = platoon
+            };
+        }
+
+        public HumanoidCharacterProfile WithSynthetic(bool synthetic)
+        {
+            return new(this)
+            {
+                Synthetic = synthetic
+            };
         }
 
         public HumanoidCharacterProfile WithThreatPreference(ProtoId<ThreatPrototype> threat, bool pref)
@@ -859,6 +895,8 @@ namespace Content.Shared.Preferences
             if (XenoPostfix != other.XenoPostfix) return false;
             if (Allegiance != other.Allegiance) return false;
             if (Origin != other.Origin) return false;
+            if (Platoon != other.Platoon) return false;
+            if (Synthetic != other.Synthetic) return false;
             if (!_threatPreferences.SetEquals(other._threatPreferences)) return false;
             if (!GamemodeSetPreferencesEqual(_gamemodeThreatPreferences, other._gamemodeThreatPreferences)) return false;
             return Appearance.MemberwiseEquals(other.Appearance);
@@ -1277,6 +1315,8 @@ namespace Content.Shared.Preferences
             hashCode.Add(XenoPostfix);
             hashCode.Add(Allegiance);
             hashCode.Add(Origin);
+            hashCode.Add(Platoon);
+            hashCode.Add(Synthetic);
             foreach (var threatPreference in _threatPreferences.Select(threat => threat.Id).OrderBy(id => id))
             {
                 hashCode.Add(threatPreference);

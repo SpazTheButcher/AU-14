@@ -4,6 +4,7 @@ namespace Content.Shared.AU14.util
     {
         Corpsman,
         Clothing,
+        ShipsideUniform,
         Weapons,
         SWeapons,
         ObjectivesConsole,
@@ -53,6 +54,7 @@ namespace Content.Shared.AU14.util
         GroundsideOps,
         TacticalMap,
         ReqVend,
+        VehicleCrew,
         Analyzer,
         AICore,
         AllianceConsoleGovfor,
@@ -65,6 +67,16 @@ namespace Content.Shared.AU14.util
         CommandTabletGovfor,
         CommandTabletOpfor,
         GroundsideOpsGovfor,
-        GroundsideOpsOpfor
+        GroundsideOpsOpfor,
+        LockedDoubleNormalDoor,
+        LockedDoubleGlassDoor,
+        LockedDoubleCommandDoor,
+        LockedDoubleCommandGlassDoor,
+        LockedDoubleSecurityDoor,
+        LockedDoubleSecurityGlassDoor,
+        LockedDoubleMedicalDoor,
+        LockedDoubleMedicalGlassDoor,
+        LockedDoubleEngineeringDoor,
+        LockedDoubleEngineeringGlassDoor
     }
 }

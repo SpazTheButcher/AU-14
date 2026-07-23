@@ -517,9 +517,12 @@
 
 - type: entity
   parent: RMCGogglesBallistic
-  id: RMCGogglesPrescriptionBallistic # TODO make this actually prescription
+  id: RMCGogglesPrescriptionBallistic
   name: prescription marine ballistic goggles
   description: Standard issue USCM goggles. Mostly used to decorate one's helmet. Contains prescription lenses in case you weren't sure if they were lame or not.
+  components:
+  - type: VisionCorrection
+    visionBonus: -4
 
 - type: entity
   parent: RMCGogglesBallistic
@@ -582,6 +585,9 @@
   id: RMCPrescriptionSunglasses
   name: prescription sunglasses
   description: A mixture of coolness and the inherent nerdiness of a prescription. Somehow manages to conceal both.
+  components:
+  - type: VisionCorrection
+    visionBonus: -4
 
 # Identical to upstream ones, sans the name and description
 - type: entity
@@ -696,6 +702,40 @@
   - type: Clothing
     sprite: _RMC14/Objects/Clothing/Eyes/Glasses/trimax_black_glasses.rsi
 
+# Prescription variants
+
+- type: entity
+  parent: RMCSunglassesBigFake
+  id: RMCPrescriptionSunglassesBigFake
+  name: prescription TriMex personal shades
+  description: These are a bargain-bin pair of TriMax-style sunglasses, fitted with prescription lenses.
+  components:
+  - type: VisionCorrection
+    visionBonus: -4
+
+- type: entity
+  parent: RMCGlassesTriMaxYellowFake
+  id: RMCPrescriptionGlassesTriMaxYellowFake
+  name: prescription TriMex 'Polarized' Shades
+  components:
+  - type: VisionCorrection
+    visionBonus: -4
+
+- type: entity
+  parent: RMCGlassesTriMaxBronzeFake
+  id: RMCPrescriptionGlassesTriMaxBronzeFake
+  components:
+  - type: VisionCorrection
+    visionBonus: -4
+
+- type: entity
+  parent: RMCGlassesTriMaxBlackFake
+  id: RMCPrescriptionGlassesTriMaxBlackFake
+  name: prescription TriMex Tactical Shades
+  components:
+  - type: VisionCorrection
+    visionBonus: -4
+
 - type: entity
   parent: ClothingEyesBase
   id: RMCGlassesAviators
@@ -731,6 +771,8 @@
   components:
   - type: Item
     storedRotation: 0
+  - type: VisionCorrection
+    visionBonus: -4
   - type: Sprite
     sprite: _RMC14/Objects/Clothing/Eyes/Glasses/hipster.rsi
   - type: Clothing

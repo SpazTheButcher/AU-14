@@ -22,6 +22,8 @@
   roundProfiles:
   - AU14RoundJobProfileMilitaryBase
   roundComponents:
+  - type: AU14CallsignRole
+    category: ARMOR
   - type: Skills
     preset: AU14SkillPresetPlatoonVehicleCrewman
   - type: JobPrefix
@@ -37,23 +39,20 @@
     - Epilepsy
     - NonResuscitable
     - NoEnglish
+    - SlowRunner
+    - Anemic
+    - Asthmatic
   ranks:
     RMCRankCivilian: []
   chevrons:
+    RMCRankSergeant:
+      entity: AU14ChevronUSCMSergeant
+      requirements:
+      - !type:RoleTimeRequirement
+        role: AU14JobGOVFORVehicleCrewman
+        time: 36000 # 10 hours
     RMCRankCorporal:
       entity: AU14ChevronUSCMCorporal
-      requirements:
-      - !type:RoleTimeRequirement
-        role: AU14JobGOVFORVehicleCrewman
-        time: 86400 # 24 hours
-    RMCRankLanceCorporal:
-      entity: AU14ChevronUSCMLanceCorporal
-      requirements:
-      - !type:RoleTimeRequirement
-        role: AU14JobGOVFORVehicleCrewman
-        time: 18000 # 5 hours
-    RMCRankPrivateFirstClass:
-      entity: AU14ChevronUSCMPrivateFirstClass
       requirements: []
 
 - type: playTimeTracker
@@ -87,15 +86,16 @@
   equipment:
     id: AU14IDCardGOVFORVehicleCrewman
     ears: AU14HeadsetGovforCommand
+    head: AU14CamoM50Helmet
+    pocket1: AU14MaintenanceJack
 
 - type: startingGear
   id: AU14GearOPFORVehicleCrewman
   equipment:
-    outerClothing: AU14ArmorM3JungleThree
-    shoes: AU14BootsJungle
-    head: AU14JungleM10Helmet
-    jumpsuit: AU14JungleFatigues
-    ears: AU14HeadsetGovforCommand
+    id: AU14IDCardOPFORVehicleCrewman
+    head: AU14CamoM50Helmet
+    ears: AU14HeadsetOpforCommand
+    pocket1: AU14MaintenanceJack
 
 - type: entity
   parent: CMSpawnPointJobBase
@@ -124,17 +124,24 @@
 - type: startingGear
   id: AU14GearGOVFORVehicleCrewmanDummy
   equipment:
-    id: AU14IDCardOPFORVehicleCrewman
+    id: AU14IDCardGOVFORVehicleCrewman
     ears: AU14HeadsetOpforCommand
+    head: AU14CamoM50Helmet
+    outerClothing: AU14ArmorM3JungleThree
+    shoes: AU14BootsJungle
+    jumpsuit: AU14JungleFatigues
+    pocket1: AU14MaintenanceJack
 
 - type: startingGear
   id: AU14GearOPFORVehicleCrewmanDummy
   equipment:
+    id: AU14IDCardOPFORVehicleCrewman
     outerClothing: AU14ArmorM3JungleThree
     shoes: AU14BootsJungle
-    head: AU14JungleM10Helmet
+    head: AU14CamoM50Helmet
     jumpsuit: AU14JungleFatigues
     ears: AU14HeadsetOpforCommand
+    pocket1: AU14MaintenanceJack
 
 - type: entity
   parent: CMSpawnPointJobBase
