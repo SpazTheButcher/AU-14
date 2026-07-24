@@ -15,6 +15,7 @@ using Content.Shared.Actions;
 using Robust.Shared.Network;
 using Robust.Shared.Timing;
 using Robust.Shared.GameObjects;
+using Content.Shared._RMC14.Xenonids.Hive;
 
 namespace Content.Server._CMU14.Xenomorphs.Pathogen.Overmind;
 
@@ -29,6 +30,7 @@ public sealed class CMUXenoOvermindSystem : EntitySystem
     [Dependency] private readonly SharedMoverController _mover = default!;
     [Dependency] private readonly INetManager _net = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private readonly SharedXenoHiveSystem _hive = default!;
 
     private static readonly ProtoId<TagPrototype> DoorBumpOpenerTag = "DoorBumpOpener";
     private static readonly EntProtoId EyeProto = "CMU14XenoOvermindEye";
@@ -36,10 +38,7 @@ public sealed class CMUXenoOvermindSystem : EntitySystem
     private static readonly string[] EyeOnlyActions =
     [
         "CMU14ActionXenoPathogenHeal",
-        "CMU14ActionXenoPathogenWordQueen",
-        "CMU14ActionXenoPathogenPheromones",
-        "CMU14ActionXenoPathogenWatch",
-        "CMU14ActionXenoPathogenRest",
+        "CMU14ActionXenoPathogenExpandWeeds"
     ];
 
     private static readonly string[] PhysicalOnlyActions =
@@ -54,13 +53,11 @@ public sealed class CMUXenoOvermindSystem : EntitySystem
         SubscribeLocalEvent<CMUXenoOvermindComponent, CMUXenoOvermindChangeFormActionEvent>(OnChangeForm);
         SubscribeLocalEvent<CMUXenoOvermindComponent, CMUXenoOvermindFormChangedEvent>(OnFormChanged);
         SubscribeLocalEvent<CMUXenoOvermindComponent, ComponentShutdown>(OnOvermindShutdown);
-        // Mirror queen eye: handle visibility mask so the player can see xeno-layer entities
         SubscribeLocalEvent<CMUXenoOvermindComponent, GetVisMaskEvent>(OnGetVisMask);
     }
 
     private void OnGetVisMask(Entity<CMUXenoOvermindComponent> ent, ref GetVisMaskEvent args)
     {
-        // While in eye form, grant the xeno visibility layer so the eye entity is visible to the player
         if (ent.Comp.Eye != null)
             args.VisibilityMask |= (int) VisibilityFlags.Xeno;
     }
@@ -68,12 +65,41 @@ public sealed class CMUXenoOvermindSystem : EntitySystem
     private void OnOvermindInit(Entity<CMUXenoOvermindComponent> ent, ref ComponentStartup args)
     {
         EnterEyeForm(ent);
-        // Actions are granted after MapInit so defer the update
         Timer.Spawn(0, () =>
         {
             if (!TerminatingOrDeleted(ent))
+            {
                 UpdateFormActions(ent.Owner, incorporeal: true);
+                EnsurePathogenHive(ent.Owner);
+            }
         });
+    }
+
+    /// <summary>
+    /// If the Overmind has no hive assigned yet, find CMUPathogenHive and assign it.
+    /// Retries next tick if the hive entity isn't ready yet.
+    /// </summary>
+    private void EnsurePathogenHive(EntityUid uid)
+    {
+        if (TerminatingOrDeleted(uid))
+            return;
+
+        if (_hive.GetHive(uid) != null)
+            return;
+
+        var hives = EntityQueryEnumerator<HiveComponent, MetaDataComponent>();
+        while (hives.MoveNext(out var hiveUid, out _, out var meta))
+        {
+            if (meta.EntityPrototype?.ID != "CMUPathogenHive")
+                continue;
+
+            Log.Debug($"EnsurePathogenHive: assigning Overmind {ToPrettyString(uid)} to {ToPrettyString(hiveUid)}");
+            _hive.SetHive(uid, hiveUid);
+            return;
+        }
+
+        Log.Debug($"EnsurePathogenHive: CMUPathogenHive not found for {ToPrettyString(uid)}, retrying next tick");
+        Timer.Spawn(0, () => EnsurePathogenHive(uid));
     }
 
     private void OnOvermindShutdown(Entity<CMUXenoOvermindComponent> ent, ref ComponentShutdown args)

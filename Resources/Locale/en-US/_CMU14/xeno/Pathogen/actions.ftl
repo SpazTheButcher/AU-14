@@ -50,3 +50,7 @@ cmu-pathogen-ui-overmind-needed-label = [bold][color=red]There must be an Overmi
 
 cmu-xeno-infected-bursted-back = {CAPITALIZE(SUBJECT($victim))} {CONJUGATE-HAVE($victim)} {POSS-ADJ($victim)} spine ripped out through {POSS-ADJ($victim)} back!
 cmu-xeno-infection-burst-now-xeno-back = We rip {POSS-ADJ($victim)} spine out through {THE($victim)}'s back!
+
+# Queen word
+
+cmu-pathogen-words-of-the-overmind-header = The thoughts of the Overmind echo through the Confluence...

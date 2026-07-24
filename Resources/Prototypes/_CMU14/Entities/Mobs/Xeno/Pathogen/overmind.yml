@@ -72,6 +72,12 @@
     pheromonesMultiplier: 4
   - type: CMUXenoOvermind
   - type: XenoWordQueen
+    sound: !type:SoundCollectionSpecifier
+      collection: PathogenOvermindCommand
+      params:
+        volume: -6
+    header: cmu-pathogen-words-of-the-overmind-header
+    messageColor: "#8a8c50"
   - type: XenoPsychicCommunication
   - type: ManageHive
   - type: HiveLeaderGranter
