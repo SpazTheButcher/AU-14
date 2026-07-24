@@ -296,9 +296,14 @@ public sealed class CMUXenoWarlockTest
         Assert.That(CMUXenoWarlockSystem.GetPsychicShieldDetonationCost(), Is.EqualTo(FixedPoint2.New(200)));
         Assert.That(CMUXenoWarlockSystem.GetPsychicShieldDuration().TotalSeconds, Is.EqualTo(6).Within(0.001));
         Assert.That(CMUXenoWarlockSystem.GetPsychicShieldCooldownDuration().TotalSeconds, Is.EqualTo(10).Within(0.001));
-        Assert.That(CMUXenoWarlockSystem.GetPsychicShieldIntegrity(), Is.EqualTo(FixedPoint2.New(650)));
+        // 2000 is the current tuned value. TGMC baseline is 650; the local rework raised the
+        // integrity budget to compensate for the shield keeping its integrity as the only
+        // break-condition (the pre-existing 10-projectile hard cap was removed).
+        Assert.That(CMUXenoWarlockSystem.GetPsychicShieldIntegrity(), Is.EqualTo(FixedPoint2.New(2000)));
         Assert.That(CMUXenoWarlockSystem.GetPsychicShieldBreakStunDuration().TotalSeconds, Is.EqualTo(1).Within(0.001));
-        Assert.That(CMUXenoWarlockSystem.GetPsychicShieldMaxFrozenProjectiles(), Is.EqualTo(10));
+        // 0 disables the hard cap. TGMC baseline is 10 (shield breaks after catching 10 projectiles);
+        // the local rework removed that cap so integrity is the only break-condition.
+        Assert.That(CMUXenoWarlockSystem.GetPsychicShieldMaxFrozenProjectiles(), Is.EqualTo(0));
     }
 
     [Test]
@@ -407,7 +412,9 @@ public sealed class CMUXenoWarlockTest
     public void PsychicBlastKnocksBackAffectedTargets()
     {
         Assert.That(CMUXenoWarlockSystem.ShouldPsychicBlastKnockbackAffectedTargets(), Is.True);
-        Assert.That(CMUXenoWarlockSystem.GetPsychicBlastKnockbackSpeed(), Is.EqualTo(8).Within(0.001));
+        // 15 is the current tuned throw speed. TGMC baseline is 8; the local rework raised the
+        // knockback impulse so the throw is visibly further and easier to read as a psychic push.
+        Assert.That(CMUXenoWarlockSystem.GetPsychicBlastKnockbackSpeed(), Is.EqualTo(15).Within(0.001));
         Assert.That(CMUXenoWarlockSystem.GetPsychicBlastKnockbackDirection(Vector2.Zero, new Vector2(2, 0), Vector2.Zero), Is.EqualTo(Vector2.UnitX));
         Assert.That(CMUXenoWarlockSystem.GetPsychicBlastKnockbackDirection(Vector2.Zero, Vector2.Zero, new Vector2(0, -8)), Is.EqualTo(-Vector2.UnitY));
     }
