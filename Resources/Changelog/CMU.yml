@@ -8034,5 +8034,19 @@
   id: 500
   time: '2026-07-24T13:17:16.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1700
+- author: Sniperzero112
+  changes:
+  - message: 1 WY MRE, 1 Canteen, 1 Tear Gas, 1 Flash Bang
+    type: Add
+  id: 501
+  time: '2026-07-24T20:58:52.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1702
+- author: maertayn
+  changes:
+  - message: Fixed the Changelog webhook to Discord failing after reaching MAX_ENTRIES
+    type: Code
+  id: 502
+  time: '2026-07-24T21:25:27.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1703
 Name: CMU
 Order: -1
