@@ -10,6 +10,7 @@ using Content.Server.Mind.Commands;
 using Content.Server.Prayer;
 using Content.Server.Silicons.Laws;
 using Content.Server.Station.Systems;
+using Content.Server._RMC14.Mentor;
 using Content.Shared._RMC14.Admin;
 using Content.Shared._RMC14.Dialog;
 using Content.Shared._RMC14.Prototypes;
@@ -72,6 +73,7 @@ namespace Content.Server.Administration.Systems
         [Dependency] private AdminFrozenSystem _freeze = default!;
         [Dependency] private IPlayerManager _playerManager = default!;
         [Dependency] private SiliconLawSystem _siliconLawSystem = default!;
+        [Dependency] private MentorManager _mentorManager = default!;
 
         // RMC14
         [Dependency] private DialogSystem _dialog = default!;
@@ -139,54 +141,59 @@ namespace Content.Server.Administration.Systems
                     args.Verbs.Add(prayerVerb);
 
                     // Spawn - Like respawn but on the spot.
-                    args.Verbs.Add(new Verb()
+                    // Mentors are excluded even if their admin data otherwise counts as IsAdmin (e.g. via
+                    // the MentorHelp flag alone) - spawning players is not part of what mentors should do.
+                    if (!_mentorManager.IsMentor(player.UserId))
                     {
-                        Text = Loc.GetString("admin-player-actions-spawn"),
-                        Category = VerbCategory.Admin,
-                        Act = () =>
+                        args.Verbs.Add(new Verb()
                         {
-                            if (!_transformSystem.TryGetMapOrGridCoordinates(args.Target, out var coords))
+                            Text = Loc.GetString("admin-player-actions-spawn"),
+                            Category = VerbCategory.Admin,
+                            Act = () =>
                             {
-                                _popup.PopupEntity(Loc.GetString("admin-player-spawn-failed"), args.User, args.User);
-                                return;
-                            }
+                                if (!_transformSystem.TryGetMapOrGridCoordinates(args.Target, out var coords))
+                                {
+                                    _popup.PopupEntity(Loc.GetString("admin-player-spawn-failed"), args.User, args.User);
+                                    return;
+                                }
 
-                            var stationUid = _stations.GetOwningStation(args.Target);
+                                var stationUid = _stations.GetOwningStation(args.Target);
 
-                            var profile = _gameTicker.GetPlayerProfile(targetActor.PlayerSession);
-                            var mobUid = _spawning.SpawnPlayerMob(coords.Value, null, profile, stationUid);
+                                var profile = _gameTicker.GetPlayerProfile(targetActor.PlayerSession);
+                                var mobUid = _spawning.SpawnPlayerMob(coords.Value, null, profile, stationUid);
 
-                            if (_mindSystem.TryGetMind(args.Target, out var mindId, out var mindComp))
-                                _mindSystem.TransferTo(mindId, mobUid, true, mind: mindComp);
+                                if (_mindSystem.TryGetMind(args.Target, out var mindId, out var mindComp))
+                                    _mindSystem.TransferTo(mindId, mobUid, true, mind: mindComp);
 
-                        },
-                        ConfirmationPopup = true,
-                        Impact = LogImpact.High,
-                    });
+                            },
+                            ConfirmationPopup = true,
+                            Impact = LogImpact.High,
+                        });
 
-                    // RMC14
-                    args.Verbs.Add(new Verb
-                    {
-                        Text = Loc.GetString("rmc-admin-player-actions-spawn-here-as-job"),
-                        Category = VerbCategory.Admin,
-                        Act = () =>
+                        // RMC14
+                        args.Verbs.Add(new Verb
                         {
-                            var jobs = new List<DialogOption>();
-                            foreach (var job in _prototypeManager.EnumerateCM<JobPrototype>())
+                            Text = Loc.GetString("rmc-admin-player-actions-spawn-here-as-job"),
+                            Category = VerbCategory.Admin,
+                            Act = () =>
                             {
-                                var ev = new SpawnAsJobDialogEvent(GetNetEntity(args.User), GetNetEntity(args.Target), job.ID);
-                                var roleName = job.SpawnMenuRoleName is { } raw
-                                    ? (Loc.TryGetString(raw, out var loc) ? loc : raw)
-                                    : job.LocalizedName;
-                                jobs.Add(new DialogOption(roleName, ev));
-                            }
+                                var jobs = new List<DialogOption>();
+                                foreach (var job in _prototypeManager.EnumerateCM<JobPrototype>())
+                                {
+                                    var ev = new SpawnAsJobDialogEvent(GetNetEntity(args.User), GetNetEntity(args.Target), job.ID);
+                                    var roleName = job.SpawnMenuRoleName is { } raw
+                                        ? (Loc.TryGetString(raw, out var loc) ? loc : raw)
+                                        : job.LocalizedName;
+                                    jobs.Add(new DialogOption(roleName, ev));
+                                }
 
-                            jobs.Sort((a, b) => string.Compare(a.Text, b.Text, StringComparison.Ordinal));
-                            _dialog.OpenOptions(args.User, "Choose a job", jobs);
-                        },
-                        ConfirmationPopup = true,
-                        Impact = LogImpact.High,
-                    });
+                                jobs.Sort((a, b) => string.Compare(a.Text, b.Text, StringComparison.Ordinal));
+                                _dialog.OpenOptions(args.User, "Choose a job", jobs);
+                            },
+                            ConfirmationPopup = true,
+                            Impact = LogImpact.High,
+                        });
+                    }
 
                     if (TryComp(args.Target, out HumanoidAppearanceComponent? appearance))
                     {
