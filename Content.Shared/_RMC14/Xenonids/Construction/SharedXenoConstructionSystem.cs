@@ -1537,7 +1537,7 @@ public sealed partial class SharedXenoConstructionSystem : EntitySystem
         target = target.SnapToGrid(EntityManager, _map);
         var hasBoost = _queenBoostQuery.HasComp(xeno.Owner);
 
-        if (IsNearVehiclePopup(xeno, target))
+        if (IsNearVehiclePopup(xeno, target, popup))
             return false;
         if (checkStructureSelected &&
             buildChoice is { } nodeChoice &&
@@ -1993,12 +1993,13 @@ public sealed partial class SharedXenoConstructionSystem : EntitySystem
         return true;
     }
 
-    private bool IsNearVehiclePopup(Entity<XenoConstructionComponent> xeno, EntityCoordinates target)
+    private bool IsNearVehiclePopup(Entity<XenoConstructionComponent> xeno, EntityCoordinates target, bool popup = true)
     {
         if (!IsNearVehicle(_transform.ToMapCoordinates(target)))
             return false;
 
-        _popup.PopupClient(Loc.GetString("cm-xeno-construction-failed-cant-build"), target, xeno);
+        if (popup)
+            _popup.PopupClient(Loc.GetString("cm-xeno-construction-failed-cant-build"), target, xeno);
         return true;
     }
 
