@@ -18,15 +18,26 @@ public sealed class CMUXenoWarlockTest
     [Test]
     public void GetPsychicCrushDamageScalesWithCompletedPulses()
     {
-        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushDamage(1), Is.EqualTo(100));
-        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushDamage(5), Is.EqualTo(240));
+        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushDamage(1), Is.EqualTo(40));
+        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushDamage(5), Is.EqualTo(100));
     }
 
     [Test]
     public void GetPsychicCrushDamageClampsToValidPulseRange()
     {
-        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushDamage(-1), Is.EqualTo(65));
-        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushDamage(8), Is.EqualTo(240));
+        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushDamage(-1), Is.EqualTo(25));
+        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushDamage(8), Is.EqualTo(100));
+    }
+
+    [Test]
+    public void PsychicCrushParalyzesOnlyOnHighPulseCharges()
+    {
+        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushParalyzeDuration(0), Is.EqualTo(TimeSpan.Zero));
+        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushParalyzeDuration(2), Is.EqualTo(TimeSpan.Zero));
+        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushParalyzeDuration(3), Is.EqualTo(TimeSpan.Zero));
+        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushParalyzeDuration(4).TotalSeconds, Is.EqualTo(1.5).Within(0.001));
+        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushParalyzeDuration(5).TotalSeconds, Is.EqualTo(1.5).Within(0.001));
+        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushParalyzeDuration(8).TotalSeconds, Is.EqualTo(1.5).Within(0.001));
     }
 
     [Test]
@@ -51,8 +62,8 @@ public sealed class CMUXenoWarlockTest
     [Test]
     public void PsychicCrushDebuffsScaleWithCompletedPulses()
     {
-        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushStaggerDuration(5).TotalSeconds, Is.EqualTo(10));
-        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushSlowDuration(5).TotalSeconds, Is.EqualTo(15));
+        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushStaggerDuration(5).TotalSeconds, Is.EqualTo(2.5).Within(0.001));
+        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushSlowDuration(5).TotalSeconds, Is.EqualTo(5).Within(0.001));
     }
 
     [Test]
@@ -62,10 +73,9 @@ public sealed class CMUXenoWarlockTest
     }
 
     [Test]
-    public void PsychicBlastModeSelectsBeamProjectile()
+    public void PsychicBlastSelectsBeamProjectile()
     {
-        Assert.That(CMUXenoWarlockSystem.GetPsychicBlastBeamPrototype(CMUXenoPsychicBlastMode.Blast), Is.EqualTo("CMUXenoPsychicBlastProjectile"));
-        Assert.That(CMUXenoWarlockSystem.GetPsychicBlastBeamPrototype(CMUXenoPsychicBlastMode.Lance), Is.EqualTo("CMUXenoPsychicLanceProjectile"));
+        Assert.That(CMUXenoWarlockSystem.GetPsychicBlastBeamPrototype(), Is.EqualTo("CMUXenoPsychicBlastProjectile"));
     }
 
     [Test]
@@ -73,10 +83,10 @@ public sealed class CMUXenoWarlockTest
     {
         var profile = CMUXenoWarlockSystem.GetWarlockParticleProfile(CMUXenoWarlockParticleEffect.PsychicBlastCharge);
 
-        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelColor(CMUXenoWarlockChannelKind.PsychicBlast, CMUXenoPsychicBlastMode.Blast), Is.EqualTo("#970f0f"));
-        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelLightPrototype(CMUXenoWarlockChannelKind.PsychicBlast, CMUXenoPsychicBlastMode.Blast), Is.EqualTo("CMUXenoWarlockBlastChannelEffect"));
+        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelColor(CMUXenoWarlockChannelKind.PsychicBlast), Is.EqualTo("#970f0f"));
+        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelLightPrototype(CMUXenoWarlockChannelKind.PsychicBlast), Is.EqualTo("CMUXenoWarlockBlastChannelEffect"));
         Assert.That(CMUXenoWarlockSystem.ShouldSpawnWarlockChannelStream(CMUXenoWarlockChannelKind.PsychicBlast), Is.False);
-        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelParticlePrototype(CMUXenoWarlockChannelKind.PsychicBlast, CMUXenoPsychicBlastMode.Blast), Is.EqualTo("CMUXenoWarlockBlastParticles"));
+        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelParticlePrototype(CMUXenoWarlockChannelKind.PsychicBlast), Is.EqualTo("CMUXenoWarlockBlastParticles"));
         Assert.That(profile.Color, Is.EqualTo("#970f0f"));
         Assert.That(profile.Count, Is.EqualTo(300));
         Assert.That(profile.Spawning, Is.EqualTo(20));
@@ -89,10 +99,10 @@ public sealed class CMUXenoWarlockTest
     {
         var profile = CMUXenoWarlockSystem.GetWarlockParticleProfile(CMUXenoWarlockParticleEffect.PsychicCrushCharge);
 
-        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelColor(CMUXenoWarlockChannelKind.PsychicCrush, CMUXenoPsychicBlastMode.Blast), Is.EqualTo("#6a59b3"));
-        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelLightPrototype(CMUXenoWarlockChannelKind.PsychicCrush, CMUXenoPsychicBlastMode.Blast), Is.EqualTo("CMUXenoWarlockCrushChannelEffect"));
+        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelColor(CMUXenoWarlockChannelKind.PsychicCrush), Is.EqualTo("#6a59b3"));
+        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelLightPrototype(CMUXenoWarlockChannelKind.PsychicCrush), Is.EqualTo("CMUXenoWarlockCrushChannelEffect"));
         Assert.That(CMUXenoWarlockSystem.ShouldSpawnWarlockChannelStream(CMUXenoWarlockChannelKind.PsychicCrush), Is.False);
-        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelParticlePrototype(CMUXenoWarlockChannelKind.PsychicCrush, CMUXenoPsychicBlastMode.Blast), Is.EqualTo("CMUXenoWarlockCrushParticles"));
+        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelParticlePrototype(CMUXenoWarlockChannelKind.PsychicCrush), Is.EqualTo("CMUXenoWarlockCrushParticles"));
         Assert.That(profile.Color, Is.EqualTo("#6a59b3"));
         Assert.That(profile.Count, Is.EqualTo(300));
         Assert.That(profile.Spawning, Is.EqualTo(15));
@@ -101,20 +111,9 @@ public sealed class CMUXenoWarlockTest
     }
 
     [Test]
-    public void PsychicLanceUsesTgmcMagentaParticles()
-    {
-        var profile = CMUXenoWarlockSystem.GetWarlockParticleProfile(CMUXenoWarlockParticleEffect.PsychicLanceCharge);
-
-        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelParticlePrototype(CMUXenoWarlockChannelKind.PsychicBlast, CMUXenoPsychicBlastMode.Lance), Is.EqualTo("CMUXenoWarlockLanceParticles"));
-        Assert.That(profile.Color, Is.EqualTo("#CB0166"));
-        Assert.That(profile.Spawning, Is.EqualTo(30));
-    }
-
-    [Test]
     public void WarlockChannelParticlesRenderFromWarlockCenter()
     {
         Assert.That(CMUXenoWarlockSystem.GetWarlockParticleRenderOffset(CMUXenoWarlockParticleEffect.PsychicBlastCharge), Is.EqualTo(Vector2.Zero));
-        Assert.That(CMUXenoWarlockSystem.GetWarlockParticleRenderOffset(CMUXenoWarlockParticleEffect.PsychicLanceCharge), Is.EqualTo(Vector2.Zero));
         Assert.That(CMUXenoWarlockSystem.GetWarlockParticleRenderOffset(CMUXenoWarlockParticleEffect.PsychicCrushCharge), Is.EqualTo(Vector2.Zero));
     }
 
@@ -234,8 +233,8 @@ public sealed class CMUXenoWarlockTest
     public void PsychicCrushUsesTgmcWindupBeforeChannelLoop()
     {
         Assert.That(CMUXenoWarlockSystem.GetPsychicCrushWindupDuration().TotalSeconds, Is.EqualTo(0.8).Within(0.001));
-        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushPulseInterval().TotalSeconds, Is.EqualTo(1.75).Within(0.001));
-        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushChannelDuration().TotalSeconds, Is.EqualTo(3.5).Within(0.001));
+        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushPulseInterval().TotalSeconds, Is.EqualTo(1).Within(0.001));
+        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushChannelDuration().TotalSeconds, Is.EqualTo(4).Within(0.001));
     }
 
     [Test]
@@ -259,7 +258,6 @@ public sealed class CMUXenoWarlockTest
         Assert.That(CMUXenoWarlockSystem.ShouldSpawnPsychicCrushTileBlur(true), Is.True);
         Assert.That(CMUXenoWarlockSystem.GetPsychicCrushBlurPrototype(), Is.EqualTo("CMUXenoPsychicCrushBlur"));
         Assert.That(CMUXenoWarlockSystem.GetPsychicCrushBlurDuration().TotalSeconds, Is.EqualTo(1).Within(0.001));
-        Assert.That(CMUXenoWarlockSystem.GetPsychicCrushOwnerSlowDuration().TotalSeconds, Is.EqualTo(1).Within(0.001));
     }
 
     [TestCase(CMUXenoWarlockChannelKind.PsychicCrush)]
@@ -306,8 +304,8 @@ public sealed class CMUXenoWarlockTest
     [Test]
     public void PsychicShieldUsesTgmcOwnerGlowInsteadOfDuplicateShieldSprite()
     {
-        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelColor(CMUXenoWarlockChannelKind.PsychicShield, CMUXenoPsychicBlastMode.Blast), Is.EqualTo("#5999b3"));
-        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelLightPrototype(CMUXenoWarlockChannelKind.PsychicShield, CMUXenoPsychicBlastMode.Blast), Is.EqualTo("CMUXenoWarlockShieldChannelEffect"));
+        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelColor(CMUXenoWarlockChannelKind.PsychicShield), Is.EqualTo("#5999b3"));
+        Assert.That(CMUXenoWarlockSystem.GetWarlockChannelLightPrototype(CMUXenoWarlockChannelKind.PsychicShield), Is.EqualTo("CMUXenoWarlockShieldChannelEffect"));
         Assert.That(CMUXenoWarlockSystem.ShouldPsychicShieldOwnerChannelDrawShieldSprite(), Is.False);
     }
 
