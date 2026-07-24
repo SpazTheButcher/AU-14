@@ -1226,6 +1226,10 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasColumnType("text")
                         .HasColumnName("species");
 
+                    b.Property<bool>("Synthetic")
+                        .HasColumnType("boolean")
+                        .HasColumnName("synthetic");
+
                     b.Property<string>("ThreatPreference")
                         .HasColumnType("text")
                         .HasColumnName("threat_preference");

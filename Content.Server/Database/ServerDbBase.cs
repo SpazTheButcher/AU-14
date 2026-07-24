@@ -337,6 +337,7 @@ namespace Content.Server.Database
                 allegiance,
                 origin,
                 platoon,
+                profile.Synthetic,
                 threatPreferences,
                 gamemodeJobPriorities,
                 gamemodeAntagPreferences,
@@ -612,6 +613,7 @@ namespace Content.Server.Database
             profile.Allegiance = humanoid.Allegiance?.Id;
             profile.Origin = humanoid.Origin?.Id;
             profile.Platoon = humanoid.Platoon?.Id;
+            profile.Synthetic = humanoid.Synthetic;
             profile.ThreatPreference = humanoid.ThreatPreferences.Count == 0
                 ? null
                 : JsonSerializer.Serialize(humanoid.ThreatPreferences.Select(t => t.Id).OrderBy(id => id));

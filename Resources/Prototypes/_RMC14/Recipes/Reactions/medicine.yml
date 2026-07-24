@@ -188,12 +188,10 @@
   reactants:
     CMUOxycodone:
       amount: 1
-    RMCChlorine:
-      amount: 1
-    RMCFluorine:
+    RMCCLF3:
       amount: 1
   products:
-    CMUFentanylPrecursor: 3
+    CMUFentanylPrecursor: 2
 
 - type: reaction
   id: CMUFentanyl

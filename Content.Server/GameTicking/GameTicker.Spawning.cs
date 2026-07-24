@@ -161,20 +161,25 @@ namespace Content.Server.GameTicking
                 return null;
             }
 
-            // If player is ignoring allegiance, always use selected profile
-            if (_allegianceSystem.IsIgnoringAllegiance(userId))
-                return selectedProfile;
-
             JobPrototype? jobProto = null;
             if (jobId != null)
                 _prototypeManager.TryIndex(jobId, out jobProto);
+
+            bool MeetsSynthetic(HumanoidCharacterProfile profile) =>
+                jobProto == null || _allegianceSystem.DoesCharacterMeetJobSynthetic(profile, jobProto, userId);
+
+            // Synthetic eligibility is a hard requirement — unlike allegiance/origin, it is
+            // not subject to the "Ignore Allegiance" opt-out.
+            if (_allegianceSystem.IsIgnoringAllegiance(userId))
+                return MeetsSynthetic(selectedProfile) ? selectedProfile : FindMatchingProfile(MeetsSynthetic);
 
             bool MeetsJobRequirements(HumanoidCharacterProfile profile)
             {
                 if (jobProto == null)
                     return true;
 
-                return _allegianceSystem.DoesCharacterMeetJobAllegiance(profile, jobProto)
+                return MeetsSynthetic(profile)
+                    && _allegianceSystem.DoesCharacterMeetJobAllegiance(profile, jobProto)
                     && _allegianceSystem.DoesCharacterMeetJobOrigin(profile, jobProto);
             }
 
@@ -193,7 +198,7 @@ namespace Content.Server.GameTicking
                 return MeetsJobRequirements(selectedProfile) ? selectedProfile : FindMatchingProfile(MeetsJobRequirements);
 
             // Check if the selected profile matches
-            if (_allegianceSystem.IsAllegianceApplicableForPlatoon(selectedProfile, platoon, jobProto))
+            if (_allegianceSystem.IsAllegianceApplicableForPlatoon(selectedProfile, platoon, jobProto, userId))
                 return selectedProfile;
 
             // Selected doesn't match — search all character profiles
@@ -204,7 +209,8 @@ namespace Content.Server.GameTicking
                 prefs.Characters,
                 prefs.SelectedCharacterIndex,
                 platoon,
-                jobProto);
+                jobProto,
+                userId);
 
             return match ?? null;
         }
