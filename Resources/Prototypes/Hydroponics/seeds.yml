@@ -163,6 +163,15 @@
       Min: 1
       Max: 4
       PotencyDivisor: 25
+  specialChemicals:
+    CMUConiine:
+      Min: 3
+      Max: 20
+      PotencyDivisor: 10
+    CMUPhenol:
+      Min: 3
+      Max: 20
+      PotencyDivisor: 10
 
 - type: seed
   id: laughinPea
@@ -703,6 +712,11 @@
       Min: 1
       Max: 4
       PotencyDivisor: 25
+  specialChemicals:
+    CMUPsoralen:
+      Min: 3
+      Max: 20
+      PotencyDivisor: 5
 
 - type: seed
   id: garlic
@@ -744,6 +758,7 @@
     - FoodApple
   mutationPrototypes:
     - goldenApple
+    - poisonApple
   harvestRepeat: Repeat
   lifespan: 55
   maturation: 6
@@ -1058,6 +1073,11 @@
       Min: 1
       Max: 25
       PotencyDivisor: 4
+  specialChemicals:
+    CMUUrishiol:
+      Min: 3
+      Max: 20
+      PotencyDivisor: 2
 
 - type: seed
   id: deathNettle
@@ -1181,6 +1201,11 @@
       Min: 1
       Max: 20
       PotencyDivisor: 5
+  specialChemicals:
+    CMUAtropine:
+      Min: 1
+      Max: 20
+      PotencyDivisor: 5
 
 - type: seed
   id: aloe
@@ -1257,7 +1282,12 @@
       Min: 1
       Max: 20
       PotencyDivisor: 5
-    Epinephrine:
+    CMUAmatoxin:
+      Min: 3
+      Max: 10
+      PotencyDivisor: 5
+  specialChemicals:
+    CMUZygacine:
       Min: 1
       Max: 20
       PotencyDivisor: 5
