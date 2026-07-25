@@ -2,6 +2,7 @@ using System.Linq;
 using System.Numerics;
 using Content.Shared._RMC14.Barricade;
 using Content.Shared._RMC14.CameraShake;
+using Content.Shared._RMC14.Entrenching;
 using Content.Shared._RMC14.Stun;
 using Content.Shared._RMC14.Xenonids.GasToggle;
 using Content.Shared._RMC14.Xenonids.Neurotoxin;
@@ -24,11 +25,9 @@ using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
-using Content.Shared._RMC14.CCVar;
 using Content.Shared._RMC14.Xenonids.Hive;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Physics;
-using Robust.Shared.Configuration;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Systems;
 
@@ -54,7 +53,6 @@ public abstract partial class SharedXenoTailStabSystem : EntitySystem
     [Dependency] private RMCDazedSystem _daze = default!;
     [Dependency] private RMCCameraShakeSystem _cameraShake = default!;
     [Dependency] private RMCSizeStunSystem _size = default!;
-    [Dependency] private IConfigurationManager _config = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private SharedXenoHiveSystem _hive = default!;
 
@@ -127,6 +125,9 @@ public abstract partial class SharedXenoTailStabSystem : EntitySystem
             if (uid == stab.Owner)
                 return true;
 
+            if (HasComp<BarricadeComponent>(uid))
+                return false;
+
             if (!HasComp<MobStateComponent>(uid))
                 return true;
 
@@ -140,10 +141,15 @@ public abstract partial class SharedXenoTailStabSystem : EntitySystem
         // but have you seen these allocations either way
         var intersect = _physics.IntersectRayWithPredicate(transform.MapID, leftRay, tailRange, Ignored, false);
         intersect = intersect.Concat(_physics.IntersectRayWithPredicate(transform.MapID, rightRay, tailRange, Ignored, false));
-        var results = intersect.Select(r => r.HitEntity).ToHashSet();
+        var results = intersect
+            .Select(r => r.HitEntity)
+            .Distinct()
+            .OrderBy(x =>
+                (_transform.GetMapCoordinates(x).Position - userCoords.Position).LengthSquared())
+            .ToList();
 
         var actualResults = new List<EntityUid>();
-        var range = stab.Comp.TailRange.Float();
+        var range = tailRange;
         foreach (var result in results)
         {
             if (!_interaction.InRangeUnobstructed(stab.Owner, result, range: range))
@@ -180,6 +186,9 @@ public abstract partial class SharedXenoTailStabSystem : EntitySystem
         {
             args.Handled = true;
 
+            var filter = Filter.Pvs(transform.Coordinates, entityMan: EntityManager)
+                .RemoveWhereAttachedEntity(o => o == stab.Owner);
+
             foreach (var originalHit in actualResults)
             {
                 var hit = originalHit;
@@ -191,19 +200,19 @@ public abstract partial class SharedXenoTailStabSystem : EntitySystem
                         userPosition,
                         (targetPosition - userPosition).ToWorldAngle(),
                         0,
-                        stab.Comp.TailRange.Float(),
+                        tailRange,
                         _transform.GetMapId(stab.Owner),
                         stab))
                     .ToList();
 
-                foreach (var potentialTarget in entities)
+                foreach (var entity in entities)
                 {
-                    var target = GetEntity(potentialTarget);
+                    var blockingEntity = GetEntity(entity);
 
-                    if (!_directionBlock.IsAttackBlocked(stab, target))
+                    if (!_directionBlock.IsAttackBlocked(stab, blockingEntity))
                         continue;
 
-                    hit = target;
+                    hit = blockingEntity;
                     break;
                 }
 
@@ -215,12 +224,12 @@ public abstract partial class SharedXenoTailStabSystem : EntitySystem
                     _interaction.DoContactInteraction(stab, stab);
                     _interaction.DoContactInteraction(stab, hit);
 
-                    var filter = Filter.Pvs(transform.Coordinates, entityMan: EntityManager).RemoveWhereAttachedEntity(o => o == stab.Owner);
-
-                    var attackedEv = new AttackedEvent(stab, stab, args.Target);
+                var attackedEv = new AttackedEvent(stab, stab, args.Target);
                     RaiseLocalEvent(hit, attackedEv);
 
-                var modifiedDamage = DamageSpecifier.ApplyModifierSets(damage + hitEvent.BonusDamage + attackedEv.BonusDamage, hitEvent.ModifiersList);
+                var modifiedDamage = DamageSpecifier.ApplyModifierSets(
+                    damage + hitEvent.BonusDamage + attackedEv.BonusDamage,
+                    hitEvent.ModifiersList);
                 var finalDamage = _xeno.TryApplyXenoSlashDamageMultiplier(hit, modifiedDamage);
                 var change = _damageable.TryChangeDamage(
                     hit,
@@ -245,7 +254,7 @@ public abstract partial class SharedXenoTailStabSystem : EntitySystem
             var length = localPos.Length();
             if (length > 0)
             {
-                localPos *= stab.Comp.TailRange.Float() / length;
+                localPos *= tailRange / length;
                 DoLunge((stab, stab, transform), localPos, "WeaponArcThrust");
             }
 
