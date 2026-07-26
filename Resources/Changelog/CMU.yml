@@ -8104,5 +8104,54 @@
   id: 507
   time: '2026-07-25T08:47:20.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1708
+- author: maertayn
+  changes:
+  - message: Fixed Fatal KeyNotFoundException for Thanatometabolic (Research reagent)
+    type: Code
+  id: 508
+  time: '2026-07-25T22:43:26.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1712
+- author: MACMAN2003
+  changes:
+  - message: Weyland-Yutani's interstellar shipping division no longer misplaces their
+      experimental bioweapon crates.
+    type: Fix
+  id: 509
+  time: '2026-07-26T00:06:22.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1713
+- author: OmerF-afk
+  changes:
+  - message: Alkysine for brain damage.
+    type: Add
+  - message: New paper content.
+    type: Add
+  id: 510
+  time: '2026-07-26T00:14:55.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1714
+- author: maertayn
+  changes:
+  - message: Gasmasks spamming console and showing Error when blood stained
+    type: Fix
+  id: 511
+  time: '2026-07-26T05:33:19.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1717
+- author: troytroy400
+  changes:
+  - message: Added the Weyland-Yutani APC. A resprited version of the normal APC.
+    type: Add
+  - message: Humans are now unable to read the names/descriptions of xenos. They will
+      all show up as '???' to mimic the fact that the character knows nothing of/about
+      Xenomorphs. This should hopefully help communicate to new players that we are
+      a first contact server.
+    type: Add
+  - message: Inapprovaline no-longer makes you go unconscious with OD (no more CLF
+      cheesing tactic).
+    type: Tweak
+  - message: Renames Admin Assistant to Deputy Administrator to be more inline with
+      its intended role.
+    type: Tweak
+  id: 512
+  time: '2026-07-26T08:32:34.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1719
 Name: CMU
 Order: -1
