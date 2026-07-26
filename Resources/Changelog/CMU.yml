@@ -8104,5 +8104,75 @@
   id: 507
   time: '2026-07-25T08:47:20.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1708
+- author: maertayn
+  changes:
+  - message: Fixed Fatal KeyNotFoundException for Thanatometabolic (Research reagent)
+    type: Code
+  id: 508
+  time: '2026-07-25T22:43:26.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1712
+- author: MACMAN2003
+  changes:
+  - message: Weyland-Yutani's interstellar shipping division no longer misplaces their
+      experimental bioweapon crates.
+    type: Fix
+  id: 509
+  time: '2026-07-26T00:06:22.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1713
+- author: OmerF-afk
+  changes:
+  - message: Alkysine for brain damage.
+    type: Add
+  - message: New paper content.
+    type: Add
+  id: 510
+  time: '2026-07-26T00:14:55.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1714
+- author: maertayn
+  changes:
+  - message: Gasmasks spamming console and showing Error when blood stained
+    type: Fix
+  id: 511
+  time: '2026-07-26T05:33:19.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1717
+- author: troytroy400
+  changes:
+  - message: Added the Weyland-Yutani APC. A resprited version of the normal APC.
+    type: Add
+  - message: Humans are now unable to read the names/descriptions of xenos. They will
+      all show up as '???' to mimic the fact that the character knows nothing of/about
+      Xenomorphs. This should hopefully help communicate to new players that we are
+      a first contact server.
+    type: Add
+  - message: Inapprovaline no-longer makes you go unconscious with OD (no more CLF
+      cheesing tactic).
+    type: Tweak
+  - message: Renames Admin Assistant to Deputy Administrator to be more inline with
+      its intended role.
+    type: Tweak
+  id: 512
+  time: '2026-07-26T08:32:34.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1719
+- author: ver0098
+  changes:
+  - message: UPP Shotgunner and Sadar spec has been reworked, have a try at it later.
+    type: Add
+  - message: UPP pyro broiler now fits special fuel tanks and LPO80-T and FL3 no longer
+      meltable
+    type: Fix
+  id: 513
+  time: '2026-07-26T09:00:27.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1711
+- author: maertayn
+  changes:
+  - message: Thermal Cloak provides strong invisibility when stationary (97.5%), and
+      75% invisibility when moving - fades in and out
+    type: Add
+  - message: Shuttles/vehicles metadata is now named correctly instead of all being
+      named either 'grid' or 'Map Entity'
+    type: Map
+  id: 514
+  time: '2026-07-26T11:00:08.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1720
 Name: CMU
 Order: -1
