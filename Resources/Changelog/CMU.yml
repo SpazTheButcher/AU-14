@@ -8153,5 +8153,26 @@
   id: 512
   time: '2026-07-26T08:32:34.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1719
+- author: ver0098
+  changes:
+  - message: UPP Shotgunner and Sadar spec has been reworked, have a try at it later.
+    type: Add
+  - message: UPP pyro broiler now fits special fuel tanks and LPO80-T and FL3 no longer
+      meltable
+    type: Fix
+  id: 513
+  time: '2026-07-26T09:00:27.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1711
+- author: maertayn
+  changes:
+  - message: Thermal Cloak provides strong invisibility when stationary (97.5%), and
+      75% invisibility when moving - fades in and out
+    type: Add
+  - message: Shuttles/vehicles metadata is now named correctly instead of all being
+      named either 'grid' or 'Map Entity'
+    type: Map
+  id: 514
+  time: '2026-07-26T11:00:08.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1720
 Name: CMU
 Order: -1
