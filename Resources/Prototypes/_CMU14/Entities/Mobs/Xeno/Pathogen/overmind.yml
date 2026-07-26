@@ -188,6 +188,7 @@
   - type: XenoAnnounceDeath
     message: cmu-xeno-death-overmind
     color: "#8a8c50"
+  - type: DropshipHijacker
 
 - type: entity
   parent: CMU14XenoOvermindBase
