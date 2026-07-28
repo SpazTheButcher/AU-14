@@ -114,8 +114,13 @@ namespace Content.Server.GameTicking
 
             var maps = new List<GameMapPrototype>();
 
+            // If the map was explicitly force-set by something (i.e. votemap, forcemap,
+            // or CCVars.GameMap) let that take priority over any voted AU14 planet, so
+            // admin/test overrides aren't silently ignored in favor of stale planet state.
+            var mainStationMap = _gameMapManager.GetSelectedMap();
+
             // Check for voted planet from AuRoundSystem
-            var selectedPlanet = _auRoundSystem.GetSelectedPlanet();
+            var selectedPlanet = mainStationMap == null ? _auRoundSystem.GetSelectedPlanet() : null;
             if (selectedPlanet != null)
             {
                 // Use the voted planet's map as the primary map
@@ -126,9 +131,6 @@ namespace Content.Server.GameTicking
             }
             else
             {
-                // the map might have been force-set by something
-                // (i.e. votemap or forcemap)
-                var mainStationMap = _gameMapManager.GetSelectedMap();
                 if (mainStationMap == null)
                 {
                     // otherwise set the map using the config rules
