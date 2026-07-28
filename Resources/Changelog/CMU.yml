@@ -8274,5 +8274,16 @@
   id: 521
   time: '2026-07-26T21:21:59.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1725
+- author: yowhatupitk-bit
+  changes:
+  - message: Medical Officer Rank O1-O2 > O1
+    type: Fix
+  - message: Auxiliary Technician Rank E1-E2 > E2-E4
+    type: Fix
+  - message: Engineering Technician Rank E1-E2 > E2-E4
+    type: Fix
+  id: 522
+  time: '2026-07-28T10:51:23.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1729
 Name: CMU
 Order: -1
