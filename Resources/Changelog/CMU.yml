@@ -8323,5 +8323,45 @@
   id: 523
   time: '2026-07-28T13:18:27.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1731
+- author: deepdarkdepths
+  changes:
+  - message: Certain Dancer and Warrior abilities no longer have a cooldown upon missing.
+      Tailstab has been reverted to its previous state as a thrust attack.
+    type: Tweak
+  id: 524
+  time: '2026-07-28T13:40:58.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1715
+- author: troytroy400
+  changes:
+  - message: Added prescription variants of gas masks to GOVFOR/OPFOR apparel vendors.
+    type: Add
+  - message: Added dedicated squad lead vendors for all GOVFOR factions.
+    type: Add
+  - message: RTO vendor now contains all the equipment they need + has been properly
+      locked.
+    type: Tweak
+  - message: The USS Bush has been updated with all new vendors.
+    type: Tweak
+  - message: Blood vendors have been locked the same as normal medical vendors. Both
+      are now hackable.
+    type: Tweak
+  - message: 'Added new lobby art by Terra: ''Working Joe Error'''
+    type: Add
+  - message: Added new lobby art commissioned by AK5.
+    type: Add
+  - message: WY PMC vendors now have the correct amount of gas masks in stock.
+    type: Fix
+  - message: Doors spawned by VMarkers now properly rotate.
+    type: Fix
+  id: 525
+  time: '2026-07-28T19:17:42.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1732
+- author: Michellechkya
+  changes:
+  - message: Added colonial research synthetic as specialisation
+    type: Add
+  id: 526
+  time: '2026-07-28T19:18:10.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1733
 Name: CMU
 Order: -1
