@@ -19,6 +19,7 @@
       Critical: XenoCrit
       Dead: XenoDead
     displayDamageInAlert: true
+  - type: XenoHeavy
   - type: Xeno
     role: CMU14JobPathogenBrute
     tier: 3

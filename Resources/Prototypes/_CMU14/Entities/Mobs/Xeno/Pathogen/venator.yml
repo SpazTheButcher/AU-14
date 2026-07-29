@@ -39,6 +39,7 @@
       types:
         Slash: 40
   - type: XenoHook
+  - type: XenoHeavy
   - type: XenoDevour
   - type: XenoTailSeize
   - type: XenoAbduct

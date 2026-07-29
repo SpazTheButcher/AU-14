@@ -31,6 +31,7 @@
       Critical: XenoCrit
       Dead: XenoDead
     displayDamageInAlert: true
+  - type: XenoHeavy
   - type: CMUXenoMycotoxinInject
     plasmaCost: 150
     range: 3.0

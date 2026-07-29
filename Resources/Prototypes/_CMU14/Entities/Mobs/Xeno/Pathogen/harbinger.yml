@@ -19,6 +19,7 @@
       Critical: XenoCrit
       Dead: XenoDead
     displayDamageInAlert: true
+  - type: XenoHeavy
   - type: CMUXenoCyclone
     plasmaCost: 75
     baseRange: 2
