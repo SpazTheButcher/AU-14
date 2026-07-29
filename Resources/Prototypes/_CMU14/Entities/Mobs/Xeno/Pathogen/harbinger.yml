@@ -38,6 +38,7 @@
     - CMU14ActionXenoPathogenCyclone
     - CMU14ActionXenoPathogenMycotoxinInject
     - CMU14ActionXenoPathogenDevolve
+    - CMU14ActionXenoPathogenRegurgitate
   - type: XenoLeap
     delay: 0
     knockdownTime: 0
@@ -96,7 +97,7 @@
   - type: XenoDevour
   - type: CMArmor
     explosionArmor: 20
-    xenoArmor: 30
+    xenoArmor: 15
   - type: XenoClaws
     clawType: VerySharp
   - type: Tackle

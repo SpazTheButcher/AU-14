@@ -33,6 +33,7 @@
     - CMU14ActionXenoPathogenDefensiveShield
     - CMU14ActionXenoPathogenDislocate
     - CMU14ActionXenoPathogenDevolve
+    - CMU14ActionXenoPathogenRegurgitate
   - type: XenoDislocate
   - type: CrusherShield
   - type: XenoStomp
@@ -96,7 +97,7 @@
         Brute: 40
   - type: CMArmor
     explosionArmor: 50
-    xenoArmor: 45
+    xenoArmor: 20
   - type: XenoClaws
     clawType: VerySharp
   - type: Tackle

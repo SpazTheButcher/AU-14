@@ -51,6 +51,7 @@
     - CMU14ActionXenoPathogenBlightWave
     - CMU14ActionXenoPathogenParalyzingSlash
     - CMU14ActionXenoPathogenMycotoxinInjectMatriarch
+    - CMU14ActionXenoPathogenRegurgitate
   - type: XenoRegen
     healOffWeeds: true
     restHealMultiplier: 1.4
@@ -105,7 +106,7 @@
         Brute: 48
   - type: CMArmor
     explosionArmor: 50
-    xenoArmor: 40
+    xenoArmor: 25
   - type: Tackle
     min: 2
     max: 5

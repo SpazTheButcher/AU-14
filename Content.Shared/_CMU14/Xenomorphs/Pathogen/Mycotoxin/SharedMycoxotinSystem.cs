@@ -229,10 +229,11 @@ public sealed class SharedMycotoxinSystem : EntitySystem
     /// Immediately infects a target by setting their mycotoxin exposure above
     /// the threshold. Safe to call from other systems.
     /// </summary>
-    public void ForceInfect(EntityUid target, EntProtoId embryoSpawn)
+    public void ForceInfect(EntityUid target, EntProtoId embryoSpawn, EntityUid? sourceHive = null)
     {
         var exposure = EnsureComp<MycotoxinExposureComponent>(target);
         exposure.EmbryoSpawn = embryoSpawn;
+        exposure.SourceHive = sourceHive;
         exposure.Exposure = exposure.InfectThreshold + 1f;
         Dirty(target, exposure);
     }

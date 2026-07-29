@@ -7,6 +7,7 @@ using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
 using Content.Shared.DoAfter;
 using Content.Shared._CMU14.Xenomorphs.Pathogen.Walker;
+using Content.Shared._RMC14.Xenonids.Hive;
 
 namespace Content.Shared._CMU14.Xenomorphs.Pathogen.DirectSporeInfect;
 
@@ -20,6 +21,7 @@ public sealed partial class CMUXenoDirectSporeInfectSystem : EntitySystem
     [Dependency] private readonly XenoSystem _xeno = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private readonly SharedXenoHiveSystem _hive = default!;
 
     public override void Initialize()
     {
@@ -139,7 +141,8 @@ public sealed partial class CMUXenoDirectSporeInfectSystem : EntitySystem
         if (!_xenoPlasma.TryRemovePlasmaPopup(xeno.Owner, xeno.Comp.PlasmaCost))
             return;
 
-        _mycotoxin.ForceInfect(target, xeno.Comp.EmbryoSpawn);
+        var sourceHive = _hive.GetHive(xeno.Owner)?.Owner;
+        _mycotoxin.ForceInfect(target, xeno.Comp.EmbryoSpawn, sourceHive);
 
         _popup.PopupPredicted(
             Loc.GetString("cmu-xeno-direct-spore-infect-hit", ("target", target)),

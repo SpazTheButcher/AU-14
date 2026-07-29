@@ -17,6 +17,8 @@ using Robust.Shared.Timing;
 using Content.Shared.Interaction;
 using Content.Shared.Body.Systems;
 using Content.Shared._CMU14.Medical.Injuries.Wounds;
+using Content.Shared._CMU14.Xenomorphs.Pathogen.Walker;
+using Content.Shared.Examine;
 
 namespace Content.Server._CMU14.Xenomorphs.Pathogen.Sporecaster;
 
@@ -40,6 +42,7 @@ public sealed class CMUPathogenSporecasterSystem : EntitySystem
         SubscribeLocalEvent<CMUPathogenSporecasterComponent, MapInitEvent>(OnMapInit);
         SubscribeLocalEvent<CMUPathogenSporecasterComponent, DestructionEventArgs>(OnDestruction);
         SubscribeLocalEvent<CMUPathogenSporecasterComponent, InteractHandEvent>(OnInteract);
+        SubscribeLocalEvent<CMUPathogenSporecasterComponent, ExaminedEvent>(OnExamine);
     }
 
     private void OnMapInit(Entity<CMUPathogenSporecasterComponent> ent, ref MapInitEvent args)
@@ -143,6 +146,9 @@ public sealed class CMUPathogenSporecasterSystem : EntitySystem
                 if (HasComp<VictimInfectedComponent>(target))
                     continue;
 
+                if (HasComp<CMUPathogenWalkerComponent>(target))
+                    continue;
+
                 if (_mobState.IsDead(target))
                     continue;
 
@@ -196,5 +202,19 @@ public sealed class CMUPathogenSporecasterSystem : EntitySystem
         }
 
         return false;
+    }
+
+    private void OnExamine(Entity<CMUPathogenSporecasterComponent> ent, ref ExaminedEvent args)
+    {
+        if (!HasComp<XenoComponent>(args.Examiner) && !_hive.FromSameHive(ent.Owner, args.Examiner))
+            return;
+
+        var remaining = ent.Comp.NextGrowAt - _timing.CurTime;
+        var seconds = (int) Math.Max(0, remaining.TotalSeconds);
+
+        args.PushMarkup(Loc.GetString("cmu-sporecaster-examine",
+            ("current", ent.Comp.StoredClouds),
+            ("max", ent.Comp.MaxClouds),
+            ("seconds", seconds)));
     }
 }

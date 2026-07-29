@@ -1,0 +1,1 @@
+cmu-sporecaster-examine = Stored spore clouds: {$current}/{$max}. Next cloud in {$seconds}s.

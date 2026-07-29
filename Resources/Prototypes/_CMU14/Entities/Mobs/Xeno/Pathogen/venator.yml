@@ -33,6 +33,7 @@
     - CMU14ActionXenoPathogenParalyzingSlash
     - CMU14ActionXenoPathogenScissorCut
     - CMU14ActionXenoPathogenDevolve
+    - CMU14ActionXenoPathogenRegurgitate
   - type: XenoScissorCut
     damage:
       types:

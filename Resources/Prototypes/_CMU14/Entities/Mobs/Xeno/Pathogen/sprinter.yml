@@ -33,6 +33,7 @@
     - CMU14ActionXenoPathogenParalyzingSlash
     - CMU14ActionXenoPathogenTailStab
     - CMU14ActionXenoPathogenZoom
+    - CMU14ActionXenoPathogenRegurgitate
   - type: XenoZoom
   - type: XenoBoneChips
   - type: XenoLeap
@@ -107,7 +108,6 @@
       state: background_pathogen
   - type: Tag
     tags:
-    - DoorBumpOpener
     - RMCSynthGrabbable
   - type: VentCrawler
     ventCrawlIcon: runner

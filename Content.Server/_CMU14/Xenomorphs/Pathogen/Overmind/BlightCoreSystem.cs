@@ -13,6 +13,8 @@ using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Robust.Shared.Timing;
 using Robust.Server.GameObjects;
+using Content.Shared.Damage;
+using Content.Server._RMC14.Announce;
 
 namespace Content.Server._CMU14.Xenomorphs.Pathogen.Overmind;
 
@@ -26,6 +28,7 @@ public sealed partial class CMUBlightCoreSystem : EntitySystem
     [Dependency] private readonly XenoEvolutionSystem _evolution = default!;
     [Dependency] private readonly UserInterfaceSystem _ui = default!;
     [Dependency] private readonly IPlayerManager _player = default!;
+    [Dependency] private readonly XenoAnnounceSystem _xenoAnnounce = default!;
 
     private const float JoinTimeBonusSeconds = 10f;
     private const float InitialVoteSeconds = 35f;
@@ -48,7 +51,59 @@ public sealed partial class CMUBlightCoreSystem : EntitySystem
         SubscribeLocalEvent<CMUBlightCoreComponent, BlightCoreDeclineMessage>(OnDecline);
         SubscribeLocalEvent<XenoComponent, BlightCoreVoteMessage>(OnVoteCast);
         SubscribeLocalEvent<CMUXenoOvermindComponent, MobStateChangedEvent>(OnOvermindDeath);
+        SubscribeLocalEvent<CMUBlightCoreComponent, EntityTerminatingEvent>(OnCoreDestroyed);
+        SubscribeLocalEvent<CMUBlightCoreComponent, DamageChangedEvent>(OnCoreDamaged);
+        SubscribeLocalEvent<CMUBlightCoreComponent, ComponentStartup>(OnCoreInit);
         
+    }
+
+    private void OnCoreInit(Entity<CMUBlightCoreComponent> core, ref ComponentStartup args)
+    {
+        if (_net.IsClient)
+            return;
+
+        if (core.Comp.CurrentOvermind != null)
+            return;
+
+        Timer.Spawn(0, () =>
+        {
+            if (TerminatingOrDeleted(core))
+                return;
+
+            if (core.Comp.CurrentOvermind != null)
+                return;
+
+            // Find pathogen hive directly instead of relying on HiveMemberComponent being set
+            EntityUid? pathogenHive = null;
+            var hiveQuery = EntityQueryEnumerator<HiveComponent, MetaDataComponent>();
+            while (hiveQuery.MoveNext(out var hiveUid, out _, out var meta))
+            {
+                if (meta.EntityPrototype?.ID == "CMUPathogenHive")
+                {
+                    pathogenHive = hiveUid;
+                    break;
+                }
+            }
+
+            if (pathogenHive == null)
+                return;
+
+            var query = EntityQueryEnumerator<CMUXenoOvermindComponent, HiveMemberComponent>();
+            while (query.MoveNext(out var overmindUid, out var overmindComp, out var member))
+            {
+                if (member.Hive != pathogenHive.Value)
+                    continue;
+
+                if (overmindComp.LinkedCore != null)
+                    continue;
+
+                overmindComp.LinkedCore = core.Owner;
+                Dirty(overmindUid, overmindComp);
+                core.Comp.CurrentOvermind = GetNetEntity(overmindUid);
+                Dirty(core);
+                break;
+            }
+        });
     }
 
     private void OnStep(Entity<CMUBlightCoreComponent> core, ref StepTriggeredOffEvent args)
@@ -89,13 +144,11 @@ public sealed partial class CMUBlightCoreSystem : EntitySystem
 
         if (!TryComp(stepper, out XenoComponent? _))
         {
-            Log.Debug($"BlightCore: {stepper} nie ma XenoComponent");
             return;
         }
 
         if (_mobState.IsDead(stepper))
         {
-            Log.Debug($"BlightCore: {stepper} jest martwy");
             return;
         }
 
@@ -103,24 +156,20 @@ public sealed partial class CMUBlightCoreSystem : EntitySystem
             _hive.GetHive(core.Owner) is not { } coreHive ||
             xenoHive.Owner != coreHive.Owner)
         {
-            Log.Debug($"BlightCore: hive mismatch");
             return;
         }
 
         if (_hive.HasHiveQueen(xenoHive))
         {
-            Log.Debug($"BlightCore: hive ma już królową");
             return;
         }
 
         if (core.Comp.CurrentOvermind is not null &&
             !TerminatingOrDeleted(GetEntity(core.Comp.CurrentOvermind.Value)))
         {
-            Log.Debug($"BlightCore: Overmind już istnieje");
             return;
         }
 
-        Log.Debug($"BlightCore: trigger OK dla {stepper}");
         args.Continue = true;
     }
 
@@ -238,6 +287,26 @@ public sealed partial class CMUBlightCoreSystem : EntitySystem
             PopupType.LargeCaution);
     }
 
+    private void OnCoreDestroyed(Entity<CMUBlightCoreComponent> core, ref EntityTerminatingEvent args)
+    {
+        Log.Debug($"BlightCore: OnCoreDestroyed FIRED for {ToPrettyString(core)}");
+        if (_net.IsClient)
+            return;
+
+        if (core.Comp.CurrentOvermind is not { } netOvermind)
+            return;
+
+        var overmind = GetEntity(netOvermind);
+        if (TerminatingOrDeleted(overmind))
+            return;
+
+        // Get the hive from the OVERMIND, not the (terminating) core
+        if (_hive.GetHive(overmind) is { } hive)
+            PopupToHive(hive, Loc.GetString("cmu14-blight-core-destroyed-overmind-died"));
+
+        QueueDel(overmind);
+    }
+
     private void OnOvermindDeath(Entity<CMUXenoOvermindComponent> overmind, ref MobStateChangedEvent args)
     {
         if (args.NewMobState != MobState.Dead)
@@ -313,19 +382,7 @@ public sealed partial class CMUBlightCoreSystem : EntitySystem
 
     private void PopupToHive(Entity<HiveComponent> hive, string message)
     {
-        var query = EntityQueryEnumerator<XenoComponent, HiveMemberComponent>();
-
-        while (query.MoveNext(out var uid, out _, out var member))
-        {
-            if (member.Hive != hive.Owner)
-                continue;
-
-            if (_player.TryGetSessionByEntity(uid, out var session) &&
-                session.AttachedEntity is { } ent)
-            {
-                _popup.PopupEntity(message, ent, ent, PopupType.Medium);
-            }
-        }
+        _xenoAnnounce.AnnounceToHive(EntityUid.Invalid, hive.Owner, message, hive.Comp.AnnounceSound, PopupType.Medium);
     }
 
     private void OpenVoteUiForHive(EntityUid coreUid, Entity<HiveComponent> hive)
@@ -379,5 +436,28 @@ public sealed partial class CMUBlightCoreSystem : EntitySystem
 
             _ui.CloseUi(uid, BlightCoreUiKey.Vote);
         }
+    }
+
+    private TimeSpan _lastDamageAnnounce = TimeSpan.Zero;
+    private const float DamageAnnounceCoolddownSeconds = 10f;
+
+    private void OnCoreDamaged(Entity<CMUBlightCoreComponent> core, ref DamageChangedEvent args)
+    {
+        if (_net.IsClient)
+            return;
+
+        if (args.DamageDelta == null || args.DamageDelta.GetTotal() <= 0)
+            return;
+
+        var now = _timing.CurTime;
+        if (now - core.Comp.LastDamageAnnounceAt < TimeSpan.FromSeconds(DamageAnnounceCoolddownSeconds))
+            return;
+
+        core.Comp.LastDamageAnnounceAt = now;
+
+        if (_hive.GetHive(core.Owner) is not { } hive)
+            return;
+
+        PopupToHive(hive, Loc.GetString("cmu14-blight-core-under-attack"));
     }
 }

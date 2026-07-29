@@ -52,6 +52,7 @@
     - CMU14PathogenPlasmaTreeConstructionNode
     - CMU14PathogenRecoveryNodeConstructionNode
     - CMU14PathogenSporecasterConstructionNode
+    - CMU14ActionXenoPathogenRegurgitate
   - type: XenoDevour
   - type: XenoHeadbite
     damage:
@@ -85,6 +86,8 @@
     - CMU14XenoConditor
     - CMU14XenoBrute
     - CMU14XenoRoot
+    - CMU14XenoHarbinger
+    - CMU14XenoVenator
   - type: XenoDevolve
     devolvesTo:
     - CMU14XenoSprinter
