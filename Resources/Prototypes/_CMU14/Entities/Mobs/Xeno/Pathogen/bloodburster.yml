@@ -142,3 +142,14 @@
   - type: RMCSpawnEntitiesOnGib
     entities:
     - CMU14GibEffectPathogenBloodburster
+
+- type: entity
+  id: CMU14XenoEmbryoBloodburster
+  parent: BaseItem
+  name: alien embryo
+  description: All slimy and yucky.
+  components:
+    - type: Sprite
+      sprite: _CMU14/Mobs/Xenonids/Pathogen/bloodburster.rsi+
+      noRot: true
+      state: embryo
