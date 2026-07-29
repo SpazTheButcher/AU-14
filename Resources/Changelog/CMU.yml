@@ -8274,5 +8274,54 @@
   id: 521
   time: '2026-07-26T21:21:59.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1725
+- author: yowhatupitk-bit
+  changes:
+  - message: Medical Officer Rank O1-O2 > O1
+    type: Fix
+  - message: Auxiliary Technician Rank E1-E2 > E2-E4
+    type: Fix
+  - message: Engineering Technician Rank E1-E2 > E2-E4
+    type: Fix
+  id: 522
+  time: '2026-07-28T10:51:23.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1729
+- author: troytroy400
+  changes:
+  - message: Almost all IFF small arms now block firing on friendlies instead of allowing
+      you to just shoot through them.
+    type: Fix
+  - message: Double door vmarkers now show the proper sprite.
+    type: Fix
+  - message: The B8 scope can now be attached to the M41A MK2.
+    type: Add
+  - message: Added logistics door variants for OPFOR/GOVFOR with relevant vmarkers.
+    type: Add
+  - message: The callsign directory laptop now has relevant vmarkers.
+    type: Add
+  - message: Added dedicated ship comms arrays with relevant vmarkers.
+    type: Add
+  - message: Added a Military Combat Correspondent role to GOVFOR, spawns only during
+      the Distress Signal.
+    type: Add
+  - message: 'The USS George W. Bush has been updated with missing content including:
+      comms, research, a bigger req line, proper locked doors and many other small
+      tweaks.'
+    type: Tweak
+  - message: Drone Operator now defaults into the Auxiliary squad on spawn
+    type: Tweak
+  - message: renamed Adjutant Officer to Executive Officer.
+    type: Tweak
+  - message: The Broadcasting camera now has a built in 4x scope and can now be wielded
+      with only one hand.
+    type: Tweak
+  - message: Removed damage decrease modifier from smart scope.
+    type: Tweak
+  - message: Smartguns now refuse to fire on friendlies instead of firing through
+      them. To compensate, SGs have been given a damage and firerate buff. This change
+      is experimental and will be tweaked as needed.
+    type: Tweak
+  id: 523
+  time: '2026-07-28T13:18:27.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1731
 Name: CMU
 Order: -1
