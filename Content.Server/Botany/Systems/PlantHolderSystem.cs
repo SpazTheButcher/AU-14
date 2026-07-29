@@ -29,6 +29,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Content.Shared.Labels.Components;
+using DocumentFormat.OpenXml.Office2016.Drawing.Charts;
 
 namespace Content.Server.Botany.Systems;
 
@@ -397,12 +398,24 @@ public sealed partial class PlantHolderSystem : EntitySystem
 
         component.LastCycle = curTime;
 
-        // Process mutations
-        if (component.MutationLevel > 0)
-        {
-            Mutate(uid, Math.Min(component.MutationLevel, 25), component);
-            component.UpdateSpriteAfterUpdate = true;
+        component.MutationLevel -= _random.Next(2, 5);
+        if (component.MutationLevel < 0)
             component.MutationLevel = 0;
+
+        // Process mutations
+        //if (component.MutationLevel > 0)
+        //{
+        //    Mutate(uid, Math.Min(component.MutationLevel, 25), component);
+        //    component.UpdateSpriteAfterUpdate = true;
+        //    component.MutationLevel = 0;
+        //}
+        if (component.Seed is not null && component.Seed.Immutable == false)
+        {
+            if (_random.Prob(MathF.Min(MathF.Max(component.MutationLevel, 0), 100) / 100))
+            {
+                Mutate(uid, (_random.Next(101) < 15) ? 2 : 1, component.MutationLevel, component);
+                component.MutationLevel = 0;
+            }
         }
 
         // Weeds like water and nutrients! They may appear even if there's not a seed planted.
@@ -523,7 +536,8 @@ public sealed partial class PlantHolderSystem : EntitySystem
             if (component.DrawWarnings)
                 component.UpdateSpriteAfterUpdate = true;
         }
-
+        //RMC/CMU has atmospherics disabled
+        /*
         var environment = _atmosphere.GetContainingMixture(uid, true, true) ?? GasMixture.SpaceGas;
 
         component.MissingGas = 0;
@@ -585,7 +599,7 @@ public sealed partial class PlantHolderSystem : EntitySystem
                     MathF.Max(1f, MathF.Round(amount * MathF.Round(component.Seed.Potency) / exudeCount)));
             }
         }
-
+        /**/
         // Toxin levels beyond the plant's tolerance cause damage.
         // They are, however, slowly reduced over time.
         if (component.Toxins > 0)
@@ -826,6 +840,14 @@ public sealed partial class PlantHolderSystem : EntitySystem
         component.ImproperPressure = false;
         component.ImproperHeat = false;
 
+        foreach (var mon in component.MutationController.Fields)
+        {
+            if (mon.Value > -3)
+            {
+                component.MutationController.Fields[mon.Key] = 0;
+            }
+        }
+
         UpdateSprite(uid, component);
     }
 
@@ -883,7 +905,7 @@ public sealed partial class PlantHolderSystem : EntitySystem
         if (!_solutionContainerSystem.ResolveSolution(uid, component.SoilSolutionName, ref component.SoilSolution, out var solution))
             return;
 
-        if (solution.Volume > 0 && component.MutationLevel < 25)
+        if (solution.Volume > 0)
         {
             var amt = FixedPoint2.New(1);
             foreach (var entry in _solutionContainerSystem.RemoveEachReagent(component.SoilSolution.Value, amt))
@@ -896,16 +918,28 @@ public sealed partial class PlantHolderSystem : EntitySystem
         CheckLevelSanity(uid, component);
     }
 
-    private void Mutate(EntityUid uid, float severity, PlantHolderComponent? component = null)
+    public void Mutate(EntityUid uid, float severity, float mutationLevel, PlantHolderComponent? component = null)
     {
         if (!Resolve(uid, ref component))
             return;
 
-        if (component.Seed != null)
+        if (component.Seed is null)
+            return;
+
+        if ((component.Seed.MutationPrototypes.Count > 0 && severity > 1 &&
+            component.MutationController.Fields["Mutate Species"] == 0) ||
+            (component.Seed.MutationPrototypes.Count > 0 && component.MutationController.Fields["Mutate Species"] > 0))
         {
-            EnsureUniqueSeed(uid, component);
-            _mutation.MutateSeed(uid, ref component.Seed, severity);
+            if (component.MutationController.Fields["Mutate Species"] > 0)
+                component.MutationController.Fields["Mutate Species"] = 0;
+            _mutation.MutateSpecies((uid, component), ref component.Seed, severity);
         }
+
+
+
+
+        EnsureUniqueSeed(uid, component);
+        _mutation.MutateSeed((uid, component), ref component.Seed, severity);
     }
 
     public void UpdateSprite(EntityUid uid, PlantHolderComponent? component = null)

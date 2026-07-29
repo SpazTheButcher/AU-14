@@ -1101,7 +1101,7 @@
   nutrientConsumption: 0.80
   idealHeat: 298
   chemicals:
-    SulfuricAcid:
+    RMCSulphuricAcid:
       Min: 1
       Max: 15
       PotencyDivisor: 6
@@ -1109,6 +1109,11 @@
       Min: 1
       Max: 15
       PotencyDivisor: 6
+  specialChemicals:
+    CMUUrishiol:
+      Min: 7
+      Max: 20
+      PotencyDivisor: 1
 
 - type: seed
   id: chili
@@ -1183,8 +1188,6 @@
   packetPrototype: PoppySeeds
   productPrototypes:
     - FoodPoppy
-  mutationPrototypes:
-    - lily
   lifespan: 25
   maturation: 10
   production: 3
@@ -1748,6 +1751,9 @@
   packetPrototype: BerrySeeds
   productPrototypes:
     - FoodBerries
+  mutationPrototypes:
+    - poisonberry
+    - deathberry
   harvestRepeat: Repeat
   lifespan: 50
   maturation: 6
