@@ -150,6 +150,6 @@
   description: All slimy and yucky.
   components:
     - type: Sprite
-      sprite: _CMU14/Mobs/Xenonids/Pathogen/bloodburster.rsi+
+      sprite: _CMU14/Mobs/Xenonids/Pathogen/bloodburster.rsi
       noRot: true
       state: embryo
