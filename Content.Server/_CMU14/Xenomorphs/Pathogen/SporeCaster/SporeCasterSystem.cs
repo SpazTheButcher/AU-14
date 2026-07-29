@@ -126,6 +126,9 @@ public sealed class CMUPathogenSporecasterSystem : EntitySystem
             if (caster.StoredClouds <= 0)
                 continue;
 
+            if (time < caster.NextAutoReleaseAt)
+                continue;
+
             _nearby.Clear();
             _lookup.GetEntitiesInRange<MobStateComponent>(
                 Transform(uid).Coordinates,
@@ -136,25 +139,21 @@ public sealed class CMUPathogenSporecasterSystem : EntitySystem
             {
                 if (HasComp<XenoComponent>(target))
                     continue;
-
                 if (HasComp<SynthComponent>(target))
                     continue;
-
                 if (!HasComp<InfectableComponent>(target))
                     continue;
-
                 if (HasComp<VictimInfectedComponent>(target))
                     continue;
-
                 if (HasComp<CMUPathogenWalkerComponent>(target))
                     continue;
-
                 if (_mobState.IsDead(target))
                     continue;
-
                 if (IsProtected(target))
                     continue;
 
+                caster.NextAutoReleaseAt = time + caster.AutoReleaseInterval;
+                Dirty(uid, caster);
                 ReleaseCloud((uid, caster));
                 break;
             }
