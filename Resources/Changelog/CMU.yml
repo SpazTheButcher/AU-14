@@ -8363,5 +8363,24 @@
   id: 526
   time: '2026-07-28T19:18:10.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1733
+- author: Fejet
+  changes:
+  - message: structuraised Base of clothing
+    type: Add
+  - message: 'Limb Defend for Boots and Gloves Gloves have: melee: 40, bullet: 40,
+      explosionArmor: 20 protection. Boots have: melee: 25, bullet: 25, explosionArmor:
+      20 protection.'
+    type: Fix
+  id: 527
+  time: '2026-07-29T02:49:36.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1727
+- author: johnnny34y
+  changes:
+  - message: Adds a boot-up sound that plays when the HAZOPS Powered Warfighting Armor
+      is equipped.
+    type: Add
+  id: 528
+  time: '2026-07-29T02:50:10.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1735
 Name: CMU
 Order: -1
