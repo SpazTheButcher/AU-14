@@ -124,7 +124,7 @@
     capacity: 10
   - type: VehicleHardpointAmmo
     magazineSize: 10
-    maxStoredMagazines: 3
+    maxStoredMagazines: 1
   - type: GunFireArc
     arc: 120
   - type: RefillableByBulletBox
