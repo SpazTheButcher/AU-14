@@ -80,6 +80,7 @@ public static class RoundStatusWebhook
 
         fields.Add(new WebhookEmbedField { Name = "Operation", Value = FormatOperation(status), Inline = false });
         fields.Add(new WebhookEmbedField { Name = "Recent Rounds", Value = FormatRecentGamemodes(status.RecentGamemodes), Inline = false });
+        fields.Add(CreateLastUpdatedField(DateTimeOffset.UtcNow));
 
         var payload = new WebhookPayload
         {
@@ -266,6 +267,16 @@ public static class RoundStatusWebhook
                 .Where(roleId => !string.IsNullOrWhiteSpace(roleId))
                 .Distinct(StringComparer.Ordinal)
                 .Select(roleId => $"<@&{roleId}>"));
+    }
+
+    private static WebhookEmbedField CreateLastUpdatedField(DateTimeOffset updatedAt)
+    {
+        return new WebhookEmbedField
+        {
+            Name = "Last Updated",
+            Value = $"<t:{updatedAt.ToUnixTimeSeconds()}:R>",
+            Inline = false,
+        };
     }
 
     private static string GetTitle(RoundStatusWebhookKind kind, int roundId)

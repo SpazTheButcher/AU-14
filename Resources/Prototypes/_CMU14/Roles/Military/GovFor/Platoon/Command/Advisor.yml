@@ -24,7 +24,12 @@
   roundProfiles:
   - AU14RoundJobProfileMilitaryBase
   roundComponents:
+  - type: AU14CallsignRole
+    suffix: OPS
+    commandElement: true
   - type: SeeNewPlayers
+  - type: ANPRCRadioUser
+  - type: ANPRCCryptoAuthority
   - type: Skills
     preset: AU14SkillPresetPlatoonAdvisor
   - type: RMCSpeechBubbleSpecificStyle
@@ -41,17 +46,18 @@
       icon:
         sprite: /Textures/_AU14/Interface/au14opforjobicons.rsi
         state: advisor
-
   requirements:
   - !type:OverallPlaytimeRequirement
     time: 3600
   - !type:AgeRequirement
-    requiredAge: 21
+    requiredAge: 25
   - !type:TraitsRequirement
     inverted: true
     traits:
     - Epilepsy
     - NoEnglish
+    - SlowRunner
+    - Anemic
   ranks:
     RMCRankCivilian: []
   chevrons:
@@ -60,47 +66,40 @@
       requirements:
       - !type:RoleTimeRequirement
         role: AU14JobGOVFORadvisor
-        time: 360000
+        time: 180000 # 50 hours
+    RMCRankFirstSergeant:
+      entity: AU14ChevronUSCMFirstSergeant
+      requirements:
+      - !type:RoleTimeRequirement
+        role: AU14JobGOVFORadvisor
+        time: 144000 # 40 hours
     RMCRankMasterGunnerySergeant:
       entity: AU14ChevronUSCMMasterGunnerySergeant
       requirements:
       - !type:RoleTimeRequirement
         role: AU14JobGOVFORadvisor
-        time: 86400
-    RMCRankFirstSergeant:
-      entity: AU14ChevronUSCMFirstSergeant
+        time: 108000 # 30 hours
+    RMCRankMasterSergeant:
+      entity: AU14ChevronUSCMMasterSergeant
+      requirements:
+      - !type:RoleTimeRequirement
+        role: AU14JobGOVFORadvisor
+        time: 72000 # 20 hours
+    RMCRankGunnerySergeant:
+      entity: AU14ChevronUSCMGunnerySergeant
+      requirements:
+      - !type:RoleTimeRequirement
+        role: AU14JobGOVFORadvisor
+        time: 36000 # 10 hours
+    RMCRankStaffSergeant:
+      entity: AU14ChevronUSCMStaffSergeant
       requirements: []
 
 - type: playTimeTracker
   id: AU14JobGOVFORadvisor
   isHumanoid: true
 
-- type: startingGear
-  id: AU14GearGOVFORadvisor
-  equipment:
-    id: AU14IDCardSquadAdvisor
-    ears: AU14HeadsetGovforCommand
-    back: AU14SatchelMarineAdvisorMilitary # removed by ImaginaryFriend
-    pocket1: AU14StampSEA # removed by ImaginaryFriend
-
-- type: startingGear
-  id: AU14GearGOVFORadvisorDummy
-  equipment:
-    shoes: CMBootsBrownFilled
-    head: CMHeadCapDrill
-    jumpsuit: CMJumpsuitBO
-    ears: AU14HeadsetGovforCommand
-
-- type: entity
-  parent: CMSpawnPointJobBase
-  id: AU14SpawnPointGOVFORadvisor
-  name: Spawn Point GOVFOR Advisor
-  components:
-  - type: SpawnPoint
-    job_id: AU14JobGOVFORadvisor
-  - type: Sprite
-    state: syn_spawn
-
+# ├──[ Job Prototypes ]──────────────────────────────────────────────┤
 - type: job
   parent: AU14JobadvisorBase
   id: AU14JobGOVFORadvisor
@@ -112,6 +111,43 @@
     components:
     - type: RMCSpeechBubbleSpecificStyle
       speechStyleClass: commanderSpeech
+
+- type: job
+  parent: AU14JobadvisorBase
+  id: AU14JobOPFORadvisor
+  roundSide: Opfor
+  roundForce: OPFOR
+  icon: "AU14JobIconOPFORAdvisor"
+  spawnMenuRoleName: Platoon Advisor (OPFOR)
+  startingGear: AU14GearOPFORadvisor
+  dummyStartingGear: AU14GearOPFORadvisorDummy
+  supervisors: au14-job-supervisors-opfor
+  accessGroups:
+  - AU14OpforCommand
+
+# ├──[ Starting Gear ]───────────────────────────────────────────────┤
+- type: startingGear
+  id: AU14GearGOVFORadvisor
+  equipment:
+    id: AU14IDCardSquadAdvisor
+    ears: AU14HeadsetGovforCommand
+    belt: AU14BeltPostelPistolM48A5NoSuper
+    back: AU14SatchelMarineAdvisorMilitary # removed by ImaginaryFriend
+    pocket1: AU14StampSEA # removed by ImaginaryFriend
+  storage:
+    back:
+    - ANPRCFillCardGOVFOR
+
+- type: startingGear
+  id: AU14GearOPFORadvisor
+  equipment:
+    id: AU14IDCardOPFORAdvisor
+    ears: AU14HeadsetOpforCommand
+    belt: AU14BeltPostelPistolM48A5NoSuper
+    back: AU14SatchelMarineAdvisorMilitary
+  storage:
+    back:
+    - ANPRCFillCardOPFOR
 
 - type: roleLoadout
   id: JobAU14JobGOVFORadvisor
@@ -128,25 +164,42 @@
   - SmokablesRMC
   - WeaponsRMC
 
-- type: job
-  parent: AU14JobadvisorBase
-  id: AU14JobOPFORadvisor
-  roundSide: Opfor
-  roundForce: OPFOR
-  icon: "AU14JobIconOPFORAdvisor"
-  spawnMenuRoleName: Platoon Advisor (OPFOR)
-  startingGear: AU14GearOPFORadvisor
-  dummyStartingGear: AU14GearOPFORadvisorDummy
-  supervisors: au14-job-supervisors-opfor
-  accessGroups:
-  - AU14OpforCommand
+- type: startingGear
+  id: AU14GearImaginaryAdvisor
+  equipment:
+    head: CMHeadCapDrill
+    eyes: CMGlassesSecurity
+    jumpsuit: CMJumpsuitBO
+    outerClothing: RMCProvostJacketFilled
+    gloves: CMHandsBlackMarine
+    shoes: CMBootsBrownFilled
 
 - type: startingGear
-  id: AU14GearOPFORadvisor
+  id: AU14GearGOVFORadvisorDummy
   equipment:
-    id: AU14IDCardOPFORAdvisor
+    shoes: CMBootsBrownFilled
+    head: CMHeadCapDrill
+    jumpsuit: CMJumpsuitBO
+    ears: AU14HeadsetGovforCommand
+
+- type: startingGear
+  id: AU14GearOPFORadvisorDummy
+  equipment:
+    shoes: CMBootsBrownFilled
+    head: CMHeadCapDrill
+    jumpsuit: CMJumpsuitBO
     ears: AU14HeadsetOpforCommand
-    back: AU14SatchelMarineAdvisorMilitary
+
+# ├──[ Spawnpoints ]─────────────────────────────────────────────────┤
+- type: entity
+  parent: CMSpawnPointJobBase
+  id: AU14SpawnPointGOVFORadvisor
+  name: Spawn Point GOVFOR Advisor
+  components:
+  - type: SpawnPoint
+    job_id: AU14JobGOVFORadvisor
+  - type: Sprite
+    state: syn_spawn
 
 - type: entity
   parent: CMSpawnPointJobBase
@@ -158,14 +211,7 @@
   - type: Sprite
     state: syn_spawn
 
-- type: startingGear
-  id: AU14GearOPFORadvisorDummy
-  equipment:
-    shoes: CMBootsBrownFilled
-    head: CMHeadCapDrill
-    jumpsuit: CMJumpsuitBO
-    ears: AU14HeadsetOpforCommand
-
+# ├──[ Factions ]────────────────────────────────────────────────────┤
 - type: job
   parent: AU14JobadvisorBase
   id: AU14JobGOVFORadvisorRMC

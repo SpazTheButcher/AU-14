@@ -10,6 +10,7 @@ public sealed class RMCPowerSystem : SharedRMCPowerSystem
     {
         base.Initialize();
         SubscribeLocalEvent<RMCApcComponent, AfterAutoHandleStateEvent>(OnApcState);
+        SubscribeLocalEvent<RMCPortableGeneratorComponent, AfterAutoHandleStateEvent>(OnPortableGeneratorState);
 
         SubscribeLocalEvent<RMCReactorPoweredLightComponent, AppearanceChangeEvent>(OnReactorPoweredLightAppearanceChange);
     }
@@ -41,5 +42,24 @@ public sealed class RMCPowerSystem : SharedRMCPowerSystem
     private void OnReactorPoweredLightAppearanceChange(Entity<RMCReactorPoweredLightComponent> ent, ref AppearanceChangeEvent args)
     {
         Pointlight.SetEnabled(ent, ent.Comp.Enabled);
+    }
+
+    private void OnPortableGeneratorState(Entity<RMCPortableGeneratorComponent> ent, ref AfterAutoHandleStateEvent args)
+    {
+        try
+        {
+            if (!TryComp(ent, out UserInterfaceComponent? ui))
+                return;
+
+            foreach (var bui in ui.ClientOpenInterfaces.Values)
+            {
+                if (bui is RMCPortableGeneratorBui genUi)
+                    genUi.Refresh();
+            }
+        }
+        catch (Exception e)
+        {
+            Log.Error($"Error refreshing {nameof(RMCPortableGeneratorBui)}\n{e}");
+        }
     }
 }

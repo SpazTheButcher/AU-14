@@ -142,8 +142,16 @@ public abstract partial class SharedRMCLandmineSystem : EntitySystem
 
     private void OnPreventCollide(Entity<RMCLandmineComponent> ent, ref PreventCollideEvent args)
     {
-        if (ent.Comp.Armed && !HasComp<XenoProjectileComponent>(args.OtherEntity) && !HasComp<MobStateComponent>(args.OtherEntity))
+        if (ent.Comp.Armed &&
+            !CanProjectileTrigger(ent, args.OtherEntity) &&
+            !HasComp<MobStateComponent>(args.OtherEntity))
             args.Cancelled = true;
+    }
+
+    protected bool CanProjectileTrigger(Entity<RMCLandmineComponent> ent, EntityUid projectile)
+    {
+        return HasComp<XenoProjectileComponent>(projectile) ||
+               ent.Comp.TriggerOnAnyProjectile && HasComp<ProjectileComponent>(projectile);
     }
 
     private void OnBeforeDamageChanged(Entity<RMCLandmineComponent> ent, ref BeforeDamageChangedEvent args)

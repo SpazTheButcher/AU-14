@@ -18,7 +18,6 @@
   - type: SharpGun
   - type: GunRequiresWield
   - type: GunIFF
-    intrinsic: true
     enabled: true
   - type: ShootAtFixedPoint
     maxFixedRange: 7
@@ -435,6 +434,7 @@
           bounds: "-0.25,-0.25,0.25,0.25"
         hard: false
         layer:
+        - BulletImpassable
         - XenoProjectileImpassable
       fix1:
         shape:
@@ -469,6 +469,7 @@
     placementDelay: 3
     disarmDelay: 3
     shotStackLimit: 1
+    triggerOnAnyProjectile: true
     deploySound:
       path: /Audio/_RMC14/Weapons/Guns/Gunshots/gun_sharp_explode.ogg
   - type: SharpMine

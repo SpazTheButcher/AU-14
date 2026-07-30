@@ -4,6 +4,7 @@ using Content.Server.Administration.Logs;
 using Content.Server.Atmos.Components;
 using Content.Server.NodeContainer.EntitySystems;
 using Content.Server.NPC.Pathfinding;
+using Content.Shared._ES.Camera;
 using Content.Shared._RMC14.Explosion;
 using Content.Shared.Atmos.Components;
 using Content.Shared.Camera;
@@ -23,6 +24,7 @@ using Robust.Server.Player;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Configuration;
 using Robust.Shared.Map;
+using Robust.Shared.Network;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
@@ -33,11 +35,13 @@ namespace Content.Server.Explosion.EntitySystems;
 
 public sealed partial class ExplosionSystem : SharedExplosionSystem
 {
+    [Dependency] private ESScreenshakeSystem _shake = default!;
     [Dependency] private IMapManager _mapManager = default!;
     [Dependency] private IRobustRandom _robustRandom = default!;
     [Dependency] private ITileDefinitionManager _tileDefinitionManager = default!;
     [Dependency] private IPrototypeManager _prototypeManager = default!;
     [Dependency] private IConfigurationManager _cfg = default!;
+    [Dependency] private INetConfigurationManager _netConfig = default!;
     [Dependency] private IPlayerManager _playerManager = default!;
 
     [Dependency] private MapSystem _mapSystem = default!;
@@ -64,6 +68,8 @@ public sealed partial class ExplosionSystem : SharedExplosionSystem
     public const ushort DefaultTileSize = 1;
 
     public const int MaxExplosionAudioRange = 30;
+
+    public const float FarScreenShakeRange = 25f;
 
     /// <summary>
     ///     The "default" explosion prototype.
@@ -348,7 +354,6 @@ public sealed partial class ExplosionSystem : SharedExplosionSystem
         var visualEnt = CreateExplosionVisualEntity(pos, queued.Proto.ID, spaceMatrix, spaceData, gridData.Values, iterationIntensity);
 
         // camera shake
-        CameraShake(iterationIntensity.Count * 4f, pos, queued.TotalIntensity);
 
         //For whatever bloody reason, sound system requires ENTITY coordinates.
         var mapEntityCoords = _transformSystem.ToCoordinates(_mapSystem.GetMap(pos.MapId), pos);
@@ -379,6 +384,21 @@ public sealed partial class ExplosionSystem : SharedExplosionSystem
             ? queued.Proto.SmallSoundFar
             : queued.Proto.SoundFar;
 
+        var farTranslationShake = iterationIntensity.Count < queued.Proto.SmallSoundIterationThreshold
+            ? new ESScreenshakeParameters() { Trauma = 0.4f, DecayRate = 0.6f, Frequency = 0.014f }
+            : new ESScreenshakeParameters() { Trauma = 0.6f, DecayRate = 0.2f, Frequency = 0.014f };
+
+        var shakeFilter = filter.RemoveWhere(session =>
+        {
+            if (!_netConfig.GetClientCVar(session.Channel, CCVars.ExplosionScreenShakeEnabled))
+                return true;
+
+            return _netConfig.GetClientCVar(session.Channel, CCVars.ExplosionScreenShakeIgnoreFar) &&
+                   session.AttachedEntity is { } shakeEntity &&
+                   (_transformSystem.GetWorldPosition(shakeEntity) - pos.Position).Length() > FarScreenShakeRange;
+        });
+        _shake.Screenshake(shakeFilter, farTranslationShake, null);
+
         _audio.PlayGlobal(farSound, farFilter, true, farSound.Params);
 
         return new Explosion(this,
@@ -402,6 +422,24 @@ public sealed partial class ExplosionSystem : SharedExplosionSystem
 
     private void CameraShake(float range, MapCoordinates epicenter, float totalIntensity)
     {
-        // RMC14 disables explosion camera shake.
+        var players = Filter.Empty();
+        players.AddInRange(epicenter, range, _playerManager, EntityManager);
+
+        foreach (var player in players.Recipients)
+        {
+            if (player.AttachedEntity is not EntityUid uid)
+                continue;
+
+            var playerPos = _transformSystem.GetWorldPosition(player.AttachedEntity!.Value);
+            var delta = epicenter.Position - playerPos;
+
+            if (delta.EqualsApprox(Vector2.Zero))
+                delta = new(0.01f, 0);
+
+            var distance = delta.Length();
+            var effect = 5 * MathF.Pow(totalIntensity, 0.5f) * (1 - distance / range);
+            if (effect > 0.01f)
+                _recoilSystem.KickCamera(uid, -delta.Normalized() * effect);
+        }
     }
 }

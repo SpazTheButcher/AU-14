@@ -10,6 +10,7 @@ using Content.Server._RMC14.LinkAccount;
 using Content.Server.Administration.Logs;
 using Content.Server.Administration.Managers;
 using Content.Server.IP;
+using Content.Shared._CMU14.BalanceRating;
 using Content.Shared._RMC14.NamedItems;
 using Content.Shared.Administration.Logs;
 using Content.Shared.AU14.Allegiance;
@@ -29,10 +30,11 @@ using Robust.Shared.Enums;
 using Robust.Shared.Network;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
+using Content.Shared.AU14.util;
 
 namespace Content.Server.Database
 {
-    public abstract class ServerDbBase
+    public abstract partial class ServerDbBase
     {
         private readonly ISawmill _opsLog;
 
@@ -240,6 +242,9 @@ namespace Content.Server.Database
             ProtoId<OriginPrototype>? origin = profile.Origin is { } originId
                 ? new ProtoId<OriginPrototype>(originId)
                 : (ProtoId<OriginPrototype>?)null;
+            ProtoId<PlatoonPrototype>? platoon = profile.Platoon is { } platoonId
+                ? new ProtoId<PlatoonPrototype>(platoonId)
+                : (ProtoId<PlatoonPrototype>?)null;
             var threatPreferences = ConvertThreatPreferences(profile.ThreatPreference);
             var gamemodeJobPriorities = ConvertGamemodeJobPriorities(profile.GamemodeJobPriorities);
             var gamemodeAntagPreferences = ConvertGamemodeAntagPreferences(profile.GamemodeAntagPreferences);
@@ -304,7 +309,11 @@ namespace Content.Server.Database
                     Color.FromHex(profile.FacialHairColor),
                     Color.FromHex(profile.EyeColor),
                     Color.FromHex(profile.SkinColor),
-                    markings
+                    markings,
+                    profile.RegulationHairName ?? HairStyles.DefaultHairStyle,
+                    profile.RegulationHairColor is { } regulationHairColor ? Color.FromHex(regulationHairColor) : Color.Black,
+                    profile.RegulationFacialHairName ?? HairStyles.DefaultFacialHairStyle,
+                    profile.RegulationFacialHairColor is { } regulationFacialHairColor ? Color.FromHex(regulationFacialHairColor) : Color.Black
                 ),
                 spawnPriority,
                 armorPreference,
@@ -327,10 +336,21 @@ namespace Content.Server.Database
                 profile.XenoPostfix,
                 allegiance,
                 origin,
+                platoon,
+                profile.Synthetic,
                 threatPreferences,
                 gamemodeJobPriorities,
                 gamemodeAntagPreferences,
-                gamemodeThreatPreferences
+                gamemodeThreatPreferences,
+                profile.ShortExamine,
+                profile.FullDescription,
+                profile.MedicalRecord,
+                profile.CriminalRecord,
+                profile.GeneralRecord,
+                profile.Height,
+                profile.Weight,
+                Enum.TryParse<BuildType>(profile.Build, out var build) ? build : BuildType.Average,
+                profile.HideMetaInformation
             );
         }
 
@@ -524,6 +544,10 @@ namespace Content.Server.Database
             profile.HairColor = appearance.HairColor.ToHex();
             profile.FacialHairName = appearance.FacialHairStyleId;
             profile.FacialHairColor = appearance.FacialHairColor.ToHex();
+            profile.RegulationHairName = appearance.RegulationHairStyleId;
+            profile.RegulationHairColor = appearance.RegulationHairColor.ToHex();
+            profile.RegulationFacialHairName = appearance.RegulationFacialHairStyleId;
+            profile.RegulationFacialHairColor = appearance.RegulationFacialHairColor.ToHex();
             profile.EyeColor = appearance.EyeColor.ToHex();
             profile.SkinColor = appearance.SkinColor.ToHex();
             profile.SpawnPriority = (int) humanoid.SpawnPriority;
@@ -597,6 +621,17 @@ namespace Content.Server.Database
             profile.XenoPostfix = humanoid.XenoPostfix;
             profile.Allegiance = humanoid.Allegiance?.Id;
             profile.Origin = humanoid.Origin?.Id;
+            profile.Platoon = humanoid.Platoon?.Id;
+            profile.Synthetic = humanoid.Synthetic;
+            profile.ShortExamine = humanoid.ShortExamine;
+            profile.FullDescription = humanoid.FullDescription;
+            profile.MedicalRecord = humanoid.MedicalRecord;
+            profile.CriminalRecord = humanoid.CriminalRecord;
+            profile.GeneralRecord = humanoid.GeneralRecord;
+            profile.Height = humanoid.Height;
+            profile.Weight = humanoid.Weight;
+            profile.Build = humanoid.Build.ToString();
+            profile.HideMetaInformation = humanoid.HideMetaInformation;
             profile.ThreatPreference = humanoid.ThreatPreferences.Count == 0
                 ? null
                 : JsonSerializer.Serialize(humanoid.ThreatPreferences.Select(t => t.Id).OrderBy(id => id));
@@ -1050,6 +1085,218 @@ namespace Content.Server.Database
             await db.DbContext.SaveChangesAsync(cancel);
         }
 
+        #region CMU Balance Rating
+
+        public async Task<long> CreateCMUBalanceRatingPoll(
+            int roundId,
+            CMUBalanceRatingTarget target,
+            string targetId,
+            CMUBalanceRatingMetric metric,
+            Guid? createdBy,
+            DateTime openedAt)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(roundId);
+
+            if (!Enum.IsDefined(target))
+                throw new ArgumentOutOfRangeException(nameof(target), target, "Unknown balance rating target type.");
+
+            if (!Enum.IsDefined(metric))
+                throw new ArgumentOutOfRangeException(nameof(metric), metric, "Unknown balance rating metric.");
+
+            if (target == CMUBalanceRatingTarget.Map && metric != CMUBalanceRatingMetric.Fun)
+                throw new ArgumentException("Map balance ratings only support the fun metric.", nameof(metric));
+
+            if (string.IsNullOrWhiteSpace(targetId))
+                throw new ArgumentException("A balance rating target ID is required.", nameof(targetId));
+
+            if (targetId.Length > CMUBalanceRatingPoll.TargetIdMaxLength)
+            {
+                throw new ArgumentException(
+                    $"A balance rating target ID cannot exceed {CMUBalanceRatingPoll.TargetIdMaxLength} characters.",
+                    nameof(targetId));
+            }
+
+            await using var db = await GetDb();
+
+            var poll = new CMUBalanceRatingPoll
+            {
+                RoundId = roundId,
+                Target = target.ToString(),
+                TargetId = targetId,
+                Metric = metric.ToString(),
+                CreatedById = createdBy,
+                OpenedAt = NormalizeInputTime(openedAt),
+            };
+
+            db.DbContext.CMUBalanceRatingPolls.Add(poll);
+            await db.DbContext.SaveChangesAsync();
+
+            return poll.Id;
+        }
+
+        public async Task AddCMUBalanceRatingResponse(
+            long pollId,
+            Guid playerId,
+            byte rating,
+            DateTime recordedAt)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(pollId);
+
+            if (rating is < 1 or > 5)
+                throw new ArgumentOutOfRangeException(nameof(rating), rating, "A balance rating must be from 1 to 5.");
+
+            await using var db = await GetDb();
+
+            var pollExists = await db.DbContext.CMUBalanceRatingPolls
+                .AsNoTracking()
+                .AnyAsync(poll => poll.Id == pollId);
+
+            if (!pollExists)
+                return;
+
+            var alreadyRecorded = await db.DbContext.CMUBalanceRatingResponses
+                .AsNoTracking()
+                .AnyAsync(response => response.PollId == pollId && response.PlayerId == playerId);
+
+            if (alreadyRecorded)
+                return;
+
+            db.DbContext.CMUBalanceRatingResponses.Add(new CMUBalanceRatingResponse
+            {
+                PollId = pollId,
+                PlayerId = playerId,
+                Rating = rating,
+                RecordedAt = NormalizeInputTime(recordedAt),
+            });
+
+            try
+            {
+                await db.DbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                var duplicate = await db.DbContext.CMUBalanceRatingResponses
+                    .AsNoTracking()
+                    .AnyAsync(response => response.PollId == pollId && response.PlayerId == playerId);
+
+                if (!duplicate)
+                    throw;
+            }
+        }
+
+        public async Task CloseCMUBalanceRatingPoll(long pollId, DateTime closedAt)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(pollId);
+
+            await using var db = await GetDb();
+
+            var poll = await db.DbContext.CMUBalanceRatingPolls
+                .SingleOrDefaultAsync(candidate => candidate.Id == pollId);
+
+            if (poll == null || poll.ClosedAt != null)
+                return;
+
+            var normalizedClosedAt = NormalizeInputTime(closedAt);
+            if (normalizedClosedAt < poll.OpenedAt)
+                throw new ArgumentException("A balance rating poll cannot close before it opened.", nameof(closedAt));
+
+            poll.ClosedAt = normalizedClosedAt;
+            await db.DbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteCMUBalanceRatingPoll(long pollId)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(pollId);
+
+            await using var db = await GetDb();
+
+            var poll = await db.DbContext.CMUBalanceRatingPolls
+                .SingleOrDefaultAsync(candidate => candidate.Id == pollId);
+
+            if (poll == null)
+                return;
+
+            db.DbContext.CMUBalanceRatingPolls.Remove(poll);
+            await db.DbContext.SaveChangesAsync();
+        }
+
+        public async Task<CMUBalanceRatingDashboard> GetCMUBalanceRatingDashboard(
+            CancellationToken cancel = default)
+        {
+            await using var db = await GetDb(cancel);
+
+            var pollGroups = await db.DbContext.CMUBalanceRatingPolls
+                .AsNoTracking()
+                .GroupBy(poll => new { poll.Target, poll.TargetId, poll.Metric })
+                .Select(group => new
+                {
+                    group.Key.Target,
+                    group.Key.TargetId,
+                    group.Key.Metric,
+                    Polls = group.Count(),
+                    LastPolledAt = group.Max(poll => poll.OpenedAt),
+                })
+                .ToListAsync(cancel);
+
+            var responseGroups = await db.DbContext.CMUBalanceRatingResponses
+                .AsNoTracking()
+                .GroupBy(response => new
+                {
+                    response.Poll.Target,
+                    response.Poll.TargetId,
+                    response.Poll.Metric,
+                })
+                .Select(group => new
+                {
+                    group.Key.Target,
+                    group.Key.TargetId,
+                    group.Key.Metric,
+                    Rating1 = group.Count(response => response.Rating == 1),
+                    Rating2 = group.Count(response => response.Rating == 2),
+                    Rating3 = group.Count(response => response.Rating == 3),
+                    Rating4 = group.Count(response => response.Rating == 4),
+                    Rating5 = group.Count(response => response.Rating == 5),
+                    LastRatedAt = group.Max(response => response.RecordedAt),
+                })
+                .OrderBy(group => group.Target)
+                .ThenBy(group => group.TargetId)
+                .ThenBy(group => group.Metric)
+                .ToListAsync(cancel);
+
+            var responsesByTarget = responseGroups.ToDictionary(
+                group => (group.Target, group.TargetId, group.Metric));
+
+            var entries = new List<CMUBalanceRatingStatisticsEntry>(pollGroups.Count);
+            foreach (var group in pollGroups
+                         .OrderBy(group => group.Target)
+                         .ThenBy(group => group.TargetId)
+                         .ThenBy(group => group.Metric))
+            {
+                responsesByTarget.TryGetValue(
+                    (group.Target, group.TargetId, group.Metric),
+                    out var responses);
+
+                entries.Add(new CMUBalanceRatingStatisticsEntry(
+                    Enum.Parse<CMUBalanceRatingTarget>(group.Target),
+                    Enum.Parse<CMUBalanceRatingMetric>(group.Metric),
+                    group.TargetId,
+                    group.TargetId,
+                    group.Polls,
+                    responses?.Rating1 ?? 0,
+                    responses?.Rating2 ?? 0,
+                    responses?.Rating3 ?? 0,
+                    responses?.Rating4 ?? 0,
+                    responses?.Rating5 ?? 0,
+                    NormalizeDatabaseTime(responses?.LastRatedAt ?? group.LastPolledAt)));
+            }
+
+            var totalResponses = entries.Sum(entry => entry.Responses);
+            var totalPolls = pollGroups.Sum(group => group.Polls);
+            return new CMUBalanceRatingDashboard(entries, totalPolls, totalResponses);
+        }
+
+        #endregion
+
         public async Task<int> AddNewRound(Server server, params Guid[] playerIds)
         {
             await using var db = await GetDb();
@@ -1224,6 +1471,16 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
                     group.Count()))
                 .ToList();
 
+            var manualReasons = modeRecords
+                .Where(record => record.Outcome == CMURoundStatisticsOutcome.Unknown)
+                .GroupBy(record => NormalizeCMURoundOutcomeSource(record.Source))
+                .OrderByDescending(group => group.Count())
+                .ThenBy(group => group.Key)
+                .Select(group => new CMURoundManualReasonBreakdown(
+                    group.Key,
+                    group.Count()))
+                .ToList();
+
             var threats = modeRecords
                 .Where(record => !string.IsNullOrWhiteSpace(record.SelectedThreatId))
                 .GroupBy(record => record.SelectedThreatId!)
@@ -1300,6 +1557,7 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
                 draws,
                 unknown,
                 outcomes,
+                manualReasons,
                 threats,
                 new CMURoundRecentForm(
                     recentRecords.Count,
@@ -1397,6 +1655,13 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
             return durations.Count == 0
                 ? 0
                 : (int) Math.Round(durations.Average());
+        }
+
+        private static string NormalizeCMURoundOutcomeSource(string source)
+        {
+            return string.IsNullOrWhiteSpace(source)
+                ? "Unknown"
+                : source.Trim();
         }
 
         private static List<CMURoundPlayerCountBandBreakdown> BuildPlayerCountBands(List<CMURoundOutcomeRecord> records)
@@ -2924,6 +3189,17 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
         #endregion
 
         public abstract Task SendNotification(DatabaseNotification notification);
+
+        private static DateTime NormalizeInputTime(DateTime time)
+        {
+            return time.Kind switch
+            {
+                DateTimeKind.Utc => time,
+                DateTimeKind.Local => time.ToUniversalTime(),
+                DateTimeKind.Unspecified => DateTime.SpecifyKind(time, DateTimeKind.Utc),
+                _ => throw new ArgumentOutOfRangeException(nameof(time)),
+            };
+        }
 
         // SQLite returns DateTime as Kind=Unspecified, Npgsql actually knows for sure it's Kind=Utc.
         // Normalize DateTimes here so they're always Utc. Thanks.

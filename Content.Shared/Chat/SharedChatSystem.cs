@@ -135,7 +135,7 @@ public abstract partial class SharedChatSystem : EntitySystem
         if (!_validPrefixes.Contains(input[0]))
             return;
 
-        var lookupKey = input[..2];
+        var lookupKey = $"{input[0]}{char.ToLowerInvariant(input[1])}";
         if (!_channelLookup.ContainsKey(lookupKey))
             return;
         // RMC14
@@ -176,13 +176,10 @@ public abstract partial class SharedChatSystem : EntitySystem
                 ? _prototypeManager.Index<RadioChannelPrototype>(HivemindChannel)
                 : _prototypeManager.Index<RadioChannelPrototype>(CommonChannel);
 
-        // RMC14
-        if (channel?.ID == HivemindChannel.Id &&
-            !_xenoEvolution.HasLiving<XenoEvolutionGranterComponent>(1, null, hive))
+            // RMC14
+            if (channel?.ID == HivemindChannel.Id &&
+                !CanUseHivemind(source, hive, quiet))
             {
-                if (!quiet)
-                    _popup.PopupEntity(Loc.GetString("rmc-no-queen-hivemind-chat"), source, source, PopupType.LargeCaution);
-
                 output = SanitizeMessageCapital(input[1..].TrimStart());
                 return false;
             }
@@ -212,7 +209,7 @@ public abstract partial class SharedChatSystem : EntitySystem
         // RMC14
         var prefix = input[0];
         var channelKey = input[1];
-        var lookupKey = $"{prefix}{char.ToLower(channelKey)}";
+        var lookupKey = $"{prefix}{char.ToLowerInvariant(channelKey)}";
 
         var foundChannel = _channelLookup.TryGetValue(lookupKey, out channel);
 
@@ -224,11 +221,8 @@ public abstract partial class SharedChatSystem : EntitySystem
             RaiseLocalEvent(source, ev);
 
             if (ev.Channel == HivemindChannel.Id &&
-                !_xenoEvolution.HasLiving<XenoEvolutionGranterComponent>(1, null, hive))
+                !CanUseHivemind(source, hive, quiet))
             {
-                if (!quiet)
-                    _popup.PopupEntity(Loc.GetString("rmc-no-queen-hivemind-chat"), source, source, PopupType.LargeCaution);
-
                 output = SanitizeMessageCapital(input[1..].TrimStart());
                 return false;
             }
@@ -249,6 +243,12 @@ public abstract partial class SharedChatSystem : EntitySystem
         RaiseLocalEvent(source, ref prefixEv);
         channel = prefixEv.Channel;
 
+        if (channel?.ID == HivemindChannel.Id &&
+            !CanUseHivemind(source, hive, quiet))
+        {
+            return false;
+        }
+
         if (HasComp<XenoComponent>(source) && !IsHivebrokenXeno(source) && channel == null)
         {
             Log.Info("Has XenoComponent but no channel, returning false");
@@ -257,6 +257,17 @@ public abstract partial class SharedChatSystem : EntitySystem
         // RMC14
 
         return true;
+    }
+
+    private bool CanUseHivemind(EntityUid source, Entity<HiveComponent>? hive, bool quiet)
+    {
+        if (_xenoEvolution.HasLiving<XenoEvolutionGranterComponent>(1, null, hive))
+            return true;
+
+        if (!quiet)
+            _popup.PopupEntity(Loc.GetString("rmc-no-queen-hivemind-chat"), source, source, PopupType.LargeCaution);
+
+        return false;
     }
 
     private bool IsHivebrokenXeno(EntityUid uid)
@@ -383,5 +394,96 @@ public abstract partial class SharedChatSystem : EntitySystem
             return "";
         tagStart += tag.Length + 2;
         return rawmsg.Substring(tagStart, tagEnd - tagStart);
+    }
+
+    // CMU: Per-word and per-phrase bold/italic markup system
+    //
+    // Phrase-level: "**phrase**" bolds, "//phrase//" italicizes, "***phrase***"
+    // does both. Word-level: "word*" bolds, "word/" italicizes, "word***" does
+    // both. Optional trailing punctuation (!?.,;:) directly before the marker is
+    // included inside the emphasis, so "HELP!*" bolds "HELP!" as one unit.
+    //
+    // Regexes are applied most-specific-marker-first (triple, then double, then
+    // single) so a longer marker sequence is never partially consumed by a
+    // shorter pattern before it gets a chance to match as a whole.
+    private static readonly Regex PhraseBoldItalicRegex = new(@"\*\*\*(.+?)\*\*\*", RegexOptions.Compiled);
+    private static readonly Regex PhraseBoldRegex = new(@"\*\*(.+?)\*\*", RegexOptions.Compiled);
+    private static readonly Regex PhraseItalicRegex = new(@"//(.+?)//", RegexOptions.Compiled);
+    private static readonly Regex InlineBoldItalicRegex = new(@"(\w+[!?.,;:]*)\*\*\*(?=\s|$)", RegexOptions.Compiled);
+    private static readonly Regex InlineBoldRegex = new(@"(\w+[!?.,;:]*)\*(?=\s|$)", RegexOptions.Compiled);
+    private static readonly Regex InlineItalicRegex = new(@"(\w+[!?.,;:]*)/(?=\s|$)", RegexOptions.Compiled);
+
+    private const char BoldSentinelStart = '\uE000';
+    private const char BoldSentinelEnd = '\uE001';
+    private const char ItalicSentinelStart = '\uE002';
+    private const char ItalicSentinelEnd = '\uE003';
+
+    /// <summary>
+    /// Applies phrase-level markup first (***, then **, then //), then falls
+    /// back to word-level markup (word***, word*, word/) for anything left
+    /// unmarked. Uses sentinel characters so the markup survives
+    /// FormattedMessage.EscapeText. Call ResolveBoldSentinels after escaping to
+    /// turn sentinels into real tags, or StripBoldSentinels if the destination
+    /// doesn't support markup (e.g. hidden "X emotes..." popups).
+    /// </summary>
+    public string MarkInlineFormatting(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+            return message;
+
+        var result = PhraseBoldItalicRegex.Replace(message, m =>
+            $"{BoldSentinelStart}{ItalicSentinelStart}{m.Groups[1].Value}{ItalicSentinelEnd}{BoldSentinelEnd}");
+
+        result = PhraseBoldRegex.Replace(result, m =>
+            $"{BoldSentinelStart}{m.Groups[1].Value}{BoldSentinelEnd}");
+
+        result = PhraseItalicRegex.Replace(result, m =>
+            $"{ItalicSentinelStart}{m.Groups[1].Value}{ItalicSentinelEnd}");
+
+        result = InlineBoldItalicRegex.Replace(result, m =>
+            $"{BoldSentinelStart}{ItalicSentinelStart}{m.Groups[1].Value}{ItalicSentinelEnd}{BoldSentinelEnd}");
+
+        result = InlineBoldRegex.Replace(result, m =>
+            $"{BoldSentinelStart}{m.Groups[1].Value}{BoldSentinelEnd}");
+
+        result = InlineItalicRegex.Replace(result, m =>
+            $"{ItalicSentinelStart}{m.Groups[1].Value}{ItalicSentinelEnd}");
+
+        return result;
+    }
+
+    public string ResolveBoldSentinels(string escapedMessage)
+    {
+        // CMU: RobustToolbox's rich text tags each push their own font onto
+        // a stack independently (see BoldTag.cs / ItalicTag.cs / BoldItalicTag.cs
+        // in the engine) - nesting [bold][italic]...[/italic][/bold] does NOT
+        // combine into a bold-italic font, the inner tag's font just overwrites
+        // the outer one and bold is lost. [bolditalic]...[/bolditalic] is a
+        // separate dedicated tag/font for the combined case. Collapse the
+        // adjacent combined-sentinel pairs into that tag first, before
+        // resolving whatever single-flag sentinels are left over.
+        var result = escapedMessage
+            .Replace($"{BoldSentinelStart}{ItalicSentinelStart}", "[bolditalic]")
+            .Replace($"{ItalicSentinelEnd}{BoldSentinelEnd}", "[/bolditalic]");
+
+        return result
+            .Replace(BoldSentinelStart.ToString(), "[bold]")
+            .Replace(BoldSentinelEnd.ToString(), "[/bold]")
+            .Replace(ItalicSentinelStart.ToString(), "[italic]")
+            .Replace(ItalicSentinelEnd.ToString(), "[/italic]");
+    }
+
+    /// <summary>
+    /// Removes sentinel characters entirely without converting them to markup.
+    /// Use this for destinations that don't render markup, such as the hidden
+    /// "X emotes..." popup shown when a listener can't understand the language.
+    /// </summary>
+    public string StripBoldSentinels(string message)
+    {
+        return message
+            .Replace(BoldSentinelStart.ToString(), "")
+            .Replace(BoldSentinelEnd.ToString(), "")
+            .Replace(ItalicSentinelStart.ToString(), "")
+            .Replace(ItalicSentinelEnd.ToString(), "");
     }
 }

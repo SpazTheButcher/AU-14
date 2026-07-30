@@ -13,7 +13,7 @@ using Robust.Shared.Player;
 using Content.Shared._RMC14.Xenonids;
 using Robust.Shared.Audio.Systems;
 using System.Linq;
-using Content.Shared._CMU14.Medical.BodyPart;
+using Content.Shared._CMU14.Medical.Anatomy.BodyParts;
 using Content.Server._RMC14.Decals;
 using Content.Server.Spawners.Components;
 using Content.Shared.Body.Events;
@@ -98,6 +98,7 @@ public sealed partial class AcidBloodSplashSystem : EntitySystem
 
             ent.Comp.NextSplashAvailable = _timing.CurTime + ent.Comp.SplashCooldown;
             _damageable.TryChangeDamage(target, _xeno.TryApplyXenoAcidDamageMultiplier(target, ent.Comp.Damage), origin: ent.Owner);
+            CMUStainTarget(ent, target); // CMU14
             i++;
 
             _audio.PlayPvs(ent.Comp.AcidSplashSound, target);

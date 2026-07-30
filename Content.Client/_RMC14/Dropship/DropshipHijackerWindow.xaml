@@ -2,11 +2,13 @@
     xmlns="https://spacestation14.io"
     xmlns:controls="clr-namespace:Content.Client._RMC14.Dropship"
     xmlns:cc="clr-namespace:Content.Client.Administration.UI.CustomControls"
-    Title="Dropship Hijack"
+    Title="{Loc cmu-dropship-hijack-title}"
     MinSize="200 300">
     <BoxContainer Orientation="Vertical">
         <RichTextLabel Name="Header" Access="Public" />
         <cc:HSeparator Color="#4972A1" Margin="0 0 0 5" />
         <BoxContainer Name="Destinations" Access="Public" Orientation="Vertical" />
+        <cc:HSeparator Name="DeclineSeparator" Access="Public" Color="#4972A1" Margin="0 5 0 5" />
+        <Button Name="DeclineHijackButton" Access="Public" Text="{Loc cmu-dropship-hijack-decline}" StyleClasses="OpenBoth" />
     </BoxContainer>
 </controls:DropshipHijackerWindow>

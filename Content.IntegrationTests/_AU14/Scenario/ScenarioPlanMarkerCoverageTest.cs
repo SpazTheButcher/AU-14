@@ -2661,6 +2661,7 @@ public sealed class ScenarioPlanMarkerCoverageTest
                 var guerillaBucket = spawnPlan.BodyBuckets.Single(bucket => bucket.Bucket == "CLFGuerilla");
 
                 Assert.That(commandBucket.Bodies["AU14JobCLFCellLeader"], Is.EqualTo(1));
+                Assert.That(commandBucket.Bodies["AU14JobCLFRadioOperator"], Is.EqualTo(1));
                 Assert.That(commandBucket.Bodies["AU14JobCLFPhysician"], Is.EqualTo(1));
                 Assert.That(commandBucket.Bodies["AU14JobCLFSurgeon"], Is.EqualTo(1));
                 Assert.That(guerillaBucket.Bodies["AU14JobCLFGuerilla"], Is.EqualTo(3));
@@ -4690,6 +4691,7 @@ public sealed class ScenarioPlanMarkerCoverageTest
     private static bool IsClfCommandJob(string jobId)
     {
         return jobId.Equals("AU14JobCLFCellLeader", StringComparison.OrdinalIgnoreCase) ||
+               jobId.Equals("AU14JobCLFRadioOperator", StringComparison.OrdinalIgnoreCase) ||
                jobId.Equals("AU14JobCLFPhysician", StringComparison.OrdinalIgnoreCase) ||
                jobId.Equals("AU14JobCLFSurgeon", StringComparison.OrdinalIgnoreCase);
     }

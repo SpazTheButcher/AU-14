@@ -11,6 +11,9 @@
   - type: Tag
     tags:
     - ClothMade
+  - type: CMUItemStain
+    wornStates:
+      head: beret_blood
 
 - type: entity
   parent: CMHeadBeret
@@ -469,7 +472,7 @@
   parent: CMHeadCapMP
   id: CMHeadFlapCap
   name: USCM expedition cap
-  description: It's a cap, with flaps. A patch stitched across the front reads "UNS ALMAYER".
+  description: It's a cap, with flaps. A patch stitched across the front reads "USS BARACK OBAMA".
   components:
   - type: Sprite
     sprite: _RMC14/Objects/Clothing/Head/Hats/flapcap/jungle.rsi
@@ -544,6 +547,9 @@
     sprite: _RMC14/Objects/Clothing/Head/Hats/SurgicalCap/blue.rsi
   - type: Clothing
     sprite: _RMC14/Objects/Clothing/Head/Hats/SurgicalCap/blue.rsi
+  - type: CMUItemStain
+    wornStates:
+      head: surgcap_blood
 
 - type: entity
   parent: CMHeadCapSurgBlue
@@ -792,11 +798,11 @@
   - type: Clothing
     sprite: _RMC14/Objects/Clothing/Head/Hats/radiation_hood.rsi
   - type: HideLayerClothing
-    slots:
-    - Hair
-    - HeadTop
-    - HeadSide
-    - Snout
+    layers:
+      Hair: HEAD
+      HeadTop: HEAD
+      HeadSide: HEAD
+      Snout: HEAD
 
 - type: entity
   parent: RMCHeadRadiationHood

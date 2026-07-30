@@ -50,6 +50,8 @@
     cover:
       tags:
       - Catwalk
+  - type: FTLSmashImmune
+  - type: NoFTL
 
 - type: entity
   parent: AUShepFloorWaterEntity
@@ -72,3 +74,85 @@
   components:
   - type: Sprite
     state: shallow_edge
+
+- type: entity
+  parent: RMCEntityDesertWaterDeep
+  id: CMUEntityShepDesertWaterDeep
+  components:
+  - type: Sprite
+    color: '#FFFFFF33'
+  - type: FTLSmashImmune
+  - type: NoFTL
+  # Shepherd's deep river sits on the underground z-level. These entities are saved unanchored (water must
+  # not take a snap-grid slot), so the cave-in system saw an empty tile and treated the whole riverbed as an
+  # over-mined cavern - collapsing it and dropping the bridges built above. This marks the riverbed as holding
+  # up its own roof, the same way rock and walls do.
+  - type: ZLoadBearingTerrain
+
+- type: entity
+  id: CMUOverlayWater
+  placement:
+    mode: SnapgridCenter
+    snap:
+    - Wall
+  components:
+  - type: Sprite
+    drawdepth: Overlays
+    sprite: _RMC14/Tiles/planet/desert_water.rsi
+    color: '#FFFFFF33'
+    layers:
+    - state: deep
+  - type: Transform
+    anchored: true
+  - type: SyncSprite
+  - type: SpeedModifierContacts
+    walkSpeedModifier: 0.375
+    sprintSpeedModifier: 0.375
+    ignoreWhitelist:
+      components:
+      - Xeno
+      tags:
+      - Carp
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.5,-0.5,0.5,0.5"
+        layer:
+          - SlipLayer
+        mask:
+          - ItemMask
+        density: 1000
+        hard: false
+  - type: StepTrigger
+    requiredTriggeredSpeed: 0
+    intersectRatio: 0.1
+  - type: TileEntityEffect
+    effects:
+    - !type:ExtinguishReaction
+  - type: FootstepModifier
+    footstepSoundCollection:
+      collection: FootstepWater
+      params:
+        volume: 8
+  - type: DamageOverTime
+    affectsDead: false
+    armorPiercingDamage:
+      types:
+        Asphyxiation: 4.6
+    emotes:
+    multipliers:
+    - multiplier: 0
+      whitelist:
+        tags:
+        - Carp
+    - multiplier: 0
+      whitelist:
+        components:
+        - Xeno
+        - Synth
+  - type: FTLSmashImmune
+  - type: NoFTL

@@ -6,9 +6,13 @@ using Content.Server.NPC;
 using Content.Server.NPC.HTN;
 using Content.Server.NPC.Pathfinding;
 using Content.Server.NPC.Systems;
+using Content.Server.Radio;
+using Content.Server.Radio.Components;
+using Content.Server.Radio.EntitySystems;
 using Content.Server._RMC14.Humanoid.Markings;
 using Content.Shared._CMU14.DroneOperator;
 using Content.Shared._CMU14.Threats.Mobs.Xeno.Caste.Warlock;
+using Content.Shared._CMU14.ZLevels.Core.EntitySystems;
 using Content.Shared._RMC14.Humanoid.Markings;
 using Content.Shared._RMC14.Marines.Skills;
 using Content.Shared._RMC14.Synth;
@@ -36,6 +40,7 @@ using Content.Shared.Movement.Pulling.Events;
 using Content.Shared.NPC;
 using Content.Shared.Popups;
 using Content.Shared.Random.Helpers;
+using Content.Shared.Radio.Components;
 using Content.Shared.SSDIndicator;
 using Content.Shared.StatusEffectNew;
 using Content.Shared.Throwing;
@@ -48,6 +53,7 @@ using Robust.Shared.Map;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Systems;
+using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
@@ -70,18 +76,21 @@ public sealed partial class CMUDroneOperatorSystem : EntitySystem
     [Dependency] private MetaDataSystem _metaData = default!;
     [Dependency] private MindSystem _mind = default!;
     [Dependency] private MobStateSystem _mobState = default!;
+    [Dependency] private INetManager _netMan = default!;
     [Dependency] private NPCSystem _npc = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private QuickDialogSystem _quickDialog = default!;
     [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private RadioSystem _radio = default!;
     [Dependency] private SkillsSystem _skills = default!;
     [Dependency] private SharedStatusEffectsSystem _statusEffects = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private SharedToolSystem _tool = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private CMUXenoWarlockSystem _warlockParticles = default!;
+    [Dependency] private CMUSharedZLevelsSystem _zLevels = default!;
 
     private static readonly EntProtoId EndControlActionId = "CMUActionDroneEndControl";
     private static readonly TimeSpan LeashCheckInterval = TimeSpan.FromSeconds(0.5);
@@ -146,6 +155,7 @@ public sealed partial class CMUDroneOperatorSystem : EntitySystem
         SubscribeLocalEvent<CMURemotePilotingComponent, ComponentShutdown>(OnPilotingShutdown);
         SubscribeLocalEvent<CMURemotePilotingComponent, PlayerAttachedEvent>(OnPilotingPlayerAttached, after: [typeof(SSDIndicatorSystem)]);
         SubscribeLocalEvent<CMURemotePilotingComponent, PlayerDetachedEvent>(OnPilotingPlayerDetached, after: [typeof(SSDIndicatorSystem)]);
+        SubscribeLocalEvent<CMURemotePilotingComponent, HeadsetRadioReceiveRelayEvent>(OnPilotingHeadsetReceive);
         SubscribeLocalEvent<CMURemotePilotingComponent, UpdateCanMoveEvent>(OnPilotingUpdateCanMove);
         SubscribeLocalEvent<CMURemotePilotingComponent, MoveEvent>(OnPilotingMove);
         SubscribeLocalEvent<CMURemotePilotingComponent, MobStateChangedEvent>(OnPilotingMobStateChanged);
@@ -498,6 +508,17 @@ public sealed partial class CMUDroneOperatorSystem : EntitySystem
             return;
         }
 
+        if (args.Channel != null &&
+            TryComp<WearingHeadsetComponent>(session.Operator, out var wearing) &&
+            TryComp<EncryptionKeyHolderComponent>(wearing.Headset, out var keys) &&
+            keys.Channels.Contains(args.Channel.ID) &&
+            !keys.ReadOnlyChannels.Contains(args.Channel.ID))
+        {
+            _radio.SendRadioMessage(session.Operator, args.Message, args.Channel, wearing.Headset, args.Language);
+            args.Channel = null;
+            return;
+        }
+
         _chat.TrySendInGameICMessage(
             session.Operator,
             args.Message,
@@ -827,6 +848,12 @@ public sealed partial class CMUDroneOperatorSystem : EntitySystem
     private void OnPilotingPlayerDetached(Entity<CMURemotePilotingComponent> ent, ref PlayerDetachedEvent args)
     {
         SuppressSsdIndicator(ent.Owner);
+    }
+
+    private void OnPilotingHeadsetReceive(Entity<CMURemotePilotingComponent> ent, ref HeadsetRadioReceiveRelayEvent args)
+    {
+        if (_actorQuery.TryComp(ent.Comp.Drone, out var actor))
+            _netMan.ServerSendMessage(args.RelayedEvent.ChatMsg, actor.PlayerSession.Channel);
     }
 
     private void OnPilotingUpdateCanMove(Entity<CMURemotePilotingComponent> ent, ref UpdateCanMoveEvent args)
@@ -1425,7 +1452,7 @@ public sealed partial class CMUDroneOperatorSystem : EntitySystem
             return false;
         }
 
-        if (!IsSameMapInRange(user, drone.Owner, tablet.Comp.Range))
+        if (!IsInControlRange(user, drone.Owner, tablet.Comp.Range))
         {
             reason = Loc.GetString("cmu-drone-follow-out-of-range");
             return false;
@@ -1724,7 +1751,7 @@ public sealed partial class CMUDroneOperatorSystem : EntitySystem
             return false;
         }
 
-        if (!IsSameMapInRange(user, drone.Owner, tablet.Comp.Range))
+        if (!IsInControlRange(user, drone.Owner, tablet.Comp.Range))
         {
             reason = Loc.GetString("cmu-drone-control-out-of-range");
             return false;
@@ -1767,7 +1794,7 @@ public sealed partial class CMUDroneOperatorSystem : EntitySystem
             return;
         }
 
-        if (!TryGetSameMapDistance(drone.Comp.Operator, drone.Owner, out var distance) ||
+        if (!TryGetControlDistance(drone.Comp.Operator, drone.Owner, tablet.Range, out var distance) ||
             distance > tablet.Range)
         {
             QueueEndControl(drone, Loc.GetString("cmu-drone-control-ended-leash"));
@@ -2355,12 +2382,12 @@ public sealed partial class CMUDroneOperatorSystem : EntitySystem
                !TerminatingOrDeleted(drone);
     }
 
-    private bool IsSameMapInRange(EntityUid first, EntityUid second, float range)
+    private bool IsInControlRange(EntityUid first, EntityUid second, float range)
     {
-        return TryGetSameMapDistance(first, second, out var distance) && distance <= range;
+        return TryGetControlDistance(first, second, range, out var distance) && distance <= range;
     }
 
-    private bool TryGetSameMapDistance(EntityUid first, EntityUid second, out float distance)
+    private bool TryGetControlDistance(EntityUid first, EntityUid second, float maxDistance, out float distance)
     {
         distance = 0f;
 
@@ -2370,14 +2397,26 @@ public sealed partial class CMUDroneOperatorSystem : EntitySystem
         var firstCoords = _transform.GetMapCoordinates(first);
         var secondCoords = _transform.GetMapCoordinates(second);
 
-        if (firstCoords.MapId != secondCoords.MapId ||
-            firstCoords.MapId == MapId.Nullspace)
-        {
+        if (firstCoords.MapId == MapId.Nullspace || secondCoords.MapId == MapId.Nullspace)
             return false;
+
+        if (firstCoords.MapId == secondCoords.MapId)
+        {
+            distance = Vector2.Distance(firstCoords.Position, secondCoords.Position);
+            return true;
         }
 
-        distance = (firstCoords.Position - secondCoords.Position).Length();
-        return true;
+        var firstMap = Transform(first).MapUid;
+        var secondMap = Transform(second).MapUid;
+        return firstMap is { } resolvedFirstMap &&
+               secondMap is { } resolvedSecondMap &&
+               _zLevels.TryGetDistanceViaAdjacentLevelOpening(
+                   resolvedFirstMap,
+                   firstCoords.Position,
+                   resolvedSecondMap,
+                   secondCoords.Position,
+                   maxDistance,
+                   out distance);
     }
 
     private bool TryDistance(EntityUid first, EntityUid second, out float distance)

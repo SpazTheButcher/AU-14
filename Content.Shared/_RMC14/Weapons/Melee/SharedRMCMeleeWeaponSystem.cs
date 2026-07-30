@@ -71,6 +71,15 @@ public abstract partial class SharedRMCMeleeWeaponSystem : EntitySystem
 
         ent.Comp.OriginalTime = weapon.NextAttack;
         weapon.NextAttack = _timing.CurTime;
+
+        ent.Comp.ResetUserCooldown = TryComp(ent, out RMCMeleeUserCooldownComponent? userCooldown);
+        if (userCooldown != null)
+        {
+            ent.Comp.OriginalUserTime = userCooldown.NextAttack;
+            userCooldown.NextAttack = _timing.CurTime;
+            Dirty(ent, userCooldown);
+        }
+
         Dirty(ent, weapon);
         Dirty(ent, ent.Comp);
     }
@@ -213,7 +222,15 @@ public abstract partial class SharedRMCMeleeWeaponSystem : EntitySystem
             return;
 
         if (disarm)
+        {
             weapon.NextAttack = reset.OriginalTime;
+
+            if (reset.ResetUserCooldown && TryComp(weaponUid, out RMCMeleeUserCooldownComponent? userCooldown))
+            {
+                userCooldown.NextAttack = reset.OriginalUserTime;
+                Dirty(weaponUid, userCooldown);
+            }
+        }
 
         RemComp<MeleeResetComponent>(weaponUid);
         Dirty(weaponUid, weapon);

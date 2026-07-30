@@ -183,6 +183,96 @@
     CMUOxycodone: 3
 
 - type: reaction
+  id: CMUFentanylPrecursor
+  minTemp: 350
+  reactants:
+    CMUOxycodone:
+      amount: 1
+    RMCCLF3:
+      amount: 1
+  products:
+    CMUFentanylPrecursor: 2
+
+- type: reaction
+  id: CMUFentanyl
+  minTemp: 400
+  maxTemp: 420
+  reactants:
+    CMUFentanylPrecursor:
+      amount: 1
+    CMEpinephrine:
+      amount: 1
+    RMCPhosphorus:
+      amount: 1
+  products:
+    CMUFentanyl: 1
+
+- type: reaction
+  id: CMUMethPrecursor
+  minTemp: 370
+  reactants:
+    RMCMethylphenidate:
+      amount: 2
+    RMCChlorine:
+      amount: 1
+    RMCPhosphorus:
+      amount: 1
+  products:
+    CMUMethPrecursor: 3
+
+- type: reaction
+  id: CMUMethBase
+  minTemp: 400
+  reactants:
+    CMUMethPrecursor:
+      amount: 1
+    RMCSulphuricAcid:
+      amount: 1
+    RMCCarbon:
+      amount: 1
+  products:
+    CMUMethBase: 2
+
+- type: reaction
+  id: CMUMethamphetamine
+  maxTemp: 320
+  reactants:
+    CMUMethBase:
+      amount: 1
+    RMCEthanol:
+      amount: 1
+  products:
+    CMUMethamphetamine: 2
+
+- type: reaction
+  id: CMUSleen
+  reactants:
+    CMUOxycodone:
+      amount: 1
+    CMUTramadol:
+      amount: 1
+    RMCEthanol:
+      amount: 1
+    CMInaprovaline:
+      amount: 1
+  products:
+    CMUSleen: 4
+
+- type: reaction
+  id: CMUSoporific
+  reactants:
+    RMCChloralhydrate:
+      amount: 1
+    RMCChlorine:
+      amount: 1
+    RMCEthanol:
+      amount: 1
+    RMCSugar:
+      amount: 1
+  products:
+    CMUSoporific: 4
+
+- type: reaction
   id: CMUHepatocytin
   reactants:
     CMDylovene:
@@ -241,6 +331,18 @@
       amount: 1
   products:
     CMUOsteoCalc: 3
+
+- type: reaction
+  id: CMUAlkysine
+  reactants:
+    RMCChlorine:
+      amount: 1
+    RMCNitrogen:
+      amount: 1
+    CMDylovene:
+      amount: 1
+  products:
+    CMUAlkysine: 3
 
 - type: reaction
   id: CMUBiogenicMatrix

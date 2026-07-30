@@ -2,6 +2,9 @@
   id: CMUZLevelEye
   save: false
   categories: [ HideSpawnMenu ]
+  components:
+  - type: Transform
+    gridTraversal: false
 
 - type: entity
   id: CMUMultiZStairs
@@ -88,17 +91,47 @@
   components:
   - type: Sprite
     state: ramptop
+  id: CMUMultiZStairsStrataSolo
+  components:
+  - type: Sprite
+    drawdepth: WallMountedItems
+    noRot: true
+    sprite: _CMU14/Structures/stairs.rsi
+    state: p_stair_strata_solo_cap
+    offset: 0,0.5
 
 - type: entity
   parent: BaseItem
   id: CMUDeployableZLevelLadder
-  name: Deployable Ladder
-  description: A portable ladder that can be deployed through an open Z-level shaft.
+  name: retractable ladder
+  description: A portable ladder that can be deployed against objects to traverse z-levels.
   components:
   - type: Sprite
-    sprite: _RMC14/Structures/ladder.rsi
-    state: ladderup
+    sprite: _AU14/Structures/deployableladder.rsi
+    state: icon
   - type: Item
-    sprite: _RMC14/Structures/ladder.rsi
+    sprite: _AU14/Structures/deployableladder.rsi
     size: Large
   - type: CMUDeployableZLevelLadder
+    upLadderPrototype: CMUDeployableZLevelLadderThroughUp
+    downLadderPrototype: CMUDeployableZLevelLadderThroughDown
+
+- type: entity
+  parent: CMUZLevelLadderThrough
+  id: CMUDeployableZLevelLadderThroughUp
+  suffix: Deployable, Up
+  components:
+  - type: Sprite
+    sprite: _AU14/Structures/deployableladder.rsi
+    drawdepth: WallTops
+    state: deployed
+
+- type: entity
+  parent: CMUZLevelLadderThroughDown
+  id: CMUDeployableZLevelLadderThroughDown
+  suffix: Deployable, Down
+  components:
+  - type: Sprite
+    sprite: _AU14/Structures/deployableladder.rsi
+    drawdepth: WallTops
+    state: deployed

@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
+using Content.Shared._ES.Camera;
 using Content.Shared._RMC14.Attachable.Systems;
 using Content.Shared._RMC14.CCVar;
 using Content.Shared._RMC14.Emplacements;
@@ -14,7 +15,7 @@ using Content.Shared.ActionBlocker;
 using Content.Shared.Actions;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Audio;
-using Content.Shared.Camera;
+using Content.Shared.CCVar;
 using Content.Shared.CombatMode;
 using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Damage;
@@ -92,7 +93,7 @@ public abstract partial class SharedGunSystem : EntitySystem
     [Dependency] private   SharedColorFlashEffectSystem _color = default!;
     [Dependency] private   CMUZLevelShootingSystem _zLevelShooting = default!;
     [Dependency] private   CMUSharedZLevelsSystem _zLevels = default!;
-    [Dependency] private   SharedCameraRecoilSystem _recoil = default!;
+    [Dependency] private   ESScreenshakeSystem _shake = default!;
     [Dependency] private   IConfigurationManager _config = default!;
     [Dependency] private   INetConfigurationManager _netConfig = default!;
 
@@ -1025,7 +1026,11 @@ public abstract partial class SharedGunSystem : EntitySystem
         if (!Timing.IsFirstTimePredicted || user == null || recoil == Vector2.Zero || recoilScalar == 0)
             return;
 
-        _recoil.KickCamera(user.Value, recoil.Normalized() * 0.5f * recoilScalar);
+        if (!_config.GetCVar(CCVars.FirearmScreenShakeEnabled))
+            return;
+
+        var rotation = new ESScreenshakeParameters { Trauma = 0.085f * recoilScalar, DecayRate = 1.2f, Frequency = 0.008f };
+        _shake.Screenshake(user.Value, null, rotation);
     }
 
     public virtual void ShootProjectile(EntityUid uid, Vector2 direction, Vector2 gunVelocity, EntityUid? gunUid, EntityUid? user = null, float speed = 20f)

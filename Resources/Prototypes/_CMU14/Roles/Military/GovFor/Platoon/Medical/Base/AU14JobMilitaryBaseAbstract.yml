@@ -5,7 +5,7 @@
   name: au14-job-name-govforMilitaryDoctor
   description: au14-job-description-govforMilitaryDoctor
   icon: "AU14JobIconDoctor"
-  spawnMenuRoleName: Military Doctor (GOVFOR)
+  spawnMenuRoleName: Medical Officer (GOVFOR)
   startingGear: AU14GearGOVFORMilitaryDoctor
   dummyStartingGear: AU14GearGOVFORMilitaryDoctorDummy
   playTimeTracker: AU14JobGOVFORMilitaryDoctor
@@ -13,9 +13,11 @@
   overwatchRoleName: au14-job-name-govforMilitaryDoctor
   overwatchSortPriority: -6
   overwatchShowName: true
+  displayWeight: 4
   accessGroups:
   - AU14GovforCorpsman
   - AU14GovforSquad
   access:
   - CMAccessMedical
   - CMAccessChemistry
+  - CMAccessMedPrep

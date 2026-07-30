@@ -12,10 +12,14 @@
   supervisors: au14-job-supervisors-workingjoe-military
   usePlayerProfile: false
   jobEntity: AU14MobWorkingJoeGOVFOR
+  displayWeight: -1
   accessGroups:
   - AU14GovforCommand
   - AUPrisonStaff
   - auwy
+  roundComponents:
+  - type: AU14CallsignRole
+    category: SYNTH
 
 - type: job
   abstract: true
@@ -31,10 +35,14 @@
   supervisors: au14-job-supervisors-workingjoe-military
   usePlayerProfile: false
   jobEntity: AU14MobWorkingJoeOPFOR
+  displayWeight: -1
   accessGroups:
   - AU14OpforCommand
   - AUPrisonStaff
   - auwy
+  roundComponents:
+  - type: AU14CallsignRole
+    category: SYNTH
 
 - type: job
   parent: AU14JobGOVFORWorkingJoeBase
@@ -48,7 +56,12 @@
     - NonResuscitable
     - Epilepsy
     - NoEnglish
-
+    - CMUProstheticLeftArm
+    - CMUProstheticRightArm
+    - CMUProstheticLeftLeg
+    - CMUProstheticRightLeg
+    - SlowRunner
+    - Anemic
 - type: entity
   parent: CMSpawnPointJobBase
   id: AU14SpawnPointGOVFORWorkingJoe
@@ -74,6 +87,8 @@
     - FrontalLisp
     - NonResuscitable
     - Epilepsy
+    - SlowRunner
+    - Anemic
 
 - type: entity
   parent: CMSpawnPointJobBase

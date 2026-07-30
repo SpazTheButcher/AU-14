@@ -33,6 +33,8 @@ using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 using Robust.Server.GameObjects;
+using Content.Shared._RMC14.Language.Prototypes;
+using Content.Server._RMC14.Language.Systems;
 
 namespace Content.Server._RMC14.UniversalRecorder;
 
@@ -58,6 +60,8 @@ public sealed partial class UniversalRecorderSystem : EntitySystem
     [Dependency] private SharedToolSystem _tool = default!;
     [Dependency] private UserInterfaceSystem _ui = default!;
     [Dependency] private EntityWhitelistSystem _whitelist = default!;
+    [Dependency] private LanguageSystem _language = default!;
+    [Dependency] private LanguageLearningSystem _languageLearning = default!;
 
     public override void Initialize()
     {
@@ -538,17 +542,28 @@ public sealed partial class UniversalRecorderSystem : EntitySystem
             speech = overrideSpeech;
 
         var speechVerb = Loc.GetString(_random.Pick(speech.SpeechVerbStrings));
-        var line = FormatTranscriptLine(currentDuration, nameEv.VoiceName, speechVerb, args.Message);
+
+        var language = _language.GetCurrentLanguage(args.Source);
+
+        var line = FormatTranscriptLine(
+            currentDuration,
+            nameEv.VoiceName,
+            speechVerb,
+            language,
+            args.Message);
+
 
         tapeRuntime.Entries.Add(new RecorderEntry(
             currentDuration,
             nameEv.VoiceName,
             speechVerb,
+            language,
             args.Message,
             speech.FontId,
             speech.FontSize,
             speech.Bold,
-            line));
+            line,
+            SpeakerEntity: args.Source));
         tapeRuntime.UsedCapacity = currentDuration;
     }
 
@@ -962,31 +977,54 @@ public sealed partial class UniversalRecorderSystem : EntitySystem
 
     private void SendPlaybackSpeech(Entity<UniversalRecorderComponent> ent, RecorderEntry entry)
     {
-        var wrapped = Loc.GetString(
-            entry.Bold ? "chat-manager-entity-say-bold-wrap-message" : "chat-manager-entity-say-wrap-message",
-            ("entityName", FormattedMessage.EscapeText(entry.SpeakerName)),
-            ("verb", entry.SpeechVerb),
-            ("fontType", entry.FontId),
-            ("fontSize", entry.FontSize),
-            ("message", FormattedMessage.EscapeText(entry.Text)));
-
-        var channels = new HashSet<INetChannel>();
-        foreach (var recipient in Filter.Pvs(ent.Owner, entityManager: EntityManager).Recipients)
+        // resolve language icon the same way ChatSystem does
+        string? languageIcon = null;
+        if (_prototype.TryIndex<LanguagePrototype>(entry.Language, out var languageProto))
         {
-            channels.Add(recipient.Channel);
+            var hideLanguageName = languageProto.HideLanguageName;
+            languageIcon = hideLanguageName ? null : languageProto.DisplayedLanguageIcon;
         }
 
-        if (channels.Count == 0)
-            return;
+        foreach (var recipient in Filter.Pvs(ent.Owner, entityManager: EntityManager).Recipients)
+        {
+            var listener = recipient.AttachedEntity;
+            if (listener == null)
+                continue;
 
-        _chatManager.ChatMessageToMany(
-            ChatChannel.Local,
-            entry.Text,
-            wrapped,
-            ent.Owner,
-            hideChat: true,
-            recordReplay: true,
-            channels);
+            if (!TryComp<ActorComponent>(listener.Value, out var actor))
+                continue;
+
+            _languageLearning.TryLearnFromRecording(
+                listener.Value,
+                entry.Text,
+                entry.Language,
+                ent.Owner);
+
+            var text = _language.ObfuscateMessageForListener(
+                listener.Value,
+                entry.Text,
+                entry.Language,
+                entry.SpeakerEntity ?? ent.Owner);
+
+            var wrapped = Loc.GetString(
+                entry.Bold
+                    ? "chat-manager-entity-say-bold-wrap-message"
+                    : "chat-manager-entity-say-wrap-message",
+                ("entityName", FormattedMessage.EscapeText(entry.SpeakerName)),
+                ("verb", entry.SpeechVerb),
+                ("fontType", entry.FontId),
+                ("fontSize", entry.FontSize),
+                ("message", FormattedMessage.EscapeText(text)));
+
+            _chatManager.ChatMessageToOne(
+                ChatChannel.Local,
+                text,
+                wrapped,
+                ent.Owner,
+                false,
+                actor.PlayerSession.Channel,
+                languageIcon: languageIcon);
+        }
     }
 
     private TimeSpan GetCurrentRecordedDuration(
@@ -1093,9 +1131,14 @@ public sealed partial class UniversalRecorderSystem : EntitySystem
         return $"[{totalMinutes:00}:{timestamp.Seconds:00}]";
     }
 
-    private static string FormatTranscriptLine(TimeSpan timestamp, string speakerName, string speechVerb, string text)
+    private static string FormatTranscriptLine(
+        TimeSpan timestamp,
+        string speakerName,
+        string speechVerb,
+        ProtoId<LanguagePrototype> language,
+        string text)
     {
-        return $"{FormatTimestamp(timestamp)} {speakerName} {speechVerb}, \"{text}\"";
+        return $"{FormatTimestamp(timestamp)} [{language}] {speakerName} {speechVerb}, \"{text}\"";
     }
 
     private static string FormatDuration(TimeSpan duration)

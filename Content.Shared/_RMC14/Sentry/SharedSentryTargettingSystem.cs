@@ -5,6 +5,7 @@ using Content.Shared.AU14.AllianceConsole;
 using Content.Shared.Inventory;
 using Content.Shared.NPC.Components;
 using Content.Shared.Weapons.Ranged.Components;
+using Robust.Shared.Containers;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Network;
@@ -18,6 +19,7 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private GunIFFSystem _iff = default!;
     [Dependency] private SharedTransformSystem _xform = default!;
+    [Dependency] private SharedContainerSystem _container = default!;
 
     private const string SentryExcludedFaction = "RMCDumb";
 
@@ -286,6 +288,9 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
             if (target == ent.Owner)
                 continue;
 
+            if (_container.IsEntityInContainer(target))
+                continue;
+
             if (IsFriendlyByIff(target))
                 continue;
 
@@ -323,10 +328,11 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
 
     private void UpdateSentryIFF(Entity<SentryTargetingComponent> ent)
     {
-        if (!TryComp<UserIFFComponent>(ent.Owner, out var userIff))
-            return;
+        EnsureComp<EntityIFFComponent>(ent.Owner);
+        var userIff = EnsureComp<UserIFFComponent>(ent.Owner);
 
-        _iff.ClearUserFactions((ent.Owner, userIff));
+        foreach (var managedIff in SentryFactionToIff.Values)
+            _iff.RemoveUserFaction((ent.Owner, userIff), managedIff);
 
         foreach (var faction in ent.Comp.FriendlyFactions)
         {

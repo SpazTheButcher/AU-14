@@ -41,6 +41,12 @@ public sealed partial class RMCLandmineComponent : Component
     public HashSet<EntProtoId<IFFFactionComponent>> Factions = new();
 
     /// <summary>
+    ///     Whether all projectiles can trigger the landmine, instead of only xeno projectiles.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public bool TriggerOnAnyProjectile;
+
+    /// <summary>
     ///     The amount of times the claymore has been shot.
     /// </summary>
     [DataField, AutoNetworkedField]

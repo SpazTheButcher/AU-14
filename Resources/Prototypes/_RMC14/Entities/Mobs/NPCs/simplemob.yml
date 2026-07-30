@@ -250,6 +250,18 @@
       state: hooked
       visible: false
   - type: Hands
+    hands:
+      hand_right:
+        location: Right
+    sortedHands:
+    - hand_right
+  - type: RandomSound
+    sound:
+      collection: CMUMonkeyNoises
+      params:
+        volume: -10
+    min: 45
+    max: 60
   - type: ComplexInteraction
   - type: GenericVisualizer
     visuals:
@@ -296,13 +308,13 @@
   - type: CanBeFirePatted
   - type: FixedIdentity
     name: cm-chatsan-replacement-monkey
-#  - type: NPCRetaliation
-#    attackMemoryLength: 10
-#  - type: FactionException
+  - type: NPCRetaliation
+    attackMemoryLength: 10
+  - type: FactionException
   - type: NpcFactionMember
     factions:
       - Passive
-#  - type: HTN
-#    rootTask:
-#      task: SimpleHostileCompound
+  - type: HTN
+    rootTask:
+      task: SimpleHostileCompound
 # objectively speaking getting killed by an ape is funny but it is not parity. commented out incase this non-parity feature is deemed vital for some reason

@@ -175,6 +175,7 @@ public abstract partial class SharedXenoHiveSystem : EntitySystem
 
     /// <summary>
     /// Tries to get the hive from a member, returning null if it has no hive or it is invalid.
+    /// This runs through CMDistressSignalRuleSystem, and therefor will return null on Insurgency/CF.
     /// </summary>
     public Entity<HiveComponent>? GetHive(Entity<HiveMemberComponent?> member)
     {
@@ -223,6 +224,13 @@ public abstract partial class SharedXenoHiveSystem : EntitySystem
         {
             hive.Allies.Remove(faction);
         }
+        //just made some BULLSHIT!!
+        var factionsQuery = EntityQueryEnumerator<NpcFactionMemberComponent>();
+        while (factionsQuery.MoveNext(out EntityUid ent, out var comp))
+        {
+            if (comp.Factions.Contains(faction))
+                DirtyEntity(ent);
+        }
     }
 
     public void SetHiveIndividualAlly(EntityUid ent, EntityUid hiveEnt, bool alliance)
@@ -237,13 +245,18 @@ public abstract partial class SharedXenoHiveSystem : EntitySystem
         {
             hive.IndividualAllies.Remove(ent);
         }
+        DirtyEntity(ent);
     }
 
     public void ClearHiveIndividualAllies(EntityUid hiveEnt)
     {
         if (!TryComp<HiveComponent>(hiveEnt, out var hive))
             return;
-        hive.IndividualAllies.Clear();
+        foreach (var item in hive.IndividualAllies)
+        {
+            hive.IndividualAllies.Remove(item);
+            DirtyEntity(item);
+        }
     }
 
     /// <summary>
@@ -568,7 +581,7 @@ public abstract partial class SharedXenoHiveSystem : EntitySystem
     {
         if (TryGetBurrowedLarvaSpawnPositionAt<HiveCoreComponent>(hive, out position) ||
             TryGetBurrowedLarvaSpawnPositionAt<XenoEvolutionGranterComponent>(hive, out position) ||
-            TryGetBurrowedLarvaSpawnPositionAt<XenoComponent>(hive, out position))
+            TryGetBurrowedLarvaSpawnPositionAtXeno(hive, out position))
         {
             return true;
         }
@@ -583,10 +596,24 @@ public abstract partial class SharedXenoHiveSystem : EntitySystem
         var candidates = EntityQueryEnumerator<T, HiveMemberComponent>();
         while (candidates.MoveNext(out var uid, out _, out var member))
         {
-            if (member.Hive != hive.Owner ||
-                TerminatingOrDeleted(uid) ||
-                HasComp<BurrowedLarvaSpawnBlockedComponent>(uid) ||
-                _mobState.IsDead(uid))
+            if (!CanSpawnBurrowedLarvaAt(uid, member, hive))
+                continue;
+
+            position = _transform.GetMoverCoordinates(uid);
+            return true;
+        }
+
+        position = default;
+        return false;
+    }
+
+    private bool TryGetBurrowedLarvaSpawnPositionAtXeno(Entity<HiveComponent> hive, out EntityCoordinates position)
+    {
+        var candidates = EntityQueryEnumerator<XenoComponent, HiveMemberComponent>();
+        while (candidates.MoveNext(out var uid, out var xeno, out var member))
+        {
+            if (!CanSpawnBurrowedLarvaAt(uid, member, hive) ||
+                !CanXenoSpawnBurrowedLarva(xeno))
             {
                 continue;
             }
@@ -597,6 +624,19 @@ public abstract partial class SharedXenoHiveSystem : EntitySystem
 
         position = default;
         return false;
+    }
+
+    private bool CanSpawnBurrowedLarvaAt(EntityUid uid, HiveMemberComponent member, Entity<HiveComponent> hive)
+    {
+        return member.Hive == hive.Owner &&
+               !TerminatingOrDeleted(uid) &&
+               !HasComp<BurrowedLarvaSpawnBlockedComponent>(uid) &&
+               !_mobState.IsDead(uid);
+    }
+
+    private static bool CanXenoSpawnBurrowedLarva(XenoComponent xeno)
+    {
+        return xeno.Tier > 0 || xeno.BypassTierCount;
     }
 
     private void OnAutoAssignHiveAdded(Entity<AutoAssignHiveComponent> ent, ref ComponentStartup args)

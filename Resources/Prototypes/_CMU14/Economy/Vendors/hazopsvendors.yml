@@ -98,6 +98,8 @@
       entries:
       - id: CMBeltMarine
         amount: 40
+      - id: CMUBeltCombatSidearmRig
+        amount: 15
       - id: RMCBeltGrenade
         amount: 4
       - id: RMCM276ShotgunShellLoadingRig
@@ -123,8 +125,6 @@
         amount: 3
       - id: RMCPouchMagazine
         amount: 50
-      - id: RMCPouchMagazineLarge
-        amount: 8
       - id: RMCPouchShotgunLarge
         amount: 8
       - id: RMCPouchGeneralMedium
@@ -133,8 +133,6 @@
         amount: 4
       - id: RMCPouchMagazinePistol
         amount: 25
-      - id: RMCPouchMagazinePistolLarge
-        amount: 6
       - id: RMCPouchPistol
         amount: 20
       - id: AU14PouchIFAKFill
@@ -151,10 +149,16 @@
       entries:
       - id: AU14MaskGasHAZOPSM40
         amount: 40
+      - id: AU14MaskPrescriptionGasHAZOPSM40
+        amount: 10
       - id: AU14MaskGasHAZOPSM17
         amount: 40
+      - id: AU14MaskPrescriptionGasHAZOPSM17
+        amount: 10
       - id: CMUGasMaskFilterHAZOPS
         amount: 80
+      - id: AU14PouchGasMaskBag
+        amount: 20
       - id: CMMaskCoif
         amount: 20
       - id: RMCMaskTornScarfGreen
@@ -234,6 +238,7 @@
       entries:
       - id: AU14SmartGunMinigunHAZOPS
       - id: AU14HAZOPSBatteryMinigunGAU19Backpack
+      - id: RMCScabbardMacheteSGFilled
     - name: Munitions
       entries:
       - id: AU14MagazineMinigunHAZOPS
@@ -266,9 +271,12 @@
       choices: { CMUHandgunsWeapon: 1 }
       entries:
       - id: AU14KitWeaponM4A3
+      - id: AU14GunCasePistolM50HAZOPS
     - name: Handgun Ammunition
       entries:
       - id: CMMagazinePistolM1984
+        amount: 60
+      - id: AU14MagazinePistolM50
         amount: 60
     - name: Attachments
       choices: { CMUAttachmentsVendor: 1 }
@@ -323,7 +331,7 @@
         isAppendSquadRoleName: false
         givePrefix: rmc-job-prefix-weapons-specialist-shotgunner
         isAppendPrefix: true
-      - id: AU14KitHAZOPSPyroM240A2
+      - id: CMU14PyroSpecEquipmentCaseHAZOPS
         giveSquadRoleName: au14-job-name-specialist-pyro
         givePrefix: au14-job-prefix-specialist-pyro
         isAppendSquadRoleName: false
@@ -436,6 +444,109 @@
         amount: 2
 
 - type: entity
+  parent: ColMarTechBase
+  id: AU14HAZOPSsquadleaderequipmentvendor
+  name: HAZOPS squad leader vendor
+  description: >-
+    An automated equipment rack, hooked up to a compact storage of Hazardous Operations squad-leadership equipment of the Marine Special Operations Command.
+    Designed for immediate readiness following cryogenic hypersleep or rapid mobilization orders.
+  components:
+  - type: Sprite
+    sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/clothing.rsi
+  - type: CMAutomatedVendor
+    jobs:
+    - AU14JobGOVFORSquadSergeant
+    - AU14JobOPFORSquadSergeant
+    - AU14JobGOVFORSquadSergeantCMBCIU
+    - AU14JobGOVFORSquadSergeantRMC
+    - AU14JobGOVFORSquadSergeantUPP
+    - AU14JobGOVFORSquadSergeantWYPMC
+    sections:
+    - name: Helmets and Hats
+      choices: { CMHat: 2 }
+      entries:
+      - id: AU14JungleM11Helmet
+      - id: AU14HAZOPShecuBeret
+    - name: Squad Leader Essentials
+      takeAll: CMStandard
+      entries:
+      - id: RMCVendorBundleCrewLeader
+    - name: Backpack
+      choices: { CMBackpack: 1 }
+      entries:
+      - id: CMBackpackMarine
+      - id: RMCScabbardMacheteFilled
+      - id: CMSatchelMarine
+        recommended: true
+    - name: Footwear
+      entries:
+      - id: AU14SpikeBoots
+        points: 8
+        recommended: true
+    - name: Utilities
+      entries:
+      - id: RMCWhistle
+        points: 3
+      - id: CMFireExtinguisherPortable
+        points: 3
+      - id: RMCMotionDetector
+        points: 5
+      - id: RMCFulton20
+        points: 5
+    - name: Binoculars
+      entries:
+      - id: RMCRangefinder
+        points: 3
+      - id: RMCLaserDesignator
+        points: 5
+    - name: Engineering Supplies
+      entries:
+      - id: CMSheetMetal10
+        name: metal x10
+        points: 5
+        recommended: true
+      - id: CMSheetPlasteel10
+        name: plasteel x10
+        points: 7
+        recommended: true
+      - id: RMCExplosivePlastic
+        points: 5
+        recommended: true
+      - id: RMCExplosiveBreachingCharge
+        points: 7
+        recommended: true
+      - id: CMSandbagEmpty25
+        name: sandbags x25
+        points: 10
+        recommended: true
+      - id: RMCPackFlareCAS
+        points: 7
+      - id: RMCWeldingGoggles
+        points: 5
+    - name: Medical Supplies
+      entries:
+      - id: CMBurnKit10
+        points: 2
+      - id: CMTraumaKit10
+        points: 2
+      - id: CMAdvFirstAidKitFilled
+        points: 12
+      - id: CMBicaridineAutoInjector
+        points: 1
+      - id: CMDexalinPlusAutoInjector
+        points: 1
+      - id: CMInaprovalineAutoInjector
+        points: 1
+      - id: CMKelotaneAutoInjector
+        points: 1
+      - id: CMTricordrazineAutoInjector
+        points: 1
+      - id: CMHealthAnalyzer
+        points: 4
+      - id: CMRollerBedSpawnFolded
+        points: 2
+
+- type: entity
   parent: ColMarTechCargo
   id: AU14HAZOPSRequisitionVendor
   name: HAZOPS automated requisitions vendor
@@ -519,18 +630,30 @@
         amount: 100
       - id: RMCSpeedLoader44Marksman
         amount: 10
+    - name: Magazine Boxes
+      entries:
+      - id: CMUBoxMagazineSMGXMP5A6
+        amount: 2
+      - id: RMCBoxMagazinePistolM1984
+        amount: 2
+    - name: Ammo Boxes
+      entries:
+      - id: RMCBoxBulletsRifle
+        amount: 5
+      - id: CMUBoxBulletsPistol9MM
+        amount: 5
     - name: explosives
       entries:
       - id: CMPacketGrenadeHighExplosiveFilled
         amount: 6
       - id: RMCPacketGrenadeIncendiaryFilled
         amount: 3
-      - id: RMCPacketGrenadeWhitePhosphorusFilled
-        amount: 3
       - id: CMPacketGrenadeFragFilled
         amount: 6
       - id: RMCPacketGrenadeSmokeFilled
         amount: 6
+      - id: RMCPacketGrenadeWhitePhosphorusFilled
+        amount: 3
       - id: CMPacketGrenadeFragOldFilled
         amount: 2
       - id: RMCBoxClaymoreMineFilled
@@ -601,11 +724,19 @@
         amount: 4
       - id: RMCOuterClothingExternalWebbing
         amount: 4
+    - name: Pouches
+      entries:
+      - id: RMCPouchMagazineLarge
+        amount: 10
+      - id: RMCPouchMagazinePistolLarge
+        amount: 10
     - name: Devices
       entries:
       - id: RMCIntelDetector
         amount: 4
       - id: RMCFulton20
+        amount: 4
+      - id: RMCOverwatchCameraTripod
         amount: 4
       - id: RMCSentryLaptop
         amount: 4
@@ -616,6 +747,28 @@
       - id: AU14BackpackRTOPackDesert
         amount: 1
       - id: AU14BackpackRTOPackGray
+        amount: 1
+    - name: Materials
+      entries:
+      - id: CMSheetMetal
+        amount: 4
+      - id: CMSheetPlasteel50
+        amount: 4
+      - id: CMSandbagEmpty50
+        amount: 8
+      - id: AU14HescoKit
+        amount: 30
+      - id: RMCSheetPlastic
+        amount: 4
+      - id: RMCSheetAluminum
+        amount: 4
+      - id: CMSheetGlass
+        amount: 5
+      - id: RMCSheetCardboard
+        amount: 5
+      - id: CMSheetPhoron
+        amount: 1
+      - id: SheetUranium
         amount: 1
     - name: Tents
       entries:
@@ -635,3 +788,54 @@
       entries:
       - id: AU14FlagCarriableUA
         amount: 1
+
+- type: entity
+  parent: ColMarTechBase
+  id: AU14HAZOPSShipsideUniformVendor
+  name: HAZOPS shipside uniform vendor
+  description: A stripped-down dispenser rack stocked with off-duty uniforms, footwear, and light personal gear for wear aboard ship.
+  components:
+  - type: Sprite
+    sprite: _AU14/Structures/Vendors/uscmgearrack.rsi
+  - type: CMAutomatedVendor
+    sections:
+    - name: Softcovers
+      entries:
+      - id: AU14JungleBoonieHat
+        amount: 20
+      - id: AU14JunglePatrolCap
+        amount: 25
+      - id: AU14HeadCommandoBeanie
+        amount: 10
+    - name: Fatigues
+      entries:
+      - id: AU14HAZOPUrbanFatigues
+        amount: 40
+    - name: Footwear
+      entries:
+      - id: CMBootsBlack
+        amount: 40
+    - name: Mask
+      entries:
+      - id: CMMaskCoif
+        amount: 20
+      - id: RMCMaskTornScarfGreen
+        amount: 20
+      - id: RMCMaskTornScarfSnow
+        amount: 20
+      - id: RMCMaskTornScarfBlack
+        amount: 20
+    - name: Glasses
+      entries:
+      - id: RMCGlassesMarineRpg
+        amount: 25
+      - id: AU14GlassesBiMex
+        amount: 25
+      - id: AU14GlassesBiMexOrange
+        amount: 25
+      - id: RMCGlassesTriMaxBronze
+        amount: 25
+    - name: Bag
+      entries:
+      - id: CMSatchelMarine
+        amount: 40

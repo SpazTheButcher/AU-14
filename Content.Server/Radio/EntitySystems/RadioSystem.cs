@@ -4,7 +4,6 @@ using Content.Server.Chat.Systems;
 using Content.Server.Power.Components;
 using Content.Server.Radio.Components;
 using Content.Shared._CMU14.Yautja;
-// RMC14
 using Content.Server._RMC14.Language.Systems;
 using Content.Shared._RMC14.Chat;
 using Content.Shared._RMC14.Language.Prototypes;
@@ -92,23 +91,7 @@ public sealed partial class RadioSystem : EntitySystem
             return;
 
         // CMU14
-        var wrappedMessage = _chatManager.AddGhostFollowButton(
-            args.ChatMsg.Message.WrappedMessage,
-            args.MessageSource,
-            actor.PlayerSession.Channel);
-        if (wrappedMessage == args.ChatMsg.Message.WrappedMessage)
-        {
-            _netMan.ServerSendMessage(args.ChatMsg, actor.PlayerSession.Channel);
-            return;
-        }
-
-        var msg = new MsgChatMessage
-        {
-            Message = new ChatMessage(args.ChatMsg.Message)
-            {
-                WrappedMessage = wrappedMessage,
-            },
-        };
+        var msg = AddChatActionButtons(args.ChatMsg, args.MessageSource, actor.PlayerSession.Channel);
         _netMan.ServerSendMessage(msg, actor.PlayerSession.Channel);
         // CMU14
     }
@@ -177,7 +160,7 @@ public sealed partial class RadioSystem : EntitySystem
             speech = _chat.GetSpeechVerb(messageSource, message);
 
         var content = escapeMarkup
-            ? FormattedMessage.EscapeText(message)
+            ? _chat.ResolveBoldSentinels(FormattedMessage.EscapeText(message))
             : message;
 
         // RMC14
@@ -201,7 +184,7 @@ public sealed partial class RadioSystem : EntitySystem
             ("fontType", radioFontId ?? speech.FontId),
             ("fontSize", radioFontSize),
             // RMC14
-            ("verb", Loc.GetString(speech.SpeechVerbStrings[_random.Next(speech.SpeechVerbStrings.Count)])),
+            ("verb", verb),
             ("channel", $"\\[{channel.LocalizedName}\\]"),
             ("name", name),
             ("message", content));
@@ -245,22 +228,26 @@ public sealed partial class RadioSystem : EntitySystem
             string actualMessage = message;
             string actualWrappedMessage = wrappedMessage;
             string? actualLanguageIcon = languageIcon;
+            var actualName = name;
 
             var listenerEntity = ResolveRadioListener(receiver);
 
-            if (listenerEntity.HasValue && !_language.CanUnderstand(listenerEntity.Value, currentLanguage))
+            if (listenerEntity.HasValue &&
+                listenerEntity.Value != messageSource &&
+                !_language.CanUnderstand(listenerEntity.Value, currentLanguage))
             {
-                var actualName = _chat.GetSpeakerNameForListener(messageSource, listenerEntity, name);
+                actualName = _chat.GetSpeakerNameForListener(messageSource, listenerEntity, name);
+                actualMessage = _language.ObfuscateMessageForListener(listenerEntity.Value, message, currentLanguage, messageSource);
 
                 actualWrappedMessage = Loc.GetString(
                     speech.Bold ? "chat-radio-message-wrap-bold" : "chat-radio-message-wrap",
                     ("color", channel.Color),
                     ("fontType", radioFontId ?? speech.FontId),
                     ("fontSize", radioFontSize),
-                    ("verb", Loc.GetString(speech.SpeechVerbStrings[_random.Next(speech.SpeechVerbStrings.Count)])),
+                    ("verb", verb),
                     ("channel", $"\\[{channel.LocalizedName}\\]"),
                     ("name", FormattedMessage.EscapeText(actualName)),
-                    ("message", escapeMarkup ? FormattedMessage.EscapeText(actualMessage) : actualMessage));
+                    ("message", escapeMarkup ? _chat.ResolveBoldSentinels(FormattedMessage.EscapeText(actualMessage)) : actualMessage));
             }
 
             var chat = new ChatMessage(
@@ -270,11 +257,12 @@ public sealed partial class RadioSystem : EntitySystem
                 GetNetEntity(messageSource),
                 _chatManager.EnsurePlayer(CompOrNull<ActorComponent>(messageSource)?.PlayerSession.UserId)?.Key,
                 languageIcon: actualLanguageIcon,
-                repeatCheckSender: !HasComp<ChatRepeatIgnoreSenderComponent>(radioSource));
+                repeatCheckSender: !HasComp<ChatRepeatIgnoreSenderComponent>(radioSource),
+                display: CreateRadioDisplay(channel, actualName, verb));
 
             var chatMsg = new MsgChatMessage { Message = chat };
             var ev = new RadioReceiveEvent(
-                actualMessage,
+                message,
                 messageSource,
                 channel,
                 radioSource,
@@ -293,9 +281,10 @@ public sealed partial class RadioSystem : EntitySystem
                 GetNetEntity(messageSource),
                 _chatManager.EnsurePlayer(CompOrNull<ActorComponent>(messageSource)?.PlayerSession.UserId)?.Key,
                 languageIcon: languageIcon,
-                repeatCheckSender: !HasComp<ChatRepeatIgnoreSenderComponent>(radioSource));
+                repeatCheckSender: !HasComp<ChatRepeatIgnoreSenderComponent>(radioSource),
+                display: CreateRadioDisplay(channel, name, verb));
 
-            SendHivemindToGhosts(new MsgChatMessage { Message = hivemindChat });
+            SendHivemindToGhosts(new MsgChatMessage { Message = hivemindChat }, messageSource);
         }
 
         if (canSend &&
@@ -318,18 +307,48 @@ public sealed partial class RadioSystem : EntitySystem
             GetNetEntity(messageSource),
             _chatManager.EnsurePlayer(CompOrNull<ActorComponent>(messageSource)?.PlayerSession.UserId)?.Key,
             languageIcon: languageIcon,
-            repeatCheckSender: !HasComp<ChatRepeatIgnoreSenderComponent>(radioSource));
+            repeatCheckSender: !HasComp<ChatRepeatIgnoreSenderComponent>(radioSource),
+            display: CreateRadioDisplay(channel, name, verb));
         _replay.RecordServerMessage(replayChat);
 
         _messages.Remove(message);
     }
 
-    private void SendHivemindToGhosts(MsgChatMessage chatMsg)
+    private void SendHivemindToGhosts(MsgChatMessage chatMsg, EntityUid messageSource)
     {
         foreach (var session in Filter.Empty().AddWhereAttachedEntity(HasComp<GhostHearingComponent>).Recipients)
         {
-            _netMan.ServerSendMessage(chatMsg, session.Channel);
+            _netMan.ServerSendMessage(AddChatActionButtons(chatMsg, messageSource, session.Channel), session.Channel);
         }
+    }
+
+    private MsgChatMessage AddChatActionButtons(MsgChatMessage chatMsg, EntityUid messageSource, INetChannel recipient)
+    {
+        var ghostWrappedMessage = _chatManager.AddGhostFollowButton(
+            chatMsg.Message.WrappedMessage,
+            messageSource,
+            recipient);
+        var wrappedMessage = _chatManager.AddXenoWatchButton(
+            ghostWrappedMessage,
+            messageSource,
+            recipient);
+
+        if (wrappedMessage == chatMsg.Message.WrappedMessage)
+            return chatMsg;
+
+        return new MsgChatMessage
+        {
+            Message = new ChatMessage(chatMsg.Message)
+            {
+                WrappedMessage = wrappedMessage,
+                GhostFollowEntity = ghostWrappedMessage != chatMsg.Message.WrappedMessage
+                    ? GetNetEntity(messageSource)
+                    : NetEntity.Invalid,
+                XenoWatchEntity = wrappedMessage != ghostWrappedMessage
+                    ? GetNetEntity(messageSource)
+                    : NetEntity.Invalid,
+            },
+        };
     }
 
     private string GetRadioSpeakerName(EntityUid messageSource, RadioChannelPrototype channel, string voiceName)
@@ -363,6 +382,17 @@ public sealed partial class RadioSystem : EntitySystem
         }
 
         return name;
+    }
+
+    private static ChatDisplayMetadata CreateRadioDisplay(RadioChannelPrototype channel, string name, string verb)
+    {
+        return new ChatDisplayMetadata(
+            ChatDisplayKind.Radio,
+            senderName: name,
+            verb: verb,
+            channelLabel: channel.LocalizedName,
+            quoteBody: true,
+            accentColor: channel.Color);
     }
 
     private MsgChatMessage GetRadioChatMessageForReceiver(
@@ -439,13 +469,7 @@ public sealed partial class RadioSystem : EntitySystem
             GetNetEntity(messageSource),
             _chatManager.EnsurePlayer(CompOrNull<ActorComponent>(messageSource)?.PlayerSession.UserId)?.Key,
             repeatCheckSender: !HasComp<ChatRepeatIgnoreSenderComponent>(radioSource),
-            display: new ChatDisplayMetadata(
-                ChatDisplayKind.Radio,
-                senderName: name,
-                verb: verb,
-                channelLabel: channel.LocalizedName,
-                quoteBody: true,
-                accentColor: channel.Color));
+            display: CreateRadioDisplay(channel, name, verb));
 
         return new MsgChatMessage { Message = chat };
     }

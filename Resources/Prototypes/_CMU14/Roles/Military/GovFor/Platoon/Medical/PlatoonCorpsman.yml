@@ -11,6 +11,7 @@
   playTimeTracker: AU14JobGOVFORPlatoonCorpsman
   overwatchRoleName: au14-job-name-govforplatooncorpsman-plural
   overwatchSortPriority: -2
+  displayWeight: 3
   accessGroups:
   - AU14GovforCorpsman
   - AU14GovforSquad
@@ -95,15 +96,15 @@
     - Epilepsy
     - NonResuscitable
     - NoEnglish
+    - CMUProstheticLeftArm
+    - CMUProstheticRightArm
+    - CMUProstheticLeftLeg
+    - CMUProstheticRightLeg
+    - SlowRunner
+    - Anemic
   ranks:
     RMCRankCivilian: []
   chevrons:
-    RMCRankLanceCorporal:
-      entity: AU14ChevronUSCMLanceCorporal
-      requirements:
-      - !type:RoleTimeRequirement
-        role: AU14JobGOVFORPlatoonCorpsman
-        time: 36000
     RMCRankPrivateFirstClass:
       entity: AU14ChevronUSCMPrivateFirstClass
       requirements: []
@@ -176,7 +177,7 @@
 - type: startingGear
   id: AU14GearopforPlatoonCorpsman
   equipment:
-    id: AU14JobIDCardopforPlatoonCorpsman
+    id: AU14JobIDCardOPFORPlatoonCorpsman
     ears: AU14HeadsetOpforMarine
 
 - type: entity

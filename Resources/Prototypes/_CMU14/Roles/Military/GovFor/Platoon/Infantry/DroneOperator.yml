@@ -36,17 +36,20 @@
     traits:
     - Epilepsy
     - NoEnglish
+    - SlowRunner
+    - Anemic
+    - Asthmatic
   ranks:
     RMCRankCivilian: []
   chevrons:
-    RMCRankPrivateFirstClass:
-      entity: AU14ChevronUSCMPrivateFirstClass
+    RMCRankStaffSergeant:
+      entity: AU14ChevronUSCMStaffSergeant
       requirements:
       - !type:RoleTimeRequirement
         role: CMUJobGOVFORDroneOperator
-        time: 36000
-    RMCRankPrivate:
-      entity: AU14ChevronUSCMPrivate
+        time: 36000 # 10 hours
+    RMCRankSergeant:
+      entity: AU14ChevronUSCMSergeant
       requirements: []
 
 - type: playTimeTracker
@@ -58,7 +61,6 @@
   equipment:
     id: CMUIDCardDroneOperator
     ears: AU14HeadsetGovforMarine
-    back: CMUDroneOperatorPackFilled
 
 - type: startingGear
   id: CMUGearGOVFORDroneOperatorDummy
@@ -97,11 +99,13 @@
   hidden: false
   setPreference: true
   basePlaytimeTracker: true
+  ignoreAllegiance: true
 
 - type: roleLoadout
   id: JobCMUJobGOVFORDroneOperator
   points: 7
   groups:
+  - CMUDroneOperatorBackpack
   - EyewearRMCPVE
   - MasksRMCPVE
   - HeadwearRMCPVE
@@ -110,3 +114,16 @@
   - RecreationalRMC
   - CannedDrinksAU14
   - SmokablesRMC
+
+- type: loadoutGroup
+  id: CMUDroneOperatorBackpack
+  name: rmc-loadout-group-backpack
+  minLimit: 1
+  hidden: true
+  loadouts:
+  - CMUDroneOperatorPackLoadout
+
+- type: loadout
+  id: CMUDroneOperatorPackLoadout
+  equipment:
+    back: CMUDroneOperatorPackFilled

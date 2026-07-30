@@ -1,21 +1,23 @@
 - type: entity
-  id: AU14LanguagePresetXeno
-  name: Xenoish Language
+  id: AU14LanguagePresetXenoCultist
+  name: Xenoish Language for Humans
   categories: [ HideSpawnMenu ]
   components:
   - type: LanguagePreset
     spokenLanguages:
     - English
     - Xeno
+    - Latin
     understoodLanguages:
     - English
     - Xeno
+    - Latin
     currentLanguage: English
     defaultLanguage: English
 
 - type: entity
   id: AU14LanguagePresetYautja
-  name: Yautja Language
+  name: Yautja Language for humans
   categories: [ HideSpawnMenu ]
   components:
   - type: LanguagePreset
@@ -30,7 +32,7 @@
 
 - type: entity
   id: AU14LanguagePresetArcturian
-  name: Arcturian Language
+  name: Arcturian Language for humans
   categories: [ HideSpawnMenu ]
   components:
   - type: LanguagePreset

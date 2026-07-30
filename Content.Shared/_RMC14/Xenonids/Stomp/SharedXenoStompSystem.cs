@@ -6,7 +6,7 @@ using Content.Shared._RMC14.Pulling;
 using Content.Shared._RMC14.Slow;
 using Content.Shared._RMC14.Stun;
 using Content.Shared._RMC14.Xenonids.Plasma;
-using Content.Shared._CMU14.Medical.BodyPart;
+using Content.Shared._CMU14.Medical.Anatomy.BodyParts;
 using Content.Shared.Actions;
 using Content.Shared.Coordinates;
 using Content.Shared.Damage;
@@ -56,6 +56,7 @@ public sealed partial class XenoStompSystem : EntitySystem
     [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private SharedMapSystem _map = default!;
     [Dependency] private TurfSystem _turf = default!;
+
 
     public override void Initialize()
     {
@@ -179,7 +180,11 @@ public sealed partial class XenoStompSystem : EntitySystem
             if (!_xeno.CanAbilityAttackTarget(xeno, receiver))
                 continue;
 
-            if (IsBlockedByObstacle(origin, _transform.GetMapCoordinates(receiver), xeno.Owner))
+            if (IsBlockedByObstacle(
+                    origin,
+                    _transform.GetMapCoordinates(receiver),
+                    xeno.Owner,
+                    ignoreBarricades: xeno.Comp.StompsThroughBarricades))
                 continue;
 
             if (xeno.Comp.SlowBigInsteadOfStun && _size.TryGetSize(receiver, out var size) && size >= RMCSizes.Big)
@@ -191,6 +196,11 @@ public sealed partial class XenoStompSystem : EntitySystem
 
             if (xeno.Comp.Slows)
                 _slow.TrySuperSlowdown(receiver, xeno.Comp.SlowTime, true);
+
+            if (xeno.Comp.KnocksBack)
+            {
+                _size.KnockBack(receiver, origin, xeno.Comp.KnockbackPower, xeno.Comp.KnockbackPower + 1f);
+            }
 
             if (xform.Coordinates.TryDistance(EntityManager, receiver.Owner.ToCoordinates(), out var distance) && distance <= xeno.Comp.ShortRange)
             {
@@ -313,7 +323,11 @@ public sealed partial class XenoStompSystem : EntitySystem
         }
     }
 
-    private bool IsBlockedByObstacle(MapCoordinates origin, MapCoordinates target, EntityUid ignore)
+    private bool IsBlockedByObstacle(
+        MapCoordinates origin,
+        MapCoordinates target,
+        EntityUid ignore,
+        bool ignoreBarricades = false)
     {
         if (origin.MapId != target.MapId)
             return true;
@@ -323,8 +337,11 @@ public sealed partial class XenoStompSystem : EntitySystem
         if (distance < 0.1f)
             return false;
 
-        var mask = (int) (CollisionGroup.Impassable | CollisionGroup.InteractImpassable | CollisionGroup.BarricadeImpassable);
-        var ray = new CollisionRay(origin.Position, diff.Normalized(), mask);
+        var mask = CollisionGroup.Impassable | CollisionGroup.InteractImpassable;
+        if (!ignoreBarricades)
+            mask |= CollisionGroup.BarricadeImpassable;
+
+        var ray = new CollisionRay(origin.Position, diff.Normalized(), (int) mask);
         foreach (var _ in _physics.IntersectRay(origin.MapId, ray, distance, ignore, returnOnFirstHit: true))
         {
             return true;

@@ -115,6 +115,14 @@ public sealed partial class JobRequirementsManager : ISharedPlaytimeManager
         return false;
     }
     // RMC14-Whitelist-Tweak-End
+
+    /// <summary>
+    ///     Whether the local player holds the whitelist for <paramref name="jobId"/> (including via a
+    ///     WhitelistParent). Used for whitelist-gated UI that isn't a spawnable job, e.g. the construction
+    ///     menu editor tools. The server always re-validates.
+    /// </summary>
+    public bool IsWhitelisted(string jobId) => IsWhitelistedInternal(jobId);
+
     public bool IsAllowed(JobPrototype job, HumanoidCharacterProfile? profile, [NotNullWhen(false)] out FormattedMessage? reason)
     {
         reason = null;

@@ -74,6 +74,14 @@ namespace Content.Client.Input
             human.AddFunction(ContentKeyFunctions.OpenInventoryMenu);
             human.AddFunction(ContentKeyFunctions.SmartEquipBackpack);
             human.AddFunction(ContentKeyFunctions.SmartEquipBelt);
+            human.AddFunction(ContentKeyFunctions.SmartEquipPocket1);
+            human.AddFunction(ContentKeyFunctions.SmartEquipPocket2);
+            human.AddFunction(ContentKeyFunctions.SmartEquipSuitStorage);
+            // RMC14
+            human.AddFunction(ContentKeyFunctions.SmartEquipUniform);
+            human.AddFunction(ContentKeyFunctions.SmartEquipArmor);
+            human.AddFunction(ContentKeyFunctions.SmartEquipHelmet);
+            // RMC14
             human.AddFunction(ContentKeyFunctions.OpenBackpack);
             human.AddFunction(ContentKeyFunctions.OpenBelt);
             human.AddFunction(ContentKeyFunctions.MouseMiddle);
@@ -128,7 +136,6 @@ namespace Content.Client.Input
             common.AddFunction(ContentKeyFunctions.OpenAdminMenu);
             common.AddFunction(ContentKeyFunctions.OpenGuidebook);
 
-
             CMFunctions(contexts);
         }
 
@@ -159,6 +166,14 @@ namespace Content.Client.Input
             human.AddFunction(CMUKeyFunctions.CMUTargetBodyZoneRightLeg);
             human.AddFunction(CMUKeyFunctions.CMUOpenMedicalCraftingMenu);
             human.AddFunction(CMUKeyFunctions.CMUToggleShootDownZLevel);
+            human.AddFunction(CMUKeyFunctions.CMUEmoteSlot1);
+            human.AddFunction(CMUKeyFunctions.CMUEmoteSlot2);
+            human.AddFunction(CMUKeyFunctions.CMUEmoteSlot3);
+            human.AddFunction(CMUKeyFunctions.CMUEmoteSlot4);
+            human.AddFunction(CMUKeyFunctions.CMUEmoteSlot5);
+            human.AddFunction(CMUKeyFunctions.CMUEmoteSlot6);
+            human.AddFunction(CMUKeyFunctions.CMUEmoteSlot7);
+            human.AddFunction(CMUKeyFunctions.CMUEmoteSlot8);
 
             //Xenonid
             var xenonid = contexts.New("xenonid", "human");

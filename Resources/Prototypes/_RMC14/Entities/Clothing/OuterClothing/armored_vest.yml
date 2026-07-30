@@ -19,6 +19,9 @@
   - type: CMHardArmor
   - type: RMCNameItemOnVend
     item: Armor
+  - type: CMUItemStain
+    wornStates:
+      outerClothing: vest_blood
 
 - type: entity
   parent: RMCArmorVest
@@ -101,9 +104,6 @@
     explosionArmor: 0
   - type: Item
     size: Huge
-  - type: RMCDefibrillatorBlocked
-    popup: cm-defib-take-off-armor
-    showOnExamine: false
   - type: InteractedBlacklist
     blacklist:
       components:
@@ -148,6 +148,9 @@
     damageCoefficient: 0
     worn: false
   - type: Appearance
+  - type: CMUItemStain
+    wornStates:
+      outerClothing: vest_blood
 
 # MP
 

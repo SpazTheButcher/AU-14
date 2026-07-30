@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Content.Server._CMU14.Threats;
 using Content.Server.AU14.Round;
+using Content.Server.GameTicking;
 using Content.Shared._RMC14.Rules;
 using Content.Shared._CMU14.Threats;
 using Content.Shared.Preferences;
@@ -131,6 +133,266 @@ public sealed class AuJobSelectionTest
     }
 
     [Test]
+    public void ThirdPartyBodyBudgetUsesRatioAndThreatBodyCap()
+    {
+        Assert.That(
+            AuRoundSystem.CalculateThirdPartyBodyBudget(35, 0.15f),
+            Is.EqualTo(5));
+        Assert.That(
+            AuRoundSystem.CalculateThirdPartyBodyBudget(35, 0.15f, new ThreatVoteBodyCount(1, 4)),
+            Is.EqualTo(5));
+        Assert.That(
+            AuRoundSystem.CalculateThirdPartyBodyBudget(35, 0.15f, new ThreatVoteBodyCount(1, 2)),
+            Is.EqualTo(3));
+    }
+
+    [Test]
+    public void ThirdPartySelectionSkipsPartiesThatDoNotFitRemainingBodyBudget()
+    {
+        var large = CreateThirdPartyPrototype("Large");
+        var medium = CreateThirdPartyPrototype("Medium");
+        var small = CreateThirdPartyPrototype("Small");
+        var bodyCounts = new Dictionary<ThirdPartyPrototype, int>
+        {
+            [large] = 8,
+            [medium] = 4,
+            [small] = 2,
+        };
+
+        var selected = AuRoundSystem.SelectThirdPartiesWithinBodyBudget(
+            [large, medium, small],
+            maxThirdParties: 7,
+            bodyBudget: 5,
+            PickFirst,
+            party => bodyCounts[party],
+            out var selectedBodies);
+
+        Assert.That(selected, Is.EqualTo(new List<ThirdPartyPrototype> { medium }));
+        Assert.That(selectedBodies, Is.EqualTo(4));
+        return;
+
+        static ThirdPartyPrototype PickFirst(IReadOnlyList<ThirdPartyPrototype> candidates)
+            => candidates[0];
+    }
+
+    [Test]
+    public void ThirdPartySelectionDoesNotSelectDuplicatePrototypeIds()
+    {
+        var duplicate = CreateThirdPartyPrototype("Duplicate");
+        var duplicateWithDifferentCase = CreateThirdPartyPrototype("duplicate");
+        var other = CreateThirdPartyPrototype("Other");
+
+        var selected = AuRoundSystem.SelectThirdPartiesWithinBodyBudget(
+            [duplicate, duplicateWithDifferentCase, other],
+            maxThirdParties: 3,
+            bodyBudget: 3,
+            PickFirst,
+            _ => 1,
+            out var selectedBodies);
+
+        Assert.That(selected, Is.EqualTo(new[] { duplicate, other }));
+        Assert.That(selectedBodies, Is.EqualTo(2));
+        return;
+
+        static ThirdPartyPrototype PickFirst(IReadOnlyList<ThirdPartyPrototype> candidates)
+            => candidates[0];
+    }
+
+    [Test]
+    public void DistressSignalThirdPartyFillUsesRemainingThreatCapacity()
+    {
+        var lockedLarge = CreateThirdPartyPrototype("LockedLarge");
+        var lockedSmall = CreateThirdPartyPrototype("LockedSmall");
+        var tooLarge = CreateThirdPartyPrototype("TooLarge");
+        var fits = CreateThirdPartyPrototype("Fits");
+        var tiny = CreateThirdPartyPrototype("Tiny");
+        var bodyCounts = new Dictionary<ThirdPartyPrototype, int>
+        {
+            [lockedLarge] = 4,
+            [lockedSmall] = 2,
+            [tooLarge] = 4,
+            [fits] = 2,
+            [tiny] = 1,
+        };
+
+        var additional = AuRoundSystem.SelectAdditionalDistressSignalThirdParties(
+            [lockedLarge, lockedSmall, tooLarge, fits, tiny],
+            [lockedLarge, lockedSmall],
+            maxThirdParties: 3,
+            bodyBudget: 9,
+            PickFirst,
+            party => bodyCounts[party],
+            out var lockedBodies,
+            out var additionalBodies);
+
+        Assert.That(additional, Is.EqualTo(new[] { fits }));
+        Assert.That(lockedBodies, Is.EqualTo(6));
+        Assert.That(additionalBodies, Is.EqualTo(2));
+        return;
+
+        static ThirdPartyPrototype PickFirst(IReadOnlyList<ThirdPartyPrototype> candidates)
+            => candidates[0];
+    }
+
+    [Test]
+    public void DistressSignalThirdPartyFillPreservesAnnouncedSurvivorCount()
+    {
+        var lockedSurvivor = CreateThirdPartyPrototype(
+            "LockedSurvivor",
+            roundStart: true,
+            announceAsSurvivors: true);
+        var duplicateLockedParty = CreateThirdPartyPrototype("LockedSurvivor");
+        var additionalSurvivor = CreateThirdPartyPrototype(
+            "AdditionalSurvivor",
+            roundStart: true,
+            announceAsSurvivors: true);
+        var delayedSurvivor = CreateThirdPartyPrototype(
+            "DelayedSurvivor",
+            announceAsSurvivors: true);
+        var unrelatedRoundStart = CreateThirdPartyPrototype("UnrelatedRoundStart", roundStart: true);
+        var bodyCounts = new Dictionary<ThirdPartyPrototype, int>
+        {
+            [lockedSurvivor] = 3,
+            [duplicateLockedParty] = 3,
+            [additionalSurvivor] = 2,
+            [delayedSurvivor] = 2,
+            [unrelatedRoundStart] = 1,
+        };
+
+        var additional = AuRoundSystem.SelectAdditionalDistressSignalThirdParties(
+            [duplicateLockedParty, additionalSurvivor, delayedSurvivor, unrelatedRoundStart],
+            [lockedSurvivor],
+            maxThirdParties: 3,
+            bodyBudget: 10,
+            PickFirst,
+            party => bodyCounts[party],
+            out var lockedBodies,
+            out var additionalBodies);
+
+        Assert.That(additional, Is.EqualTo(new[] { delayedSurvivor, unrelatedRoundStart }));
+        Assert.That(lockedBodies, Is.EqualTo(3));
+        Assert.That(additionalBodies, Is.EqualTo(3));
+        Assert.That(
+            AuRoundSystem.CalculateAnnouncedSurvivorCount(
+                new[] { lockedSurvivor }.Concat(additional),
+                party => bodyCounts[party]),
+            Is.EqualTo(3));
+        return;
+
+        static ThirdPartyPrototype PickFirst(IReadOnlyList<ThirdPartyPrototype> candidates)
+            => candidates[0];
+    }
+
+    [Test]
+    public void DistressSignalThirdPartyLimitsUseMostRestrictiveThreat()
+    {
+        var limits = AuRoundSystem.GetConservativeThirdPartyLimits(
+        [
+            (MaxThirdParties: 7, BodyBudget: 8),
+            (MaxThirdParties: 3, BodyBudget: 10),
+            (MaxThirdParties: 5, BodyBudget: 4),
+        ]);
+
+        Assert.That(limits.MaxThirdParties, Is.EqualTo(3));
+        Assert.That(limits.BodyBudget, Is.EqualTo(4));
+        Assert.That(AuRoundSystem.GetConservativeThirdPartyLimits([]), Is.EqualTo(default((int, int))));
+    }
+
+    [Test]
+    public void SurvivorCountIncludesOnlyApprovedPartyFamilies()
+    {
+        var approvedRoundStart = CreateThirdPartyPrototype(roundStart: true, announceAsSurvivors: true);
+        var approvedDelayed = CreateThirdPartyPrototype(announceAsSurvivors: true);
+        var unrelated = CreateThirdPartyPrototype(roundStart: true);
+        var bodyCounts = new Dictionary<ThirdPartyPrototype, int>
+        {
+            [approvedRoundStart] = 3,
+            [approvedDelayed] = 2,
+            [unrelated] = 8,
+        };
+
+        var count = AuRoundSystem.CalculateAnnouncedSurvivorCount(
+            [approvedRoundStart, approvedDelayed, unrelated],
+            party => bodyCounts[party]);
+
+        Assert.That(count, Is.EqualTo(3));
+    }
+
+    [Test]
+    public void ResettingDistressSignalLockPreservesOrdinaryThirdPartySelection()
+    {
+        var state = new AuRoundSelectionState();
+        var ordinaryParty = CreateThirdPartyPrototype();
+        state.SelectedThirdParties.Add(ordinaryParty);
+
+        state.ResetDistressSignalThirdPartyLock();
+
+        Assert.That(state.SelectedThirdParties, Is.EqualTo(new[] { ordinaryParty }));
+
+        state.DistressSignalThirdPartiesLocked = true;
+        state.DistressSignalThirdPartyFillCompleted = true;
+        state.DistressSignalSurvivorCount = 3;
+        state.ResetDistressSignalThirdPartyLock();
+
+        Assert.That(state.SelectedThirdParties, Is.Empty);
+        Assert.That(state.DistressSignalThirdPartiesLocked, Is.False);
+        Assert.That(state.DistressSignalThirdPartyFillCompleted, Is.False);
+        Assert.That(state.DistressSignalSurvivorCount, Is.Zero);
+    }
+
+    [Test]
+    public void DistressSignalSurvivorAnnouncementTriggersOnceAtOneMinute()
+    {
+        var roundStart = TimeSpan.FromMinutes(10);
+
+        Assert.That(
+            GameTicker.IsDistressSignalSurvivorAnnouncementDue(
+                true,
+                GameRunLevel.PreRoundLobby,
+                false,
+                false,
+                roundStart,
+                roundStart - TimeSpan.FromSeconds(61)),
+            Is.False);
+        Assert.That(
+            GameTicker.IsDistressSignalSurvivorAnnouncementDue(
+                true,
+                GameRunLevel.PreRoundLobby,
+                false,
+                false,
+                roundStart,
+                roundStart - TimeSpan.FromSeconds(60)),
+            Is.True);
+        Assert.That(
+            GameTicker.IsDistressSignalSurvivorAnnouncementDue(
+                true,
+                GameRunLevel.PreRoundLobby,
+                false,
+                false,
+                roundStart,
+                roundStart - TimeSpan.FromSeconds(59.5)),
+            Is.True);
+        Assert.That(
+            GameTicker.IsDistressSignalSurvivorAnnouncementDue(
+                true,
+                GameRunLevel.PreRoundLobby,
+                false,
+                true,
+                roundStart,
+                roundStart - TimeSpan.FromSeconds(30)),
+            Is.False);
+        Assert.That(
+            GameTicker.IsDistressSignalSurvivorAnnouncementDue(
+                true,
+                GameRunLevel.PreRoundLobby,
+                true,
+                false,
+                roundStart,
+                roundStart - TimeSpan.FromSeconds(30)),
+            Is.False);
+    }
+
+    [Test]
     public void PlanetVoteOptionsUseStableCarryoverKey()
     {
         var planets = new List<RMCPlanetMapPrototypeComponent>
@@ -156,5 +418,26 @@ public sealed class AuJobSelectionTest
             .GetField(nameof(RMCPlanetMapPrototypeComponent.VoteName), BindingFlags.Instance | BindingFlags.Public)!
             .SetValue(planet, voteName);
         return planet;
+    }
+
+    private static ThirdPartyPrototype CreateThirdPartyPrototype(
+        string id = "TestThirdParty",
+        bool roundStart = false,
+        bool announceAsSurvivors = false)
+    {
+        var party = (ThirdPartyPrototype) RuntimeHelpers.GetUninitializedObject(typeof(ThirdPartyPrototype));
+        typeof(ThirdPartyPrototype)
+            .GetField($"<{nameof(ThirdPartyPrototype.ID)}>k__BackingField",
+                BindingFlags.Instance | BindingFlags.NonPublic)!
+            .SetValue(party, id);
+        typeof(ThirdPartyPrototype)
+            .GetField($"<{nameof(ThirdPartyPrototype.RoundStart)}>k__BackingField",
+                BindingFlags.Instance | BindingFlags.NonPublic)!
+            .SetValue(party, roundStart);
+        typeof(ThirdPartyPrototype)
+            .GetField($"<{nameof(ThirdPartyPrototype.AnnounceAsSurvivors)}>k__BackingField",
+                BindingFlags.Instance | BindingFlags.NonPublic)!
+            .SetValue(party, announceAsSurvivors);
+        return party;
     }
 }

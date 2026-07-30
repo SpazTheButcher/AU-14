@@ -106,6 +106,8 @@
       entries:
       - id: AU14BeltMarineUPP
         amount: 40
+      - id: CMUBeltCombatSidearmRig
+        amount: 15
       - id: RMCBeltGrenade
         amount: 4
       - id: AU14ShotgunShellLoadingRigUPP
@@ -131,8 +133,6 @@
         amount: 3
       - id: RMCPouchMagazine
         amount: 50
-      - id: RMCPouchMagazineLarge
-        amount: 8
       - id: RMCPouchShotgunLarge
         amount: 8
       - id: RMCPouchGeneralMedium
@@ -141,8 +141,6 @@
         amount: 4
       - id: RMCPouchMagazinePistol
         amount: 25
-      - id: RMCPouchMagazinePistolLarge
-        amount: 6
       - id: AU14PouchPistolAlt
         amount: 20
       - id: AU14PouchIFAKFill
@@ -157,10 +155,6 @@
         amount: 15
     - name: Mask
       entries:
-      - id: RMCMaskGasSPP
-        amount: 40
-      - id: CMUGasMaskFilterUPP
-        amount: 80
       - id: CMMaskCoif
         amount: 20
       - id: RMCMaskScarfBlack
@@ -245,11 +239,19 @@
         amount: 40
       - id: AU14NaloxoneAutoInjector
         amount: 9
+      - id: AU14PacketPillsTramadol
+        amount: 40
+      - id: AU14FirstAidAutoInjectorNoSkill
+        amount: 20
+      - id: CMUSplintItem
+        amount: 40
     - name: Tools
       entries:
       - id: CMEntrenchingTool
         recommended: true
         amount: 30
+      - id: AU14ToolShovel
+        amount: 10
       - id: RMCCombatUtilityKnifeA
         recommended: true
         amount: 25
@@ -319,6 +321,16 @@
         amount: 12
       - id: RMCPackFlareCAS
         amount: 8
+    - name: Gas Mask
+      entries:
+      - id: RMCMaskGasSPP
+        amount: 40
+      - id: RMCMaskPrescriptionGasSPP
+        amount: 10
+      - id: CMUGasMaskFilterUPP
+        amount: 80
+      - id: AU14PouchGasMaskBag
+        amount: 20
     - name: Optics
       entries:
       - id: RMCLaserDesignatorPVE
@@ -357,7 +369,13 @@
   - type: Sprite
     sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/medical_gear.rsi
   - type: CMAutomatedVendor
-    jobs: [ AU14JobPlatoonCorpsmanBase, AU14JobGOVFORPlatoonCorpsman, AU14JobOPFORPlatoonCorpsman ]
+    jobs:
+    - AU14JobGOVFORPlatoonCorpsman
+    - AU14JobGOVFOROfficerMedical
+    - AU14JobGOVFORAuxSupportSynth
+    - AU14JobOPFORPlatoonCorpsman
+    - AU14JobOPFOROfficerMedical
+    - AU14JobOPFORAuxSupportSynth
     sections:
     - name: Essential Equipment
       takeAll: CMUEssentialEquipment
@@ -717,6 +735,10 @@
       - id: RMCPackFlareCAS
     - name: Spare Equipment
       entries:
+      - id: ANPRC117GRadioOPFORFilled
+        amount: 2
+      - id: ANPRCMastAntenna
+        amount: 1
       - id: RMCExplosiveBreachingCharge
         amount: 4
       - id: RMCBinoculars
@@ -759,6 +781,7 @@
       takeAll: CMUAREssentialEquipment
       entries:
       - id: AU14ArmorSmartGunDesertCombatHarnessUPP
+      - id: RMCScabbardMacheteSGFilled
 
     - name: Firearm System
       choices: { CMUPlatoonMG: 1 }
@@ -803,6 +826,108 @@
       - id: RMCLaserDesignator
       - id: RMCWhistle
       - id: RMCPackFlareCAS
+
+- type: entity
+  parent: ColMarTechBase
+  id: AU14UPPSquadLeaderVendor
+  name: UPP squad leader vendor
+  description: >-
+    An automated equipment rack, hooked up to a compact storage of Union of Progressive Peoples squad-leadership equipment.
+    Designed for immediate readiness following cryogenic hypersleep or rapid mobilization orders.
+  components:
+  - type: Sprite
+    sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/clothing.rsi
+  - type: CMAutomatedVendor
+    jobs:
+    - AU14JobGOVFORSquadSergeant
+    - AU14JobOPFORSquadSergeant
+    - AU14JobGOVFORSquadSergeantCMBCIU
+    - AU14JobGOVFORSquadSergeantRMC
+    - AU14JobGOVFORSquadSergeantUPP
+    - AU14JobGOVFORSquadSergeantWYPMC
+    sections:
+    - name: Apparel
+      choices: { CMHat: 1 }
+      entries:
+      - id: CMHeadCapSPPBeret
+    - name: Squad Leader Essentials
+      takeAll: CMStandard
+      entries:
+      - id: RMCVendorBundleCrewLeader
+    - name: Backpack
+      choices: { CMBackpack: 1 }
+      entries:
+      - id: CMBackpackMarine
+      - id: RMCScabbardMacheteFilled
+      - id: CMSatchelMarine
+        recommended: true
+    - name: Footwear
+      entries:
+      - id: AU14SpikeBoots
+        points: 8
+        recommended: true
+    - name: Utilities
+      entries:
+      - id: RMCWhistle
+        points: 3
+      - id: CMFireExtinguisherPortable
+        points: 3
+      - id: RMCMotionDetector
+        points: 5
+      - id: RMCFulton20
+        points: 5
+    - name: Binoculars
+      entries:
+      - id: RMCRangefinder
+        points: 3
+      - id: RMCLaserDesignator
+        points: 5
+    - name: Engineering Supplies
+      entries:
+      - id: CMSheetMetal10
+        name: metal x10
+        points: 5
+        recommended: true
+      - id: CMSheetPlasteel10
+        name: plasteel x10
+        points: 7
+        recommended: true
+      - id: RMCExplosivePlastic
+        points: 5
+        recommended: true
+      - id: RMCExplosiveBreachingCharge
+        points: 7
+        recommended: true
+      - id: CMSandbagEmpty25
+        name: sandbags x25
+        points: 10
+        recommended: true
+      - id: RMCPackFlareCAS
+        points: 7
+      - id: RMCWeldingGoggles
+        points: 5
+    - name: Medical Supplies
+      entries:
+      - id: CMBurnKit10
+        points: 2
+      - id: CMTraumaKit10
+        points: 2
+      - id: CMAdvFirstAidKitFilled
+        points: 12
+      - id: CMBicaridineAutoInjector
+        points: 1
+      - id: CMDexalinPlusAutoInjector
+        points: 1
+      - id: CMInaprovalineAutoInjector
+        points: 1
+      - id: CMKelotaneAutoInjector
+        points: 1
+      - id: CMTricordrazineAutoInjector
+        points: 1
+      - id: CMHealthAnalyzer
+        points: 4
+      - id: CMRollerBedSpawnFolded
+        points: 2
 
 - type: entity
   parent: ColMarTechBase
@@ -864,12 +989,12 @@
       takeOne: SquadSpecKit
       sharedSpecLimit: 1
       entries:
-      - id: AU14KitUPPPointmanType23
+      - id: CMUType23ShotgunCase
         giveSquadRoleName: au14-job-name-govforspecialist-pointmanUPP
         givePrefix: au14-job-prefix-govforspecialist-pointmanUPP
         isAppendSquadRoleName: false
         isAppendPrefix: true
-      - id: AU14KitUPPHATHJRA12
+      - id: CMUDemoSpecEquipmentCaseUPP
         giveSquadRoleName: au14-job-name-govforspecialist-heavyantitankUPP
         givePrefix: au14-job-prefix-govforspecialist-heavyantitankUPP
         isAppendSquadRoleName: false
@@ -879,7 +1004,7 @@
         givePrefix: au14-job-prefix-govforspecialist-marksmanUPP
         isAppendSquadRoleName: false
         isAppendPrefix: true
-      - id: AU14KitUPPPyroLPO80
+      - id: CMU14PyroSpecEquipmentCaseUPP
         giveSquadRoleName: au14-job-name-specialist-pyro
         givePrefix: au14-job-prefix-specialist-pyro
         isAppendSquadRoleName: false
@@ -918,14 +1043,14 @@
   name: UPP combat technicians gear rack
   description: An automated gear rack for combat technicians.
   components:
-  - type: AccessReader
-    access: [ [ "AU14AccessGovforEngineering" ], [ "AU14AccessOpforEngineering" ] ]
   - type: Sprite
     sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/combat_technician_gear.rsi
   - type: CMAutomatedVendor
     jobs:
     - AU14JobGOVFORSquadCombatTech
     - AU14JobOPFORSquadCombatTech
+    - AU14JobGOVFOROfficerEngi
+    - AU14JobOPFOROfficerEngi
     sections:
     - name: Engineer Set
       takeAll: CMEngineerSet
@@ -958,46 +1083,86 @@
       - id: RMCSatchelSPPWelder
         recommended: true
     - name: Engineering Storage Pouch
-      choices: { CMUPouchesCT: 1 }
+      choices: { CMUPouchesCT: 2 }
       entries:
       - id: RMCPouchConstruction
         recommended: true
+      - id: RMCPouchEngineerKit
       - id: RMCPouchElectronics
-    - name: Engineering Supplies
+    - name: Engineering Materials
       entries:
       - id: CMSheetMetal50
         name: metal x50
-        points: 8
+        points: 6
         recommended: true
       - id: CMSheetPlasteel50
         name: plasteel x50
-        points: 10
+        points: 8
         recommended: true
-      - id: CMAPCElectronics
+      - id: AU14HescoKit
+        name: HESCO barricade kit
+        points: 4
+        recommended: true
+      - id: CMSandbagEmpty50
+        name: sandbags x50
+        points: 4
+      - id: RMCPlankWood
+        name: wood x50
+        points: 2
+    - name: Engineering Supplies
+      entries:
+      - id: CMFoldingBarricadesMB6x3
+        name: MB-6 folding barricade x3
+        points: 2
+      - id: AU14MaintenanceJack
+        points: 2
+      - id: RMCES11MobileFuelCanister
+        points: 4
+      - id: RMCMagazineSMGNailgun
+        points: 2
+      - id: RMCEngineerKit
         points: 2
       - id: DoorElectronics
         points: 2
-      - id: CMUDeployableZLevelLadder
-        points: 10
+    - name: Power Generation
+      entries:
+      - id: RMCPowerCell
+        points: 2
       - id: RMCPowerCellHigh
-        points: 3
+        points: 4
       - id: RMCPowerCellSuper
-        points: 8
-      - id: RMCMagazineSMGNailgun
-        points: 5
-    #- id: CMES11MobileFuelCanister
-    #  points: 4
+        points: 6
+      - id: CMAPCElectronics
+        points: 2
+      - id: RMCPortableGeneratorPacmanMachineCircuitBoard
+        name: PACMAN generator machine board
+        points: 4
+      - id: RMCPortableGeneratorSuperPacmanMachineCircuitboard
+        name: super PACMAN generator machine board
+        points: 6
+      - id: CMSheetPhoron
+        name: phoron x50
+        points: 2
+      - id: SheetUranium
+        name: uranium x30
+        points: 4
     - name: Explosives
       entries:
       - id: RMCExplosivePlastic
-        points: 5
-      - id: RMCExplosiveBreachingCharge
-        points: 8
+        points: 4
+      - id: AU14Bangalore
+        points: 6
         recommended: true
+      - id: RMCExplosiveBreachingCharge
+        points: 6
+      - id: RMCPacketGrenadeMetalFoamFilled
+        points: 8
+      - id: RMCRocketM5510Brute
+        points: 4
     - name: Utilities
       entries:
       - id: RMCSynthResetKey
-        points: 5
+        points: 4
 
 - type: entity
   parent: ColMarTechBase
@@ -1158,6 +1323,20 @@
         amount: 100
       - id: RMCMagazineSMGType19Drum
         amount: 40
+    - name: Magazine Boxes
+      entries:
+      - id: CMUBoxMagazineRifleAG80
+        amount: 2
+      - id: RMCBoxMagazinePistolType73
+        amount: 2
+    - name: Ammo Boxes
+      entries:
+      - id: CMUBoxBulletsRifleAG80
+        amount: 5
+      - id: RMCBoxBulletsSMG
+        amount: 5
+      - id: CMUBoxBulletsPistolType73
+        amount: 5
     - name: explosives
       entries:
       - id: AU14PacketGrenadeHighExplosiveUPPFilled
@@ -1166,6 +1345,8 @@
         amount: 4
       - id: AU14PacketGrenadeSmokeUPPFilled
         amount: 6
+      - id: RMCPacketGrenadeWhitePhosphorusFilled
+        amount: 3
       - id: AU14PacketGrenadeTearGasFilled
         amount: 3
       - id: RMCBoxClaymoreMineFilled
@@ -1208,6 +1389,12 @@
         amount: 4
       - id: RMCOuterClothingExternalWebbing
         amount: 4
+    - name: Pouches
+      entries:
+      - id: RMCPouchMagazineLarge
+        amount: 10
+      - id: RMCPouchMagazinePistolLarge
+        amount: 10
     - name: Devices
       entries:
       - id: AU14PowerCellSmartgunUPP
@@ -1215,6 +1402,8 @@
       - id: RMCIntelDetector
         amount: 4
       - id: RMCFulton20
+        amount: 4
+      - id: RMCOverwatchCameraTripod
         amount: 4
       - id: RMCSentryLaptop
         amount: 4
@@ -1225,6 +1414,28 @@
       - id: AU14BackpackRTOPackDesert
         amount: 1
       - id: AU14BackpackRTOPackGray
+        amount: 1
+    - name: Materials
+      entries:
+      - id: CMSheetMetal
+        amount: 4
+      - id: CMSheetPlasteel50
+        amount: 4
+      - id: CMSandbagEmpty50
+        amount: 8
+      - id: AU14HescoKit
+        amount: 30
+      - id: RMCSheetPlastic
+        amount: 4
+      - id: RMCSheetAluminum
+        amount: 4
+      - id: CMSheetGlass
+        amount: 5
+      - id: RMCSheetCardboard
+        amount: 5
+      - id: CMSheetPhoron
+        amount: 1
+      - id: SheetUranium
         amount: 1
     - name: Tents
       entries:
@@ -1244,3 +1455,68 @@
       entries:
       - id: AU14FlagCarriableUPP
         amount: 1
+
+- type: entity
+  parent: ColMarTechBase
+  id: AU14UPPShipsideUniformVendor
+  name: UPP shipside uniform vendor
+  description: A stripped-down dispenser rack stocked with off-duty uniforms, footwear, and light personal gear for wear aboard ship.
+  components:
+  - type: AccessReader
+    access: [ [ "AU14AccessGovforSquad" ], [ "AU14AccessOpforSquad" ] ]
+  - type: Sprite
+    sprite: _AU14/Structures/Vendors/uscmgearrack.rsi
+  - type: CMAutomatedVendor
+    sections:
+    - name: Softcovers
+      entries:
+      - id: AU14UPPPatrolCap
+        amount: 20
+      - id: CMHeadCapSPPBeret
+        amount: 15
+      - id: AU14UPPBoonie
+        amount: 15
+      - id: AU14UPPUshanka
+        amount: 40
+    - name: Fatigues
+      entries:
+      - id: AU14FatiguesUPP
+        amount: 40
+    - name: Footwear
+      entries:
+      - id: RMCBootsSPPBlack
+        amount: 20
+      - id: RMCBootsSPP
+        amount: 40
+    - name: Mask
+      entries:
+      - id: CMMaskCoif
+        amount: 20
+      - id: RMCMaskScarfBlack
+        amount: 20
+      - id: RMCMaskScarfGray
+        amount: 20
+      - id: RMCMaskTornScarfGreen
+        amount: 20
+      - id: RMCMaskTornScarfDesert
+        amount: 20
+      - id: RMCMaskTornScarfSnow
+        amount: 20
+      - id: RMCMaskTornScarfBlack
+        amount: 20
+      - id: RMCMaskSmockBlack
+        amount: 20
+      - id: RMCMaskNeckerchiefGray
+        amount: 20
+    - name: Glasses
+      entries:
+      - id: AU14GlassesBiMex
+        amount: 25
+      - id: AU14GlassesBiMexOrange
+        amount: 25
+      - id: RMCGlassesTriMaxBronze
+        amount: 25
+    - name: Bag
+      entries:
+      - id: CMSatchelMarine
+        amount: 40

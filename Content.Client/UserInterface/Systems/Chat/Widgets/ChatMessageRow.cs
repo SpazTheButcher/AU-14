@@ -3,6 +3,7 @@ using System.Numerics;
 using Content.Client.Stylesheets;
 using Content.Client.Resources;
 using Content.Shared._CMU14.Ghost;
+using Content.Shared._CMU14.Xenonids.Watch;
 using Content.Shared.Chat;
 using Robust.Client.Console;
 using Robust.Client.Graphics;
@@ -27,13 +28,18 @@ public sealed partial class ChatMessageRow : PanelContainer
 
         var accent = accentOverride ?? GetAccent(message, textColor);
         var metrics = GetMetrics(fontSize);
+
+        // Messages with a custom background (e.g. examine echoes) get a full box outline and some
+        // breathing room, so a run of them doesn't melt into one undifferentiated block of color.
+        var isBoxed = message.Display?.BackgroundColorOverride != null;
+
         HorizontalExpand = true;
-        Margin = new Thickness(0, 0, 0, metrics.OuterBottomMargin);
+        Margin = new Thickness(0, 0, 0, isBoxed ? Math.Max(metrics.OuterBottomMargin, 4) : metrics.OuterBottomMargin);
         PanelOverride = new StyleBoxFlat
         {
-            BackgroundColor = GetBackground(message.Channel),
+            BackgroundColor = GetBackground(message),
             BorderColor = accent,
-            BorderThickness = new Thickness(2, 0, 0, 0),
+            BorderThickness = isBoxed ? new Thickness(2, 2, 2, 2) : new Thickness(2, 0, 0, 0),
             ContentMarginLeftOverride = 4,
             ContentMarginRightOverride = 4,
             ContentMarginTopOverride = metrics.VerticalPadding,
@@ -69,8 +75,14 @@ public sealed partial class ChatMessageRow : PanelContainer
 
         if (message.GhostFollowEntity.Valid)
         {
-            var followButton = CreateFollowButton(message, metrics);
+            var followButton = CreateFollowButton(message, metrics, textColor);
             row.AddChild(followButton);
+        }
+
+        if (message.XenoWatchEntity.Valid)
+        {
+            var watchButton = CreateXenoWatchButton(message, metrics, textColor);
+            row.AddChild(watchButton);
         }
 
         _messageLabel = new RichTextLabel
@@ -95,24 +107,64 @@ public sealed partial class ChatMessageRow : PanelContainer
         row.AddChild(_repeatBadge);
     }
 
-    private Button CreateFollowButton(ChatMessage message, RowMetrics metrics)
+    private Button CreateFollowButton(ChatMessage message, RowMetrics metrics, Color textColor)
     {
         var followButtonSize = new Vector2(metrics.FollowButtonSize, metrics.FollowButtonSize);
+        var followButtonColor = textColor.WithAlpha(1f);
         var followButton = new Button
         {
             Text = Loc.GetString("cmu-chat-manager-follow-button"),
             ToolTip = Loc.GetString("cmu-chat-manager-follow-button-tooltip"),
             MinSize = followButtonSize,
             MaxSize = followButtonSize,
-            Margin = new Thickness(2, -1, 2, 0),
+            Margin = new Thickness(2, 5, 2, 0),
+            ModulateSelfOverride = followButtonColor,
             VerticalAlignment = VAlignment.Top,
             StyleClasses = { StyleNano.StyleClassChatGhostFollowButton }
         };
 
         followButton.Label.HorizontalExpand = true;
+        followButton.Label.HorizontalAlignment = HAlignment.Center;
+        followButton.Label.VerticalAlignment = VAlignment.Center;
         followButton.Label.Align = Label.AlignMode.Center;
+        followButton.Label.FontColorOverride = followButtonColor;
         followButton.OnPressed += _ => _consoleHost.ExecuteCommand($"{CMUGhostFollowCommand.CommandName} {message.GhostFollowEntity}");
         return followButton;
+    }
+
+    private Button CreateXenoWatchButton(ChatMessage message, RowMetrics metrics, Color textColor)
+    {
+        var watchButton = CreateChatActionButton(
+            Loc.GetString("cmu-chat-manager-xeno-watch-button"),
+            Loc.GetString("cmu-chat-manager-xeno-watch-button-tooltip"),
+            metrics,
+            textColor);
+        watchButton.OnPressed += _ => _consoleHost.ExecuteCommand($"{CMUXenoWatchCommand.CommandName} {message.XenoWatchEntity}");
+        return watchButton;
+    }
+
+    private Button CreateChatActionButton(string text, string toolTip, RowMetrics metrics, Color textColor)
+    {
+        var buttonSize = new Vector2(metrics.FollowButtonSize, metrics.FollowButtonSize);
+        var buttonColor = textColor.WithAlpha(1f);
+        var button = new Button
+        {
+            Text = text,
+            ToolTip = toolTip,
+            MinSize = buttonSize,
+            MaxSize = buttonSize,
+            Margin = new Thickness(2, 5, 2, 0),
+            ModulateSelfOverride = buttonColor,
+            VerticalAlignment = VAlignment.Top,
+            StyleClasses = { StyleNano.StyleClassChatGhostFollowButton }
+        };
+
+        button.Label.HorizontalExpand = true;
+        button.Label.HorizontalAlignment = HAlignment.Center;
+        button.Label.VerticalAlignment = VAlignment.Center;
+        button.Label.Align = Label.AlignMode.Center;
+        button.Label.FontColorOverride = buttonColor;
+        return button;
     }
 
     public void SetRepeatCount(int count)
@@ -141,14 +193,14 @@ public sealed partial class ChatMessageRow : PanelContainer
     private static RowMetrics GetMetrics(int? fontSize)
     {
         if (fontSize == null)
-            return new RowMetrics(2, 4, 0, 1.06f, 42, 58, 25, 18);
+            return new RowMetrics(2, 4, 0, 1.06f, 42, 58, 25, 16);
 
         return fontSize.Value switch
         {
-            <= 9 => new RowMetrics(1, 3, 0, 1.0f, 34, 46, 20, 16),
-            <= 11 => new RowMetrics(1, 3, 0, 1.02f, 38, 52, 22, 17),
-            <= 13 => new RowMetrics(2, 4, 0, 1.04f, 40, 56, 24, 18),
-            _ => new RowMetrics(2, 4, 0, 1.06f, 42, 58, 25, 20)
+            <= 9 => new RowMetrics(1, 3, 0, 1.0f, 34, 46, 20, 14),
+            <= 11 => new RowMetrics(1, 3, 0, 1.02f, 38, 52, 22, 15),
+            <= 13 => new RowMetrics(2, 4, 0, 1.04f, 40, 56, 24, 16),
+            _ => new RowMetrics(2, 4, 0, 1.06f, 42, 58, 25, 18)
         };
     }
 
@@ -193,8 +245,13 @@ public sealed partial class ChatMessageRow : PanelContainer
             && string.Equals(display.ChannelLabel, "RAD", StringComparison.OrdinalIgnoreCase);
     }
 
-    private static Color GetBackground(ChatChannel channel)
+    private static Color GetBackground(ChatMessage message)
     {
+        if (message.Display?.BackgroundColorOverride is { } backgroundOverride)
+            return backgroundOverride;
+
+        var channel = message.Channel;
+
         if ((channel & ChatChannel.AdminRelated) != 0)
             return Color.FromHex("#23151e");
 

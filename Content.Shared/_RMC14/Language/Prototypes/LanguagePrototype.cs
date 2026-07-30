@@ -9,6 +9,15 @@ namespace Content.Shared._RMC14.Language.Prototypes;
 [Prototype]
 public sealed partial class LanguagePrototype : IPrototype
 {
+
+    /// <summary>
+    /// Languages that share vocabulary with this one.
+    /// Key is the sister language ID, value is similarity (0.0 - 1.0).
+    /// Relationship is automatically bidirectional — you only need to define it on one side.
+    /// </summary>
+    [DataField]
+    public Dictionary<ProtoId<LanguagePrototype>, float> SisterLanguages = new();
+
     public const float DefaultWordComprehensionValue = 0.0f;
     public const float DefaultClearComprehensionThresholdValue = 0.6f;
     public const float DefaultPartialComprehensionThresholdValue = 0.2f;

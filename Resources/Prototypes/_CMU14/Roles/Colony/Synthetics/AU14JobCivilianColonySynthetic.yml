@@ -68,6 +68,10 @@
     - FrontalLisp
     - NonResuscitable
     - Epilepsy
+    - CMUProstheticLeftArm
+    - CMUProstheticRightArm
+    - CMUProstheticLeftLeg
+    - CMUProstheticRightLeg
   ranks:
     RMCRankSyntheticColonist: []
   startingGear: AU14GearCivilianColonySynthetic
@@ -76,10 +80,12 @@
   joinNotifyCrew: false
   supervisors: au14-job-supervisors-colonycivilian
   whitelisted: true
-  whitelistParent: AU14JobGeneralWhitelist
+  whitelistParent: CMUJobSyntheticWhitelist
+  isSynthetic: true
   accessGroups:
   - Colonist
   - auadmin
+  - auheadsofcolony
   roleWeight: 0.25
 
 - type: startingGear
@@ -107,19 +113,25 @@
   points: 7
   groups:
   - ColonySynthSpecializationAU14
+  - SynthBackpackAU14
   - ColonySynthUniformAU14
+  - ColonySynthSuitAU14
+  - ColonySynthHeadwearAU14
   - ColonySynthPouchesLeftAU14
   - ColonySynthPouchesRightAU14
   - ColonySynthSuitSpecialAU14
   - ColonySynthBeltAU14
   - SynthGlovesAU14
-  - SynthBackpackAU14
   - SynthEquipmentAU14
   - SynthGlassesAU14
   - SynthMasksAU14
+  - ForceSynthResetKeyAU14
   - PaperworkRMC
   - RecreationalRMC
   - CannedDrinksAU14
   - SmokablesRMC
+  - EyewearRMC
+  - MasksRMC
+  - HeadwearCLFAU14
 
 # ├──[ orbital ]─────────────────────────────────────────────────────┤

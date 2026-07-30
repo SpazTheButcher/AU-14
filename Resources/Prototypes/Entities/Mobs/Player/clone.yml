@@ -26,6 +26,18 @@
   - PermanentBlindness
   - Snoring
   - Unrevivable
+  - SlowRunner
+  - CMUTileMovement
+  - RespiratoryStrain
+  - Anemic
+  - DrugAllergy
+  - Panic
+  - NicotineAddiction
+  - Epilepsy
+  - CMUProstheticLeftArm
+  - CMUProstheticRightArm
+  - CMUProstheticLeftLeg
+  - CMUProstheticRightLeg
   # job specific
   - BibleUser
   - CommandStaff

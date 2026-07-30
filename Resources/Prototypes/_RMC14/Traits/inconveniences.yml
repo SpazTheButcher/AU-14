@@ -43,6 +43,67 @@
   description: au14-trait-epilepsy-desc
   category: Disabilities
   components:
-    - type: Narcolepsy
-      timeBetweenIncidents: 3600, 4600
-      durationOfIncident: 3, 9
+    - type: Epilepsy
+
+- type: trait
+  id: SlowRunner
+  name: au14-trait-slowrunner-name
+  description: au14-trait-slowrunner-desc
+  category: Disabilities
+  components:
+    - type: SlowRunner
+
+- type: trait
+  id: Asthmatic
+  name: au14-trait-asthmatic-name
+  description: au14-trait-asthmatic-desc
+  category: Disabilities
+  components:
+    - type: RespiratoryStrain
+  traitGear: CMUAsthmaInhaler
+
+- type: trait
+  id: Anemic
+  name: au14-trait-anemic-name
+  description: au14-trait-anemic-desc
+  category: Disabilities
+  components:
+    - type: Anemic
+
+- type: trait
+  id: RandomDrugAllergy
+  name: au14-trait-drugallergy-name
+  description: au14-trait-drugallergy-desc
+  category: Disabilities
+  components:
+    - type: DrugAllergy
+  traitGear: CMUEpinephrineAutoInjector
+
+- type: trait
+  id: PanicProne
+  name: au14-trait-panicprone-name
+  description: au14-trait-panicprone-desc
+  category: Disabilities
+  components:
+    - type: Panic
+
+- type: trait
+  id: NicotineAddiction
+  name: au14-trait-nicotineaddiction-name
+  description: au14-trait-nicotineaddiction-desc
+  category: Disabilities
+  components:
+    - type: NicotineAddiction
+
+- type: trait
+  id: Nearsighted
+  name: au14-trait-nearsighted-name
+  description: au14-trait-nearsighted-desc
+  category: Disabilities
+  traitGear: RMCHipsterGlasses
+  whitelist:
+    components:
+      - Blindable
+  components:
+    - type: PermanentBlindness
+      blindness: 4

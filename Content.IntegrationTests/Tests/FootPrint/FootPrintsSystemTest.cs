@@ -38,7 +38,7 @@ public sealed class FootPrintsSystemTest
 ";
 
     [Test]
-    public async Task StainedWalkingDoesNotSpawnFootprintEntitiesButDraggingSpawnsDecal()
+    public async Task StainedWalkingAndDraggingSpawnUncappedDecals()
     {
         await using var pair = await PoolManager.GetServerClient();
         var server = pair.Server;
@@ -69,14 +69,18 @@ public sealed class FootPrintsSystemTest
                 SetStainedSteps(alivePrints);
                 SetStainedSteps(criticalPrints);
 
-                xform.SetLocalPosition(aliveMover, new Vector2(1.5f, 0.5f));
-                Assert.That(CountFootprints(entMan, aliveMover), Is.EqualTo(0));
+                MoveWithinTile(xform, aliveMover);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(CountFootprints(entMan, aliveMover), Is.EqualTo(0));
+                    Assert.That(CountDecals(entMan, grid.Owner), Is.EqualTo(9));
+                });
 
-                xform.SetLocalPosition(criticalMover, new Vector2(1.5f, 0.5f));
+                MoveWithinTile(xform, criticalMover);
                 Assert.Multiple(() =>
                 {
                     Assert.That(CountFootprints(entMan, criticalMover), Is.EqualTo(0));
-                    Assert.That(CountDecals(entMan, grid.Owner), Is.EqualTo(1));
+                    Assert.That(CountDecals(entMan, grid.Owner), Is.EqualTo(18));
                 });
             }
             finally
@@ -89,11 +93,24 @@ public sealed class FootPrintsSystemTest
         await pair.CleanReturnAsync();
     }
 
+    private static void MoveWithinTile(SharedTransformSystem xform, EntityUid mover)
+    {
+        for (var i = 0; i < 9; i++)
+        {
+            var position = i % 2 == 0
+                ? new Vector2(1.7f, 0.7f)
+                : new Vector2(1.9f, 0.9f);
+
+            xform.SetLocalPosition(mover, position);
+        }
+    }
+
     private static void SetStainedSteps(FootPrintsComponent prints)
     {
         prints.PrintsColor = Color.Red;
         prints.StepSize = 0.1f;
         prints.DragSize = 0.1f;
+        prints.ColorReduceAlpha = 0f;
     }
 
     private static int CountFootprints(IEntityManager entMan, EntityUid owner)
