@@ -8,6 +8,7 @@ meta:
   entityCount: 17002
 maps:
 - 1
+grids:
 - 1
 orphans: []
 nullspace: []

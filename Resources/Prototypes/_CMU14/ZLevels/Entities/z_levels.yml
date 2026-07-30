@@ -91,6 +91,9 @@
   components:
   - type: Sprite
     state: ramptop
+
+- type: entity
+  parent: CMUMultiZStairsNoPreview
   id: CMUMultiZStairsStrataSolo
   components:
   - type: Sprite
