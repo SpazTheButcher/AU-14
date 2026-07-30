@@ -68,6 +68,7 @@
 
 - type: reaction
   id: CMDexalin
+  quantized: true
   reactants:
     RMCOxygen:
       amount: 2

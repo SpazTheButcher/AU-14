@@ -299,7 +299,7 @@
     solutions:
       food:
         reagents:
-        - ReagentId: CMUUrishiol
+        - ReagentId: Histamine
           Quantity: 15
   - type: Produce
     seedId: deathNettle
