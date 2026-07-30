@@ -194,6 +194,7 @@ namespace Content.Shared.Chemistry.Reagent
             var entMan = IoCManager.Resolve<IEntityManager>();
             var random = IoCManager.Resolve<IRobustRandom>();
             var args = new EntityEffectReagentArgs(plantHolder.Value, entMan, null, solution, amount.Quantity, this, null, 1f);
+            var hargs = new EntityEffectHydroArgs(plantHolder.Value, entMan, null, solution, amount.Quantity, this, null, 1f);
             foreach (var plantMetabolizable in PlantMetabolisms)
             {
                 if (!plantMetabolizable.ShouldApply(args, random))
@@ -207,6 +208,16 @@ namespace Content.Shared.Chemistry.Reagent
                 }
 
                 plantMetabolizable.Effect(args);
+            }
+            if (Metabolisms is not null)
+            {
+                foreach (var (_, meta) in Metabolisms)
+                {
+                    foreach (var effect in meta.Effects)
+                    {
+                        effect.Effect(hargs);
+                    }
+                }
             }
         }
 

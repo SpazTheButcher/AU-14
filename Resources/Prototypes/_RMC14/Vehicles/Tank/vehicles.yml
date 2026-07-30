@@ -545,10 +545,6 @@
     layers:
     - map: [ base ]
       state: tank_base
-    - map: [ armor ]
-      sprite: _RMC14/Structures/Vehicles/tank.rsi
-      state: ARMOR
-      visible: false
     - map: [ primary ]
       state: tank_turret_0
     - map: [ secondary ]
@@ -563,11 +559,6 @@
       state: wheels_1
   - type: ItemSlots
     slots:
-      armor:
-        disableEject: true
-        whitelist:
-          components:
-          - HardpointItem
       primary:
         startingItem: VehicleTankTurretTWE
         disableEject: true
