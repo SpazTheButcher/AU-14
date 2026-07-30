@@ -8382,5 +8382,90 @@
   id: 528
   time: '2026-07-29T02:50:10.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1735
+- author: troytroy400
+  changes:
+  - message: Added a Character tab to the character creator. Players can set their
+      height, weight, build, medical history, criminal history, general history, small
+      'at a glance' flavor text (shown when shift clicking) and extended flavor text
+      (shown in the detailed examine context menu) in the new tab.
+    type: Add
+  - message: Added GOVFOR, OPFOR and Colony personnel roster consoles that list faction
+      members and their character descriptions (CLF members appear disguised in the
+      colony console). Medical history and your character's eye/hair/skin color will
+      auto populate in the consoles with aliments based on your character's selection.
+    type: Add
+  - message: Added a "Hide Meta Information" toggle to keep certain description fields
+      private from other players Detailed Examine if you wish to keep information
+      purely discernable IC or don't trust other players not to metagame.
+    type: Add
+  - message: Age, Allegiance, Pronouns and Origin moved from the Appearance tab into
+      the new Character tab.
+    type: Tweak
+  - message: Updated the USS Bush with the new personnel roster consoles and did some
+      minor bug fixing.
+    type: Tweak
+  - message: GOVFOR Medical and Engineering doors now correctly require Medical/Engineering
+      access instead of accepting any generic GOVFOR access.
+    type: Fix
+  id: 529
+  time: '2026-07-29T20:50:23.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1737
+- author: Piticzu
+  changes:
+  - message: The Warlock's plasma pool is now 800 instead of 1700, and its plasma
+      regeneration on weeds is 6 instead of 60.
+    type: Tweak
+  - message: Psychic Blast now costs 100 plasma from 75, 10 second cooldown from 8,
+      and reaches 6 tiles instead of 7.
+    type: Tweak
+  - message: Psychic Crush now reaches 6 tiles instead of 7.
+    type: Tweak
+  - message: Psychic Shield costs 300 plasma to raise, and detonating it is now free.
+    type: Tweak
+  - message: Psychic Shield now reflects caught projectiles straight back instead
+      of scattering them.
+    type: Tweak
+  - message: Psychic Crush no longer crushes through walls and windows.
+    type: Fix
+  - message: Xenos bumping into a Warlock no longer knock it out of its Psychic Shield.
+    type: Fix
+  - message: The Warlock's ability descriptions now state their costs, ranges, durations
+      and effects.
+    type: Fix
+  id: 530
+  time: '2026-07-29T22:06:12.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1730
+- author: ver0098
+  changes:
+  - message: MOU53 replaced by olympiets breech action shotgun in upp req.
+    type: Add
+  id: 531
+  time: '2026-07-29T22:06:37.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1739
+- author: troytroy400
+  changes:
+  - message: Added support for single vehicle weapons to take multiple ammo types.
+    type: Add
+  - message: Added APFSDS, HEAT, HE, canister, HESH and napalm variants of the LTB
+      cannon shell
+    type: Add
+  - message: Removed APHE rounds from the LTB cannon.
+    type: Remove
+  - message: The LTB cannon now ejects spent shells after firing.
+    type: Add
+  - message: Added HEFA, WPDP and HIAM variants of the tank grenade launcher round.
+    type: Add
+  - message: Halved the tank grenade launcher's fire rate.
+    type: Tweak
+  - message: fix some test cases.
+    type: Fix
+  - message: Most tank weapons can no-longer put rounds in reserve and must be reloaded
+      after running dry.
+    type: Tweak
+  - message: Added a tracer round for the M56 tank cupola.
+    type: Add
+  id: 532
+  time: '2026-07-30T00:02:44.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1740
 Name: CMU
 Order: -1
