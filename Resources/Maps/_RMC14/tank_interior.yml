@@ -1,11 +1,11 @@
 meta:
   format: 7
   category: Map
-  engineVersion: v278.0.0
+  engineVersion: 264.0.2-fix-physics
   forkId: ""
   forkVersion: ""
-  time: 07/30/2026 10:00:13
-  entityCount: 41
+  time: 03/12/2026 10:11:34
+  entityCount: 40
 maps:
 - 1
 grids:
@@ -108,13 +108,6 @@ entities:
       data:
         chunkSize: 4
     - type: GasTileOverlay
-- proto: AU14VehicleRadioSet
-  entities:
-  - uid: 500
-    components:
-    - type: Transform
-      pos: 1.5,-0.5
-      parent: 2
 - proto: RMCRotaryPhoneWallmount
   entities:
   - uid: 28
@@ -133,10 +126,6 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 1.4387805,-0.43172377
       parent: 2
-    missingComponents:
-    - Corrodible
-    - Damageable
-    - Destructible
 - proto: RMCSeatTankGunner
   entities:
   - uid: 26
@@ -145,50 +134,12 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 0.70269585,-2.3210986
       parent: 2
-    missingComponents:
-    - Corrodible
-    - Damageable
-    - Destructible
-- proto: RMCWallInvisibleBulletBlocker
+- proto: VehicleTankAmmoLoader
   entities:
-  - uid: 32
+  - uid: 38
     components:
     - type: Transform
-      pos: 1.5094132,-3.3260386
-      parent: 2
-  - uid: 34
-    components:
-    - type: Transform
-      rot: 1.5707963267948966 rad
-      pos: 2.0011587,-2.441083
-      parent: 2
-  - uid: 35
-    components:
-    - type: Transform
-      pos: 0.4718294,-3.3309548
-      parent: 2
-  - uid: 46
-    components:
-    - type: Transform
-      rot: 1.5707963267948966 rad
-      pos: 2.5,-0.5
-      parent: 2
-- proto: RMCWallInvisibleBulletLightBlocker
-  entities:
-  - uid: 33
-    components:
-    - type: Transform
-      pos: 1.5,-3.5
-      parent: 2
-  - uid: 36
-    components:
-    - type: Transform
-      pos: 0.5,-3.5
-      parent: 2
-  - uid: 37
-    components:
-    - type: Transform
-      pos: 2.5,-3.5
+      pos: 1.340075,-1.3274913
       parent: 2
 - proto: VehicleInteriorExtinguisher
   entities:
@@ -198,10 +149,6 @@ entities:
       rot: -1.5707963267948966 rad
       pos: 0.8297322,0.3712867
       parent: 2
-    - type: Physics
-      canCollide: False
-    - type: Fixtures
-      fixtures: {}
 - proto: VehicleInteriorNanomed
   entities:
   - uid: 27
@@ -209,15 +156,6 @@ entities:
     - type: Transform
       pos: 0.28445482,0.37976068
       parent: 2
-- proto: VehicleTankAmmoLoader
-  entities:
-  - uid: 38
-    components:
-    - type: Transform
-      pos: 1.340075,-1.3274913
-      parent: 2
-    missingComponents:
-    - InteractionTransparency
 - proto: VehicleTankBack1
   entities:
   - uid: 21
@@ -389,16 +327,52 @@ entities:
     - type: Transform
       pos: 2.5,0.5
       parent: 2
-- proto: VehicleViewportUnanchored
+- proto: RMCWallInvisibleBulletBlocker
   entities:
-  - uid: 39
+  - uid: 32
+    components:
+    - type: Transform
+      pos: 1.5094132,-3.3260386
+      parent: 2
+  - uid: 34
     components:
     - type: Transform
       rot: 1.5707963267948966 rad
-      pos: 0.30790615,-0.14253885
+      pos: 2.0011587,-2.441083
       parent: 2
-    - type: Fixtures
-      fixtures: {}
-    missingComponents:
-    - InteractionTransparency
+  - uid: 35
+    components:
+    - type: Transform
+      pos: 0.4718294,-3.3309548
+      parent: 2
+  - uid: 46
+    components:
+    - type: Transform
+      rot: 1.5707963267948966 rad
+      pos: 2.5,-0.5
+      parent: 2
+- proto: RMCWallInvisibleBulletLightBlocker
+  entities:
+  - uid: 33
+    components:
+    - type: Transform
+      pos: 1.5,-3.5
+      parent: 2
+  - uid: 36
+    components:
+    - type: Transform
+      pos: 0.5,-3.5
+      parent: 2
+  - uid: 37
+    components:
+    - type: Transform
+      pos: 2.5,-3.5
+      parent: 2
+- proto: AU14VehicleRadioSet
+  entities:
+  - uid: 500
+    components:
+    - type: Transform
+      pos: 1.5,-0.5
+      parent: 2
 ...
