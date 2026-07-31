@@ -45,9 +45,6 @@ public sealed partial class CMUPathogenSporeCloudSystem : EntitySystem
         if (cloud.Comp.Inhaling)
             return false;
 
-        if (HasComp<CMUPathogenWalkerComponent>(target))
-            return false;
-
         if (HasComp<SynthComponent>(target))
             return false;
 
