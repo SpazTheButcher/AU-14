@@ -245,9 +245,9 @@ public sealed class ScenarioPlanMarkerCoverageTest
 - type: partySpawn
   id: ScenarioPlanStandaloneCooldownThirdPartySpawn
   leadersToSpawn:
-    MobHuman: 1
+    MobHuman: 2
   gruntsToSpawn:
-    MobHuman: 1
+    MobHuman: 3
   spawnTogether: false
   Markers:
     Leader: scenario-plan-cooldown
@@ -1672,6 +1672,41 @@ public sealed class ScenarioPlanMarkerCoverageTest
                 thirdPartySystem.SpawnThirdParty(thirdParty, partySpawn, false),
                 Is.False,
                 "Scenario Plan standalone third-party markers should not be immediately reused while their cooldown is active.");
+        });
+
+        await pair.CleanReturnAsync();
+    }
+
+    [Test]
+    public async Task RoundStartThirdPartyReusesMarkersOnCooldownWhenRequired()
+    {
+        await using var pair = await PoolManager.GetServerClient();
+        var server = pair.Server;
+        var map = await pair.CreateTestMap();
+
+        await server.WaitPost(() =>
+        {
+            var entities = server.EntMan;
+
+            entities.SpawnEntity(StandaloneThirdPartyCooldownLeaderMarker, map.GridCoords);
+            entities.SpawnEntity(StandaloneThirdPartyCooldownMemberMarker, map.GridCoords);
+        });
+
+        await server.WaitAssertion(() =>
+        {
+            var prototypes = server.ResolveDependency<IPrototypeManager>();
+            var thirdPartySystem = server.System<ThirdPartySystem>();
+            var thirdParty = prototypes.Index<ThirdPartyPrototype>(StandaloneCooldownThirdParty);
+            var partySpawn = prototypes.Index<PartySpawnPrototype>(thirdParty.PartySpawn);
+
+            Assert.That(
+                thirdPartySystem.SpawnThirdParty(thirdParty, partySpawn, true),
+                Is.True,
+                "Round-start spawning should reuse a marker only after its distinct marker pool is exhausted.");
+            Assert.That(
+                thirdPartySystem.SpawnThirdParty(thirdParty, partySpawn, true),
+                Is.True,
+                "Round-start spawning should be able to reuse matching markers that are already on cooldown.");
         });
 
         await pair.CleanReturnAsync();
