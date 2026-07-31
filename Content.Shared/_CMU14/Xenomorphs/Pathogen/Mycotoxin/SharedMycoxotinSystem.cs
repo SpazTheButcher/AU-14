@@ -58,6 +58,8 @@ public abstract class SharedMycotoxinSystem : EntitySystem
     {
         if (!HasComp<Content.Shared.Mobs.Components.MobStateComponent>(target))
             return false;
+        if (HasComp<CMUPathogenWalkerComponent>(target))
+            return false;
         if (HasComp<XenoComponent>(target) || HasComp<SynthComponent>(target))
             return false;
         if (!HasComp<InfectableComponent>(target))
