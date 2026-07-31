@@ -101,7 +101,7 @@
   - type: GunIgnoreContainerOwnerCollision
   - type: GunIgnorePrediction
   - type: Gun
-    fireRate: 0.3333
+    fireRate: 0.16665
     projectileSpeed: 18
     minAngle: 10
     maxAngle: 10
@@ -124,11 +124,11 @@
     capacity: 10
   - type: VehicleHardpointAmmo
     magazineSize: 10
-    maxStoredMagazines: 3
+    maxStoredMagazines: 1
   - type: GunFireArc
     arc: 120
   - type: RefillableByBulletBox
-    bulletType: VehicleAmmoBoxSmokeLauncher
+    bulletType: VehicleAmmoBoxGrenadeLauncher
   - type: GunMuzzleOffset
     offset: "0,0"
     useDirectionalOffsets: true
@@ -251,7 +251,7 @@
     accuracyMultiplierUnwielded: 5
   - type: BallisticAmmoProvider
     cycleable: false
-    proto: VehicleCartridgeSentry10x50mm
+    proto: CMUCartridgeCupolaTracer
     capacity: 500
   - type: VehicleHardpointAmmo
     magazineSize: 500
