@@ -15,6 +15,7 @@ using Content.Shared._CMU14.Medical.Injuries.Wounds;
 using Content.Shared.Body.Systems;
 using Robust.Shared.Prototypes;
 using Content.Shared.Containers.ItemSlots;
+using Content.Shared._CMU14.Xenomorphs.Pathogen.Walker;
 
 namespace Content.Shared._CMU14.Xenomorphs.Pathogen.Mycotoxin;
 
