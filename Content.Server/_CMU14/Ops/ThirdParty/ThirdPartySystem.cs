@@ -6,6 +6,7 @@ using Content.Server.AU14.Scenario;
 using Content.Server.AU14.VendorMarker;
 using Content.Server.Chat.Systems;
 using Content.Server.GameTicking;
+using Content.Server.GameTicking.Presets;
 using Content.Server.IdentityManagement;
 using Content.Server.Preferences.Managers;
 using Content.Shared._CMU14.Threats;
@@ -1027,11 +1028,25 @@ public sealed partial class ThirdPartySystem : EntitySystem
     public void StartThirdPartySpawning(ThreatPrototype threat,
         Dictionary<NetUserId, (ProtoId<JobPrototype>?, EntityUid)>? assignedJobs = null)
     {
+        StartThirdPartySpawning(threat, threat.ThirdPartyInterval, $"threat={threat.ID}", assignedJobs);
+    }
+
+    public void StartThirdPartySpawning(GamePresetPrototype preset,
+        Dictionary<NetUserId, (ProtoId<JobPrototype>?, EntityUid)>? assignedJobs = null)
+    {
+        StartThirdPartySpawning(null, preset.ThirdPartyInterval, $"preset={preset.ID}", assignedJobs);
+    }
+
+    private void StartThirdPartySpawning(ThreatPrototype? threat,
+        int intervalSeconds,
+        string scheduleContext,
+        Dictionary<NetUserId, (ProtoId<JobPrototype>?, EntityUid)>? assignedJobs)
+    {
         _currentThreat = threat;
         _thirdPartyList = _auRoundSystem.SelectedThirdParties.ToList();
         _nextThirdPartyIndex = 0;
         _spawnTimer = 0f;
-        _spawnInterval = TimeSpan.FromSeconds(Math.Max(1, threat.ThirdPartyInterval));
+        _spawnInterval = TimeSpan.FromSeconds(Math.Max(1, intervalSeconds));
 
         var roundstartCount = 0;
         foreach (ThirdPartyPrototype party in _thirdPartyList)
@@ -1042,7 +1057,7 @@ public sealed partial class ThirdPartySystem : EntitySystem
 
         ThirdPartyAssignmentCounts assignmentCounts = ThirdPartySystem.CountThirdPartyAssignments(assignedJobs);
         _sawmill.Info(
-            $"[ThirdPartySystem] Starting third-party queue: threat={threat.ID}, selected={_thirdPartyList.Count}, roundstart={roundstartCount}, interval={_spawnInterval}, assignedJobs={assignedJobs?.Count ?? 0}, assignedThirdPartyLeaders={assignmentCounts.Leaders}, assignedThirdPartyMembers={assignmentCounts.Members}.");
+            $"[ThirdPartySystem] Starting third-party queue: {scheduleContext}, selected={_thirdPartyList.Count}, roundstart={roundstartCount}, interval={_spawnInterval}, assignedJobs={assignedJobs?.Count ?? 0}, assignedThirdPartyLeaders={assignmentCounts.Leaders}, assignedThirdPartyMembers={assignmentCounts.Members}.");
 
         if (_thirdPartyList.Count == 0)
         {
