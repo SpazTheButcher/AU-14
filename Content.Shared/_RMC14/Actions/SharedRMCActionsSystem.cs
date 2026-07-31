@@ -3,6 +3,7 @@ using Content.Shared.Actions.Components;
 using Content.Shared.Actions.Events;
 using Content.Shared.Interaction;
 using Robust.Shared.Serialization;
+using Robust.Shared.Prototypes;
 
 namespace Content.Shared._RMC14.Actions;
 
