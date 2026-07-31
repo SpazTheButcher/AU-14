@@ -558,7 +558,7 @@ public sealed partial class RMCPullingSystem : EntitySystem
     {
         if (args.Target == ent.Comp.Pulling && args.Target != null)
         {
-            args.Range = 4.0f;
+            args.Range = Math.Max(args.Range, 4.0f);
         }
     }
 
@@ -566,7 +566,7 @@ public sealed partial class RMCPullingSystem : EntitySystem
     {
         if (args.Target == ent.Comp.Pulling && args.Target != null)
         {
-            args.Range = 4.0f;
+            args.Range = Math.Max(args.Range, 4.0f);
         }
     }
 
