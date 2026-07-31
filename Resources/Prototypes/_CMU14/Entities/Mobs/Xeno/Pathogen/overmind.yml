@@ -194,6 +194,18 @@
   name: Overmind
 
 - type: entity
+  id: CMU14XenoOvermindEyeOrder
+  parent: CMU14XenoOvermindBase
+  name: Overmind
+  categories: [ HideSpawnMenu, DoNotMap ]
+
+- type: entity
+  id: CMU14XenoOvermindPhysicalOrder
+  parent: CMU14XenoOvermindBase
+  name: Overmind
+  categories: [ HideSpawnMenu, DoNotMap ]
+
+- type: entity
   parent: StationAiHolo
   id: CMU14XenoOvermindEye
   name: overmind eye
