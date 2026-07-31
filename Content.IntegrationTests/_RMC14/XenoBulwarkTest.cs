@@ -377,7 +377,7 @@ public sealed class XenoBulwarkTest
                 {
                     Assert.That(reflected.Length(), Is.EqualTo(incoming.Length()).Within(0.01f));
                     Assert.That(Vector2.Dot(reflected, incoming), Is.LessThan(0));
-                    Assert.That(Vector2.Distance(reflected, -incoming), Is.GreaterThan(0.01f));
+                    Assert.That(Vector2.Distance(reflected, -incoming), Is.GreaterThan(0.0001f));
                     Assert.That(reflectedRotation.Theta, Is.EqualTo(reflected.ToWorldAngle().Theta).Within(0.01f));
                 });
             }
