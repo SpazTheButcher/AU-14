@@ -110,7 +110,7 @@
     attackRate: 2.5
     damage:
       groups:
-        Brute: 38
+        Brute: 55
   - type: CMArmor
     explosionArmor: 50
     xenoArmor: 15

@@ -221,6 +221,7 @@ public sealed class CMUXenoOvermindSystem : EntitySystem
     private void EnterEyeForm(Entity<CMUXenoOvermindComponent> ent)
     {
         SetIncorporealPhysics(ent.Owner, true);
+        SetActionOrder(ent, ent.Comp.EyeFormActionOrderId);
 
         if (_net.IsClient)
             return;
@@ -247,6 +248,7 @@ public sealed class CMUXenoOvermindSystem : EntitySystem
     {
         RemoveEye(ent);
         SetIncorporealPhysics(ent.Owner, false);
+        SetActionOrder(ent, ent.Comp.PhysicalFormActionOrderId);
 
         if (TryComp(ent.Owner, out EyeComponent? eyeComp))
         {
@@ -258,6 +260,13 @@ public sealed class CMUXenoOvermindSystem : EntitySystem
         }
 
         RemComp<RelayInputMoverComponent>(ent.Owner);
+    }
+
+    private void SetActionOrder(Entity<CMUXenoOvermindComponent> ent, string id)
+    {
+        var order = EnsureComp<RMCActionOrderComponent>(ent.Owner);
+        order.Id = id;
+        Dirty(ent.Owner, order);
     }
 
     private void OnWatch(Entity<CMUXenoOvermindComponent> ent, ref XenoWatchEvent args)

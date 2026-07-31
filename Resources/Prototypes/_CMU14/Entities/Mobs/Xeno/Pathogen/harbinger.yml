@@ -23,7 +23,7 @@
   - type: CMUXenoCyclone
     plasmaCost: 75
     baseRange: 2
-    baseDamage: 25
+    baseDamage: 30
   - type: CMUXenoMycotoxinInject
   - type: Xeno
     role: CMU14JobPathogenHarbinger
@@ -94,11 +94,15 @@
     attackRate: 2.0
     damage:
       groups:
-        Brute: 42
+        Brute: 45
+  - type: XenoTailStab
+    tailDamage:
+      groups:
+        Brute: 54
   - type: XenoDevour
   - type: CMArmor
     explosionArmor: 20
-    xenoArmor: 15
+    xenoArmor: 20
   - type: XenoClaws
     clawType: VerySharp
   - type: Tackle

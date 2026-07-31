@@ -127,7 +127,7 @@
     attackRate: 1.5
     damage:
       groups:
-        Brute: 15
+        Brute: 20
   - type: CMArmor
     explosionArmor: 10
   - type: Tackle
