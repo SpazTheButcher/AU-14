@@ -8467,5 +8467,211 @@
   id: 532
   time: '2026-07-30T00:02:44.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1740
+- author: ver0098
+  changes:
+  - message: FV150 LCT is now available in vehicle lift
+    type: Add
+  - message: NSG23 is now in WEYU PMC weapon vendor.
+    type: Add
+  - message: NSG23 (UBF) and MK221 now in WEYU PMC req
+    type: Add
+  - message: Corporate has allocated more funds into security, certain firearms are
+      now in disposal for emergencies.
+    type: Add
+  - message: longstreet/cheetah turret rotation speed has been increased
+    type: Tweak
+  - message: a viewport exterior has been added to longstreet interior
+    type: Add
+  - message: TWE CT now gets brute as a option in their vendor
+    type: Fix
+  - message: FORECON marksman now gets the M4RA Custom instead of the m49a2
+    type: Fix
+  id: 533
+  time: '2026-07-30T15:27:41.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1744
+- author: ver0098
+  changes:
+  - message: FV150 LCT is now available in vehicle lift
+    type: Add
+  - message: NSG23 is now in WEYU PMC weapon vendor.
+    type: Add
+  - message: NSG23 (UBF) and MK221 now in WEYU PMC req
+    type: Add
+  - message: Corporate has allocated more funds into security, certain firearms are
+      now in disposal for emergencies.
+    type: Add
+  - message: longstreet/cheetah turret rotation speed has been increased
+    type: Tweak
+  - message: a viewport exterior has been added to longstreet interior
+    type: Add
+  - message: TWE CT now gets brute as a option in their vendor
+    type: Fix
+  - message: FORECON marksman now gets the M4RA Custom instead of the m49a2
+    type: Fix
+  id: 534
+  time: '2026-07-30T15:27:41.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1744
+- author: MACMAN2003
+  changes:
+  - message: Plants are now susceptible to mutation. Be careful what berries you eat,
+      they may be poisonous.
+    type: Add
+  - message: You can now synthesize Ammonia and Diethylamine, both potent plant foods.
+    type: Add
+  id: 535
+  time: '2026-07-30T15:34:31.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1738
+- author: MACMAN2003
+  changes:
+  - message: Plants are now susceptible to mutation. Be careful what berries you eat,
+      they may be poisonous.
+    type: Add
+  - message: You can now synthesize Ammonia and Diethylamine, both potent plant foods.
+    type: Add
+  id: 536
+  time: '2026-07-30T15:34:31.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1738
+- author: johnnny34y
+  changes:
+  - message: Added a new primary for HAZOPS; the XM20A2. It's somewhere in-between
+      a rifle and and LMG.
+    type: Add
+  id: 537
+  time: '2026-07-31T04:19:03.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1742
+- author: johnnny34y
+  changes:
+  - message: Added a new primary for HAZOPS; the XM20A2. It's somewhere in-between
+      a rifle and and LMG.
+    type: Add
+  id: 538
+  time: '2026-07-31T04:19:03.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1742
+- author: blueDev2
+  changes:
+  - message: Added an adjustable default price to shop vendors. Newly stocked goods
+      are priced at the default price.
+    type: Tweak
+  id: 539
+  time: '2026-07-31T04:26:43.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1745
+- author: blueDev2
+  changes:
+  - message: Added an adjustable default price to shop vendors. Newly stocked goods
+      are priced at the default price.
+    type: Tweak
+  id: 540
+  time: '2026-07-31T04:26:43.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1745
+- author: peace-lock
+  changes:
+  - message: Added clandestine relay station to CLF cell kit.
+    type: Add
+  id: 541
+  time: '2026-07-31T04:27:09.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1746
+- author: peace-lock
+  changes:
+  - message: Added clandestine relay station to CLF cell kit.
+    type: Add
+  id: 542
+  time: '2026-07-31T04:27:09.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1746
+- author: MACMAN2003
+  changes:
+  - message: Hydroponics trays are no longer water soluble.
+    type: Fix
+  id: 543
+  time: '2026-07-31T04:27:31.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1747
+- author: MACMAN2003
+  changes:
+  - message: Hydroponics trays are no longer water soluble.
+    type: Fix
+  id: 544
+  time: '2026-07-31T04:27:31.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1747
+- author: deepdarkdepths
+  changes:
+  - message: Pulled targets are now always able to be targeted with harm mode, instead
+      of being stuck just out of range.
+    type: Add
+  - message: Fixed Queen Eye's leash breaking.
+    type: Fix
+  - message: Fixed various Queen Eye performance issues.
+    type: Fix
+  - message: Xenomorphs that lack plasma can use z-jump now.
+    type: Tweak
+  - message: Sentries can no longer be placed inside vehicles.
+    type: Fix
+  id: 545
+  time: '2026-07-31T05:44:22.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1741
+- author: deepdarkdepths
+  changes:
+  - message: Pulled targets are now always able to be targeted with harm mode, instead
+      of being stuck just out of range.
+    type: Add
+  - message: Fixed Queen Eye's leash breaking.
+    type: Fix
+  - message: Fixed various Queen Eye performance issues.
+    type: Fix
+  - message: Xenomorphs that lack plasma can use z-jump now.
+    type: Tweak
+  - message: Sentries can no longer be placed inside vehicles.
+    type: Fix
+  id: 546
+  time: '2026-07-31T05:44:22.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1741
+- author: JaSeNeSaJ
+  changes:
+  - message: ZLevel offset from 0.7 (22.5 pixels) to 0.75 (24 pixels)
+    type: Tweak
+  - message: MultiZ sprites for better look and new offset
+    type: Tweak
+  - message: 'Sheperds'': Increased WYGuard and Scientist jobslots by 1'
+    type: Tweak
+  - message: 'Sheperds'': Additional gear locker for WYGuards'
+    type: Add
+  id: 547
+  time: '2026-07-31T12:02:43.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1749
+- author: Michellechkya
+  changes:
+  - message: Added Ryan Gosling vibe
+    type: Add
+  - message: Added Police car
+    type: Add
+  - message: Added Ambulance
+    type: Add
+  - message: Added Hyperdyne systems Van
+    type: Add
+  - message: Added civilian different cargo trucks
+    type: Add
+  - message: Added Civilian armored truck
+    type: Add
+  - message: Added Civilian truck
+    type: Add
+  - message: Added Civilian van
+    type: Add
+  - message: Added garbage truck
+    type: Add
+  - message: Added mining truck
+    type: Add
+  - message: Mapped interior of ambulance
+    type: Map
+  - message: Mapped interior of Vans
+    type: Map
+  - message: Mapped interior of Trucks
+    type: Map
+  - message: Mapped interior of police Mono Supron
+    type: Map
+  - message: Mapped interior of civilian paddywagon
+    type: Map
+  - message: Remapped interior of CMB paddywagon
+    type: Map
+  id: 548
+  time: '2026-07-31T14:08:36.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1748
 Name: CMU
 Order: -1
