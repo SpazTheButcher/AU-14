@@ -82,6 +82,8 @@
   - type: MovementSpeedModifier
     baseWalkSpeed: 3.0
     baseSprintSpeed: 6.0
+  - type: RMCSize
+    size: Big
   - type: MeleeWeapon
     attackRate: 2.2
     damage:

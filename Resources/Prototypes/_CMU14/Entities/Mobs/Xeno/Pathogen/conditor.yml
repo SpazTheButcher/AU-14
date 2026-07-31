@@ -103,9 +103,11 @@
     damage:
       groups:
         Brute: 35
+  - type: RMCSize
+    size: Big
   - type: CMArmor
     explosionArmor: 10
-    xenoArmor: 10
+    xenoArmor: 15
   - type: Tackle
     min: 2
     max: 6

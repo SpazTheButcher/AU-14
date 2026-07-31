@@ -129,6 +129,8 @@
     name: cmu-job-name-pathogen-harbinger
   - type: Speech
     speechSounds: Pathogen
+  - type: RMCSize
+    size: Big
 
 - type: entity
   parent: CMU14XenoHarbingerBase
