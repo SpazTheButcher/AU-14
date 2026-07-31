@@ -230,7 +230,7 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
         }
 
         var attackerPos = TransformSystem.GetMapCoordinates(attacker);
-        if (mousePos.MapId != attackerPos.MapId || (attackerPos.Position - mousePos.Position).Length() > meleeComponent.Range)
+        if (mousePos.MapId != attackerPos.MapId || (attackerPos.Position - mousePos.Position).Length() > _rmcMeleeWeapon.RMCGetUserDisarmRange(attacker, target, meleeComponent))
             return;
 
         _rmcLagCompensation.SendLastRealTick(); // RMC14
