@@ -285,13 +285,14 @@ public sealed partial class PlantHolderSystem : EntitySystem
                 _popup.PopupCursor(Loc.GetString("plant-holder-component-dead-plant-message"), args.User);
                 return;
             }
-
+            // this isn't present in CM13
+            /*
             if (GetCurrentGrowthStage(entity) <= 1)
             {
                 _popup.PopupCursor(Loc.GetString("plant-holder-component-early-sample-message"), args.User);
                 return;
             }
-
+            */
             component.Health -= (_random.Next(3, 5) * 10);
 
             float? healthOverride;
