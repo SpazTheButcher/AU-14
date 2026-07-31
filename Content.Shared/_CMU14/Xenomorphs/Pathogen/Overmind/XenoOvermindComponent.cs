@@ -62,8 +62,8 @@ public sealed partial class CMUXenoOvermindComponent : Component
     public Dictionary<EntProtoId, EntityUid> PhysicalFormActionEntities = new();
 
     [DataField, AutoNetworkedField]
-    public string EyeFormActionOrderId = "CMU14XenoOvermindEye";
+    public EntProtoId EyeFormActionOrderId = "CMU14XenoOvermindEye";
 
     [DataField, AutoNetworkedField]
-    public string PhysicalFormActionOrderId = "CMU14XenoOvermindPhysical";
+    public EntProtoId PhysicalFormActionOrderId = "CMU14XenoOvermindPhysical";
 }

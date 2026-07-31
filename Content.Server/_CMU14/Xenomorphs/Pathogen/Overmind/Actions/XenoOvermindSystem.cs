@@ -41,6 +41,7 @@ public sealed class CMUXenoOvermindSystem : EntitySystem
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly Robust.Server.Player.IPlayerManager _player = default!;
     [Dependency] private readonly XenoAnnounceSystem _xenoAnnounce = default!;
+    [Dependency] private readonly SharedRMCActionsSystem _rmcActions = default!;
 
     private static readonly ProtoId<TagPrototype> DoorBumpOpenerTag = "DoorBumpOpener";
     private static readonly EntProtoId EyeProto = "CMU14XenoOvermindEye";
@@ -263,11 +264,9 @@ public sealed class CMUXenoOvermindSystem : EntitySystem
         RemComp<RelayInputMoverComponent>(ent.Owner);
     }
 
-    private void SetActionOrder(Entity<CMUXenoOvermindComponent> ent, string id)
+    private void SetActionOrder(Entity<CMUXenoOvermindComponent> ent, EntProtoId id)
     {
-        var order = EnsureComp<RMCActionOrderComponent>(ent.Owner);
-        order.Id = id;
-        Dirty(ent.Owner, order);
+        _rmcActions.SetOrderId(ent.Owner, id);
     }
 
     private void OnWatch(Entity<CMUXenoOvermindComponent> ent, ref XenoWatchEvent args)

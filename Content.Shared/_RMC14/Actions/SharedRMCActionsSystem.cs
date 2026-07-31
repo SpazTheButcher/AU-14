@@ -235,6 +235,18 @@ public abstract partial class SharedRMCActionsSystem : EntitySystem
                 yield return (action, action, comp);
         }
     }
+
+    public void SetOrderId(EntityUid uid, EntProtoId id)
+    {
+        if (!TryComp(uid, out RMCActionOrderComponent? order))
+            return;
+
+        if (order.Id == id)
+            return;
+
+        order.Id = id;
+        Dirty(uid, order);
+    }
 }
 
 [Serializable, NetSerializable]
