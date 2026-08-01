@@ -6403,5 +6403,52 @@
   id: 439
   time: '2026-07-12T15:48:33.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1583
+- author: NileDeveloper
+  changes:
+  - message: Bug-161 Runechat does not sanitize markup from input
+    type: Fix
+  id: 440
+  time: '2026-07-12T19:06:30.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1594
+- author: troytroy400
+  changes:
+  - message: Gas Masks have been moved to their own section in the equipment vendor
+      and have a new item, the gas mask bag.
+    type: Add
+  - message: WPDP is now available for all factions in requisitions.
+    type: Add
+  - message: IFAKs are now logically stocked.
+    type: Tweak
+  - message: Adds missing medical equipment to equipment vendors.
+    type: Fix
+  id: 441
+  time: '2026-07-12T19:11:02.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1597
+- author: ScorchFollower
+  changes:
+  - message: Re-sprited Drone Operator's drone to be more aligned with CM's art style.
+    type: Tweak
+  id: 442
+  time: '2026-07-12T21:31:25.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1599
+- author: NileDeveloper
+  changes:
+  - message: Bug 180, issue with set words turning into te format for the hexcolor
+    type: Fix
+  id: 443
+  time: '2026-07-13T02:11:07.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1601
+- author: troytroy400
+  changes:
+  - message: Added the M34E1 Armored Engineering Vehicle. An alternative selection
+      to the APC, it is unarmed but incredibly good at clearing enemy fortifications.
+    type: Add
+  - message: Removed duplicate vehicle entries from the lift console.
+    type: Remove
+  - message: UPP vehicles in the lift console now use lore accurate names.
+    type: Fix
+  id: 444
+  time: '2026-07-13T10:09:30.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1603
 Name: CMU
 Order: -1

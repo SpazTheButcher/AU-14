@@ -127,6 +127,40 @@
       - VehicleHumveeSnowplow
       - VehicleHumveeOverlight
       - VehicleHumveeWheel
+    - name: M34E1 AEV
+      vehicle: VehicleAev
+      group: vehicle-apc
+      loadoutCategories:
+      - id: standardtreads
+        name: Treads
+        options:
+        - id: VehicleTankReinforcedTreads
+          name: reinforced treads
+          item: VehicleTankReinforcedTreads
+          slot: wheel-1
+      - id: auxiliary
+        name: Auxiliary
+        options:
+        - id: VehicleTankSnowplow
+          name: snowplow
+          item: VehicleTankSnowplow
+          slot: armor
+      - id: support
+        name: Support
+        options:
+        - id: VehicleTankOverdriveEnhancer
+          name: overdrive enhancer
+          item: VehicleTankOverdriveEnhancer
+          slot: support
+      hardpoints:
+      - VehicleTankTreads
+      - VehicleTankReinforcedTreads
+      - VehicleTankArmorBallistic
+      - VehicleTankArmorConcussive
+      - VehicleTankArmorCaustic
+      - VehicleTankArmorPaladin
+      - VehicleTankSnowplow 
+      - VehicleTankOverdriveEnhancer
     - name: M577 APC
       vehicle: VehicleAPC
       group: vehicle-apc
@@ -248,9 +282,9 @@
       - RMCAPCFlareLauncher
       - RMCAPCFreightStorage
       - RMCAPCWheel
-    - name: UPP apc
+    - name: UP-998 BTR (UPP)
       vehicle: VehicleSPPAPC
-      group: vehicle-support
+      group: vehicle-apc
       loadoutCategories:
       - id: primary
         name: Primary
@@ -274,9 +308,6 @@
           name: wheel
           item: VehicleSPPAPCWheel
           slot: wheel-1
-      - id: armor
-        name: Armor
-        options: []
       - id: support
         name: Support
         options:
@@ -411,7 +442,7 @@
       - VehicleTankRocketLauncher
       - VehicleTankFlareModule
       - VehicleTankArtilleryModule
-    - name: UPP tank
+    - name: Cheetah 2A (UPP)
       vehicle: VehicleSPPTank
       group: vehicle-tank
       loadoutCategories:
@@ -490,126 +521,6 @@
       - VehicleSPPTankWarningArray
       - VehicleSPPTankOverdriveEnhancer
       - VehicleSPPTankArtilleryModule
-    - name: UPP tank (command)
-      vehicle: VehicleSPPTankCommand
-      group: vehicle-tank
-      loadoutCategories:
-      - id: primary
-        name: Primary
-        options:
-        - id: VehicleSPPTankP17702
-          name: P-17702 rotary cannon
-          item: VehicleSPPTankP17702
-          slot: primary::turret-cannon
-      - id: secondary
-        name: Secondary
-        options:
-        - id: VehicleSPPTankHJ35TLauncher
-          name: HJ35T launcher
-          item: VehicleSPPTankHJ35TLauncher
-          slot: primary::turret-launcher
-        - id: VehicleSPPTankCupola
-          name: T60P3M cupola
-          item: VehicleSPPTankCupola
-          slot: primary::turret-launcher
-      - id: standardtreads
-        name: treads
-        options:
-        - id: VehicleTankTreads
-          name: treads
-          item: VehicleTankTreads
-          slot: wheel-1
-      - id: armor
-        name: Armor
-        options:
-        - id: VehicleSPPTankReactiveArmor
-          name: reactive armor
-          item: VehicleSPPTankReactiveArmor
-          slot: armor
-      - id: support
-        name: Support
-        options:
-        - id: VehicleTankReinforcedTreads
-          name: reinforced treads
-          item: VehicleTankReinforcedTreads
-          slot: wheel-1
-        - id: VehicleSPPTankRocketLauncher
-          name: smoke launcher
-          item: VehicleSPPTankRocketLauncher
-          slot: support
-        - id: VehicleSPPTankFlareModule
-          name: flare module
-          item: VehicleSPPTankFlareModule
-          slot: support
-        - id: VehicleSPPTankWarningArray
-          name: warning array
-          item: VehicleSPPTankWarningArray
-          slot: support
-        - id: VehicleSPPTankOverdriveEnhancer
-          name: overdrive enhancer
-          item: VehicleSPPTankOverdriveEnhancer
-          slot: support
-        - id: VehicleSPPTankArtilleryModule
-          name: artillery module
-          item: VehicleSPPTankArtilleryModule
-          slot: support
-      hardpoints:
-      - VehicleSPPTankTurret
-      - VehicleTankTreads
-      - VehicleTankReinforcedTreads
-      - VehicleSPPTankP17702
-      - VehicleSPPTankHJ35TLauncher
-      - VehicleSPPTankCupola
-      - VehicleSPPTankReactiveArmor
-      - VehicleSPPTankRocketLauncher
-      - VehicleSPPTankFlareModule
-      - VehicleSPPTankWarningArray
-      - VehicleSPPTankOverdriveEnhancer
-      - VehicleSPPTankArtilleryModule
-    - name: humvee (arc)
-      vehicle: VehicleHumveeARC
-      group: vehicle-support
-      loadoutCategories:
-      - id: primary
-        name: Primary
-        options:
-        - id: VehicleHumveeARCTurret
-          name: ARC turret
-          item: VehicleHumveeARCTurret
-          slot: turret
-      - id: armor
-        name: Armor
-        options: []
-      - id: support
-        name: Support
-        options:
-        - id: VehicleHumveeWheel
-          name: wheel
-          item: VehicleHumveeWheel
-          slot: wheel-1
-        - id: VehicleHumveeSnowplow
-          name: snowplow
-          item: VehicleHumveeSnowplow
-          slot: front
-        - id: VehicleHumveeOverlight
-          name: overlight
-          item: VehicleHumveeOverlight
-          slot: roof
-        - id: VehicleHumveeHatch
-          name: hatch
-          item: VehicleHumveeHatch
-          slot: roof
-      hardpoints:
-      - VehicleHumveeTurret
-      - VehicleHumveeTurretArmed
-      - VehicleHumveeARCTurret
-      - VehicleHumveeCannon
-      - VehicleHumveeARCCannon
-      - VehicleHumveeLauncher
-      - VehicleHumveeSnowplow
-      - VehicleHumveeOverlight
-      - VehicleHumveeHatch
-      - VehicleHumveeWheel
     - name: blackfoot
       vehicle: VehicleBlackfoot
       group: vehicle-support
