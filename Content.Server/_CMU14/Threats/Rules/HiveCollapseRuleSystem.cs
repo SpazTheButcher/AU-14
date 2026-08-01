@@ -17,7 +17,7 @@ public sealed partial class HiveCollapseRuleSystem : GameRuleSystem<HiveCollapse
     [Dependency] private AuRoundSystem _auRoundSystem = default!;
     [Dependency] private CMURoundStatisticsSystem _roundStats = default!;
 
-    private const string DefaultWinMsg = "The threat has been eliminated!";
+    private const string DefaultWinMsg = "The hive has collapsed!";
 
     private TimeSpan? _hiveCollapseTime;
     
