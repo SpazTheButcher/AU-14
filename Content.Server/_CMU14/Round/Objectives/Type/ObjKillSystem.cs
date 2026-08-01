@@ -1,7 +1,6 @@
 using System.Linq;
 using Content.Server.GameTicking;
 using Content.Server.Roles.Jobs;
-using Content.Shared._CMU14.Round.Objectives;
 using Content.Shared._CMU14.Round.Objectives.Type;
 using Content.Shared._CMU14.Round.Objectives.Component;
 using Content.Server._CMU14.Round.Objectives.Component;
@@ -13,7 +12,7 @@ using Robust.Shared.Map;
 
 namespace Content.Server._CMU14.Round.Objectives.Type;
 
-public sealed class ObjKillSystem : ObjectiveSystem
+public sealed partial class ObjKillSystem : ObjectiveSystem
 {
     [Dependency] private GameTicker _gameTicker = default!;
     [Dependency] private JobSystem _jobSystem = default!;

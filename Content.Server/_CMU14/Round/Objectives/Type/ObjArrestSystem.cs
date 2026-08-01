@@ -1,7 +1,6 @@
 using System.Linq;
 using Content.Server.GameTicking;
 using Content.Server.Roles.Jobs;
-using Content.Shared._CMU14.Round.Objectives;
 using Content.Shared._CMU14.Round.Objectives.Type;
 using Content.Shared._CMU14.Round.Objectives.Component;
 using Content.Server._CMU14.Round.Objectives.Component;
@@ -11,11 +10,10 @@ using Content.Shared.Cuffs.Components;
 using Content.Shared.NPC.Components;
 using Content.Shared.Mind.Components;
 using Robust.Shared.Map;
-using Robust.Shared.Timing;
 
 namespace Content.Server._CMU14.Round.Objectives.Type;
 
-public sealed class ObjArrestSystem : ObjectiveSystem
+public sealed partial class ObjArrestSystem : ObjectiveSystem
 {
     [Dependency] private GameTicker _gameTicker = default!;
     [Dependency] private JobSystem _jobSystem = default!;

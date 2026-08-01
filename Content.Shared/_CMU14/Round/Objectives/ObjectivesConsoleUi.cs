@@ -21,25 +21,19 @@ public enum ObjectiveTypeDisplay
 }
 
 [Serializable, NetSerializable]
-public sealed class ObjectivesConsoleBoundUserInterfaceState : BoundUserInterfaceState
+public sealed class ObjectivesConsoleBoundUserInterfaceState(
+    List<ObjectiveEntry> objectives,
+    int currentWinPoints,
+    int requiredWinPoints)
+    : BoundUserInterfaceState
 {
-    public List<ObjectiveEntry> Objectives { get; }
-    public int CurrentWinPoints { get; }
-    public int RequiredWinPoints { get; }
-
-    public ObjectivesConsoleBoundUserInterfaceState(
-        List<ObjectiveEntry> objectives,
-        int currentWinPoints,
-        int requiredWinPoints)
-    {
-        Objectives = objectives;
-        CurrentWinPoints = currentWinPoints;
-        RequiredWinPoints = requiredWinPoints;
-    }
+    public List<ObjectiveEntry> Objectives { get; } = objectives;
+    public int CurrentWinPoints { get; } = currentWinPoints;
+    public int RequiredWinPoints { get; } = requiredWinPoints;
 }
 
 [Serializable, NetSerializable]
-public sealed class ObjectivesConsoleRequestObjectivesMessage : BoundUserInterfaceMessage { }
+public sealed class ObjectivesConsoleRequestObjectivesMessage : BoundUserInterfaceMessage;
 
 [Serializable, NetSerializable]
 public enum ObjectivesConsoleKey : byte
@@ -48,102 +42,62 @@ public enum ObjectivesConsoleKey : byte
 }
 
 [Serializable, NetSerializable]
-public sealed class ObjectivesConsoleRequestIntelMessage : BoundUserInterfaceMessage
+public sealed class ObjectivesConsoleRequestIntelMessage(string objectiveId) : BoundUserInterfaceMessage
 {
-    public readonly string ObjectiveId;
-
-    public ObjectivesConsoleRequestIntelMessage(string objectiveId)
-    {
-        ObjectiveId = objectiveId;
-    }
+    public readonly string ObjectiveId = objectiveId;
 }
 
 [Serializable, NetSerializable]
-public sealed class ObjectivesConsoleUnlockIntelMessage : BoundUserInterfaceMessage
+public sealed class ObjectivesConsoleUnlockIntelMessage(string objectiveId, int tierIndex) : BoundUserInterfaceMessage
 {
-    public readonly string ObjectiveId;
-    public readonly int TierIndex;
-
-    public ObjectivesConsoleUnlockIntelMessage(string objectiveId, int tierIndex)
-    {
-        ObjectiveId = objectiveId;
-        TierIndex = tierIndex;
-    }
+    public readonly string ObjectiveId = objectiveId;
+    public readonly int TierIndex = tierIndex;
 }
 
 [Serializable, NetSerializable]
-public sealed class ObjectiveIntelTierEntry
+public sealed class ObjectiveIntelTierEntry(int index, string title, string description, double cost)
 {
-    public int Index { get; }
-    public string Title { get; }
-    public string Description { get; }
-    public double CostToUnlock { get; }
-
-    public ObjectiveIntelTierEntry(int index, string title, string description, double cost)
-    {
-        Index = index;
-        Title = title;
-        Description = description;
-        CostToUnlock = cost;
-    }
+    public int Index { get; } = index;
+    public string Title { get; } = title;
+    public string Description { get; } = description;
+    public double CostToUnlock { get; } = cost;
 }
 
 [Serializable, NetSerializable]
-public sealed class ObjectiveIntelBoundUserInterfaceMessage : BoundUserInterfaceMessage
+public sealed class ObjectiveIntelBoundUserInterfaceMessage(
+    string objectiveId,
+    string defaultTitle,
+    List<ObjectiveIntelTierEntry> tiers,
+    int unlockedTier,
+    int factionPoints)
+    : BoundUserInterfaceMessage
 {
-    public string ObjectiveId { get; }
-    public string ObjectiveDefaultTitle { get; }
-    public List<ObjectiveIntelTierEntry> Tiers { get; }
-    public int UnlockedTier { get; }
-    public int FactionPoints { get; }
-
-    public ObjectiveIntelBoundUserInterfaceMessage(
-        string objectiveId,
-        string defaultTitle,
-        List<ObjectiveIntelTierEntry> tiers,
-        int unlockedTier,
-        int factionPoints)
-    {
-        ObjectiveId = objectiveId;
-        ObjectiveDefaultTitle = defaultTitle;
-        Tiers = tiers;
-        UnlockedTier = unlockedTier;
-        FactionPoints = factionPoints;
-    }
+    public string ObjectiveId { get; } = objectiveId;
+    public string ObjectiveDefaultTitle { get; } = defaultTitle;
+    public List<ObjectiveIntelTierEntry> Tiers { get; } = tiers;
+    public int UnlockedTier { get; } = unlockedTier;
+    public int FactionPoints { get; } = factionPoints;
 }
 
 [Serializable, NetSerializable]
-public sealed class ObjectiveEntry
+public sealed class ObjectiveEntry(
+    string id,
+    string description,
+    ObjectiveStatusDisplay status,
+    ObjectiveTypeDisplay type,
+    string? progress = null,
+    bool repeating = false,
+    int? repeatsCompleted = null,
+    int? maxRepeatable = null,
+    int points = 0)
 {
-    public string Id { get; }
-    public string Description { get; }
-    public ObjectiveStatusDisplay Status { get; }
-    public ObjectiveTypeDisplay Type { get; }
-    public string? Progress { get; }
-    public bool Repeating { get; }
-    public int? RepeatsCompleted { get; }
-    public int? MaxRepeatable { get; }
-    public int Points { get; }
-
-    public ObjectiveEntry(
-        string id,
-        string description,
-        ObjectiveStatusDisplay status,
-        ObjectiveTypeDisplay type,
-        string? progress = null,
-        bool repeating = false,
-        int? repeatsCompleted = null,
-        int? maxRepeatable = null,
-        int points = 0)
-    {
-        Id = id;
-        Description = description;
-        Status = status;
-        Type = type;
-        Progress = progress;
-        Repeating = repeating;
-        RepeatsCompleted = repeatsCompleted;
-        MaxRepeatable = maxRepeatable;
-        Points = points;
-    }
+    public string Id { get; } = id;
+    public string Description { get; } = description;
+    public ObjectiveStatusDisplay Status { get; } = status;
+    public ObjectiveTypeDisplay Type { get; } = type;
+    public string? Progress { get; } = progress;
+    public bool Repeating { get; } = repeating;
+    public int? RepeatsCompleted { get; } = repeatsCompleted;
+    public int? MaxRepeatable { get; } = maxRepeatable;
+    public int Points { get; } = points;
 }

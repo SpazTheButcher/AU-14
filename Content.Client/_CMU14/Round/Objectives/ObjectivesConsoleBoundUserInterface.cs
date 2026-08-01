@@ -12,7 +12,7 @@ public sealed class ObjectivesConsoleBoundUserInterface(EntityUid owner, Enum ui
     {
         base.Open();
         _window = this.CreateWindow<ObjectivesConsoleWindow>();
-        _window.RequestIntelCallback = id => RequestIntel(id);
+        _window.RequestIntelCallback = RequestIntel;
 
         if (State is ObjectivesConsoleBoundUserInterfaceState cast)
             _window.UpdateObjectives(cast.Objectives, cast.CurrentWinPoints, cast.RequiredWinPoints);
@@ -31,7 +31,7 @@ public sealed class ObjectivesConsoleBoundUserInterface(EntityUid owner, Enum ui
             if (_window == null || _window.Disposed)
             {
                 _window = this.CreateWindow<ObjectivesConsoleWindow>();
-                _window.RequestIntelCallback = id => RequestIntel(id);
+                _window.RequestIntelCallback = RequestIntel;
             }
 
             _window.UpdateObjectives(cast.Objectives, cast.CurrentWinPoints, cast.RequiredWinPoints);
@@ -61,7 +61,7 @@ public sealed class ObjectivesConsoleBoundUserInterface(EntityUid owner, Enum ui
         _intelWindow.Populate(
             intelState.ObjectiveId,
             intelState.ObjectiveDefaultTitle,
-            intelState.Tiers ?? new List<ObjectiveIntelTierEntry>(),
+            intelState.Tiers,
             intelState.UnlockedTier,
             intelState.FactionPoints,
             idx => SendMessage(new ObjectivesConsoleUnlockIntelMessage(intelState.ObjectiveId, idx)));

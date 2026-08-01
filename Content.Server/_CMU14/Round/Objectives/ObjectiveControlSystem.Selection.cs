@@ -190,7 +190,7 @@ public sealed partial class ObjectiveControlSystem
         _ => string.Empty,
     };
 
-    private bool IsKillObjectiveCompletable(EntityUid uid, CMUObjectiveComponent comp)
+    private bool IsKillObjectiveCompletable(EntityUid uid)
     {
         if (!TryComp(uid, out KillObjectiveComponent? killObj))
             return false;

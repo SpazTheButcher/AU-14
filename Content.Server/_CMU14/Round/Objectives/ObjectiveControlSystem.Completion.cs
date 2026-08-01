@@ -187,7 +187,7 @@ public sealed partial class ObjectiveControlSystem
 
         foreach (var (uid, comp) in finalObjectives.OrderBy(_ => Random.Shared.Next()))
         {
-            if (TryComp(uid, out KillObjectiveComponent? _) && !IsKillObjectiveCompletable(uid, comp))
+            if (TryComp(uid, out KillObjectiveComponent? _) && !IsKillObjectiveCompletable(uid))
                 continue;
 
             comp.Faction = factionKey;

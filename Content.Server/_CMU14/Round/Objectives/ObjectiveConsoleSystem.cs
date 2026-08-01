@@ -5,15 +5,16 @@ using Content.Shared._CMU14.Round.Objectives.Type;
 using Content.Shared._RMC14.Intel;
 using Robust.Server.GameObjects;
 using Robust.Shared.Prototypes;
+using ObjectivesConsoleComponent = Content.Shared._CMU14.Round.Objectives.Component.ObjectivesConsoleComponent;
 
 namespace Content.Server._CMU14.Round.Objectives;
 
-public sealed class ObjectiveConsoleSystem : SharedObjectiveConsoleSystem
+public sealed partial class ObjectiveConsoleSystem : SharedObjectiveConsoleSystem
 {
-    [Dependency] private readonly UserInterfaceSystem _ui = default!;
-    [Dependency] private readonly IntelSystem _intel = default!;
-    [Dependency] private readonly ObjectiveControlSystem _objCtrl = default!;
-    [Dependency] private readonly IPrototypeManager _proto = default!;
+    [Dependency] private UserInterfaceSystem _ui = default!;
+    [Dependency] private IntelSystem _intel = default!;
+    [Dependency] private ObjectiveControlSystem _objCtrl = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
 
     private ISawmill _logs = default!;
 

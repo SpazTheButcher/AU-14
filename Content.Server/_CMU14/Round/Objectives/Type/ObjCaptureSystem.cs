@@ -10,14 +10,14 @@ using Content.Shared.Popups;
 
 namespace Content.Server._CMU14.Round.Objectives.Type;
 
-public sealed class ObjCaptureSystem : ObjectiveSystem
+public sealed partial class ObjCaptureSystem : ObjectiveSystem
 {
     [Dependency] private PopupSystem _popup = default!;
     [Dependency] private PlatoonSpawnRuleSystem _platoonSpawnRuleSystem = default!;
 
     private readonly Dictionary<EntityUid, float> _timeSinceLastIncrement = new();
     private readonly Dictionary<EntityUid, float> _lastSlashDamage = new();
-    private static readonly string[] HoistAllowedFactions = { "govfor", "opfor", "clf" };
+    private static readonly string[] HoistAllowedFactions = ["govfor", "opfor", "clf"];
 
     public override void Initialize()
     {

@@ -17,7 +17,7 @@ public sealed partial class ObjectiveIntelWindow : FancyWindow
     public void Populate(
         string objectiveId,
         string defaultTitle,
-        List<ObjectiveIntelTierEntry> tiers,
+        List<ObjectiveIntelTierEntry>? tiers,
         int unlockedTier,
         int factionPoints,
         Action<int>? unlockCallback = null)

@@ -1,4 +1,3 @@
-using Robust.Shared.Audio;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared._CMU14.Round.Objectives;
@@ -10,7 +9,7 @@ public sealed partial class ObjectiveIntelTierPrototype : IPrototype
     public string ID { get; private set; } = default!;
 
     /// <summary>When true, display obj markers on the tactical map for this tier</summary>
-    [DataField] public bool DisplayOnTacMap { get; set; } = false;
+    [DataField] public bool DisplayOnTacMap { get; set; }
 
     /// <summary>
     /// Overrides title when the tier is unlocked:
@@ -28,7 +27,7 @@ public sealed partial class ObjectiveIntelTierPrototype : IPrototype
     public string DescriptionText { get; set; } = string.Empty;
 
     /// <summary>When true, list relevant coords in the UI instead/additional to tacmap markers.</summary>
-    [DataField] public bool ListCoords { get; set; } = false;
+    [DataField] public bool ListCoords { get; set; }
 
     [DataField] public double CostToUnlock { get; set; } = 0.5;
 }

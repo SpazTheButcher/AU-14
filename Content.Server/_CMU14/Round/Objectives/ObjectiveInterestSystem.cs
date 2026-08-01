@@ -2,14 +2,9 @@ using Robust.Shared.Map;
 
 namespace Content.Server._CMU14.Round.Objectives;
 
-public sealed class ObjectiveWatchedEntityStartupEvent : EntityEventArgs
+public sealed class ObjectiveWatchedEntityStartupEvent(EntityUid uid) : EntityEventArgs
 {
-    public readonly EntityUid Uid;
-
-    public ObjectiveWatchedEntityStartupEvent(EntityUid uid)
-    {
-        Uid = uid;
-    }
+    public readonly EntityUid Uid = uid;
 }
 
 public sealed class ObjectiveInterestSystem : EntitySystem

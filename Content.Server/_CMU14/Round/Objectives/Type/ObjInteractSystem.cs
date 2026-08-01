@@ -7,7 +7,7 @@ using Content.Shared.Popups;
 
 namespace Content.Server._CMU14.Round.Objectives.Type;
 
-public sealed class ObjInteractSystem : ObjectiveSystem
+public sealed partial class ObjInteractSystem : ObjectiveSystem
 {
     [Dependency] private PopupSystem _popup = default!;
 
@@ -41,7 +41,6 @@ public sealed class ObjInteractSystem : ObjectiveSystem
         {
             var registered = RegisterPreplacedEntities(uid, interactComp);
             interactComp.HasSpawned = registered > 0;
-            if (registered <= 0) return;
         }
         else
         {
@@ -67,7 +66,7 @@ public sealed class ObjInteractSystem : ObjectiveSystem
         comp.HasSpawned = false;
 
         var query = EntityQueryEnumerator<InteractTrackerComponent, TransformComponent>();
-        while (query.MoveNext(out var ent, out var tracker, out var xform))
+        while (query.MoveNext(out _, out var tracker, out var xform))
         {
             if (tracker.ObjectiveUid != uid || xform.MapID != Transform(uid).MapID)
                 continue;
@@ -108,11 +107,11 @@ public sealed class ObjInteractSystem : ObjectiveSystem
             return;
 
         var map = Transform(uid).MapID;
-        var interested = ObjInt.GetInterestedObjectives(map, new[] { proto });
+        var interested = ObjInt.GetInterestedObjectives(map, [proto]);
 
         foreach (var objUid in interested)
         {
-            if (!TryComp(objUid, out InteractObjectiveComponent? interactComp)
+            if (!TryComp(objUid, out InteractObjectiveComponent? _)
                     || !TryComp(objUid, out CMUObjectiveComponent? auComp) || !auComp.Active)
                 continue;
 

@@ -37,14 +37,14 @@ public sealed partial class ObjectivesConsoleWindow : FancyWindow
                 labelText += " [Repeating]";
             if (!string.IsNullOrEmpty(obj.Progress))
                 labelText += $" ({obj.Progress})";
-            if (obj.MaxRepeatable is { } maxRepeat && maxRepeat > 0)
+            if (obj.MaxRepeatable is { } maxRepeat and > 0)
             {
-                if (obj.RepeatsCompleted is int repeats)
+                if (obj.RepeatsCompleted is { } repeats)
                     labelText += $" (Completed {repeats}/{maxRepeat} times)";
                 else
                     labelText += $" (Can be completed {maxRepeat} times)";
             }
-            else if (obj.RepeatsCompleted is int repeats && repeats > 0)
+            else if (obj.RepeatsCompleted is { } repeats and > 0)
             {
                 labelText += $" (Times completed: {repeats})";
             }

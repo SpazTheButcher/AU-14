@@ -14,7 +14,7 @@ namespace Content.Server._CMU14.Round.Objectives.Type;
 ///     All factions get a "Scan" context action that credits nearby active fetch objs
 ///     CLF only: cash can be inserted & every 15 creds awards 1 win point directly to CLF victory
 /// </summary>
-public sealed class ObjFetchAnalyzerSystem : EntitySystem
+public sealed partial class ObjFetchAnalyzerSystem : EntitySystem
 {
     [Dependency] private ObjFetchSystem _fetchSystem = default!;
     [Dependency] private ObjectiveControlSystem _objCtrl = default!;
@@ -77,7 +77,7 @@ public sealed class ObjFetchAnalyzerSystem : EntitySystem
         AnalyzerConversionEntry? match = null;
         foreach (var entry in component.Conversions)
         {
-            if (string.Equals(entry.Entity.Id, protoId, System.StringComparison.Ordinal))
+            if (string.Equals(entry.Entity.Id, protoId, StringComparison.Ordinal))
             {
                 match = entry;
                 break;
@@ -96,7 +96,7 @@ public sealed class ObjFetchAnalyzerSystem : EntitySystem
 
         if (match.PointsPerItemMode)
         {
-            var per = System.Math.Max(1, match.PointsPerItem);
+            var per = Math.Max(1, match.PointsPerItem);
             var points = amount * per;
 
             QueueDel(inserted);
@@ -105,7 +105,7 @@ public sealed class ObjFetchAnalyzerSystem : EntitySystem
         }
         else
         {
-            var perPoint = System.Math.Max(1, match.AmountPerPoint);
+            var perPoint = Math.Max(1, match.AmountPerPoint);
 
             var banked = component.Banked.GetValueOrDefault(protoId) + amount;
             var points = banked / perPoint;

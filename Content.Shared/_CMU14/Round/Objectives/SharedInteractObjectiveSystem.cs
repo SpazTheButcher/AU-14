@@ -66,7 +66,8 @@ public sealed class SharedInteractObjectiveSystem : EntitySystem
 
         if (requiredTool != null)
         {
-            if (toolUsed == null || !TryComp<ToolComponent>(toolUsed.Value, out var toolComp) || !toolComp.Qualities.Contains(requiredTool))
+            if (toolUsed == null || !TryComp<ToolComponent>(toolUsed.Value, out var toolComp)
+                                 || !toolComp.Qualities.Contains(requiredTool))
             {
                 _popup.PopupEntity($"You need a {requiredTool} for this step.", targetUid, user, PopupType.SmallCaution);
                 return false;
@@ -129,12 +130,11 @@ public sealed class SharedInteractObjectiveSystem : EntitySystem
             }
             var currentInteractions = !string.IsNullOrEmpty(faction) ? GetCurrentInteractions(tracker, faction) : 0;
             var requiredTool = GetRequiredTool(interactComp, currentInteractions);
-            if (requiredTool != null)
-                args.PushMarkup($"Use a [color=cyan]{requiredTool}[/color] on this.");
-            else
-                args.PushMarkup("Use an [color=cyan]empty hand[/color] to interact with this.");
+            args.PushMarkup(requiredTool != null
+                ? $"Use a [color=cyan]{requiredTool}[/color] on this."
+                : "Use an [color=cyan]empty hand[/color] to interact with this.");
 
-            if (interactComp.Tools != null && interactComp.Tools.Count > 1)
+            if (interactComp.Tools is { Count: > 1 })
                 args.PushMarkup($"Tools needed: {string.Join(", ", interactComp.Tools.Select(t => $"[color=cyan]{t}[/color]"))}");
             if (interactComp.Skills.Count > 0)
                 args.PushMarkup($"Requires skills: {string.Join(", ", interactComp.Skills.Select(s => $"[color=yellow]{s}[/color]"))}");

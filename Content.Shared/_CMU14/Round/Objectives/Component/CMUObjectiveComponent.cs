@@ -1,4 +1,3 @@
-using Content.Shared._CMU14.Round.Objectives;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
@@ -40,7 +39,7 @@ public sealed partial class CMUObjectiveComponent : Robust.Shared.GameObjects.Co
     public int MaxPlayers { get; private set; } = 200;
 
     [DataField]
-    public int MinPlayers { get; private set; } = 0;
+    public int MinPlayers { get; private set; }
 
     [DataField]
     public List<string> BlacklistedPlatoons { get; private set; } = new();
@@ -49,16 +48,16 @@ public sealed partial class CMUObjectiveComponent : Robust.Shared.GameObjects.Co
     public List<string> WhitelistedPlatoons { get; private set; } = new();
 
     [DataField]
-    public bool RollAnyway { get; private set; } = false;
+    public bool RollAnyway { get; private set; }
 
     [DataField]
-    public bool Repeating { get; private set; } = false;
+    public bool Repeating { get; private set; }
 
     [DataField]
-    public int? MaxRepeatable { get; private set; } = null;
+    public int? MaxRepeatable { get; private set; }
 
     [DataField]
-    public bool FactionNeutral { get; private set; } = false;
+    public bool FactionNeutral { get; private set; }
 
     [DataField(required: true)]
     public int ObjectiveLevel { get; private set; } = 1;
@@ -70,7 +69,7 @@ public sealed partial class CMUObjectiveComponent : Robust.Shared.GameObjects.Co
     public FinalObjectiveType FinalType { get; private set; } = FinalObjectiveType.InstantWin;
 
     [DataField]
-    public int CustomPoints { get; private set; } = 0;
+    public int CustomPoints { get; private set; }
 
     [DataField]
     public List<string> TechUnlocks { get; private set; } = new();
@@ -79,7 +78,7 @@ public sealed partial class CMUObjectiveComponent : Robust.Shared.GameObjects.Co
     public List<ProtoId<ObjectiveIntelTierPrototype>> IntelTiersProtos { get; private set; } = new();
 
     [DataField]
-    public EntProtoId<CMUObjectiveComponent>? NextTierObjective { get; private set; } = null;
+    public EntProtoId<CMUObjectiveComponent>? NextTierObjective { get; private set; }
 
     [DataField]
     public Dictionary<string, int> DefaultIntelTiers { get; set; } = new()
@@ -88,7 +87,7 @@ public sealed partial class CMUObjectiveComponent : Robust.Shared.GameObjects.Co
     };
 
     [DataField]
-    public string? RoundEndMessage { get; private set; } = null;
+    public string? RoundEndMessage { get; private set; }
 
     public bool Active { get; set; } = false;
     public string Faction { get; set; } = string.Empty;

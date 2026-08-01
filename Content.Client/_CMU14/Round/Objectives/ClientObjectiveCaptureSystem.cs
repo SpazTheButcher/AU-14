@@ -1,6 +1,4 @@
-using Content.Shared._CMU14.Round.Objectives;
 using Content.Shared._CMU14.Round.Objectives.Type;
-using Robust.Client.GameObjects;
 using Robust.Shared.GameStates;
 
 namespace Content.Client._CMU14.Round.Objectives;

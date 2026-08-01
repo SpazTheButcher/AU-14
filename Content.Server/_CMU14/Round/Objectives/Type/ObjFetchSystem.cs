@@ -6,8 +6,6 @@ using Content.Shared.Movement.Pulling.Events;
 
 namespace Content.Server._CMU14.Round.Objectives.Type;
 
-// TODO: Move over the YAML (markers etc.) to new System
-
 public sealed partial class ObjFetchSystem : ObjectiveSystem
 {
     [Dependency] private EntityLookupSystem _lookup = default!;
