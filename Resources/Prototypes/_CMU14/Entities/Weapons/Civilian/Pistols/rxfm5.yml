@@ -54,9 +54,6 @@
   - type: Tag
     tags:
     - AU14WeaponPistolRXFM5
-  - type: GunGroupPenalty
-  - type: GunPointBlank
-    weaponGroup: Pistol
   - type: GunIFF
     enabled: false
 
