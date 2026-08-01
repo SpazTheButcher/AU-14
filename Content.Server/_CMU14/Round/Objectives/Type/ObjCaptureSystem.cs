@@ -18,7 +18,6 @@ public sealed class ObjCaptureSystem : ObjectiveSystem
     private readonly Dictionary<EntityUid, float> _timeSinceLastIncrement = new();
     private readonly Dictionary<EntityUid, float> _lastSlashDamage = new();
     private static readonly string[] HoistAllowedFactions = { "govfor", "opfor", "clf" };
-    private ISawmill _logs = default!;
 
     public override void Initialize()
     {
@@ -196,12 +195,12 @@ public sealed class ObjCaptureSystem : ObjectiveSystem
 
             if (comp is { OnceOnly: true, TimesIncremented: > 0 })
             {
-                ObjCtrl.CompleteObjectiveForFaction(uid, objComp, comp.CurrentController);
+                ObjCtrl.CompleteObjectiveForFaction(uid, objComp, comp.CurrentController, sawmill: _logs);
                 continue;
             }
 
             if (comp.MaxHoldTimes > 0 && comp.TimesIncremented >= comp.MaxHoldTimes)
-                ObjCtrl.CompleteObjectiveForFaction(uid, objComp, comp.CurrentController);
+                ObjCtrl.CompleteObjectiveForFaction(uid, objComp, comp.CurrentController, sawmill: _logs);
         }
     }
 }

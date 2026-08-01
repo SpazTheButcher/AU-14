@@ -73,6 +73,9 @@ public abstract partial class ObjectiveSystem
             MarkMarkerUsed(markerUid);
         }
 
+        if (spawned.Count > 0)
+            _logs.Debug($"[OBJ-SPAWN] Spawned {spawned.Count}x '{prototypeId}' at markers (of {markers.Count} available).");
+
         return spawned;
     }
 
@@ -93,6 +96,9 @@ public abstract partial class ObjectiveSystem
             var ent = Spawn(prototypeId, xform.Coordinates);
             spawned.Add(ent);
         }
+
+        if (spawned.Count > 0)
+            _logs.Debug($"[OBJ-SPAWN] Spawned {spawned.Count}x '{prototypeId}' at markers (reusing across {markers.Count} available).");
 
         return spawned;
     }

@@ -21,7 +21,7 @@ public abstract partial class ObjectiveSystem
             return false;
 
         ObjInt.UnregisterInterest(uid);
-        ObjCtrl.CompleteObjectiveForFaction(uid, auComp, factionKey);
+        ObjCtrl.CompleteObjectiveForFaction(uid, auComp, factionKey, sawmill: _logs);
         return true;
     }
 

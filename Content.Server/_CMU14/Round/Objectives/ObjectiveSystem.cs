@@ -6,6 +6,9 @@ namespace Content.Server._CMU14.Round.Objectives;
 
 public abstract partial class ObjectiveSystem : EntitySystem
 {
+    /// <summary>Each Objective type sets this to its own sawmill ("obj-fetch") in Initialize().</summary>
+    protected ISawmill _logs = default!;
+
     protected static bool ShouldCompleteForFaction(
         CMUObjectiveComponent auComp,
         string faction,

@@ -13,7 +13,7 @@ public sealed partial class ObjectiveControlSystem
     [Dependency] private CMURoundStatisticsSystem _roundStats = default!;
     [Dependency] private ObjectiveConsoleSystem _objConsole = default!;
 
-    public void CompleteObjectiveForFaction(EntityUid uid, CMUObjectiveComponent objective, string completingFaction, bool awardPoints = true)
+    public void CompleteObjectiveForFaction(EntityUid uid, CMUObjectiveComponent objective, string completingFaction, bool awardPoints = true, ISawmill? sawmill = null)
     {
         if (_planetMapId == MapId.Nullspace || Transform(uid).MapID != _planetMapId)
             return;
@@ -25,6 +25,7 @@ public sealed partial class ObjectiveControlSystem
         if (!MarkFactionCompleted(objective, factionKey))
             return;
         AwardAndRefresh(objective, completingFaction, awardPoints);
+        (sawmill ?? _logs).Debug($"[OBJ-COMPLETE] '{objective.ObjectiveDescription}' completed for '{completingFaction}'.");
 
         if (objective.ObjectiveLevel == 3)
         {

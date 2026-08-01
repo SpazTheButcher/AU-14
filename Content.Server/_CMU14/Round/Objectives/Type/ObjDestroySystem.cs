@@ -7,8 +7,6 @@ namespace Content.Server._CMU14.Round.Objectives.Type;
 
 public sealed partial class ObjDestroySystem : ObjectiveSystem
 {
-    private ISawmill _logs = default!;
-
     public override void Initialize()
     {
         base.Initialize();

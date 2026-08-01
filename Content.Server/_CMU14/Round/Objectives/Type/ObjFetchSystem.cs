@@ -12,7 +12,6 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
 {
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedTransformSystem _xformSys = default!;
-    private ISawmill _logs = default!;
 
     public override void Initialize()
     {
@@ -211,7 +210,7 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
         if (ShouldCompleteForFaction(auComp, faction, fetchComp.AmountFetchedPerFaction[faction], fetchComp.FetchCount))
         {
             ObjInt.UnregisterInterest(item.ObjectiveUid);
-            ObjCtrl.CompleteObjectiveForFaction(item.ObjectiveUid, auComp, faction);
+            ObjCtrl.CompleteObjectiveForFaction(item.ObjectiveUid, auComp, faction, sawmill: _logs);
         }
     }
 
@@ -254,7 +253,7 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
             if (ShouldCompleteForFaction(auComp, creditFaction, fetchComp.AmountFetchedPerFaction.GetValueOrDefault(creditFaction), fetchComp.FetchCount))
             {
                 ObjInt.UnregisterInterest(objUid);
-                ObjCtrl.CompleteObjectiveForFaction(objUid, auComp, creditFaction);
+                ObjCtrl.CompleteObjectiveForFaction(objUid, auComp, creditFaction, sawmill: _logs);
             }
         }
         return totalFetched;

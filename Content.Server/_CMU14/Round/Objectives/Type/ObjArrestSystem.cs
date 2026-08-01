@@ -20,7 +20,6 @@ public sealed class ObjArrestSystem : ObjectiveSystem
     [Dependency] private GameTicker _gameTicker = default!;
     [Dependency] private JobSystem _jobSystem = default!;
     [Dependency] private SharedCuffableSystem _cuffableSystem = default!;
-    private ISawmill _logs = default!;
     private bool _shuttingDown;
 
     public override void Initialize()

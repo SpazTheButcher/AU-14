@@ -17,7 +17,6 @@ public sealed class ObjKillSystem : ObjectiveSystem
 {
     [Dependency] private GameTicker _gameTicker = default!;
     [Dependency] private JobSystem _jobSystem = default!;
-    private ISawmill _logs = default!;
     private bool _shuttingDown;
 
     public override void Initialize()

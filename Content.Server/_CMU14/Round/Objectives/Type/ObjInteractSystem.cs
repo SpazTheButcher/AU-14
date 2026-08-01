@@ -10,7 +10,6 @@ namespace Content.Server._CMU14.Round.Objectives.Type;
 public sealed class ObjInteractSystem : ObjectiveSystem
 {
     [Dependency] private PopupSystem _popup = default!;
-    private ISawmill _logs = default!;
 
     public override void Initialize()
     {
