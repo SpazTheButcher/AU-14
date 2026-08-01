@@ -1,6 +1,7 @@
 using System.Linq;
 using Content.Server._CMU14.RoundStatistics;
 using Content.Shared._CMU14.Round.Objectives.Component;
+using Content.Shared._CMU14.Round.Objectives.Type;
 using Content.Shared._RMC14.Vendors;
 using Robust.Shared.Map;
 
@@ -21,7 +22,8 @@ public sealed partial class ObjectiveControlSystem
             return;
 
         var factionKey = completingFaction.ToLowerInvariant();
-        MarkFactionCompleted(objective, factionKey);
+        if (!MarkFactionCompleted(objective, factionKey))
+            return;
         AwardAndRefresh(objective, completingFaction);
 
         if (objective.ObjectiveLevel == 3)
@@ -68,18 +70,18 @@ public sealed partial class ObjectiveControlSystem
             _objConsole.RefreshConsolesForFaction(objective.Faction);
     }
 
-    private void MarkFactionCompleted(CMUObjectiveComponent objective, string factionKey)
+    private bool MarkFactionCompleted(CMUObjectiveComponent objective, string factionKey)
     {
         if (objective.FactionNeutral)
         {
             if (!objective.StatusesPerFaction.TryGetValue(factionKey, out var status)
                     || status != CMUObjectiveComponent.ObjectiveStatus.Incomplete)
-                return;
+                return false;
 
             objective.StatusesPerFaction[factionKey] = CMUObjectiveComponent.ObjectiveStatus.Completed;
 
             if (objective.Repeating)
-                return;
+                return true;
 
             foreach (var key in objective.StatusesPerFaction.Keys.ToList())
             {
@@ -87,9 +89,12 @@ public sealed partial class ObjectiveControlSystem
                     continue;
                 objective.StatusesPerFaction[key] = CMUObjectiveComponent.ObjectiveStatus.Failed;
             }
+
+            return true;
         }
-        else
-            objective.StatusesPerFaction[factionKey] = CMUObjectiveComponent.ObjectiveStatus.Completed;
+
+        objective.StatusesPerFaction[factionKey] = CMUObjectiveComponent.ObjectiveStatus.Completed;
+        return true;
     }
 
     private void MarkAllFactionsCompleted(CMUObjectiveComponent objective, string factionKey)
@@ -109,6 +114,26 @@ public sealed partial class ObjectiveControlSystem
                 _objConsole.RefreshConsolesForFaction(f);
         else
             _objConsole.RefreshConsolesForFaction(completingFaction);
+    }
+
+    public void MarkObjectiveFailed(EntityUid uid, CMUObjectiveComponent objective)
+    {
+        if (objective.FactionNeutral)
+        {
+            foreach (var faction in objective.Factions)
+            {
+                if (string.IsNullOrEmpty(faction))
+                    continue;
+                objective.StatusesPerFaction[faction.ToLowerInvariant()] = CMUObjectiveComponent.ObjectiveStatus.Failed;
+                _objConsole.RefreshConsolesForFaction(faction);
+            }
+        }
+        else if (!string.IsNullOrEmpty(objective.Faction))
+        {
+            objective.StatusesPerFaction[objective.Faction.ToLowerInvariant()] = CMUObjectiveComponent.ObjectiveStatus.Failed;
+            _objConsole.RefreshConsolesForFaction(objective.Faction);
+        }
+        Dirty(uid, objective);
     }
 
     public void AwardPointsToFaction(string faction, CMUObjectiveComponent objective)
@@ -135,10 +160,42 @@ public sealed partial class ObjectiveControlSystem
 
     private void TryActivateFinalObjective(string factionKey)
     {
-        _logs.Warning($"[OBJ-FINAL] TryActivateFinalObjective not ported, final objective for '{factionKey}' not activated.");
-    }
+        var finalObjectives = new List<(EntityUid Uid, CMUObjectiveComponent Comp)>();
+        foreach (var (uid, comp) in _allObjectives)
+        {
+            if (_planetMapId == MapId.Nullspace || Transform(uid).MapID != _planetMapId)
+                continue;
 
-    // IsWinActive()
+            if (comp is { Active: false, ObjectiveLevel: 3 }
+                && comp.Factions.Any(f => f.ToLowerInvariant() == factionKey))
+            {
+                finalObjectives.Add((uid, comp));
+            }
+        }
+
+        foreach (var (uid, comp) in finalObjectives.OrderBy(_ => Random.Shared.Next()))
+        {
+            if (TryComp(uid, out KillObjectiveComponent? _) && !IsKillObjectiveCompletable(uid, comp))
+                continue;
+
+            comp.Faction = factionKey;
+            InitializeObjectiveStatuses(comp);
+            comp.Active = true;
+            Dirty(uid, comp);
+            RaiseLocalEvent(uid, new ObjectiveActivatedEvent());
+
+            if (GetOrReselectObjMaster() is not { } master)
+                return;
+            master.FactionsGivenFinalObjective.Add(factionKey);
+            DirtyObjectiveMaster();
+
+            IsWinActive = true;
+            _logs.Info($"[OBJ-FINAL] Activated '{comp.ObjectiveDescription}' for '{factionKey}', IsWinActive=true");
+            return;
+        }
+
+        _logs.Warning($"[OBJ-FINAL] No completable final objective found for faction '{factionKey}'. None activated!");
+    }
 
     private void TryUnlockOrSpawnNextTier(EntityUid completedUid, CMUObjectiveComponent completedObjective, string completingFaction)
     {
@@ -189,8 +246,6 @@ public sealed partial class ObjectiveControlSystem
         _roundStats.RecordObjectiveVictory(faction);
         _gameTicker.EndRound(roundEndText);
     }
-
-    // GetWinPoints()
 
     public void InitializeObjectiveStatuses(CMUObjectiveComponent obj)
     {

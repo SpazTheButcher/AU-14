@@ -2,11 +2,32 @@ using Robust.Shared.Map;
 
 namespace Content.Server._CMU14.Round.Objectives;
 
+public sealed class ObjectiveWatchedEntityStartupEvent : EntityEventArgs
+{
+    public readonly EntityUid Uid;
+
+    public ObjectiveWatchedEntityStartupEvent(EntityUid uid)
+    {
+        Uid = uid;
+    }
+}
+
 public sealed class ObjectiveInterestSystem : EntitySystem
 {
     private readonly Dictionary<string, List<EntityUid>> _interestByKey = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<EntityUid, MapId> _objectiveMap = new();
     private readonly List<EntityUid> _wildcardObjectives = new();
+
+    public override void Initialize()
+    {
+        base.Initialize();
+        SubscribeLocalEvent<MetaDataComponent, ComponentStartup>(OnEntityStartup);
+    }
+
+    private void OnEntityStartup(EntityUid uid, MetaDataComponent meta, ref ComponentStartup args)
+    {
+        RaiseLocalEvent(new ObjectiveWatchedEntityStartupEvent(uid));
+    }
 
     public override void Shutdown()
     {

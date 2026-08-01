@@ -5,6 +5,8 @@ using Content.Server.GameTicking;
 using Content.Server.Maps;
 using Content.Shared._CMU14.Round.Objectives.Component;
 using Content.Shared._RMC14.Rules;
+using Content.Shared._CMU14.Round.Objectives;
+using Robust.Server.Player;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Prototypes;
@@ -18,16 +20,26 @@ public sealed partial class ObjectiveControlSystem : EntitySystem
     [Dependency] private SharedMapSystem _mapSystem = default!;
     [Dependency] private IPrototypeManager _proto = default!;
     [Dependency] private GameTicker _gameTicker = default!;
+    [Dependency] private IPlayerManager _playerManager = default!;
+    [Dependency] private PlatoonSpawnRuleSystem _platoonSystem = default!;
 
+    private readonly List<(EntityUid Uid, CMUObjectiveComponent Comp)> _allObjectives = new();
     private EntityUid _objectiveMasterUid = EntityUid.Invalid;
     private MapId _planetMapId = MapId.Nullspace;
     private ISawmill _logs = default!;
+
+    /// <summary>True once a winning final objective has been activated.</summary>
+    public bool IsWinActive { get; set; }
+    public MapId? GetPlanetMapId() => _planetMapId;
 
     public override void Initialize()
     {
         base.Initialize();
         _logs = Logger.GetSawmill("objectives");
         SubscribeLocalEvent<PostGameMapLoad>(OnPostGameMapLoad);
+        SubscribeLocalEvent<CMUObjectiveComponent, ComponentStartup>(OnObjectiveStartup);
+        SubscribeLocalEvent<CMUObjectiveComponent, ComponentShutdown>(OnObjectiveShutdown);
+        SubscribeLocalEvent<SpendWinPointsEvent>(OnSpendWinPoints);
     }
 
     public override void Shutdown()
@@ -35,10 +47,22 @@ public sealed partial class ObjectiveControlSystem : EntitySystem
         base.Shutdown();
         _planetMapId = MapId.Nullspace;
         _objectiveMasterUid = EntityUid.Invalid;
+        _allObjectives.Clear();
+    }
+
+    private void OnObjectiveShutdown(EntityUid uid, CMUObjectiveComponent component, ref ComponentShutdown args)
+        => _allObjectives.RemoveAll(o => o.Uid == uid);
+
+    private void OnObjectiveStartup(EntityUid uid, CMUObjectiveComponent component, ref ComponentStartup args)
+    {
+        _logs.Debug($"[OBJ START] CMUObjectiveComponent started: [{ToPrettyString(uid)}]");
+        _allObjectives.Add((uid, component));
+        InitializeObjectiveStatuses(component);
     }
 
     private void OnPostGameMapLoad(PostGameMapLoad ev)
     {
+        IsWinActive = false;
         var gameMap = ev.GameMap;
         var map = ev.Map;
         var grids = ev.Grids.ToArray();
@@ -99,6 +123,7 @@ public sealed partial class ObjectiveControlSystem : EntitySystem
         if (hasPlanetMaster)
         {
             _logs.Debug($"[OBJ-CTRL] SetupPostGameMapLoad: ObjectiveMaster loaded from planet, running Main()");
+            ActivateObjectiveMaster();
             Timer.Spawn(0, Main);
             return;
         }
@@ -123,11 +148,35 @@ public sealed partial class ObjectiveControlSystem : EntitySystem
             _logs.Warning($"[OBJ-CTRL] SetupPostGameMapLoad: no master found for preset '{presetId}', spawned fallback 'ObjectiveMasterBaseDistress'");
         }
 
+        ActivateObjectiveMaster();
         Timer.Spawn(0, Main);
     }
 
+    private void ActivateObjectiveMaster()
+    {
+        if (!TryComp(_objectiveMasterUid, out CMUObjectiveMasterComponent? master)) return;
+        master.IsActive = true;
+        DirtyObjectiveMaster();
+    }
 
-    private CMUObjectiveMasterComponent? GetOrReselectObjMaster() // Stub
+    private void OnSpendWinPoints(SpendWinPointsEvent ev)
+    {
+        if (string.IsNullOrEmpty(ev.Team) || ev.Team == "none")
+            return;
+
+        if (GetOrReselectObjMaster() is not { } master)
+        {
+            _logs.Error("[OBJ-CTRL] OnSpendWinPoints called with null ObjectiveMaster!");
+            return;
+        }
+
+        var key = ev.Team.ToLowerInvariant();
+        var data = master.GetOrCreateFactionData(key);
+        data.CurrentWinPoints = Math.Max(0, data.CurrentWinPoints - ev.Amount);
+        DirtyObjectiveMaster();
+    }
+
+    private CMUObjectiveMasterComponent? GetOrReselectObjMaster()
     {
         if (_objectiveMasterUid.IsValid() && TryComp(_objectiveMasterUid, out CMUObjectiveMasterComponent? master))
             return master;
@@ -152,9 +201,82 @@ public sealed partial class ObjectiveControlSystem : EntitySystem
             Dirty(_objectiveMasterUid, master);
     }
 
-    private void Main() // Stub
+    public (int current, int required) GetWinPoints(string faction)
     {
-        _logs.Debug("[OBJ-CTRL] Main() called, but wasn't ported.");
-        // TODO: implement GetInactiveObjectives & SelectObjectives etc.
+        if (GetOrReselectObjMaster() is not { } master)
+            return (0, 0);
+
+        var key = faction.ToLowerInvariant();
+        var data = master.GetOrCreateFactionData(key);
+        return (data.CurrentWinPoints, data.RequiredWinPoints);
+    }
+
+    private void Main()
+    {
+        if (GetOrReselectObjMaster() is not { } master)
+            return;
+
+        var presetId = _gameTicker.Preset?.ID.ToLowerInvariant() ?? string.Empty;
+        var modeObjectives = GetInactiveObjectives(presetId, Transform(_objectiveMasterUid).MapID);
+        _logs.Info($"[OBJ-CTRL] Main(): Preset='{presetId}', Eligible objectives={modeObjectives.Count}");
+
+        if (modeObjectives.Count == 0)
+        {
+            _logs.Warning($"[OBJ-CTRL] Main(): No objectives passed filtering for preset '{presetId}':");
+            foreach (var (_, comp) in _allObjectives.Take(30))
+                _logs.Warning($"   {comp.ObjectiveDescription} - active={comp.Active} - neutral={comp.FactionNeutral} - presets=[{string.Join(", ", comp.AllowedPresets)}]");
+        }
+
+        string[] factions = presetId switch
+        {
+            "insurgency" => ["govfor", "clf", "scientist"],
+            "forceonforce" => ["govfor", "opfor", "scientist"],
+            "distresssignal" => ["govfor"],
+            _ => ["scientist"], // corporate fallback (e.g. colonyfall)
+        };
+
+        foreach (var faction in factions)
+        {
+            try
+            {
+                var factionData = master.GetOrCreateFactionData(faction);
+                ActivateFactionObjectives(faction, 1,
+                    SelectObjectives(faction, modeObjectives, 1,
+                        GetRandomObjectiveCount(factionData.MaxMinorObjectives, factionData.MinMinorObjectives)));
+                ActivateFactionObjectives(faction, 2,
+                    SelectObjectives(faction, modeObjectives, 2,
+                        GetRandomObjectiveCount(factionData.MaxMajorObjectives, factionData.MinMajorObjectives)));
+            }
+            catch (Exception ex)
+            {
+                _logs.Error($"[OBJ-CTRL] Failed to activate {faction} objectives! {ex}");
+            }
+        }
+
+        try
+        {
+            var neutralCandidates = modeObjectives
+                .Where(x => x.Comp is { FactionNeutral: true }
+                    && (x.Comp.ObjectiveLevel != 3 || x.Comp.RollAnyway))
+                .ToList();
+
+            int neutralCap = GetRandomObjectiveCount(master.MaxNeutralObjectives, master.MinNeutralObjectives);
+            _logs.Info($"[OBJ-CTRL] Neutral: Found {neutralCandidates.Count} candidates, max allowed = {neutralCap}");
+
+            if (neutralCandidates.Count > neutralCap)
+                neutralCandidates = WeightedRandomPick(neutralCandidates, neutralCap);
+
+            foreach (var (uid, obj) in neutralCandidates)
+            {
+                obj.Active = true;
+                Dirty(uid, obj);
+                RaiseLocalEvent(uid, new ObjectiveActivatedEvent());
+                _logs.Debug($"[OBJ-CTRL] Activated neutral objective '{obj.ObjectiveDescription}'");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logs.Error($"[OBJ-CTRL] Failed to activate neutral objectives: {ex.Message}!");
+        }
     }
 }
