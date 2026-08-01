@@ -2,7 +2,7 @@ using Robust.Shared.GameStates;
 
 namespace Content.Shared._CMU14.Round.Objectives.Component;
 
-[RegisterComponent, NetworkedComponent]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true)]
 public sealed partial class CMUObjectiveMasterComponent : Robust.Shared.GameObjects.Component
 {
     [DataDefinition]
@@ -39,7 +39,8 @@ public sealed partial class CMUObjectiveMasterComponent : Robust.Shared.GameObje
 
     public HashSet<string> FactionsGivenFinalObjective { get; set; } = new();
 
-    public bool IsActive { get; set; }
+    [AutoNetworkedField]
+    public bool IsActive;
 
     public FactionObjectiveData GetOrCreateFactionData(string faction)
     {

@@ -1,4 +1,4 @@
-using Content.Shared.AU14.Objectives;
+using Content.Shared._CMU14.Round.Objectives;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
@@ -25,9 +25,9 @@ public sealed partial class CMUObjectiveComponent : Robust.Shared.GameObjects.Co
     }
 
     [DataField(required: true)]
-    public string ID { get; private set; } = string.Empty;
+    public string Id { get; private set; } = string.Empty;
 
-    [DataField(required: true)]
+    [DataField("ObjectiveDescription", required: true)]
     public string ObjectiveDescription { get; private set; } = string.Empty;
 
     [DataField("applicableModes", required: true)]
@@ -51,13 +51,13 @@ public sealed partial class CMUObjectiveComponent : Robust.Shared.GameObjects.Co
     [DataField]
     public List<string> WhitelistedPlatoons { get; private set; } = new();
 
-    [DataField]
+    [DataField("rollanyway")]
     public bool RollAnyway { get; private set; } = false;
 
     [DataField]
     public bool Repeating { get; private set; } = false;
 
-    [DataField]
+    [DataField("maxrepeatable")]
     public int? MaxRepeatable { get; private set; } = null;
 
     [DataField]
@@ -66,7 +66,7 @@ public sealed partial class CMUObjectiveComponent : Robust.Shared.GameObjects.Co
     [DataField]
     public bool FactionNeutral { get; private set; } = false;
 
-    [DataField(required: true)]
+    [DataField("objectivelevel", required: true)]
     public int ObjectiveLevel { get; private set; } = 1;
 
     [DataField]
@@ -75,7 +75,7 @@ public sealed partial class CMUObjectiveComponent : Robust.Shared.GameObjects.Co
     [DataField]
     public FinalObjectiveType FinalType { get; private set; } = FinalObjectiveType.InstantWin;
 
-    [DataField]
+    [DataField("custompoints")]
     public int CustomPoints { get; private set; } = 0;
 
     [DataField]
