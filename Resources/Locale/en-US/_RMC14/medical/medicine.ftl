@@ -69,6 +69,8 @@ rmc-iron-container-label-text = Fe
 rmc-tramadol-container-label-text = TA
 rmc-oxycodone-container-label-text = OC
 rmc-paracetamol-container-label-text = PL
+rmc-fentanyl-container-label-text = FE
+rmc-methamphetamine-container-label-text = MA
 
 rmc-custom-container-label-text = {$customLabel}
 

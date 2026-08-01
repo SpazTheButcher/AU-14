@@ -265,6 +265,8 @@ public sealed partial class DefibrillatorSystem : EntitySystem
                 damageableComponent.TotalDamage < threshold)
             {
                 _mobState.ChangeMobState(target, MobState.Critical, mob, uid);
+                // RMC14 - A fully healed target makes TryChangeDamage no-op, so refresh the state explicitly.
+                _mobThreshold.VerifyThresholds(target, thresholds, mob, damageableComponent);
                 dead = false;
             }
 

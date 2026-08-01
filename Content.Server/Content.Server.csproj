@@ -11,9 +11,14 @@
   </PropertyGroup>
   <Import Project="../MSBuild/Content.props" />
   <ItemGroup>
+    <PackageReference Include="ClosedXML" />
     <PackageReference Include="Discord.Net" />
     <PackageReference Include="JetBrains.Annotations" PrivateAssets="All" />
     <PackageReference Include="Linguini.Bundle" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.ObjectPool" />
     <PackageReference Include="NetCord" />
     <PackageReference Include="prometheus-net" />

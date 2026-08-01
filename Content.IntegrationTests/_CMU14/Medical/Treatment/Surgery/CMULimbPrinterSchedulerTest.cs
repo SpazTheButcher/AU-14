@@ -1,5 +1,6 @@
 using Content.Server._CMU14.Medical.Treatment.Surgery;
 using Content.Shared._CMU14.Medical.Treatment.Surgery;
+using Content.Shared.Body.Part;
 using Content.Shared.Interaction.Components;
 using Robust.Server.GameObjects;
 using Robust.Shared.GameObjects;
@@ -10,6 +11,57 @@ namespace Content.IntegrationTests._CMU14.Medical.Treatment.Surgery;
 [TestFixture]
 public sealed class CMULimbPrinterSchedulerTest
 {
+    [Test]
+    public async Task UiOffersHandsAndFeetAsSeparatePrints()
+    {
+        await using var pair = await PoolManager.GetServerClient();
+        var map = await pair.CreateTestMap();
+        var server = pair.Server;
+
+        await server.WaitAssertion(() =>
+        {
+            var entMan = server.EntMan;
+            var ui = entMan.System<UserInterfaceSystem>();
+            var printer = entMan.SpawnEntity("CMULimbPrinter", map.GridCoords);
+            var viewer = entMan.SpawnEntity(null, map.GridCoords);
+            entMan.AddComponent<ComplexInteractionComponent>(viewer);
+
+            try
+            {
+                ui.OpenUi(printer, CMULimbPrinterUIKey.Key, viewer);
+                Assert.That(
+                    ui.TryGetUiState<CMULimbPrinterBuiState>(printer, CMULimbPrinterUIKey.Key, out var state),
+                    Is.True);
+                Assert.That(state!.Options, Has.Count.EqualTo(16));
+
+                foreach (var kind in new[] { CMULimbPrinterPrintKind.Organic, CMULimbPrinterPrintKind.Robotic })
+                {
+                    foreach (var type in new[] { BodyPartType.Hand, BodyPartType.Foot })
+                    {
+                        foreach (var symmetry in new[] { BodyPartSymmetry.Left, BodyPartSymmetry.Right })
+                        {
+                            Assert.That(
+                                state.Options.Exists(option =>
+                                    option.Kind == kind
+                                    && option.Type == type
+                                    && option.Symmetry == symmetry
+                                    && option.Prototype.Length > 0),
+                                Is.True,
+                                $"Missing {kind} {symmetry} {type} option");
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                entMan.DeleteEntity(viewer);
+                entMan.DeleteEntity(printer);
+            }
+        });
+
+        await pair.CleanReturnAsync();
+    }
+
     [Test]
     public async Task RestartingWorkReplacesTheVisualExpiry()
     {

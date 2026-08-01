@@ -1,5 +1,5 @@
 # Apparel, medic, aircrew, command, smartgun, section-leader, weapons, special-weapons,
-# equipment (universal), RTO (universal), aircrew-weapons (universal), CT (universal)
+# equipment (universal), RTO (universal), aircrew-weapons (universal), CT (universal), Crewman (universal)
 - type: entity
   parent: ColMarTechBase
   id: AU14USCMclothingequipmentvendor
@@ -109,6 +109,8 @@
       entries:
       - id: CMBeltMarine
         amount: 40
+      - id: CMUBeltCombatSidearmRig
+        amount: 15
       - id: RMCBeltGrenade
         amount: 4
       - id: RMCM276ShotgunShellLoadingRig
@@ -255,7 +257,7 @@
       - id: RMCPouchMedical
       - id: RMCPouchSyringeFill
       - id: RMCPouchFirstAidSplintsGauzeOintment
-        name: first-aid pouch (gauze, ointment) # TODO RMC14 splints
+        name: first-aid pouch (gauze, ointment)
       - id: RMCPouchFirstAidPills
         name: first-aid pouch (pills)
     - name: Medical Storage
@@ -614,6 +616,10 @@
       - id: RMCPackFlareCAS
     - name: Spare Equipment
       entries:
+      - id: ANPRC117GRadioFilled
+        amount: 2
+      - id: ANPRCMastAntenna
+        amount: 1
       - id: RMCExplosiveBreachingCharge
         amount: 4
       - id: RMCBinoculars
@@ -699,6 +705,110 @@
       - id: RMCLaserDesignator
       - id: RMCWhistle
       - id: RMCPackFlareCAS
+
+- type: entity
+  parent: ColMarTechBase
+  id: AU14USCMsquadleaderequipmentvendor
+  name: USCM squad leader vendor
+  description: >-
+    An automated equipment rack, hooked up to a compact storage of US Colonial Marine Corps squad-leadership equipment.
+    Designed for immediate readiness following cryogenic hypersleep or rapid mobilization orders.
+  components:
+  - type: Sprite
+    sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/clothing.rsi
+  - type: CMAutomatedVendor
+    jobs:
+    - AU14JobGOVFORSquadSergeant
+    - AU14JobOPFORSquadSergeant
+    - AU14JobGOVFORSquadSergeantCMBCIU
+    - AU14JobGOVFORSquadSergeantRMC
+    - AU14JobGOVFORSquadSergeantUPP
+    - AU14JobGOVFORSquadSergeantWYPMC
+    sections:
+    - name: Helmets and Hats
+      choices: { CMHat: 2 }
+      entries:
+      - id: AU14CamoM11Helmet
+      - id: RMCHeadBeretSquad
+        name: Black Beret
+    - name: Squad Leader Essentials
+      takeAll: CMStandard
+      entries:
+      - id: RMCVendorBundleCrewLeader
+    - name: Backpack
+      choices: { CMBackpack: 1 }
+      entries:
+      - id: CMBackpackMarine
+      - id: RMCScabbardMacheteFilled
+      - id: CMSatchelMarine
+        recommended: true
+    - name: Footwear
+      entries:
+      - id: AU14SpikeBoots
+        points: 8
+        recommended: true
+    - name: Utilities
+      entries:
+      - id: RMCWhistle
+        points: 3
+      - id: CMFireExtinguisherPortable
+        points: 3
+      - id: RMCMotionDetector
+        points: 5
+      - id: RMCFulton20
+        points: 5
+    - name: Binoculars
+      entries:
+      - id: RMCRangefinder
+        points: 3
+      - id: RMCLaserDesignator
+        points: 5
+    - name: Engineering Supplies
+      entries:
+      - id: CMSheetMetal10
+        name: metal x10
+        points: 5
+        recommended: true
+      - id: CMSheetPlasteel10
+        name: plasteel x10
+        points: 7
+        recommended: true
+      - id: RMCExplosivePlastic
+        points: 5
+        recommended: true
+      - id: RMCExplosiveBreachingCharge
+        points: 7
+        recommended: true
+      - id: CMSandbagEmpty25
+        name: sandbags x25
+        points: 10
+        recommended: true
+      - id: RMCPackFlareCAS
+        points: 7
+      - id: RMCWeldingGoggles
+        points: 5
+    - name: Medical Supplies
+      entries:
+      - id: CMBurnKit10
+        points: 2
+      - id: CMTraumaKit10
+        points: 2
+      - id: CMAdvFirstAidKitFilled
+        points: 12
+      - id: CMBicaridineAutoInjector
+        points: 1
+      - id: CMDexalinPlusAutoInjector
+        points: 1
+      - id: CMInaprovalineAutoInjector
+        points: 1
+      - id: CMKelotaneAutoInjector
+        points: 1
+      - id: CMTricordrazineAutoInjector
+        points: 1
+      - id: CMHealthAnalyzer
+        points: 4
+      - id: CMRollerBedSpawnFolded
+        points: 2
 
 - type: entity
   parent: ColMarTechBase
@@ -861,7 +971,7 @@
       - id: CMEntrenchingTool
         recommended: true
         amount: 30
-      - id: RMCShovel
+      - id: AU14ToolShovel
         amount: 10
       - id: RMCM5Bayonet
         recommended: true
@@ -932,6 +1042,8 @@
       entries:
       - id: CMMaskGas
         amount: 40
+      - id: CMMaskPrescriptionGas
+        amount: 10
       - id: CMUGasMaskFilter
         amount: 80
       - id: AU14PouchGasMaskBag
@@ -967,34 +1079,23 @@
   name: radio telephone operator rack
   description: An automated rack hooked up to a small storage of radio equipment.
   components:
-  - type: AccessReader
-    access: [ [ "AU14AccessGovforFTL" ], [ "AU14AccessOpforFTL" ] ]
   - type: Sprite
     sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/clothing.rsi
   - type: CMAutomatedVendor
+    jobs:
+    - AU14JobGOVFORRadioTrafficOperator
+    - AU14JobOPFORRadioTrafficOperator
     sections:
-    - name: RTO Backpack
-      choices: { RTOBackpack: 1 }
-      entries:
-      - id: RMCBackpackRTO
     - name: Equipment
       takeAll: CMStandard
       entries:
-      - id: CMArmorHelmetM12
+      - id: ANPRCMastAntenna
+      - id: ANPRCWhipAntenna
       - id: RMCLaserDesignator
       - id: RMCWhistle
-      - id: RMCPackFlareCAS
-      - id: AU14SpikeBoots
-    - name: Spare Equipment
-      entries:
-      - id: RMCExplosiveBreachingCharge
-        amount: 2
-      - id: RMCBinoculars
-        amount: 2
-      - id: RMCFulton20
-        amount: 1
       - id: RMCBoxPackFlareCAS
-        amount: 1
+      - id: RMCFulton20
+      - id: RMCOverwatchCameraTripod
 
 # AirCrew Weapons (universal)
 - type: entity
@@ -1039,14 +1140,16 @@
   name: combat technicians gear rack
   description: An automated gear rack for combat technicians.
   components:
-  - type: AccessReader
-    access: [ [ "AU14AccessGovforEngineering" ], [ "AU14AccessOpforEngineering" ] ]
+  # - type: AccessReader
+  #   access: [ [ "AU14AccessGovforEngineering" ], [ "AU14AccessOpforEngineering" ] ]
   - type: Sprite
     sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/combat_technician_gear.rsi
   - type: CMAutomatedVendor
     jobs:
     - AU14JobGOVFORSquadCombatTech
     - AU14JobOPFORSquadCombatTech
+    - AU14JobGOVFOROfficerEngi
+    - AU14JobOPFOROfficerEngi
     sections:
     - name: Engineer Set
       takeAll: CMEngineerSet
@@ -1093,6 +1196,10 @@
         name: plasteel x50
         points: 8
         recommended: true
+      - id: AU14HescoKit
+        name: HESCO barricade kit
+        points: 4
+        recommended: true
       - id: CMSandbagEmpty50
         name: sandbags x50
         points: 4
@@ -1103,17 +1210,15 @@
       entries:
       - id: CMFoldingBarricadesMB6x3
         name: MB-6 folding barricade x3
-        points: 4
-      - id: MaintenanceJack
         points: 2
-      - id: RMCShovel
+      - id: AU14MaintenanceJack
         points: 2
       - id: RMCES11MobileFuelCanister
         points: 4
       - id: RMCMagazineSMGNailgun
         points: 2
       - id: RMCEngineerKit
-        points: 4
+        points: 2
       - id: DoorElectronics
         points: 2
     - name: Power Generation
@@ -1141,22 +1246,98 @@
     - name: Explosives
       entries:
       - id: RMCExplosivePlastic
-        points: 5
-      - id: RMCExplosiveBreachingCharge
-        points: 8
+        points: 4
+      - id: AU14Bangalore
+        points: 6
         recommended: true
+      - id: RMCExplosiveBreachingCharge
+        points: 6
       - id: RMCPacketGrenadeMetalFoamFilled
         points: 8
+      - id: RMCRocketM5510Brute
+        points: 4
     - name: Utilities
       entries:
       - id: RMCSynthResetKey
         points: 4
 
+# Engineering Staff (GOVFOR)
+- type: entity
+  parent: ColMarTechBase
+  id: AU14EngineeringStaffVendor
+  name: engineering staff gear rack
+  description: An automated gear rack for engineering officers and technicians.
+  components:
+  - type: Sprite
+    sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/combat_technician_gear.rsi
+  - type: CMAutomatedVendor
+    jobs:
+    - AU14JobGOVFOROfficerEngi
+    - AU14JobGOVFOREngineeringTech
+    sections:
+    - name: Engineer Set
+      takeAll: CMEngineerSet
+      entries:
+      - id: AU14VendorBundleEngineeringTechnicianEssentials
+    - name: Gloves
+      choices: { CMHands: 1 }
+      entries:
+      - id: CMHandsInsulated
+    - name: Uniform
+      choices: { CMHands: 1 }
+      entries:
+      - id: CMJumpsuitMaintTech
+    - name: Helmet
+      choices: { CMHelmet: 2 }
+      entries:
+      - id: RMCHardhatOrange
+    - name: Suit
+      choices: { CMSuit: 1 }
+      entries:
+      - id: RMCHazardVest
+    - name: Tool Storage
+      choices: { CMUCTToolStorage: 2 }
+      entries:
+      - id: AU14BeltUtilityFilled
+        name: M276 pattern toolbelt rig (filled)
+      - id: AU14PouchToolsFilledComtech
+        name: tactical tools pouch (filled)
+    - name: Engineering Storage Bag
+      choices: { CMUPouchesCTBag: 1 }
+      entries:
+      - id: RMCSatchelWelder
+    - name: Engineering Storage Pouch
+      choices: { CMUPouchesCT: 2 }
+      entries:
+      - id: RMCPouchConstruction
+        recommended: true
+      - id: RMCPouchEngineerKit
+      - id: RMCPouchElectronics
+      - id: RMCPouchGeneralLarge
+    - name: Engineering Materials
+      choices: { CMUEngiStaffMaterials: 4 }
+      entries:
+      - id: CMSheetMetal50
+        name: metal x50
+      - id: CMSheetPlasteel50
+        name: plasteel x50
+        recommended: true
+      - id: CMSheetGlass
+        name: glass x50
+      - id: CMSheetGlassReinforced
+        name: reinforced glass x50
+      - id: RMCPlankWood
+        name: wood x50
+    - name: Utilities
+      choices: { CMUEngiStaffUtility: 1 }
+      entries:
+      - id: RMCSynthResetKey
+
 - type: entity
   parent: CMVendorBundleRiflemanApparel
   id: AU14VendorBundleCombatTechnicianEssentials
   name: essential engineer set
-  description: Contains 50 metal, 50 plasteel, 50 sandbags, a high-capacity power cell, a light replacer, a deployable ladder, a welding visor, welding goggles, and a nailgun.
+  description: Contains 50 metal, 50 plasteel, 50 sandbags, a shovel, a high-capacity power cell, an overwatch camera tripod, a light replacer, a deployable ladder, a welding visor, welding goggles, and a nailgun.
   components:
   - type: Sprite
     sprite: _RMC14/Objects/Tools/wrench.rsi
@@ -1177,6 +1358,27 @@
     - RMCVisorWelding
     - RMCWeldingGoggles
     - RMCSentryLaptop
+    - RMCOverwatchCameraTripod
+    - AU14ToolShovel
+
+- type: entity
+  parent: CMVendorBundleRiflemanApparel
+  id: AU14VendorBundleEngineeringTechnicianEssentials
+  name: essential engineer set
+  description: essential engineering supplies
+  components:
+  - type: Sprite
+    sprite: _RMC14/Objects/Tools/wrench.rsi
+    state: icon
+  - type: CMVendorBundle
+    bundle:
+    - RMCEngineerKit
+    - RMCPowerCellHigh
+    - RMCLightReplacer
+    - CMAPCElectronics
+    - RMCWeldingGoggles
+    - AU14MaintenanceJack
+    - AU14ToolShovel
 
 - type: entity
   parent: CMVendorBundleRiflemanApparel
@@ -1500,6 +1702,8 @@
         amount: 4
       - id: RMCFulton20
         amount: 4
+      - id: RMCOverwatchCameraTripod
+        amount: 4
       - id: RMCSentryLaptop
         amount: 4
     - name: RTO Packs
@@ -1507,6 +1711,28 @@
       - id: AU14BackpackRTOPackJungle
         amount: 2
       - id: AU14BackpackRTOPackDesert
+        amount: 1
+    - name: Materials
+      entries:
+      - id: CMSheetMetal
+        amount: 4
+      - id: CMSheetPlasteel50
+        amount: 4
+      - id: CMSandbagEmpty50
+        amount: 8
+      - id: AU14HescoKit
+        amount: 30
+      - id: RMCSheetPlastic
+        amount: 4
+      - id: RMCSheetAluminum
+        amount: 4
+      - id: CMSheetGlass
+        amount: 5
+      - id: RMCSheetCardboard
+        amount: 5
+      - id: CMSheetPhoron
+        amount: 1
+      - id: SheetUranium
         amount: 1
     - name: Tents
       entries:
@@ -1526,3 +1752,95 @@
       entries:
       - id: AU14FlagCarriableUA
         amount: 1
+
+- type: entity
+  parent: ColMarTechBase
+  id: AU14USCMVehicleCrewmanVendor
+  name: vehicle crewman vendor
+  description: >-
+    An automated dispenser rack, hooked up to a small storage of support gear for vehicle crew.
+    Engineered to get vehicle crewmen fight-ready in seconds after cryogenic hypersleep or scramble orders.
+    The console shows many different options available, though they are all marked as temporarily out of stock.
+
+    Vehicle crew protocol: grab the essential maintenance jack.
+  components:
+  - type: AccessReader
+    access: [[ "AU14AccessGovforVehicleCrew" ], [ "AU14AccessOpforVehicleCrew" ]]
+  - type: Sprite
+    sprite: _RMC14/Structures/Machines/VendingMachines/ColMarTech/clothing.rsi
+  - type: CMAutomatedVendor
+    sections:
+    - name: Servicing Tools # placeholder
+      entries:
+      - id: AU14MaintenanceJack
+
+- type: entity
+  parent: ColMarTechBase
+  id: AU14USCMShipsideUniformVendor
+  name: USCM shipside uniform vendor
+  description: A stripped-down dispenser rack stocked with off-duty uniforms, footwear, and light personal gear for wear aboard ship.
+  components:
+  - type: AccessReader
+    access: [ [ "AU14AccessGovforSquad" ], [ "AU14AccessOpforSquad" ] ]
+  - type: Sprite
+    sprite: _AU14/Structures/Vendors/uscmgearrack.rsi
+  - type: CMAutomatedVendor
+    sections:
+    - name: Softcovers
+      entries:
+      - id: AU14CamoBoonieHat
+        amount: 40
+      - id: AU14CamoPatrolCap
+        amount: 50
+      - id: AU14CamoFlapCap
+        amount: 30
+      - id: AU14HeadCommandoBeanie
+        amount: 10
+    - name: Fatigues
+      entries:
+      - id: AU14CamoUSCMFatigues
+        amount: 120
+    - name: Footwear
+      entries:
+      - id: CMBootsBlack
+        amount: 40
+      - id: CMBootsBrown
+        amount: 40
+      - id: AU14BootsJungle
+        amount: 25
+    - name: Mask
+      entries:
+      - id: CMMaskCoif
+        amount: 20
+      - id: RMCMaskScarfBlack
+        amount: 20
+      - id: RMCMaskScarfGray
+        amount: 20
+      - id: RMCMaskScarfTan
+        amount: 20
+      - id: RMCMaskTornScarfGreen
+        amount: 20
+      - id: RMCMaskTornScarfDesert
+        amount: 20
+      - id: RMCMaskTornScarfSnow
+        amount: 20
+      - id: RMCMaskTornScarfBlack
+        amount: 20
+      - id: RMCMaskSmockBlack
+        amount: 20
+      - id: RMCMaskNeckerchiefGray
+        amount: 20
+    - name: Glasses
+      entries:
+      - id: RMCGlassesMarineRpg
+        amount: 25
+      - id: AU14GlassesBiMex
+        amount: 25
+      - id: AU14GlassesBiMexOrange
+        amount: 25
+      - id: RMCGlassesTriMaxBronze
+        amount: 25
+    - name: Bag
+      entries:
+      - id: CMSatchelMarine
+        amount: 40

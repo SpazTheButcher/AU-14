@@ -7,6 +7,9 @@ au14-trait-english-language-desc = You can speak and understand English. Good da
 au14-trait-no-english-name = Forget English Language
 au14-trait-no-english-desc = Sho?
 
+au14-trait-no-language-learning-name = Language Impairment
+au14-trait-no-language-learning-desc = You are unable to learn new languages.
+
 au14-trait-polyglot-name = Polyglot
 au14-trait-polyglot-desc = Languages just come to you naturally, last time you sneezed you discombobulated a verb in a dialect you've never even heard.
 

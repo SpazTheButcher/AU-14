@@ -11,6 +11,7 @@
     - category: Plasma
     - category: Armor
     - category: Stamina
+    - category: Panic
     - category: Tacmap
     - alertType: SuitPower
     - category: Internals
@@ -25,7 +26,10 @@
     - alertType: Stun
     - alertType: Unconscious
     - category: Breathing # Vox gang not calling this oxygen
-    - category: Pressure  
+    - category: RespiratoryStrain
+    - category: DrugAllergy
+    - category: NicotineCraving
+    - category: Pressure
     - alertType: Bleed
     - category: Temperature
     - category: Hunger

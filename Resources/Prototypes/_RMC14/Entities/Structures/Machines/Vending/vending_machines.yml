@@ -916,6 +916,10 @@
         amount: 18
       - id: FoodOnionRed
         amount: 14
+      - id: FoodGrape
+        amount: 14
+      - id: FoodBerries
+        amount: 14
       - id: FoodGarlic
         amount: 22
       - id: ReagentContainerRice

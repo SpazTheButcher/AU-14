@@ -48,6 +48,24 @@
     sprite: _RMC14/Objects/Clothing/Hands/Gloves/pmc.rsi
   - type: Clothing
     sprite: _RMC14/Objects/Clothing/Hands/Gloves/pmc.rsi
+  - type: CMArmor
+    melee: 10
+    bullet: 5
+    explosionArmor: 5
+  - type: MeleeWeapon
+    attackRate: 1
+    damage:
+      types:
+        Blunt: 15
+        Structural: 10
+    soundHit:
+      collection: Punch
+    animation: WeaponArcFist
+    mustBeEquippedToUse: true
+  - type: DamageImpactProfile
+    melee:
+      contact: Crush
+      penetration: None
 
 # PMC Commando
 - type: entity

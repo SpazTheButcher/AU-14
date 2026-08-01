@@ -592,6 +592,9 @@ public abstract partial class SharedWoundsSystem : EntitySystem
         TimeSpan? newDuration = duration == TimeSpan.MaxValue ? null : time + duration;
         wounded.Wounds.Add(new Wound(total, FixedPoint2.Zero, bloodloss, newDuration, type, false));
         Dirty(woundable, wounded);
+
+        var addedEv = new WoundAddedEvent(total, type);
+        RaiseLocalEvent(woundable.Owner, ref addedEv);
     }
 
     private bool CanCreateRMCWounds(EntityUid uid)

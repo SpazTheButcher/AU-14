@@ -316,10 +316,6 @@ public sealed partial class GhostRoleSystem : EntitySystem
         if (jobBans == null || jobBans.Contains(job))
             return false;
 
-        // Check job whitelist
-        if (!_jobWhitelist.IsAllowed(player, job))
-            return false;
-
         var ev = new IsJobAllowedEvent(player, job);
         RaiseLocalEvent(ref ev);
         return !ev.Cancelled;

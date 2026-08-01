@@ -6,6 +6,8 @@
   roundProfiles:
   - AU14RoundJobProfileMilitaryBase
   roundComponents:
+  - type: AU14CallsignRole
+    category: MEDICAL
   - type: Skills
     preset: AU14SkillPresetMilitaryDoctor
   - type: JobPrefix
@@ -29,15 +31,11 @@
     - NonResuscitable
     - Epilepsy
     - NoEnglish
+    - SlowRunner
+    - Anemic
   ranks:
     RMCRankCivilian: []
   chevrons:
-    RMCRankFirstLT:
-      entity: AU14ChevronFirstLT
-      requirements:
-      - !type:RoleTimeRequirement
-        role: AU14JobGOVFORMilitaryDoctor
-        time: 86400 # 24 hours
     RMCRankSecondLT:
       entity: AU14ChevronSecondLT
       requirements: []
@@ -100,7 +98,7 @@
   roundSide: Opfor
   roundForce: OPFOR
   icon: "AU14JobIconOPFORDoctor"
-  spawnMenuRoleName: Military Doctor (OPFOR)
+  spawnMenuRoleName: Medical Officer (OPFOR)
   supervisors: au14-job-supervisors-opfor
   startingGear: AU14GearOPFORMilitaryDoctor
   dummyStartingGear: AU14GearOPFORMilitaryDoctorDummy

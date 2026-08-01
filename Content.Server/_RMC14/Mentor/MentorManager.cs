@@ -1,12 +1,19 @@
+using System.Collections.Concurrent;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Content.Server.Administration.Managers;
 using Content.Server.Database;
+using Content.Server.GameTicking;
 using Content.Server.Players.RateLimiting;
 using Content.Shared._RMC14.CCVar;
 using Content.Shared._RMC14.Mentor;
 using Content.Shared.Administration;
+using Content.Shared.CCVar;
 using Content.Shared.Players.RateLimiting;
 using Content.Shared.Roles;
 using Robust.Server.Player;
@@ -35,11 +42,38 @@ public sealed partial class MentorManager : IPostInjectInit
     private const string RateLimitKey = "MentorHelp";
     private static readonly ProtoId<JobPrototype> MentorJob = "AU14JobGOVFORadvisor";
 
+    private GameTicker _ticker = default!;
+    private const ushort MessageLengthCap = 3500;
+    private const string TooLongText = "... **(msg too long)**";
+
+    private readonly ConcurrentQueue<WebhookPayload> _pendingPayloads = new();
+    private string _mentorHelpWebhookUrl = string.Empty;
+    private readonly HttpClient _httpClient = new();
+    private int _queueProcessorStarted;
+
     private readonly HashSet<ICommonSession> _activeMentors = new();
     private readonly Dictionary<NetUserId, bool> _mentors = new();
     private readonly Dictionary<NetUserId, (TimeSpan Timestamp, bool Typing)> _typingUpdateTimestamps = new();
     private readonly Dictionary<NetUserId, List<NetUserId>> _destinationClaims = new();
     private readonly Dictionary<NetUserId, HashSet<NetUserId>> _mentorClaims = new();
+
+    private sealed class WebhookPayload
+    {
+        [JsonPropertyName("username")] public string? Username { get; set; }
+        [JsonPropertyName("embeds")] public List<WebhookEmbed>? Embeds { get; set; } = new();
+    }
+
+    private sealed class WebhookEmbed
+    {
+        [JsonPropertyName("description")] public string? Description { get; set; }
+        [JsonPropertyName("color")] public int? Color { get; set; }
+        [JsonPropertyName("footer")] public WebhookEmbedFooter? Footer { get; set; }
+    }
+
+    private sealed class WebhookEmbedFooter
+    {
+        [JsonPropertyName("text")] public string? Text { get; set; }
+    }
 
     private async Task LoadData(ICommonSession player, CancellationToken cancel)
     {
@@ -94,12 +128,10 @@ public sealed partial class MentorManager : IPostInjectInit
             }
         }
 
-        if (_mentorClaims.TryGetValue(user.UserId, out var destinations))
+        if (!_mentorClaims.TryGetValue(user.UserId, out var destinations)) return;
+        foreach (var destination in destinations)
         {
-            foreach (var destination in destinations)
-            {
-                Unclaim(user.Channel, destination, true);
-            }
+            Unclaim(user.Channel, destination, true);
         }
     }
 
@@ -357,7 +389,7 @@ public sealed partial class MentorManager : IPostInjectInit
             return;
 
         var recipients = new HashSet<INetChannel>();
-        if (destinationChannel != null && destinationChannel.IsConnected)
+        if (destinationChannel is { IsConnected: true })
             recipients.Add(destinationChannel);
 
         var isMentor = false;
@@ -397,6 +429,14 @@ public sealed partial class MentorManager : IPostInjectInit
 
         if (author != null)
             SendTypingUpdate(author.Channel, destination, false);
+
+        if (!create || string.IsNullOrWhiteSpace(_mentorHelpWebhookUrl)) return;
+        var cappedMessage = message.Length > MessageLengthCap
+            ? message[..(MessageLengthCap - TooLongText.Length)] + TooLongText
+            : message;
+        var payload = GenerateMentorHelpPayload(destinationName, authorName, cappedMessage);
+        _pendingPayloads.Enqueue(payload);
+        StartQueueProcessor();
     }
 
     private void SendTypingUpdate(INetChannel author, Guid destination, bool typing)
@@ -451,14 +491,14 @@ public sealed partial class MentorManager : IPostInjectInit
         _activeMentors.Remove(session);
         SendMentorStatus(session);
 
-        if (_mentorClaims.TryGetValue(user.UserId, out var claims))
+        if (!_mentorClaims.TryGetValue(user.UserId, out var claims)) return;
+        foreach (var claim in claims)
         {
-            foreach (var claim in claims)
-            {
-                Unclaim(user, claim, true);
-            }
+            Unclaim(user, claim, true);
         }
     }
+
+    private void OnMentorHelpWebhookChanged(string url) => _mentorHelpWebhookUrl = url;
 
     void IPostInjectInit.PostInject()
     {
@@ -483,6 +523,11 @@ public sealed partial class MentorManager : IPostInjectInit
         _userDb.AddOnFinishLoad(FinishLoad);
         _userDb.AddOnPlayerDisconnect(ClientDisconnected);
 
+        if (_config.IsCVarRegistered(CCVars.DiscordMentorHelpWebhook.Name))
+            _config.OnValueChanged(CCVars.DiscordMentorHelpWebhook, OnMentorHelpWebhookChanged, true);
+        else
+            OnMentorHelpWebhookChanged(string.Empty);
+
         if (_config.IsCVarRegistered(RMCCVars.RMCMentorHelpRateLimitPeriod.Name) &&
             _config.IsCVarRegistered(RMCCVars.RMCMentorHelpRateLimitCount.Name))
         {
@@ -497,5 +542,78 @@ public sealed partial class MentorManager : IPostInjectInit
         }
 
         _player.PlayerStatusChanged += OnPlayerStatusChanged;
+    }
+
+    private WebhookPayload GenerateMentorHelpPayload(string destinationName, string? authorName, string text)
+    {
+        var username = authorName != null ? $"{authorName} → {destinationName}" : $"System → {destinationName}";
+        var color = 0xFFA500;
+
+        _ticker ??= _entMan.System<GameTicker>();
+        var roundId = _ticker.RoundId;
+        var roundState = _ticker.RunLevel switch
+        {
+            GameRunLevel.PreRoundLobby => "Lobby",
+            GameRunLevel.InRound => $"Round {roundId}",
+            GameRunLevel.PostRound => $"Post-round {roundId}",
+            _ => "Unknown"
+        };
+        var footerText = $"Mentor Help – {roundState}";
+
+        return new WebhookPayload
+        {
+            Username = username,
+            Embeds =
+            [
+                new()
+                {
+                    Description = text,
+                    Color = color,
+                    Footer = new WebhookEmbedFooter { Text = footerText }
+                }
+            ]
+        };
+    }
+
+    private async Task PostWebhook(WebhookPayload payload)
+    {
+        var json = JsonSerializer.Serialize(payload);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        try
+        {
+            var response = await _httpClient.PostAsync(_mentorHelpWebhookUrl, content);
+            if (!response.IsSuccessStatusCode)
+            {
+                var body = await response.Content.ReadAsStringAsync();
+                _log.RootSawmill.Error($"MentorHelp webhook failed: {(int)response.StatusCode} {response.StatusCode}\n{body}");
+            }
+        }
+        catch (Exception e)
+        {
+            _log.RootSawmill.Error($"MentorHelp webhook error: {e}");
+        }
+    }
+
+    private void StartQueueProcessor()
+    {
+        if (Interlocked.Exchange(ref _queueProcessorStarted, 1) == 1)
+            return;
+        Task.Run(ProcessQueueAsync);
+    }
+
+    private async Task ProcessQueueAsync()
+    {
+        while (true)
+        {
+            while (_pendingPayloads.TryDequeue(out var payload))
+            {
+                await PostWebhook(payload);
+                await Task.Delay(1200);
+            }
+            _queueProcessorStarted = 0;
+
+            if (_pendingPayloads.IsEmpty || Interlocked.Exchange(ref _queueProcessorStarted, 1) == 1)
+                return;
+        }
     }
 }

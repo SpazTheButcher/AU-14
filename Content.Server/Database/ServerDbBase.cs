@@ -30,10 +30,11 @@ using Robust.Shared.Enums;
 using Robust.Shared.Network;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
+using Content.Shared.AU14.util;
 
 namespace Content.Server.Database
 {
-    public abstract class ServerDbBase
+    public abstract partial class ServerDbBase
     {
         private readonly ISawmill _opsLog;
 
@@ -241,6 +242,9 @@ namespace Content.Server.Database
             ProtoId<OriginPrototype>? origin = profile.Origin is { } originId
                 ? new ProtoId<OriginPrototype>(originId)
                 : (ProtoId<OriginPrototype>?)null;
+            ProtoId<PlatoonPrototype>? platoon = profile.Platoon is { } platoonId
+                ? new ProtoId<PlatoonPrototype>(platoonId)
+                : (ProtoId<PlatoonPrototype>?)null;
             var threatPreferences = ConvertThreatPreferences(profile.ThreatPreference);
             var gamemodeJobPriorities = ConvertGamemodeJobPriorities(profile.GamemodeJobPriorities);
             var gamemodeAntagPreferences = ConvertGamemodeAntagPreferences(profile.GamemodeAntagPreferences);
@@ -305,7 +309,11 @@ namespace Content.Server.Database
                     Color.FromHex(profile.FacialHairColor),
                     Color.FromHex(profile.EyeColor),
                     Color.FromHex(profile.SkinColor),
-                    markings
+                    markings,
+                    profile.RegulationHairName ?? HairStyles.DefaultHairStyle,
+                    profile.RegulationHairColor is { } regulationHairColor ? Color.FromHex(regulationHairColor) : Color.Black,
+                    profile.RegulationFacialHairName ?? HairStyles.DefaultFacialHairStyle,
+                    profile.RegulationFacialHairColor is { } regulationFacialHairColor ? Color.FromHex(regulationFacialHairColor) : Color.Black
                 ),
                 spawnPriority,
                 armorPreference,
@@ -328,10 +336,21 @@ namespace Content.Server.Database
                 profile.XenoPostfix,
                 allegiance,
                 origin,
+                platoon,
+                profile.Synthetic,
                 threatPreferences,
                 gamemodeJobPriorities,
                 gamemodeAntagPreferences,
-                gamemodeThreatPreferences
+                gamemodeThreatPreferences,
+                profile.ShortExamine,
+                profile.FullDescription,
+                profile.MedicalRecord,
+                profile.CriminalRecord,
+                profile.GeneralRecord,
+                profile.Height,
+                profile.Weight,
+                Enum.TryParse<BuildType>(profile.Build, out var build) ? build : BuildType.Average,
+                profile.HideMetaInformation
             );
         }
 
@@ -525,6 +544,10 @@ namespace Content.Server.Database
             profile.HairColor = appearance.HairColor.ToHex();
             profile.FacialHairName = appearance.FacialHairStyleId;
             profile.FacialHairColor = appearance.FacialHairColor.ToHex();
+            profile.RegulationHairName = appearance.RegulationHairStyleId;
+            profile.RegulationHairColor = appearance.RegulationHairColor.ToHex();
+            profile.RegulationFacialHairName = appearance.RegulationFacialHairStyleId;
+            profile.RegulationFacialHairColor = appearance.RegulationFacialHairColor.ToHex();
             profile.EyeColor = appearance.EyeColor.ToHex();
             profile.SkinColor = appearance.SkinColor.ToHex();
             profile.SpawnPriority = (int) humanoid.SpawnPriority;
@@ -598,6 +621,17 @@ namespace Content.Server.Database
             profile.XenoPostfix = humanoid.XenoPostfix;
             profile.Allegiance = humanoid.Allegiance?.Id;
             profile.Origin = humanoid.Origin?.Id;
+            profile.Platoon = humanoid.Platoon?.Id;
+            profile.Synthetic = humanoid.Synthetic;
+            profile.ShortExamine = humanoid.ShortExamine;
+            profile.FullDescription = humanoid.FullDescription;
+            profile.MedicalRecord = humanoid.MedicalRecord;
+            profile.CriminalRecord = humanoid.CriminalRecord;
+            profile.GeneralRecord = humanoid.GeneralRecord;
+            profile.Height = humanoid.Height;
+            profile.Weight = humanoid.Weight;
+            profile.Build = humanoid.Build.ToString();
+            profile.HideMetaInformation = humanoid.HideMetaInformation;
             profile.ThreatPreference = humanoid.ThreatPreferences.Count == 0
                 ? null
                 : JsonSerializer.Serialize(humanoid.ThreatPreferences.Select(t => t.Id).OrderBy(id => id));

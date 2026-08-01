@@ -104,6 +104,13 @@ public sealed partial class LanguageLearningSystem : SharedLanguageLearningSyste
 
         foreach (var potentialLearner in _potentialLearners)
         {
+            if (potentialLearner == args.Source)
+                continue;
+
+            // trait blocks all language learning
+            if (HasComp<NoLanguageLearningComponent>(potentialLearner))
+                continue;
+
             if (!TryComp<LanguageLearningComponent>(potentialLearner, out var learnerComp))
                 continue;
 
@@ -282,7 +289,7 @@ public sealed partial class LanguageLearningSystem : SharedLanguageLearningSyste
 
         var diminishingFactor = Math.Max(
             comp.MinimumDiminishingFactor,
-            1.0f - (studyCount / (float) comp.MaxLearningFromSameSource));
+            1.0f - (studyCount / (float)comp.MaxLearningFromSameSource));
         var distancePenalty = Math.Max(
             comp.MinimumDistancePenalty,
             1.0f - (distance / comp.LearningRange));
@@ -324,7 +331,10 @@ public sealed partial class LanguageLearningSystem : SharedLanguageLearningSyste
                 comp.MaxFrequencyLearningBonus);
 
             var learningRate = baseRate + frequencyBonus;
-            var actualLearning = learningRate * diminishingFactor * distancePenalty;
+            var sisterBonus = GetSisterLanguageBonus(comp, languageProto);
+
+            var actualLearning = learningRate * diminishingFactor * distancePenalty * sisterBonus;
+
             actualLearning *= languageProto.LearningRateMultiplier;
             actualLearning /= LearningDurationMultiplier;
             actualLearning *= _random.NextFloat(0.9f, 1.1f);
@@ -437,5 +447,73 @@ public sealed partial class LanguageLearningSystem : SharedLanguageLearningSyste
             comp.MasteredComprehensionThreshold,
             GetComprehensionThresholds(language).Clear);
         return languageData.Progress >= requiredThreshold;
+    }
+
+    private float GetSisterLanguageBonus(LanguageLearningComponent comp, LanguagePrototype targetLanguage)
+    {
+        var multiplier = 1f;
+
+        foreach (var (knownLanguage, data) in comp.Languages)
+        {
+            if (data.Progress <= 0f)
+                continue;
+
+            if (!_prototypeManager.TryIndex(knownLanguage, out var knownProto))
+                continue;
+
+            // known language -> target language
+            if (knownProto.SisterLanguages.TryGetValue(
+                new ProtoId<LanguagePrototype>(targetLanguage.ID),
+                out var bonus))
+            {
+                multiplier += bonus * data.Progress;
+            }
+
+            // target language -> known language
+            if (targetLanguage.SisterLanguages.TryGetValue(
+                knownLanguage,
+                out bonus))
+            {
+                multiplier += bonus * data.Progress;
+            }
+        }
+
+        return Math.Min(multiplier, 2.5f);
+    }
+
+    public void TryLearnFromRecording(
+        EntityUid listener,
+        string message,
+        ProtoId<LanguagePrototype> language,
+        EntityUid recorder)
+    {
+        if (!TryComp<LanguageLearningComponent>(listener, out var learner))
+            return;
+
+        if (HasComp<NoLanguageLearningComponent>(listener))
+            return;
+
+        // don't learn if already fully fluent
+        if (TryComp<LanguageComponent>(listener, out var langComp))
+        {
+            var canSpeak = langComp.SpokenLanguages.Contains(language);
+            var canUnderstand = langComp.UnderstoodLanguages.Contains(language);
+            if (canSpeak && canUnderstand)
+                return;
+        }
+
+        if (!learner.Languages.ContainsKey(language))
+            return;
+
+        var words = ExtractWords(message);
+        if (words.Count == 0)
+            return;
+
+        TryLearnWords(
+            (listener, learner),
+            recorder,
+            message,
+            language,
+            1f);
     }
 }

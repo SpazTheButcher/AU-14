@@ -829,15 +829,15 @@
 - type: reaction
   id: Mead
   reactants:
-    RMCBlackGoo: # TODO RMC14 remove this later
-      amount: 0.5
     RMCSugar: #Changed for RMC
       amount: 1
       # TODO replace Sugar with Honey once added
     Enzyme:
       amount: 1
+    Water:
+      amount: 1
   products:
-    Mead: 2
+    Mead: 3
 
 - type: reaction
   id: Mojito

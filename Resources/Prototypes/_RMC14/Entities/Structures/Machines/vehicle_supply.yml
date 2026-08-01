@@ -35,7 +35,7 @@
         type: VehicleSupplyBui
   - type: VehicleSupplyConsole
     vehicles:
-    - name: M2420 JTMV HWC
+    - name: M2420 JTMV Armed
       vehicle: VehicleHumvee
       group: vehicle-support
       loadoutCategories:
@@ -127,6 +127,80 @@
       - VehicleHumveeSnowplow
       - VehicleHumveeOverlight
       - VehicleHumveeWheel
+    - name: Kheshig-1 Transport (UPP)
+      vehicle: VehicleSPPVan
+      group: vehicle-support
+      loadoutCategories:
+      - id: wheels
+        name: Wheels
+        options:
+        - id: VehicleSPPVanWheel
+          name: wheel
+          item: VehicleSPPVanWheel
+          slot: wheel-1
+      hardpoints:
+      - VehicleSPPVanWheel
+    - name: Kheshig-1 Armed (UPP)
+      vehicle: VehicleSPPVanArmed
+      group: vehicle-support
+      loadoutCategories:
+      - id: primary
+        name: Primary
+        options:
+        - id: VehicleSPPVanTurret
+          name: turret
+          item: VehicleSPPVanTurret
+          slot: secondary
+      - id: wheels
+        name: Wheels
+        options:
+        - id: VehicleSPPVanWheel
+          name: wheel
+          item: VehicleSPPVanWheel
+          slot: wheel-1
+      hardpoints:
+      - VehicleSPPVanTurret
+      - VehicleSPPVanCannon
+      - VehicleSPPVanWheel
+    - name: Kheshig-1 Medical (UPP)
+      vehicle: VehicleSPPVanMedical
+      group: vehicle-support
+      loadoutCategories:
+      - id: wheels
+        name: Wheels
+        options:
+        - id: VehicleSPPVanWheel
+          name: wheel
+          item: VehicleSPPVanWheel
+          slot: wheel-1
+      hardpoints:
+      - VehicleSPPVanWheel
+    - name: Kheshig-1 Police (UPP)
+      vehicle: VehicleSPPVanPrisoner
+      group: vehicle-support
+      loadoutCategories:
+      - id: wheels
+        name: Wheels
+        options:
+        - id: VehicleSPPVanWheel
+          name: wheel
+          item: VehicleSPPVanWheel
+          slot: wheel-1
+      hardpoints:
+      - VehicleSPPVanWheel
+    - name: Kheshig-1 Logistics (UPP)
+      vehicle: VehicleSPPVanLogistics
+      group: vehicle-support
+      loadoutCategories:
+      - id: wheels
+        name: Wheels
+        options:
+        - id: VehicleSPPVanWheel
+          name: wheel
+          item: VehicleSPPVanWheel
+          slot: wheel-1
+      hardpoints:
+      - VehicleSPPVanWheel
     - name: M34E1 AEV
       vehicle: VehicleAev
       group: vehicle-apc
@@ -159,7 +233,7 @@
       - VehicleTankArmorConcussive
       - VehicleTankArmorCaustic
       - VehicleTankArmorPaladin
-      - VehicleTankSnowplow 
+      - VehicleTankSnowplow
       - VehicleTankOverdriveEnhancer
     - name: M577 APC
       vehicle: VehicleAPC
@@ -204,13 +278,13 @@
       vehicle: VehicleAPCMed
       group: vehicle-apc
       loadoutCategories:
-#      - id: primary
-#        name: Primary
-#        options:
-#        - id: RMCAPCDualCannon
-#          name: dual cannon
-#          item: RMCAPCDualCannon
-#          slot: primary
+      - id: primary
+        name: Primary
+        options:
+        - id: RMCAPCDualCannon
+          name: dual cannon
+          item: RMCAPCDualCannon
+          slot: primary
       - id: secondary
         name: Secondary
         options:
@@ -282,7 +356,46 @@
       - RMCAPCFlareLauncher
       - RMCAPCFreightStorage
       - RMCAPCWheel
-    - name: UP-998 BTR (UPP)
+    - name: M577 APC 'Weyland' (WY)
+      vehicle: VehicleAPCPMC
+      group: vehicle-apc
+      loadoutCategories:
+      - id: primary
+        name: Primary
+        options:
+        - id: RMCAPCDualCannon
+          name: dual cannon
+          item: RMCAPCDualCannon
+          slot: primary
+      - id: secondary
+        name: Secondary
+        options:
+        - id: RMCAPCFrontCannon
+          name: frontal cannon
+          item: RMCAPCFrontCannon
+          slot: secondary
+      - id: wheels
+        name: Wheels
+        options:
+        - id: RMCAPCWheel
+          name: wheel
+          item: RMCAPCWheel
+          slot: wheel-1
+      - id: support
+        name: Support
+        options:
+        - id: RMCAPCFlareLauncher
+          name: flare launcher
+          item: RMCAPCFlareLauncher
+          slot: support
+      hardpoints:
+      - RMCAPCDualCannon
+      - RMCAPCFrontCannon
+      - RMCAPCCommsRelay
+      - RMCAPCFlareLauncher
+      - RMCAPCFreightStorage
+      - RMCAPCWheel
+    - name: ZSL-68 APC (UPP)
       vehicle: VehicleSPPAPC
       group: vehicle-apc
       loadoutCategories:
@@ -336,6 +449,10 @@
         - id: VehicleTankAceAutocannon
           name: ACE autocannon
           item: VehicleTankAceAutocannon
+          slot: primary::turret-cannon
+        - id: VehicleTankLTBCannon
+          name: LTB cannon
+          item: VehicleTankLTBCannon
           slot: primary::turret-cannon
         - id: VehicleTankDragonFlamer
           name: DRG-N flamer
@@ -401,7 +518,131 @@
         name: Support
         options:
         - id: VehicleTankWarningArray
-          name: warning array
+          name: weapons sensor array
+          item: VehicleTankWarningArray
+          slot: support
+        - id: VehicleTankOverdriveEnhancer
+          name: overdrive enhancer
+          item: VehicleTankOverdriveEnhancer
+          slot: support
+        - id: VehicleTankRocketLauncher
+          name: smoke launcher
+          item: VehicleTankRocketLauncher
+          slot: support
+        - id: VehicleTankFlareModule
+          name: flare module
+          item: VehicleTankFlareModule
+          slot: support
+        - id: VehicleTankArtilleryModule
+          name: artillery module
+          item: VehicleTankArtilleryModule
+          slot: support
+      hardpoints:
+      - VehicleTankTurret
+      - VehicleTankTreads
+      - VehicleTankReinforcedTreads
+      - VehicleTankArmorBallistic
+      - VehicleTankArmorConcussive
+      - VehicleTankArmorCaustic
+      - VehicleTankArmorPaladin
+      - VehicleTankSnowplow
+      - VehicleTankLTAAAPMinigun
+      - VehicleTankAceAutocannon
+      - VehicleTankDragonFlamer
+      - VehicleTankFlamer
+      - VehicleTankGrenadeLauncher
+      - VehicleTankTowLauncher
+      - VehicleTankM56Cupola
+      - VehicleTankRERE700
+      - VehicleTankWarningArray
+      - VehicleTankOverdriveEnhancer
+      - VehicleTankRocketLauncher
+      - VehicleTankFlareModule
+      - VehicleTankArtilleryModule
+    - name: M34A2 Longstreet 'Yutani' (WY)
+      vehicle: VehicleTankPMC
+      group: vehicle-tank
+      loadoutCategories:
+      - id: primary
+        name: Primary
+        options:
+        - id: VehicleTankLTAAAPMinigun
+          name: LTAAAP minigun
+          item: VehicleTankLTAAAPMinigun
+          slot: primary::turret-cannon
+        - id: VehicleTankAceAutocannon
+          name: ACE autocannon
+          item: VehicleTankAceAutocannon
+          slot: primary::turret-cannon
+        - id: VehicleTankLTBCannon
+          name: LTB cannon
+          item: VehicleTankLTBCannon
+          slot: primary::turret-cannon
+        - id: VehicleTankDragonFlamer
+          name: DRG-N flamer
+          item: VehicleTankDragonFlamer
+          slot: primary::turret-cannon
+      - id: secondary
+        name: Secondary
+        options:
+        - id: VehicleTankFlamer
+          name: flamer
+          item: VehicleTankFlamer
+          slot: primary::turret-launcher
+        - id: VehicleTankGrenadeLauncher
+          name: grenade launcher
+          item: VehicleTankGrenadeLauncher
+          slot: primary::turret-launcher
+        - id: VehicleTankTowLauncher
+          name: TOW launcher
+          item: VehicleTankTowLauncher
+          slot: primary::turret-launcher
+        - id: VehicleTankM56Cupola
+          name: M56 cupola
+          item: VehicleTankM56Cupola
+          slot: primary::turret-launcher
+      - id: standardtreads
+        name: Treads
+        options:
+        - id: VehicleTankTreads
+          name: treads
+          item: VehicleTankTreads
+          slot: wheel-1
+      - id: armor
+        name: Armor
+        options:
+        - id: VehicleTankArmorBallistic
+          name: ballistic armor
+          item: VehicleTankArmorBallistic
+          slot: armor
+        - id: VehicleTankArmorConcussive
+          name: concussive armor
+          item: VehicleTankArmorConcussive
+          slot: armor
+        - id: VehicleTankArmorCaustic
+          name: caustic armor
+          item: VehicleTankArmorCaustic
+          slot: armor
+        - id: VehicleTankArmorPaladin
+          name: paladin armor
+          item: VehicleTankArmorPaladin
+          slot: armor
+      - id: auxiliary
+        name: Auxiliary
+        options:
+        - id: VehicleTankSnowplow
+          name: snowplow
+          item: VehicleTankSnowplow
+          slot: armor
+        - id: VehicleTankReinforcedTreads
+          name: reinforced treads
+          item: VehicleTankReinforcedTreads
+          slot: wheel-1
+      - id: support
+        name: Support
+        options:
+        - id: VehicleTankWarningArray
+          name: weapons sensor array
           item: VehicleTankWarningArray
           slot: support
         - id: VehicleTankOverdriveEnhancer
@@ -497,7 +738,7 @@
           item: VehicleSPPTankFlareModule
           slot: support
         - id: VehicleSPPTankWarningArray
-          name: warning array
+          name: weapons sensor array
           item: VehicleSPPTankWarningArray
           slot: support
         - id: VehicleSPPTankOverdriveEnhancer
@@ -521,36 +762,89 @@
       - VehicleSPPTankWarningArray
       - VehicleSPPTankOverdriveEnhancer
       - VehicleSPPTankArtilleryModule
-    - name: blackfoot
-      vehicle: VehicleBlackfoot
-      group: vehicle-support
-      bundle:
-      - CMUBlackfootLandingPadFoldedProp
-      - CMUBlackfootFuelPumpCrate
-      - CMUBlackfootFlightComputerCrate
-      - CMUBlackfootAerospaceTug
+    - name: FV150 Hobelar LCT (TWE)
+      vehicle: VehicleTankTWE
+      group: vehicle-tank
       loadoutCategories:
       - id: primary
         name: Primary
         options:
-        - id: VehicleBlackfootLaunchers
-          name: flare launchers
-          item: VehicleBlackfootLaunchers
-          slot: launchers
-      - id: armor
-        name: Armor
-        options: []
+        - id: VehicleTankAutocannonTWE
+          name: L26A2 45mm Autocannon
+          item: VehicleTankAutocannonTWE
+          slot: primary::turret-cannon
+      - id: secondary
+        name: Secondary
+        options:
+        - id: VehicleTankFlamer
+          name: flamer
+          item: VehicleTankFlamer
+          slot: primary::turret-launcher
+        - id: VehicleTankGrenadeLauncher
+          name: grenade launcher
+          item: VehicleTankGrenadeLauncher
+          slot: primary::turret-launcher
+        - id: VehicleTankTowLauncher
+          name: TOW launcher
+          item: VehicleTankTowLauncher
+          slot: primary::turret-launcher
+        - id: VehicleTankM56Cupola
+          name: M56 cupola
+          item: VehicleTankM56Cupola
+          slot: primary::turret-launcher
+      - id: standardtreads
+        name: Treads
+        options:
+        - id: VehicleTankTreadsTWE
+          name: treads
+          item: VehicleTankTreadsTWE
+          slot: wheel-1
       - id: support
         name: Support
         options:
-        - id: VehicleBlackfootReconSystem
-          name: recon system
-          item: VehicleBlackfootReconSystem
+        - id: VehicleTankRocketLauncherTWE
+          name: L-39T Smoke Discharger
+          item: VehicleTankRocketLauncherTWE
           slot: support
       hardpoints:
-      - VehicleBlackfootThrusters
-      - VehicleBlackfootLaunchers
-      - VehicleBlackfootReconSystem
+      - VehicleTankTurretTWE
+      - VehicleTankTreadsTWE
+      - VehicleTankFlamer
+      - VehicleTankGrenadeLauncher
+      - VehicleTankTowLauncher
+      - VehicleTankM56Cupola
+      - VehicleTankRERE700
+      - VehicleTankRocketLauncherTWE
+#    - name: blackfoot
+#      vehicle: VehicleBlackfoot
+#      group: vehicle-support
+#      bundle:
+#      - CMUBlackfootLandingPadFoldedProp
+#      - CMUBlackfootFuelPumpCrate
+#      - CMUBlackfootFlightComputerCrate
+#      - CMUBlackfootAerospaceTug
+#      loadoutCategories:
+#      - id: primary
+#        name: Primary
+#        options:
+#        - id: VehicleBlackfootLaunchers
+#          name: flare launchers
+#          item: VehicleBlackfootLaunchers
+#          slot: launchers
+#      - id: armor
+#        name: Armor
+#        options: []
+#      - id: support
+#        name: Support
+#        options:
+#        - id: VehicleBlackfootReconSystem
+#          name: recon system
+#          item: VehicleBlackfootReconSystem
+#          slot: support
+#      hardpoints:
+#      - VehicleBlackfootThrusters
+#      - VehicleBlackfootLaunchers
+#      - VehicleBlackfootReconSystem
 #    - name: AE-71E VTOL (Assault)
 #      vehicle: VehicleBlackfootDoorGunVariant
 #      bundle:
@@ -613,36 +907,36 @@
       - VehicleBlackfootLaunchers
       - VehicleBlackfootReconSystem
       - VehicleBlackfootSensorArray
-    - name: blackfoot (transport)
-      vehicle: VehicleBlackfootTransport
-      group: vehicle-support
-      bundle:
-      - CMUBlackfootLandingPadFoldedProp
-      - CMUBlackfootFuelPumpCrate
-      - CMUBlackfootFlightComputerCrate
-      - CMUBlackfootAerospaceTug
-      loadoutCategories:
-      - id: primary
-        name: Primary
-        options:
-        - id: VehicleBlackfootLaunchers
-          name: flare launchers
-          item: VehicleBlackfootLaunchers
-          slot: launchers
-      - id: armor
-        name: Armor
-        options: []
-      - id: support
-        name: Support
-        options:
-        - id: VehicleBlackfootReconSystem
-          name: recon system
-          item: VehicleBlackfootReconSystem
-          slot: support
-      hardpoints:
-      - VehicleBlackfootThrusters
-      - VehicleBlackfootLaunchers
-      - VehicleBlackfootReconSystem
+#    - name: blackfoot (transport)
+#      vehicle: VehicleBlackfootTransport
+#      group: vehicle-support
+#      bundle:
+#      - CMUBlackfootLandingPadFoldedProp
+#      - CMUBlackfootFuelPumpCrate
+#      - CMUBlackfootFlightComputerCrate
+#      - CMUBlackfootAerospaceTug
+#      loadoutCategories:
+#      - id: primary
+#        name: Primary
+#        options:
+#        - id: VehicleBlackfootLaunchers
+#          name: flare launchers
+#          item: VehicleBlackfootLaunchers
+#          slot: launchers
+#      - id: armor
+#        name: Armor
+#        options: []
+#      - id: support
+#        name: Support
+#        options:
+#        - id: VehicleBlackfootReconSystem
+#          name: recon system
+#          item: VehicleBlackfootReconSystem
+#          slot: support
+#      hardpoints:
+#      - VehicleBlackfootThrusters
+#      - VehicleBlackfootLaunchers
+#      - VehicleBlackfootReconSystem
   - type: PointLight
     radius: 1.5
     energy: 1.6

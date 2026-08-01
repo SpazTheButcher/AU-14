@@ -328,10 +328,11 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
 
     private void UpdateSentryIFF(Entity<SentryTargetingComponent> ent)
     {
-        if (!TryComp<UserIFFComponent>(ent.Owner, out var userIff))
-            return;
+        EnsureComp<EntityIFFComponent>(ent.Owner);
+        var userIff = EnsureComp<UserIFFComponent>(ent.Owner);
 
-        _iff.ClearUserFactions((ent.Owner, userIff));
+        foreach (var managedIff in SentryFactionToIff.Values)
+            _iff.RemoveUserFaction((ent.Owner, userIff), managedIff);
 
         foreach (var faction in ent.Comp.FriendlyFactions)
         {

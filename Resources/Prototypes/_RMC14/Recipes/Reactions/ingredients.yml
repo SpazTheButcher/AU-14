@@ -42,8 +42,6 @@
   reactants:
     Enzyme:
       amount: 1
-    RMCBlackGoo: # TODO RMC14 remove this later
-      amount: 0.5
     JuiceBerry:
       amount: 1
   products:
@@ -54,8 +52,6 @@
   reactants:
     Enzyme:
       amount: 1
-    RMCBlackGoo: # TODO RMC14 remove this later
-      amount: 0.5
     JuiceOrange:
       amount: 1
   products:
@@ -66,8 +62,6 @@
   reactants:
     Enzyme:
       amount: 1
-    RMCBlackGoo: # TODO RMC14 remove this later
-      amount: 0.5
     JuicePotato:
       amount: 1
   products:
@@ -78,8 +72,6 @@
   reactants:
     Enzyme:
       amount: 1
-    RMCBlackGoo: # TODO RMC14 remove this later
-      amount: 0.5
     Rice:
       amount: 1
   products:
@@ -90,22 +82,18 @@
   reactants:
     Enzyme:
       amount: 1
-    RMCBlackGoo: # TODO RMC14 remove this later
-      amount: 0.5
     Coffee:
       amount: 1
     Sugar:
       amount: 1
   products:
-    CoffeeLiqueur: 2
+    CoffeeLiqueur: 3
 
 - type: reaction
   id: MelonLiquor
   reactants:
     Enzyme:
       amount: 1
-    RMCBlackGoo: # TODO RMC14 remove this later
-      amount: 0.5
     JuiceWatermelon:
       amount: 1
   products:
@@ -116,12 +104,150 @@
   reactants:
     Enzyme:
       amount: 1
-    RMCBlackGoo: # TODO RMC14 remove this later
-      amount: 0.5
     JuiceGrape:
       amount: 1
   products:
     Wine: 2
+
+- type: reaction
+  id: DeadRum
+  reactants:
+    Enzyme:
+      amount: 1
+    TableSalt:
+      amount: 1
+    Water:
+      amount: 1
+  products:
+    DeadRum: 3
+
+- type: reaction  
+  id: Rum
+  reactants:
+    Enzyme:
+      amount: 1
+    CoconutWater:
+      amount: 1
+  products:
+    Rum: 2
+
+- type: reaction  
+  id: Tequila
+  requiredMixerCategories:
+  - Stir
+  reactants:
+    Enzyme:
+      amount: 1
+    Wine:
+      amount: 1
+    Vodka:
+      amount: 1
+  products:
+    Tequila: 3
+
+- type: reaction  
+  id: Gin
+  requiredMixerCategories:
+  - Stir
+  reactants:
+    Vodka:
+      amount: 1
+    JuiceBerry:
+      amount: 1
+    JuiceOrange:
+      amount: 1
+  products:
+    Gin: 3
+
+- type: reaction  
+  id: Champagne
+  requiredMixerCategories:
+  - Stir
+  reactants:
+    Wine:
+      amount: 1
+    SodaWater:
+      amount: 1
+  products:
+    Champagne: 2
+
+- type: reaction  
+  id: Cognac
+  requiredMixerCategories:
+  - Stir
+  reactants:
+    Wine:
+      amount: 2
+    Vodka:
+      amount: 1
+    RMCSugar:
+      amount: 1
+  products:
+    Cognac: 4
+
+- type: reaction  
+  id: Beer
+  reactants:
+    Water:
+      amount: 1
+    Enzyme:
+      amount: 1
+    Flour:
+      amount: 1
+  products:
+    Beer: 3
+
+- type: reaction  
+  id: Ale
+  reactants:
+    Water:
+      amount: 1
+    Enzyme:
+      amount: 1
+    Cornmeal:
+      amount: 1
+  products:
+    Ale: 3
+
+- type: reaction  
+  id: Vermouth
+  requiredMixerCategories:
+  - Stir
+  reactants:
+    Cognac:
+      amount: 1
+    Gin:
+      amount: 1
+    Wine:
+      amount: 1
+  products:
+    Vermouth: 3
+
+- type: reaction  
+  id: Absinthe
+  requiredMixerCategories:
+  - Stir
+  reactants:
+    Vodka:
+      amount: 1
+    Gin:
+      amount: 1
+    BlueCuracao:
+      amount: 1
+  products:
+    Absinthe: 3
+
+- type: reaction  
+  id: Whiskey
+  reactants:
+    Enzyme:
+      amount: 1
+    RMCCornoil:
+      amount: 1
+    Flour:
+      amount: 1
+  products:
+    Whiskey: 3
 
 - type: reaction
   id: RMCMilkshake

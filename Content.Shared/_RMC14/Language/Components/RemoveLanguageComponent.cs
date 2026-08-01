@@ -8,11 +8,14 @@ namespace Content.Shared._RMC14.Language.Components;
 public sealed partial class RemoveLanguageComponent : Component
 {
     [DataField]
-    public HashSet<ProtoId<LanguagePrototype>> Languages = [];
+    public List<ProtoId<LanguagePrototype>> Languages = new();
 
     [DataField]
     public bool RemoveSpoken = true;
 
     [DataField]
     public bool RemoveUnderstood = true;
+
+    [DataField]
+    public bool ClearCurrentLanguage;
 }

@@ -5,7 +5,7 @@
   name: au14-job-name-govforadjutant
   description: au14-job-description-govforadjutant
   icon: "AU14JobIconGovAdjutant"
-  spawnMenuRoleName: Adjutant Officer (GOVFOR)
+  spawnMenuRoleName: Executive Officer (GOVFOR)
   supervisors: au14-job-supervisors-govforplatco
   startingGear: AU14GearGOVFORAdjutant
   dummyStartingGear: AU14GearGOVFORAdjutantDummy
@@ -26,8 +26,13 @@
   roundProfiles:
   - AU14RoundJobProfileMilitaryBase
   roundComponents:
+  - type: AU14CallsignRole
+    suffix: "5"
+    commandElement: true
   - type: CommendationGiver
   - type: InnateCommandSpeech
+  - type: ANPRCRadioUser
+  - type: ANPRCCryptoAuthority
   - type: AU14SilenceOrderAbility
   - type: AU14CallToAttentionAbility
   - type: AU14CallToAttentionImmune
@@ -70,6 +75,9 @@
     - NonResuscitable
     - Epilepsy
     - NoEnglish
+    - SlowRunner
+    - Anemic
+    - Asthmatic
   ranks:
     RMCRankCivilian: []
   chevrons:
@@ -108,20 +116,24 @@
   equipment:
     id: AU14IDCardGOVFORAdjutant
     ears: AU14HeadsetGovforCommand
-    pocket1: AU14StampAO
     pocket2: AU14TabletGovfor
   inhand:
     - AU14KitJOAdjutantKit
+  storage:
+    back:
+    - ANPRCFillCardGOVFOR
 
 - type: startingGear
   id: AU14GearOPFORAdjutant
   equipment:
     id: AU14IDCardOPFORAdjutant
     ears: AU14HeadsetOpforCommand
-    pocket1: AU14StampAO
     pocket2: AU14TabletOpfor
   inhand:
     - AU14KitJOAdjutantKit
+  storage:
+    back:
+    - ANPRCFillCardOPFOR
 
 - type: roleLoadout
   id: JobAU14JobGOVFORAdjutant
@@ -158,7 +170,7 @@
 - type: entity
   parent: CMSpawnPointJobBase
   id: AU14SpawnPointGOVFORAdjutant
-  name: Spawn Point GOVFOR Adjutant Officer
+  name: Spawn Point GOVFOR Executive Officer
   components:
   - type: SpawnPoint
     job_id: AU14JobGOVFORAdjutant
