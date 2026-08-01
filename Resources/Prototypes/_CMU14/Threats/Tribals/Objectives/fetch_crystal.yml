@@ -5,10 +5,10 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: fetchcrystalobjective
     finalType: InstantWin
-    factioneutral: false
+    factionNeutral: false
     applicableModes:
     - DistressSignal
     possiblefactions:

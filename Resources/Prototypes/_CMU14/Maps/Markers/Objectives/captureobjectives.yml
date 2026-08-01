@@ -5,9 +5,9 @@
   id: captureuaflagobjective
   description: "Capture mainstreet for your faction."
   components:
-    - type: AuObjective
+    - type: CMUObjective
       id: captureuaflagobj
-      factioneutral: true
+      factionNeutral: true
       applicableModes:
         - ForceOnForce
         - DistressSignal
@@ -34,9 +34,9 @@
   id: capturesupermarketobjective
   description: "Capture the supermarket for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturesupermarketobjective
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -82,9 +82,9 @@
   id: capturetunnelobjective
   description: "Capture the Tunnel  for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturetunnelobjective
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -112,9 +112,9 @@
   id: capturedesertobjective
   description: "Capture the Desert for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturedesertobjective
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -144,9 +144,9 @@
   components:
   - type: NavMapBeacon
     text: Mountain LZ
-  - type: AuObjective
+  - type: CMUObjective
     id: capturemountainflagobj
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -174,9 +174,9 @@
   id: capturesolarfarmsgobjective
   description: "Capture the Solar Farms"
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturesolarfarmsobj
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -203,9 +203,9 @@
   id: capturhermitscabinobjective
   description: "Capture the Hermits Cabin"
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturehermitscabingobj
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -232,9 +232,9 @@
   id: captureadminobjective
   description: "Capture the Admins Office "
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureadminofficeobj
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -261,9 +261,9 @@
   id: captureabandonedcampobjective
   description: "Capture the Abandoned Camp "
   components:
-  - type: AuObjective
-    id: captureadminofficeobj
-    factioneutral: true
+  - type: CMUObjective
+    id: captureabandonedcampobj
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -290,9 +290,9 @@
   id: capturebasementobj
   description: "Capture the basement "
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturebasementobj
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -320,9 +320,9 @@
   id: captureroofobj
   description: "Capture the Roof "
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureroofobj
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -350,9 +350,9 @@
   id: capturemidobj
   description: "Capture the Middle floor "
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturermidobj
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -381,9 +381,9 @@
   id: captureobjectiveneroidreactorcontrol
   description: "Capture the PAEK-500 Reactor Control for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidreactorcontrol
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -411,9 +411,9 @@
   id: captureobjectiveneroidcoolantcontrol
   description: "Capture the PAEK-500 Coolant Control for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidcoolantcontrol
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -441,9 +441,9 @@
   id: captureobjectiveneroidenginecontrol
   description: "Capture the PAEK-500 Engine Control for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidenginecontrol
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -471,9 +471,9 @@
   id: captureobjectiveneroidturbinecontrol
   description: "Capture the PAEK-500 Turbine Control for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidturbinecontrol
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -501,9 +501,9 @@
   id: captureobjectiveneroidcolonyoperationsroom
   description: "Capture the Colony Operations Room for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidoperationsroom
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -531,9 +531,9 @@
   id: captureobjectiveneroidminingsite
   description: "Capture the UAS-1 Mining Site for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroiduasminingsite
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -561,9 +561,9 @@
   id: captureobjectiveneroidgeothermalgenerators
   description: "Capture the Geothermal Generators for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidgeothermalgenerators
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -591,9 +591,9 @@
   id: captureobjectiveneroidspaceport
   description: "Capture the Spaceport for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidspaceport
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -621,9 +621,9 @@
   id: captureobjectiveneroidac170cargodepot
   description: "Capture the AC-170 Cargo Depot for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidac170cargodepot
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -651,9 +651,9 @@
   id: captureobjectiveneroidcargopier
   description: "Capture the Cargo Pier for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidcargopier
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -682,9 +682,9 @@
   id: captureobjectivecorsatbiodometheta
   description: "Capture Biodome Theta for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturecorsatbiodometheta
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -712,9 +712,9 @@
   id: captureobjectivecorsatbiodomegamma
   description: "Capture Biodome Gamma for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturecorsatbiodomegamma
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -742,9 +742,9 @@
   id: captureobjectivecorsatbiodomesigma
   description: "Capture Biodome Sigma for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturecorsatbiodomesigma
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -772,9 +772,9 @@
   id: captureobjectivecorsatstationadmin
   description: "Capture Station Administration for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturecorsatstationadmin
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -802,9 +802,9 @@
   id: captureobjectivecorsatreseaechcomplex
   description: "Capture the Research Complex for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturecorsatresearchcomplex
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal

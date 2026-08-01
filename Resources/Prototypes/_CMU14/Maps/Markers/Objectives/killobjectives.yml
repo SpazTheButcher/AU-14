@@ -5,9 +5,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: killteamobjbasic
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     possiblefactions:
@@ -30,8 +30,8 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
-    factioneutral: false
+  - type: CMUObjective
+    factionNeutral: false
     id: govforkillplatcoobj
     applicableModes:
     - ForceOnForce
@@ -54,8 +54,8 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
-    factioneutral: false
+  - type: CMUObjective
+    factionNeutral: false
     id: opforkillplatcoobj
     applicableModes:
     - ForceOnForce
@@ -78,8 +78,8 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
-    factioneutral: false
+  - type: CMUObjective
+    factionNeutral: false
     id: clfkillplatcoobj
     applicableModes:
     - Insurgency
@@ -102,9 +102,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: killclfleaderobj
-    factioneutral: false
+    factionNeutral: false
     applicableModes:
     - Insurgency
     possiblefactions:
@@ -127,9 +127,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: killinsurgentsobj
-    factioneutral: false
+    factionNeutral: false
     applicableModes:
     - Insurgency
     possiblefactions:
@@ -150,9 +150,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: killgovforobj
-    factioneutral: false
+    factionNeutral: false
     applicableModes:
     - Insurgency
     possiblefactions:
@@ -173,9 +173,9 @@
 #   components:
 #   - type: Sprite
 #     state: red
-#   - type: AuObjective
+#   - type: CMUObjective
 #     id: killplatcouppobj
-#     factioneutral: false
+#     factionNeutral: false
 #     applicableModes:
 #     - ForceOnForce
 #     possiblefactions:
@@ -199,9 +199,9 @@
 #   components:
 #   - type: Sprite
 #     state: red
-#   - type: AuObjective
+#   - type: CMUObjective
 #     id: killplatcormcobj
-#     factioneutral: false
+#     factionNeutral: false
 #     applicableModes:
 #     - ForceOnForce
 #     possiblefactions:
@@ -225,8 +225,8 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
-    factioneutral: false
+  - type: CMUObjective
+    factionNeutral: false
     id: threatkillleaderobj
     applicableModes:
     - DistressSignal
@@ -248,8 +248,8 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
-    factioneutral: false
+  - type: CMUObjective
+    factionNeutral: false
     id: threatkillobj
     applicableModes:
     - DistressSignal
@@ -271,9 +271,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: killcarpobj
-    factioneutral: false
+    factionNeutral: false
     applicableModes:
     - insurgency
     possiblefactions:

@@ -6,9 +6,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: destroymineablesolarissteel
-    factioneutral: false
+    factionNeutral: false
     applicableModes:
     - ForceOnForce
     possiblefactions:
@@ -31,9 +31,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: destroyaioricessir
-    factioneutral: false
+    factionNeutral: false
     applicableModes:
     - ForceOnForce
     - DistressSignal

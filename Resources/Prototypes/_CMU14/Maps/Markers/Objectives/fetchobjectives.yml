@@ -5,9 +5,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: fetchoreobj
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     possiblefactions:
@@ -30,7 +30,7 @@
   components:
   - type: Sprite
     state: red
-  - type: FetchObjectiveMarker
+  - type: CMUObjectiveMarker
     fetchid: fetchoreobjectivemarker
 
 - type: entity
@@ -40,7 +40,7 @@
   components:
   - type: Sprite
     state: red
-  - type: FetchObjectiveReturnPoint
+  - type: FetchReturnPoint
     returnpointfaction: opfor
     generic: true
 
@@ -51,7 +51,7 @@
   components:
   - type: Sprite
     state: red
-  - type: FetchObjectiveReturnPoint
+  - type: FetchReturnPoint
     returnpointfaction: govfor
     generic: true
 
@@ -62,9 +62,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: fetchcrownobj
-    factioneutral: false
+    factionNeutral: false
     applicableModes:
     - ForceOnForce
     possiblefactions:
@@ -88,9 +88,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: fetchanprcobj
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - Insurgency
@@ -118,9 +118,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: fetchblackboxobj
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -150,9 +150,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: fetchnuclearlaunchcodesobj
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -181,9 +181,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: fetchtheaterhandbookobj
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -212,9 +212,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: fetchdatastorageobj
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -243,9 +243,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: fetchwylaptopobjj
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     - Insurgency
@@ -272,5 +272,5 @@
   components:
   - type: Sprite
     state: red
-  - type: FetchObjectiveMarker
+  - type: CMUObjectiveMarker
     generic: true

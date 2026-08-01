@@ -5,9 +5,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: arrestteamobjbasic
-    factioneutral: true
+    factionNeutral: true
     applicableModes:
     - ForceOnForce
     possiblefactions:
@@ -30,9 +30,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: govforarrestclfobj
-    factioneutral: false
+    factionNeutral: false
     applicableModes:
     - Insurgency
     possiblefactions:
@@ -54,9 +54,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: clfarrestgovforobj
-    factioneutral: false
+    factionNeutral: false
     applicableModes:
     - Insurgency
     possiblefactions:

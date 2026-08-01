@@ -5,9 +5,9 @@
   components:
   - type: Sprite
     state: red
-  - type: AuObjective
+  - type: CMUObjective
     id: hackcomputerobj
-    factioneutral: false
+    factionNeutral: false
     applicableModes:
     - ForceOnForce
     - DistressSignal
@@ -35,5 +35,5 @@
   components:
   - type: Sprite
     state: red
-  - type: FetchObjectiveMarker
+  - type: CMUObjectiveMarker
     fetchid: hackcomputerspawnmarker
