@@ -13,7 +13,7 @@ public sealed partial class ObjectiveControlSystem
     [Dependency] private CMURoundStatisticsSystem _roundStats = default!;
     [Dependency] private ObjectiveConsoleSystem _objConsole = default!;
 
-    public void CompleteObjectiveForFaction(EntityUid uid, CMUObjectiveComponent objective, string completingFaction)
+    public void CompleteObjectiveForFaction(EntityUid uid, CMUObjectiveComponent objective, string completingFaction, bool awardPoints = true)
     {
         if (_planetMapId == MapId.Nullspace || Transform(uid).MapID != _planetMapId)
             return;
@@ -24,7 +24,7 @@ public sealed partial class ObjectiveControlSystem
         var factionKey = completingFaction.ToLowerInvariant();
         if (!MarkFactionCompleted(objective, factionKey))
             return;
-        AwardAndRefresh(objective, completingFaction);
+        AwardAndRefresh(objective, completingFaction, awardPoints);
 
         if (objective.ObjectiveLevel == 3)
         {
@@ -106,9 +106,10 @@ public sealed partial class ObjectiveControlSystem
             objective.StatusesPerFaction[factionKey] = CMUObjectiveComponent.ObjectiveStatus.Completed;
     }
 
-    private void AwardAndRefresh(CMUObjectiveComponent objective, string completingFaction)
+    private void AwardAndRefresh(CMUObjectiveComponent objective, string completingFaction, bool awardPoints = true)
     {
-        AwardPointsToFaction(completingFaction, objective);
+        if (awardPoints)
+            AwardPointsToFaction(completingFaction, objective);
         if (objective.FactionNeutral)
             foreach (var f in objective.Factions)
                 _objConsole.RefreshConsolesForFaction(f);
@@ -134,6 +135,16 @@ public sealed partial class ObjectiveControlSystem
             _objConsole.RefreshConsolesForFaction(objective.Faction);
         }
         Dirty(uid, objective);
+    }
+
+    public void MarkObjectiveFailedForFaction(EntityUid uid, CMUObjectiveComponent objective, string faction)
+    {
+        if (string.IsNullOrEmpty(faction))
+            return;
+
+        objective.StatusesPerFaction[faction.ToLowerInvariant()] = CMUObjectiveComponent.ObjectiveStatus.Failed;
+        Dirty(uid, objective);
+        _objConsole.RefreshConsolesForFaction(faction);
     }
 
     public void AwardPointsToFaction(string faction, CMUObjectiveComponent objective)

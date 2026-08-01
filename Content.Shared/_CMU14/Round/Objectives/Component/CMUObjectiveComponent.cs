@@ -42,9 +42,6 @@ public sealed partial class CMUObjectiveComponent : Robust.Shared.GameObjects.Co
     [DataField]
     public int MinPlayers { get; private set; } = 0;
 
-    [DataField("disallowedThreats")]
-    public List<string> BlacklistedThreats { get; private set; } = new();
-
     [DataField]
     public List<string> BlacklistedPlatoons { get; private set; } = new();
 
@@ -59,9 +56,6 @@ public sealed partial class CMUObjectiveComponent : Robust.Shared.GameObjects.Co
 
     [DataField("maxrepeatable")]
     public int? MaxRepeatable { get; private set; } = null;
-
-    [DataField]
-    public float Timer { get; private set; } = 0f;
 
     [DataField]
     public bool FactionNeutral { get; private set; } = false;

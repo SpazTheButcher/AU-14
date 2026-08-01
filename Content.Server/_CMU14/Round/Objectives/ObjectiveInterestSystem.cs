@@ -63,8 +63,22 @@ public sealed class ObjectiveInterestSystem : EntitySystem
     {
         _wildcardObjectives.Remove(objUid);
         _objectiveMap.Remove(objUid);
-        foreach (var list in _interestByKey.Values)
-            list.Remove(objUid);
+
+        List<string>? emptyKeys = null;
+        foreach (var (key, list) in _interestByKey)
+        {
+            if (!list.Remove(objUid) || list.Count != 0)
+                continue;
+
+            emptyKeys ??= new List<string>();
+            emptyKeys.Add(key);
+        }
+
+        if (emptyKeys == null)
+            return;
+
+        foreach (var key in emptyKeys)
+            _interestByKey.Remove(key);
     }
 
     public IEnumerable<EntityUid> GetInterestedObjectives(MapId entityMap, IEnumerable<string> keys)

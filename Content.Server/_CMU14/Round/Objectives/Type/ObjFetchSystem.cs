@@ -10,8 +10,6 @@ namespace Content.Server._CMU14.Round.Objectives.Type;
 
 public sealed partial class ObjFetchSystem : ObjectiveSystem
 {
-    [Dependency] private ObjectiveControlSystem _objCtrl = default!;
-    [Dependency] private ObjectiveInterestSystem _objInt = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedTransformSystem _xformSys = default!;
     private ISawmill _logs = default!;
@@ -39,7 +37,7 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
 
         var objMap = Transform(uid).MapID;
 
-        _objInt.RegisterInterest(uid, objMap,
+        ObjInt.RegisterInterest(uid, objMap,
             keys: string.IsNullOrEmpty(fetchComp.TargetPrototype) ? null : new[] { fetchComp.TargetPrototype },
             wildcard: fetchComp.UseAnyEntity);
 
@@ -66,7 +64,7 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
                         $"has no spawn sources: no {(string.IsNullOrEmpty(fetchComp.SpawnMarkerId) ? "generic marker" : $"marker '{fetchComp.SpawnMarkerId}'")} " +
                         $"and no pre-placed '{fetchComp.TargetPrototype}' entities. Refusing to spawn — mappers must place a " +
                         $"CMUObjectiveMarker (or the item entities) on the planet map.");
-            _objCtrl.MarkObjectiveFailed(uid, comp);
+            ObjCtrl.MarkObjectiveFailed(uid, comp);
             return;
         }
 
@@ -84,6 +82,22 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
         {
             if (item.ObjectiveUid == uid && !item.Fetched && Exists(ent))
                 QueueDel(ent);
+        }
+
+        var objMap = Transform(uid).MapID;
+        var markerQuery = AllEntityQuery<CMUObjectiveMarkerComponent, TransformComponent>();
+        while (markerQuery.MoveNext(out _, out var markerComp, out var markerXform))
+        {
+            if (markerXform.MapID != objMap)
+                continue;
+
+            if (!string.IsNullOrEmpty(comp.SpawnMarkerId))
+            {
+                if (markerComp.FetchId == comp.SpawnMarkerId)
+                    markerComp.Used = false;
+            }
+            else if (markerComp.Generic)
+                markerComp.Used = false;
         }
 
         comp.HasSpawned = false;
@@ -120,7 +134,7 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
             return;
 
         var map = Transform(uid).MapID;
-        var interested = _objInt.GetInterestedObjectives(map, [proto]);
+        var interested = ObjInt.GetInterestedObjectives(map, [proto]);
         foreach (var objUid in interested)
         {
             if (!TryComp(objUid, out CMUObjectiveComponent? auComp) || !auComp.Active)
@@ -187,14 +201,17 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
             return;
 
         var faction = rpComp.ReturnPointFaction.ToLowerInvariant();
+        if (!auComp.FactionNeutral && faction != auComp.Faction.ToLowerInvariant())
+            return;
+
         fetchComp.AmountFetchedPerFaction.TryAdd(faction, 0);
         fetchComp.AmountFetchedPerFaction[faction]++;
         item.Fetched = true;
 
         if (ShouldCompleteForFaction(auComp, faction, fetchComp.AmountFetchedPerFaction[faction], fetchComp.FetchCount))
         {
-            _objInt.UnregisterInterest(item.ObjectiveUid);
-            _objCtrl.CompleteObjectiveForFaction(item.ObjectiveUid, auComp, faction);
+            ObjInt.UnregisterInterest(item.ObjectiveUid);
+            ObjCtrl.CompleteObjectiveForFaction(item.ObjectiveUid, auComp, faction);
         }
     }
 
@@ -236,8 +253,8 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
 
             if (ShouldCompleteForFaction(auComp, creditFaction, fetchComp.AmountFetchedPerFaction.GetValueOrDefault(creditFaction), fetchComp.FetchCount))
             {
-                _objInt.UnregisterInterest(objUid);
-                _objCtrl.CompleteObjectiveForFaction(objUid, auComp, creditFaction);
+                ObjInt.UnregisterInterest(objUid);
+                ObjCtrl.CompleteObjectiveForFaction(objUid, auComp, creditFaction);
             }
         }
         return totalFetched;
@@ -268,8 +285,7 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
             if (auComp.StatusesPerFaction.TryGetValue(key, out var s) && s != CMUObjectiveComponent.ObjectiveStatus.Incomplete)
                 continue;
 
-            auComp.StatusesPerFaction[key] = CMUObjectiveComponent.ObjectiveStatus.Failed;
-            _objCtrl.AwardPointsToFaction(key, auComp);
+            ObjCtrl.MarkObjectiveFailedForFaction(comp.ObjectiveUid, auComp, faction);
         }
     }
 }

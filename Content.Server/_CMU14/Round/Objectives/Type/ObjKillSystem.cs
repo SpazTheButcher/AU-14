@@ -15,8 +15,6 @@ namespace Content.Server._CMU14.Round.Objectives.Type;
 
 public sealed class ObjKillSystem : ObjectiveSystem
 {
-    [Dependency] private ObjectiveControlSystem _objCtrl = default!;
-    [Dependency] private ObjectiveInterestSystem _objInt = default!;
     [Dependency] private GameTicker _gameTicker = default!;
     [Dependency] private JobSystem _jobSystem = default!;
     private ISawmill _logs = default!;
@@ -48,7 +46,7 @@ public sealed class ObjKillSystem : ObjectiveSystem
             ActivateKillObjective(uid, killComp);
 
         var objMap = Transform(uid).MapID;
-        _objInt.RegisterInterest(uid, objMap,
+        ObjInt.RegisterInterest(uid, objMap,
             keys: string.IsNullOrEmpty(killComp.FactionToKill) ? null : new[] { killComp.FactionToKill.ToLowerInvariant() },
             wildcard: comp.FactionNeutral);
 
@@ -61,21 +59,15 @@ public sealed class ObjKillSystem : ObjectiveSystem
         if (!comp.RespawnOnRepeat)
             return;
 
-        var query = EntityQueryEnumerator<ObjSpawnedByComponent>();
-        while (query.MoveNext(out var ent, out var spawnedBy))
+        CleanupSpawnedByObjective(uid, ent =>
         {
-            if (spawnedBy.ObjectiveUid != uid)
-                continue;
+            if (!TryComp(ent, out KillMarkedForComponent? marked))
+                return;
 
-            if (TryComp(ent, out KillMarkedForComponent? marked))
-            {
-                marked.AssociatedObjectives.Remove(uid);
-                marked.AssociatedObjectiveJobs.Remove(uid);
-            }
-
-            if (Exists(ent))
-                QueueDel(ent);
-        }
+            marked.AssociatedObjectives.Remove(uid);
+            marked.AssociatedObjectiveJobs.Remove(uid);
+            marked.CreditedObjectives.Remove(uid);
+        });
 
         comp.HasSpawned = false;
     }
@@ -103,7 +95,7 @@ public sealed class ObjKillSystem : ObjectiveSystem
             factions.AddRange(factionComp.Factions.Select(f => f.ToString().ToLowerInvariant()));
 
         var map = Transform(uid).MapID;
-        var interested = _objInt.GetInterestedObjectives(map, factions);
+        var interested = ObjInt.GetInterestedObjectives(map, factions);
 
         foreach (var objUid in interested)
         {
@@ -111,7 +103,7 @@ public sealed class ObjKillSystem : ObjectiveSystem
                     || !TryComp(objUid, out CMUObjectiveComponent? auComp) || !auComp.Active)
                 continue;
 
-            string? creditFaction = GetCreditFaction(auComp, factions, killComp.FactionToKill, _gameTicker.Preset?.ID, _objCtrl);
+            string? creditFaction = GetCreditFaction(auComp, factions, killComp.FactionToKill, _gameTicker.Preset?.ID, ObjCtrl);
             if (creditFaction == null)
                 continue;
 
@@ -151,7 +143,7 @@ public sealed class ObjKillSystem : ObjectiveSystem
             if (!string.IsNullOrEmpty(comp.TargetPrototype) && meta.EntityPrototype?.ID != comp.TargetPrototype)
                 continue;
 
-            string? creditFaction = GetCreditFaction(auComp, factions, comp.FactionToKill, _gameTicker.Preset?.ID, _objCtrl);
+            string? creditFaction = GetCreditFaction(auComp, factions, comp.FactionToKill, _gameTicker.Preset?.ID, ObjCtrl);
             if (creditFaction == null)
                 continue;
 
@@ -187,20 +179,20 @@ public sealed class ObjKillSystem : ObjectiveSystem
                     || !TryComp(objectiveUid, out CMUObjectiveComponent? auComp))
                 continue;
 
-            var factionKey = factionToCredit.ToLowerInvariant();
-            killComp.AmountKilledPerFaction.TryAdd(factionKey, 0);
-            killComp.AmountKilledPerFaction[factionKey]++;
+            if (!comp.CreditedObjectives.Add(objectiveUid))
+                continue;
 
-            if (killComp.AmountKilledPerFaction[factionKey] >= killComp.KillCount)
-            {
-                _objInt.UnregisterInterest(objectiveUid);
-                _objCtrl.CompleteObjectiveForFaction(objectiveUid, auComp, factionToCredit);
+            if (TryCreditObjective(objectiveUid, auComp, killComp.AmountKilledPerFaction,
+                    factionToCredit.ToLowerInvariant(), killComp.KillCount))
                 objectivesToRemove.Add(objectiveUid);
-            }
         }
 
         foreach (var o in objectivesToRemove)
+        {
             comp.AssociatedObjectives.Remove(o);
+            comp.AssociatedObjectiveJobs.Remove(o);
+            comp.CreditedObjectives.Remove(o);
+        }
 
         if (HasComp<ArrestMarkedForComponent>(uid) && objectivesToRemove.Any(o => TryComp(o, out KillObjectiveComponent? k) && k.CountArrest))
             RemComp<ArrestMarkedForComponent>(uid);

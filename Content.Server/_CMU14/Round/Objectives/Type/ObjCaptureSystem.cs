@@ -12,7 +12,6 @@ namespace Content.Server._CMU14.Round.Objectives.Type;
 
 public sealed class ObjCaptureSystem : ObjectiveSystem
 {
-    [Dependency] private ObjectiveControlSystem _objCtrl = default!;
     [Dependency] private PopupSystem _popup = default!;
     [Dependency] private PlatoonSpawnRuleSystem _platoonSpawnRuleSystem = default!;
 
@@ -27,6 +26,25 @@ public sealed class ObjCaptureSystem : ObjectiveSystem
         _logs = Logger.GetSawmill("obj-capture");
         SubscribeLocalEvent<CaptureObjectiveComponent, CaptureHoistFlagStartedEvent>(OnFlagHoistStarted);
         SubscribeLocalEvent<CaptureObjectiveComponent, CaptureHoistFlagDoAfterEvent>(OnHoistFlagDoAfter);
+        SubscribeLocalEvent<CaptureObjectiveComponent, ObjectiveResetEvent>(OnReset);
+    }
+
+    public override void Shutdown()
+    {
+        _timeSinceLastIncrement.Clear();
+        _lastSlashDamage.Clear();
+        base.Shutdown();
+    }
+
+    private void OnReset(EntityUid uid, CaptureObjectiveComponent comp, ref ObjectiveResetEvent args)
+    {
+        comp.CurrentController = string.Empty;
+        comp.TimesIncremented = 0;
+        comp.TimesIncrementedPerFaction.Clear();
+        comp.ActionState = CaptureObjectiveComponent.FlagActionState.Idle;
+        comp.ActionUser = null;
+        comp.ActionUserFaction = null;
+        Dirty(uid, comp);
     }
 
     private string? GetPlatoonNameForFaction(string faction)
@@ -174,16 +192,16 @@ public sealed class ObjCaptureSystem : ObjectiveSystem
             comp.TimesIncrementedPerFaction.TryAdd(factionKey, 0);
             comp.TimesIncrementedPerFaction[factionKey]++;
 
-            _objCtrl.AwardPointsToFaction(comp.CurrentController, objComp);
+            ObjCtrl.AwardPointsToFaction(comp.CurrentController, objComp);
 
             if (comp is { OnceOnly: true, TimesIncremented: > 0 })
             {
-                _objCtrl.CompleteObjectiveForFaction(uid, objComp, comp.CurrentController);
+                ObjCtrl.CompleteObjectiveForFaction(uid, objComp, comp.CurrentController);
                 continue;
             }
 
             if (comp.MaxHoldTimes > 0 && comp.TimesIncremented >= comp.MaxHoldTimes)
-                _objCtrl.CompleteObjectiveForFaction(uid, objComp, comp.CurrentController);
+                ObjCtrl.CompleteObjectiveForFaction(uid, objComp, comp.CurrentController);
         }
     }
 }

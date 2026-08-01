@@ -7,8 +7,6 @@ namespace Content.Server._CMU14.Round.Objectives.Type;
 
 public sealed partial class ObjDestroySystem : ObjectiveSystem
 {
-    [Dependency] private ObjectiveControlSystem _objCtrl = default!;
-    [Dependency] private ObjectiveInterestSystem _objInt = default!;
     private ISawmill _logs = default!;
 
     public override void Initialize()
@@ -31,22 +29,15 @@ public sealed partial class ObjDestroySystem : ObjectiveSystem
 
     private void OnReset(EntityUid uid, DestroyObjectiveComponent comp, ref ObjectiveResetEvent args)
     {
-        var query = EntityQueryEnumerator<ObjSpawnedByComponent>();
-        while (query.MoveNext(out var ent, out var spawnedBy))
+        CleanupSpawnedByObjective(uid, ent =>
         {
-            if (spawnedBy.ObjectiveUid != uid)
-                continue;
+            if (!TryComp(ent, out DestroyMarkedForComponent? marked))
+                return;
 
-            if (TryComp(ent, out DestroyMarkedForComponent? marked))
-            {
-                marked.AssociatedObjectives.Remove(uid);
-                if (marked.AssociatedObjectives.Count == 0)
-                    RemComp<DestroyMarkedForComponent>(ent);
-            }
-
-            if (Exists(ent))
-                QueueDel(ent);
-        }
+            marked.AssociatedObjectives.Remove(uid);
+            if (marked.AssociatedObjectives.Count == 0)
+                RemComp<DestroyMarkedForComponent>(ent);
+        });
 
         comp.AmountDestroyedPerFaction.Clear();
         comp.HasSpawned = false;
@@ -66,7 +57,7 @@ public sealed partial class ObjDestroySystem : ObjectiveSystem
         foreach (var ent in spawned)
             EnsureComp<ObjSpawnedByComponent>(ent).ObjectiveUid = uid;
 
-        _objInt.RegisterInterest(uid, objMap,
+        ObjInt.RegisterInterest(uid, objMap,
             keys: string.IsNullOrEmpty(destroyComp.TargetPrototype) ? null : new[] { destroyComp.TargetPrototype },
             wildcard: destroyComp.UseAnyEntity);
 
@@ -119,7 +110,7 @@ public sealed partial class ObjDestroySystem : ObjectiveSystem
             return;
 
         var map = Transform(uid).MapID;
-        var interested = _objInt.GetInterestedObjectives(map, [proto]);
+        var interested = ObjInt.GetInterestedObjectives(map, [proto]);
         foreach (var objUid in interested)
         {
             if (!TryComp(objUid, out CMUObjectiveComponent? auComp) || !auComp.Active)
@@ -151,14 +142,10 @@ public sealed partial class ObjDestroySystem : ObjectiveSystem
                     || !TryComp(objectiveUid, out CMUObjectiveComponent? auComp))
                 continue;
 
-            var factionKey = factionToCredit.ToLowerInvariant();
-            destroyComp.AmountDestroyedPerFaction.TryAdd(factionKey, 0);
-            destroyComp.AmountDestroyedPerFaction[factionKey]++;
-            if (destroyComp.AmountDestroyedPerFaction[factionKey] < destroyComp.DestroyCount)
+            if (!TryCreditObjective(objectiveUid, auComp, destroyComp.AmountDestroyedPerFaction,
+                    factionToCredit.ToLowerInvariant(), destroyComp.DestroyCount))
                 continue;
 
-            _objInt.UnregisterInterest(objectiveUid);
-            _objCtrl.CompleteObjectiveForFaction(objectiveUid, auComp, factionToCredit);
             objectivesToRemove.Add(objectiveUid);
         }
         foreach (var o in objectivesToRemove)

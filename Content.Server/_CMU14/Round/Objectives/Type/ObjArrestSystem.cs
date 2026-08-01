@@ -17,8 +17,6 @@ namespace Content.Server._CMU14.Round.Objectives.Type;
 
 public sealed class ObjArrestSystem : ObjectiveSystem
 {
-    [Dependency] private ObjectiveControlSystem _objCtrl = default!;
-    [Dependency] private ObjectiveInterestSystem _objInt = default!;
     [Dependency] private GameTicker _gameTicker = default!;
     [Dependency] private JobSystem _jobSystem = default!;
     [Dependency] private SharedCuffableSystem _cuffableSystem = default!;
@@ -51,7 +49,7 @@ public sealed class ObjArrestSystem : ObjectiveSystem
             ActivateArrestObjective(uid, arrestComp);
 
         var objMap = Transform(uid).MapID;
-        _objInt.RegisterInterest(uid, objMap,
+        ObjInt.RegisterInterest(uid, objMap,
             keys: string.IsNullOrEmpty(arrestComp.FactionToArrest) ? null : new[] { arrestComp.FactionToArrest.ToLowerInvariant() },
             wildcard: comp.FactionNeutral);
 
@@ -64,22 +62,15 @@ public sealed class ObjArrestSystem : ObjectiveSystem
         if (!comp.RespawnOnRepeat)
             return;
 
-        var query = EntityQueryEnumerator<ObjSpawnedByComponent>();
-        while (query.MoveNext(out var ent, out var spawnedBy))
+        CleanupSpawnedByObjective(uid, ent =>
         {
-            if (spawnedBy.ObjectiveUid != uid)
-                continue;
+            if (!TryComp(ent, out ArrestMarkedForComponent? marked))
+                return;
 
-            if (TryComp(ent, out ArrestMarkedForComponent? marked))
-            {
-                marked.AssociatedObjectives.Remove(uid);
-                marked.AssociatedObjectiveJobs.Remove(uid);
-                marked.CreditedObjectives.Remove(uid);
-            }
-
-            if (Exists(ent))
-                QueueDel(ent);
-        }
+            marked.AssociatedObjectives.Remove(uid);
+            marked.AssociatedObjectiveJobs.Remove(uid);
+            marked.CreditedObjectives.Remove(uid);
+        });
 
         comp.HasSpawned = false;
     }
@@ -107,7 +98,7 @@ public sealed class ObjArrestSystem : ObjectiveSystem
             factions.AddRange(factionComp.Factions.Select(f => f.ToString().ToLowerInvariant()));
 
         var map = Transform(uid).MapID;
-        var interested = _objInt.GetInterestedObjectives(map, factions);
+        var interested = ObjInt.GetInterestedObjectives(map, factions);
 
         foreach (var objUid in interested)
         {
@@ -115,7 +106,7 @@ public sealed class ObjArrestSystem : ObjectiveSystem
                     || !TryComp(objUid, out CMUObjectiveComponent? auComp) || !auComp.Active)
                 continue;
 
-            string? creditFaction = GetCreditFaction(auComp, factions, arrestComp.FactionToArrest, _gameTicker.Preset?.ID, _objCtrl);
+            string? creditFaction = GetCreditFaction(auComp, factions, arrestComp.FactionToArrest, _gameTicker.Preset?.ID, ObjCtrl);
             if (creditFaction == null) continue;
 
             string? jobId = null;
@@ -154,7 +145,7 @@ public sealed class ObjArrestSystem : ObjectiveSystem
             if (!string.IsNullOrEmpty(comp.TargetPrototype) && meta.EntityPrototype?.ID != comp.TargetPrototype)
                 continue;
 
-            string? creditFaction = GetCreditFaction(auComp, factions, comp.FactionToArrest, _gameTicker.Preset?.ID, _objCtrl);
+            string? creditFaction = GetCreditFaction(auComp, factions, comp.FactionToArrest, _gameTicker.Preset?.ID, ObjCtrl);
             if (creditFaction == null) continue;
 
             string? jobId = null;
@@ -192,16 +183,9 @@ public sealed class ObjArrestSystem : ObjectiveSystem
             if (!comp.CreditedObjectives.Add(objectiveUid))
                 continue;
 
-            var factionKey = factionToCredit.ToLowerInvariant();
-            arrestComp.AmountArrestedPerFaction.TryAdd(factionKey, 0);
-            arrestComp.AmountArrestedPerFaction[factionKey]++;
-
-            if (arrestComp.AmountArrestedPerFaction[factionKey] >= arrestComp.ArrestCount)
-            {
-                _objInt.UnregisterInterest(objectiveUid);
-                _objCtrl.CompleteObjectiveForFaction(objectiveUid, auComp, factionToCredit);
+            if (TryCreditObjective(objectiveUid, auComp, arrestComp.AmountArrestedPerFaction,
+                    factionToCredit.ToLowerInvariant(), arrestComp.ArrestCount))
                 objectivesToRemove.Add(objectiveUid);
-            }
         }
 
         foreach (var o in objectivesToRemove)

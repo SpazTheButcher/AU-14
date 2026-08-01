@@ -9,8 +9,6 @@ namespace Content.Server._CMU14.Round.Objectives.Type;
 
 public sealed class ObjInteractSystem : ObjectiveSystem
 {
-    [Dependency] private ObjectiveControlSystem _objCtrl = default!;
-    [Dependency] private ObjectiveInterestSystem _objInt = default!;
     [Dependency] private PopupSystem _popup = default!;
     private ISawmill _logs = default!;
 
@@ -35,7 +33,7 @@ public sealed class ObjInteractSystem : ObjectiveSystem
 
         if (interactComp.Interactables.Count > 0)
         {
-            _objInt.RegisterInterest(uid, objMap,
+            ObjInt.RegisterInterest(uid, objMap,
                 keys: interactComp.Interactables,
                 wildcard: false);
         }
@@ -111,7 +109,7 @@ public sealed class ObjInteractSystem : ObjectiveSystem
             return;
 
         var map = Transform(uid).MapID;
-        var interested = _objInt.GetInterestedObjectives(map, new[] { proto });
+        var interested = ObjInt.GetInterestedObjectives(map, new[] { proto });
 
         foreach (var objUid in interested)
         {
@@ -166,7 +164,7 @@ public sealed class ObjInteractSystem : ObjectiveSystem
             ? interactComp.TotalCompletionsNeeded
             : interactComp.SpawnCount;
 
-        _objCtrl.AwardPointsToFaction(faction, auComp);
+        ObjCtrl.AwardPointsToFaction(faction, auComp);
 
         if (interactComp.DestroyOnComplete
                 && tracker.CompletionsPerFaction[faction] >= interactComp.CompletionsPerEnt
@@ -175,8 +173,8 @@ public sealed class ObjInteractSystem : ObjectiveSystem
 
         if (interactComp.CompletionsPerFaction[faction] >= totalNeeded)
         {
-            _objInt.UnregisterInterest(tracker.ObjectiveUid);
-            _objCtrl.CompleteObjectiveForFaction(tracker.ObjectiveUid, auComp, faction);
+            ObjInt.UnregisterInterest(tracker.ObjectiveUid);
+            ObjCtrl.CompleteObjectiveForFaction(tracker.ObjectiveUid, auComp, faction, awardPoints: false);
         }
     }
 }
