@@ -8,6 +8,6 @@ public sealed partial class HiveCollapseRuleComponent : Component
     ///     Default 10 Minutes.
     /// </summary>
     [DataField("hiveCollapseDuration")]
-    public TimeSpan HiveCollapseDuration = TimeSpan.FromSeconds(600);
+    public TimeSpan HiveCollapseDuration = TimeSpan.FromMinutes(10);
 
 }
