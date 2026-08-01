@@ -59,6 +59,8 @@
 
 - type: gamePreset
   id: DistressSignal
+  alias:
+  - distresssignal
   name: Distress Signal
   showInVote: true
   description: Investigate a mysterious distress signal as government forces.
