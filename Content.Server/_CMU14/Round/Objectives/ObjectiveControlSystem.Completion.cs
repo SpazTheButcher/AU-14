@@ -2,6 +2,7 @@ using System.Linq;
 using Content.Server._CMU14.RoundStatistics;
 using Content.Shared._CMU14.Round.Objectives.Component;
 using Content.Shared._CMU14.Round.Objectives.Type;
+using Content.Shared._RMC14.Intel;
 using Content.Shared._RMC14.Vendors;
 using Robust.Shared.Map;
 
@@ -12,6 +13,7 @@ public sealed partial class ObjectiveControlSystem
     [Dependency] private SharedCMAutomatedVendorSystem _vendorSystem = default!;
     [Dependency] private CMURoundStatisticsSystem _roundStats = default!;
     [Dependency] private ObjectiveConsoleSystem _objConsole = default!;
+    [Dependency] private IntelSystem _intel = default!;
 
     public void CompleteObjectiveForFaction(EntityUid uid, CMUObjectiveComponent objective, string completingFaction, bool awardPoints = true, ISawmill? sawmill = null)
     {
@@ -165,6 +167,7 @@ public sealed partial class ObjectiveControlSystem
         data.CurrentWinPoints += points;
         DirtyObjectiveMaster();
         _vendorSystem.UpdateVendorFactionPointsCache(key, data.CurrentWinPoints);
+        _intel.UpdateTree(_intel.EnsureTechTree(key));
 
         if (!master.FactionsGivenFinalObjective.Contains(key) && data.CurrentWinPoints >= data.RequiredWinPoints)
             TryActivateFinalObjective(key);
