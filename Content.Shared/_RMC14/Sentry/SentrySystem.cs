@@ -144,7 +144,7 @@ public sealed partial class SentrySystem : EntitySystem
 
         _rmcInteraction.SetMaxRotation(sentry.Owner, angle, sentry.Comp.MaxDeviation);
 
-        _targeting.ApplyDeployerFactions(sentry.Owner, args.User);
+        // Faction assignment is intentionally deferred — use a multitool to assign a team.
 
         UpdateState(sentry);
     }

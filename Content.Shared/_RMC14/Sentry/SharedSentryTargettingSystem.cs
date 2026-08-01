@@ -58,9 +58,8 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
 
     private void OnTargetingStartup(Entity<SentryTargetingComponent> ent, ref ComponentStartup args)
     {
-        if (ent.Comp.FriendlyFactions.Count == 0 && !string.IsNullOrEmpty(ent.Comp.OriginalFaction))
-            ent.Comp.FriendlyFactions.Add(ent.Comp.OriginalFaction);
-
+        // Sentries begin with no faction assigned — they must be configured via multitool.
+        // Only seed FriendlyFactions if the prototype explicitly pre-populated it (non-sentry use).
         if (_net.IsServer)
             ApplyTargeting(ent);
     }
