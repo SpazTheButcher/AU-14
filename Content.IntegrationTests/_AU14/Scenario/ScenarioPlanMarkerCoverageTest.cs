@@ -2707,6 +2707,83 @@ public sealed class ScenarioPlanMarkerCoverageTest
     }
 
     [Test]
+    public async Task InsurgencyPresetSchedulesExplicitlyWhitelistedThirdPartiesWithoutThreat()
+    {
+        await using var pair = await PoolManager.GetServerClient();
+        var server = pair.Server;
+
+        await server.WaitAssertion(() =>
+        {
+            var prototypes = server.ResolveDependency<IPrototypeManager>();
+            var componentFactory = server.ResolveDependency<IComponentFactory>();
+            var preset = prototypes.Index<GamePresetPrototype>(InsurgencyPreset);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(preset.ThirdPartyAutoSpawn, Is.True);
+                Assert.That(preset.ThirdPartyInterval, Is.EqualTo(1800));
+                Assert.That(preset.ThirdPartyRatio, Is.EqualTo(0.15f));
+                Assert.That(preset.MaxThirdParties, Is.EqualTo(2));
+            });
+
+            foreach (string planetId in preset.SupportedPlanets!)
+            {
+                Assert.That(
+                    TryGetPlanet(prototypes, componentFactory, planetId, out var planet),
+                    Is.True,
+                    $"{planetId} did not resolve to a planet map prototype.");
+
+                var candidates = planet!.ThirdParties
+                    .Select(prototypes.Index<ThirdPartyPrototype>)
+                    .Where(party =>
+                        AuRoundSelectionRules.IsExplicitlyWhitelistedForGamemode(party, InsurgencyPreset) &&
+                        AuRoundSelectionRules.IsThirdPartyAllowed(
+                            party,
+                            InsurgencyPreset,
+                            null,
+                            null,
+                            null,
+                            MarkerValidationPlayerCount))
+                    .ToList();
+
+                Assert.That(
+                    candidates,
+                    Is.Not.Empty,
+                    $"{planetId} has no population-valid third party explicitly whitelisted for Insurgency.");
+
+                var bodyCounts = candidates.ToDictionary(
+                    party => party,
+                    party => ThreatVoteSelection.CalculateBodyCount(
+                        prototypes.Index<PartySpawnPrototype>(party.PartySpawn),
+                        MarkerValidationPlayerCount).Total);
+                int bodyBudget = AuRoundSystem.CalculateThirdPartyBodyBudget(
+                    MarkerValidationPlayerCount,
+                    preset.ThirdPartyRatio);
+                List<ThirdPartyPrototype> selected = AuRoundSystem.SelectThirdPartiesWithinBodyBudget(
+                    candidates,
+                    preset.MaxThirdParties,
+                    bodyBudget,
+                    choices => choices[0],
+                    party => bodyCounts[party],
+                    out int selectedBodyCount);
+
+                Assert.Multiple(() =>
+                {
+                    Assert.That(selected, Is.Not.Empty, $"{planetId} could not select an Insurgency third party within its preset budget.");
+                    Assert.That(selected, Has.Count.LessThanOrEqualTo(preset.MaxThirdParties));
+                    Assert.That(selectedBodyCount, Is.LessThanOrEqualTo(bodyBudget));
+                    Assert.That(
+                        selected.All(party =>
+                            AuRoundSelectionRules.IsExplicitlyWhitelistedForGamemode(party, InsurgencyPreset)),
+                        Is.True);
+                });
+            }
+        });
+
+        await pair.CleanReturnAsync();
+    }
+
+    [Test]
     public async Task InsurgencyVotingChoicesPrototypeResolverMatchesLegacyPlan()
     {
         await using var pair = await PoolManager.GetServerClient();
