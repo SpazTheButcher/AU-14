@@ -27,13 +27,13 @@ public sealed partial class CMUObjectiveComponent : Robust.Shared.GameObjects.Co
     [DataField(required: true)]
     public string Id { get; private set; } = string.Empty;
 
-    [DataField("ObjectiveDescription", required: true)]
+    [DataField(required: true)]
     public string ObjectiveDescription { get; private set; } = string.Empty;
 
-    [DataField("applicableModes", required: true)]
+    [DataField(required: true)]
     public List<string> AllowedPresets { get; private set; } = new();
 
-    [DataField("possibleFactions", required: true)]
+    [DataField(required: true)]
     public List<string> Factions { get; private set; } = new();
 
     [DataField]
@@ -48,19 +48,19 @@ public sealed partial class CMUObjectiveComponent : Robust.Shared.GameObjects.Co
     [DataField]
     public List<string> WhitelistedPlatoons { get; private set; } = new();
 
-    [DataField("rollanyway")]
+    [DataField]
     public bool RollAnyway { get; private set; } = false;
 
     [DataField]
     public bool Repeating { get; private set; } = false;
 
-    [DataField("maxrepeatable")]
+    [DataField]
     public int? MaxRepeatable { get; private set; } = null;
 
     [DataField]
     public bool FactionNeutral { get; private set; } = false;
 
-    [DataField("objectivelevel", required: true)]
+    [DataField(required: true)]
     public int ObjectiveLevel { get; private set; } = 1;
 
     [DataField]
@@ -69,19 +69,19 @@ public sealed partial class CMUObjectiveComponent : Robust.Shared.GameObjects.Co
     [DataField]
     public FinalObjectiveType FinalType { get; private set; } = FinalObjectiveType.InstantWin;
 
-    [DataField("custompoints")]
+    [DataField]
     public int CustomPoints { get; private set; } = 0;
 
     [DataField]
     public List<string> TechUnlocks { get; private set; } = new();
 
-    [DataField("intelTiers")]
+    [DataField]
     public List<ProtoId<ObjectiveIntelTierPrototype>> IntelTiersProtos { get; private set; } = new();
 
-    [DataField("nextTier")]
+    [DataField]
     public EntProtoId<CMUObjectiveComponent>? NextTierObjective { get; private set; } = null;
 
-    [DataField("intelTierPerFaction")]
+    [DataField]
     public Dictionary<string, int> DefaultIntelTiers { get; set; } = new()
     {
         { "govfor", 1 }, { "opfor", 1 }, { "clf", 1 }, { "scientist", 1 }

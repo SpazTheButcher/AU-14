@@ -6,7 +6,7 @@ public sealed partial class FetchReturnPointComponent : Robust.Shared.GameObject
     [DataField]
     public bool Generic { get; private set; }
 
-    [DataField("returnid")]
+    [DataField]
     public string FetchId { get; private set; } = string.Empty;
 
     [DataField]

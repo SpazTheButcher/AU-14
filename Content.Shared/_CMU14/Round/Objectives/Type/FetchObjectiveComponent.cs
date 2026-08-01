@@ -9,16 +9,16 @@ public sealed partial class FetchObjectiveComponent : Robust.Shared.GameObjects.
     [DataField]
     public bool UseAnyEntity;
 
-    [DataField("entityToSpawn")]
+    [DataField]
     public string TargetPrototype = string.Empty;
 
-    [DataField("markerEntity")]
+    [DataField]
     public string SpawnMarkerId = string.Empty;
 
-    [DataField("amountToSpawn")]
+    [DataField]
     public int SpawnCount = 1;
 
-    [DataField("amountToFetch")]
+    [DataField]
     public int FetchCount = 1;
 
     [DataField("spawnOther")]

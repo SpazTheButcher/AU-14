@@ -22,16 +22,16 @@ public sealed partial class CaptureObjectiveComponent : Robust.Shared.GameObject
     }
 
     [DataField] public bool OnceOnly { get; private set; }
-    [DataField("maxholdtimes")] public int MaxHoldTimes { get; private set; }
-    [DataField("pointincrementtime")] public float PointIncrementTime { get; private set; } = 5.0f;
-    [DataField("visibleonmap")] public bool VisibleOnMap { get; private set; } = true;
+    [DataField] public int MaxHoldTimes { get; private set; }
+    [DataField] public float PointIncrementTime { get; private set; } = 5.0f;
+    [DataField] public bool VisibleOnMap { get; private set; } = true;
     [DataField] public string Airfield { get; private set; } = string.Empty;
-    [DataField("hoisttime")] public float HoistTime { get; private set; } = 5.0f;
+    [DataField] public float HoistTime { get; private set; } = 5.0f;
 
     public string CurrentController = string.Empty;
     public int TimesIncremented = 0;
 
-    [DataField("flaghealth")] public float FlagInitialHealth { get; private set; } = 100f;
+    [DataField] public float FlagInitialHealth { get; private set; } = 100f;
     public float FlagHealth = 20f;
 
     public string GovforFlagState = "uaflag_worn";

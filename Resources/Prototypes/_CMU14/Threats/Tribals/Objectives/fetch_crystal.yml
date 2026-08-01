@@ -9,18 +9,16 @@
     id: fetchcrystalobjective
     finalType: InstantWin
     factionNeutral: false
-    applicableModes:
+    allowedPresets:
     - DistressSignal
-    possiblefactions:
+    factions:
     - govfor
     repeating: false
-    rollanyway: true
-    objectivelevel: 3
-    custompoints: 100
-    maxrepeatable: 100
-    ObjectiveDescription: "Harvest the Rare Crystal deposits scattered across the jungle"
+    objectiveLevel: 3
+    customPoints: 100
+    objectiveDescription: "Harvest the Rare Crystal deposits scattered across the jungle"
   - type: FetchObjective
-    entitytospawn: SteelOre
-    markerentity: fetchoreobjectivemarker
-    amounttofetch: 500
-    useanyentity: true
+    targetPrototype: SteelOre
+    spawnMarkerId: fetchoreobjectivemarker
+    fetchCount: 500
+    useAnyEntity: true

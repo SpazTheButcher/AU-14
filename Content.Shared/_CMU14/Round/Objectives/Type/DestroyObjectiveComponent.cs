@@ -6,16 +6,16 @@ public sealed partial class DestroyObjectiveComponent : Robust.Shared.GameObject
     [DataField]
     public bool UseAnyEntity { get; private set; }
 
-    [DataField("spawnMarker")]
+    [DataField]
     public string SpawnMarkerId { get; private set; } = string.Empty;
 
-    [DataField("entityToDestroy")]
+    [DataField]
     public string TargetPrototype { get; private set; } = string.Empty;
 
-    [DataField("amountToSpawn")]
+    [DataField]
     public int SpawnCount { get; private set; } = 1;
 
-    [DataField("amountToDestroy")]
+    [DataField]
     public int DestroyCount { get; private set; } = 1;
 
     public Dictionary<string, int> AmountDestroyedPerFaction = new();
