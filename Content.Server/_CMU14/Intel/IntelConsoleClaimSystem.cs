@@ -1,4 +1,4 @@
-using Content.Server.AU14.Objectives;
+using Content.Server._CMU14.Round.Objectives;
 using Content.Server.GameTicking;
 using Content.Shared._CMU14.Intel;
 using Content.Shared._RMC14.Intel;
@@ -11,7 +11,7 @@ namespace Content.Server._CMU14.Intel;
 public sealed partial class IntelConsoleClaimSystem : EntitySystem
 {
     [Dependency] private GameTicker _gameTicker = default!;
-    [Dependency] private AuObjectiveSystem _objectives = default!;
+    [Dependency] private ObjectiveControlSystem _objectives = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
 
     private bool _roundEndTriggered;
