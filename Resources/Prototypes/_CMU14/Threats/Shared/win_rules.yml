@@ -53,6 +53,14 @@
       percent: 100
 
 - type: entity
+  id: HiveCollapsedRule
+  parent: BaseGameRule
+  name: Kill The Queen and Let the Hive Collapse
+  description: Threat wins when the Queen is dead and no Replacement Queen evolves in time.
+  components:
+    - type: HiveCollapseRule
+
+- type: entity
   id: KillAllXenoRule
   parent: BaseGameRule
   name: Kill All Xenos/Cultists
