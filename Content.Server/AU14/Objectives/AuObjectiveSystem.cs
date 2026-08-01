@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using System.Linq;
 using System.Numerics;
 using Content.Server._CMU14.RoundStatistics;
@@ -778,3 +781,5 @@ public sealed partial class AuObjectiveSystem : AuSharedObjectiveSystem
         return (data.CurrentWinPoints, data.RequiredWinPoints);
     }
 }
+
+#endif

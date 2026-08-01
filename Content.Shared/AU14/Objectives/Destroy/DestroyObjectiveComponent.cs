@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Robust.Shared.GameStates;
 using Robust.Shared.Serialization;
 
@@ -27,3 +30,5 @@ public sealed partial class DestroyObjectiveComponent : Component
 
 
 }
+
+#endif

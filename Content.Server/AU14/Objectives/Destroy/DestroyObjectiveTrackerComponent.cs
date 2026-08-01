@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 namespace Content.Server.AU14.Objectives.Destroy;
 
 [RegisterComponent]
@@ -7,3 +10,5 @@ public sealed partial class DestroyObjectiveTrackerComponent : Component
     public EntityUid ObjectiveUid;
 }
 
+
+#endif

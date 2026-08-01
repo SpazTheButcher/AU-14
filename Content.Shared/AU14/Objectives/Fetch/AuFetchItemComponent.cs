@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Content.Shared.AU14.Objectives.Fetch;
 using Robust.Shared.GameStates;
 
@@ -12,3 +15,5 @@ public sealed partial class AuFetchItemComponent : Component
 
     public EntityUid ObjectiveUid;
 }
+
+#endif

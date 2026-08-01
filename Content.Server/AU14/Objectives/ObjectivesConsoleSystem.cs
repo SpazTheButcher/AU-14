@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using System.Linq;
 using Content.Shared.AU14.Objectives;
 using Content.Shared.AU14.Objectives.Capture;
@@ -419,3 +422,5 @@ public sealed partial class ObjectivesConsoleSystem : SharedObjectivesConsoleSys
         }
     }
 }
+
+#endif

@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.AU14.Objectives.Destroy;
@@ -10,3 +13,5 @@ public sealed partial class MarkedForDestroyComponent : Component
     public Dictionary<EntityUid, string?> AssociatedObjectiveJobs = new();
 }
 
+
+#endif

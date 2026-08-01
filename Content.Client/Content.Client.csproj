@@ -31,15 +31,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="AU14\ObjectiveConsole\CriminalRecordsConsoleWindow.xaml.cs">
-      <DependentUpon>ObjectivesConsoleWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="AU14\Objectives\ObjectivesConsoleWindow.xaml.cs">
-      <DependentUpon>ObjectivesConsoleWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="AU14\Objectives\ObjectiveIntelWindow.xaml.cs">
-      <DependentUpon>ObjectiveIntelWindow.xaml</DependentUpon>
-    </Compile>
+    <!-- DEPRECATED: AU14/Objectives refactored to _CMU14/Round/Objectives -->
+    <EmbeddedResource Remove="AU14\Objectives\ObjectivesConsoleWindow.xaml" />
+    <EmbeddedResource Remove="AU14\Objectives\ObjectiveIntelWindow.xaml" />
+    <AdditionalFiles Remove="AU14\Objectives\ObjectivesConsoleWindow.xaml" />
+    <AdditionalFiles Remove="AU14\Objectives\ObjectiveIntelWindow.xaml" />
+    <!-- #if false requires exclusion from the XAML AOT (EmbeddedResource) and AdditionalFiles/Robust.Client.NameGenerator -->
+
     <Compile Update="_AU14\Chemistry\Research\ChemSimulatorWindow.xaml.cs">
       <DependentUpon>ChemSimulatorWindow.xaml</DependentUpon>
     </Compile>

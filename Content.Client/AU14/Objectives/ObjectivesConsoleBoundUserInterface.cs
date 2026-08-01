@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Content.Shared.AU14.Objectives;
 using Robust.Client.UserInterface;
 
@@ -92,3 +95,5 @@ public sealed class ObjectivesConsoleBoundUserInterface(EntityUid owner, Enum ui
         base.Dispose(disposing);
     }
 }
+
+#endif

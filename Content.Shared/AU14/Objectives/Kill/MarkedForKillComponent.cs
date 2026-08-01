@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.AU14.Objectives.Kill;
@@ -9,3 +12,5 @@ public sealed partial class MarkedForKillComponent : Component
 
     // objective, faction marked for
 }
+
+#endif

@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Robust.Shared.Audio;
 using Robust.Shared.Prototypes;
 namespace Content.Shared.AU14.Objectives;
@@ -36,3 +39,5 @@ public sealed partial class ObjectiveIntelTierPrototype : IPrototype
 
 
 }
+
+#endif

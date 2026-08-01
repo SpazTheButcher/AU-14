@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using System.Linq;
 using Content.Server.Popups;
 using Content.Server.AU14.Objectives;
@@ -207,3 +210,5 @@ public sealed partial class CaptureObjectiveSystem : EntitySystem
         }
     }
 }
+
+#endif

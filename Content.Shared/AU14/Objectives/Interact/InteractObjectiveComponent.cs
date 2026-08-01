@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.AU14.Objectives.Interact;
@@ -86,3 +89,5 @@ public sealed partial class InteractObjectiveComponent : Component
     /// </summary>
     public Dictionary<string, int> CompletionsPerFaction { get; set; } = new();
 }
+
+#endif

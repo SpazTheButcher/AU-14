@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.AU14.Objectives.Capture;
@@ -93,3 +96,5 @@ public float FlagHealth = 20f;
     public string? ActionUserFaction = null;
 
 }
+
+#endif

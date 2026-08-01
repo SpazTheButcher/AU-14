@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Content.Shared.AU14.Objectives;
 using Content.Shared.AU14.Objectives.Destroy;
 using Content.Shared.AU14.Objectives.Fetch;
@@ -291,3 +294,5 @@ public sealed partial class AuDestroyObjectiveSystem : EntitySystem
         }
     }
 }
+
+#endif

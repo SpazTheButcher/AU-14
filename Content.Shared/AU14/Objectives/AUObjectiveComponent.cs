@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Content.Shared.AU14;
 using Robust.Shared.Prototypes;
 using Content.Shared.Research.Prototypes;
@@ -141,3 +144,5 @@ public sealed partial class AuObjectiveComponent : Component
 
 
 public sealed class ObjectiveActivatedEvent : EntityEventArgs {}
+
+#endif

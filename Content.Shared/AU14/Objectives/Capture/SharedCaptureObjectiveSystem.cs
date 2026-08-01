@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using System.Linq;
 using Content.Shared._RMC14.Dropship;
 using Content.Shared.AU14.Objectives.Capture;
@@ -87,3 +90,5 @@ public sealed partial class SharedCaptureObjectiveSystem : EntitySystem
         _doAfter.TryStartDoAfter(doAfterRaiseArgs);
     }
 }
+
+#endif

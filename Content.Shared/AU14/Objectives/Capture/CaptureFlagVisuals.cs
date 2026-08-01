@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Robust.Shared.Serialization;
 
 namespace Content.Shared.AU14.Objectives.Capture;
@@ -8,3 +11,5 @@ public enum CaptureFlagVisuals
     SpriteState,
 }
 
+
+#endif

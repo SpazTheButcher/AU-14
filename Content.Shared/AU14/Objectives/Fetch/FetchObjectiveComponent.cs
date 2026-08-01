@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.AU14.Objectives.Fetch;
@@ -52,3 +55,5 @@ public sealed partial class FetchObjectiveComponent : Component
     public bool UseMarkers { get; set; } = false;
     // if this is true it will use the legacy marker system instead of the new analyzer system, useful for specific objectives IE place the relic on a pedestal but should otherwise NOT be used
 }
+
+#endif

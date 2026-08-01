@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.AU14.Objectives.Arrest;
@@ -52,3 +55,5 @@ public sealed partial class ArrestObjectiveComponent : Component
 }
 
 
+
+#endif

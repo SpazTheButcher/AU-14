@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Robust.Shared.GameObjects;
 
 namespace Content.Shared.AU14.Objectives.Capture;
@@ -24,3 +27,5 @@ public sealed class FlagHoistedEvent : EntityEventArgs
     }
 }
 
+
+#endif

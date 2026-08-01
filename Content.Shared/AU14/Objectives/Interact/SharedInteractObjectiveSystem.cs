@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using System.Linq;
 using Content.Shared.DoAfter;
 using Content.Shared.Examine;
@@ -246,3 +249,5 @@ public sealed partial class SharedInteractObjectiveSystem : EntitySystem
     }
 }
 
+
+#endif

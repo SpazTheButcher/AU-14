@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Content.Server.AU14.Objectives;
 using Content.Server.AU14.Objectives.Fetch;
 using Content.Server.Popups;
@@ -165,3 +168,5 @@ public sealed partial class AnalyzerSystem : EntitySystem
         _popupSystem.PopupEntity(msg, uid);
     }
 }
+
+#endif

@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.AU14.Objectives.Fetch;
@@ -16,3 +19,5 @@ public sealed partial class FetchObjectiveMarkerComponent: Component
     public bool Used { get; set; } = false;
 
 }
+
+#endif

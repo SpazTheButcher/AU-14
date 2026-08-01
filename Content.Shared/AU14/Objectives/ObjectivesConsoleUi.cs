@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Robust.Shared.Serialization;
 using System.Collections.Generic;
 using System.Linq;
@@ -130,3 +133,5 @@ public sealed class ObjectiveEntry
         Points = points;
     }
 }
+
+#endif

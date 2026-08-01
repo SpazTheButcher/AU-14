@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.AU14.Objectives;
@@ -9,3 +12,5 @@ public sealed partial class ObjectivesConsoleComponent : Component
     public string Faction { get; private set; } = string.Empty;
 }
 
+
+#endif

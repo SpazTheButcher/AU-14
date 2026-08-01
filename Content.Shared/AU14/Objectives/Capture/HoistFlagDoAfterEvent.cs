@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Robust.Shared.GameStates;
 using Robust.Shared.Serialization;
 using Content.Shared.DoAfter;
@@ -10,3 +13,5 @@ public sealed partial class HoistFlagDoAfterEvent : SimpleDoAfterEvent
 {
     public string Faction = string.Empty;
 }
+
+#endif

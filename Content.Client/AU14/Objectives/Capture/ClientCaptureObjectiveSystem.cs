@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Content.Shared.AU14.Objectives.Capture;
 using Content.Shared._RMC14.Flag;
 using Content.Shared.AU14.Objectives;
@@ -61,3 +64,5 @@ public sealed partial class ClientCaptureObjectiveSystem : EntitySystem
 
 
 }
+
+#endif

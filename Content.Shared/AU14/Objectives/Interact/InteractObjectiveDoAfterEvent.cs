@@ -1,3 +1,6 @@
+// DEPRECATED: Replaced by _CMU14/Round/Objectives.
+#if false
+
 using Content.Shared.DoAfter;
 using Robust.Shared.Serialization;
 
@@ -18,3 +21,5 @@ public sealed partial class InteractObjectiveDoAfterEvent : SimpleDoAfterEvent
 }
 
 
+
+#endif
