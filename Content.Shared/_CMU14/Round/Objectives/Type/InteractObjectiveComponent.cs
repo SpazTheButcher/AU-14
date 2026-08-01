@@ -1,7 +1,9 @@
+using Content.Shared._CMU14.Round.Objectives.Component;
+
 namespace Content.Shared._CMU14.Round.Objectives.Type;
 
 [RegisterComponent]
-public sealed partial class InteractObjectiveComponent : Component
+public sealed partial class InteractObjectiveComponent : Robust.Shared.GameObjects.Component
 {
     [DataField] public List<string> Interactables { get; private set; } = new();
     [DataField] public string DoAfterMessageBegin { get; private set; } = "You begin working...";

@@ -1,7 +1,11 @@
 using System.Linq;
+using Content.Server.AU14.Round;
 using Content.Server.Popups;
 using Content.Shared._CMU14.Round.Objectives;
 using Content.Shared._CMU14.Round.Objectives.Type;
+using Content.Shared._CMU14.Round.Objectives.Component;
+using Content.Shared.Damage;
+using Content.Shared.NPC.Components;
 using Content.Shared.Popups;
 
 namespace Content.Server._CMU14.Round.Objectives.Type;
@@ -10,7 +14,7 @@ public sealed class ObjCaptureSystem : ObjectiveSystem
 {
     [Dependency] private ObjectiveControlSystem _objCtrl = default!;
     [Dependency] private PopupSystem _popup = default!;
-    [Dependency] private Round.PlatoonSpawnRuleSystem _platoonSpawnRuleSystem = default!;
+    [Dependency] private PlatoonSpawnRuleSystem _platoonSpawnRuleSystem = default!;
 
     private readonly Dictionary<EntityUid, float> _timeSinceLastIncrement = new();
     private readonly Dictionary<EntityUid, float> _lastSlashDamage = new();
@@ -21,8 +25,8 @@ public sealed class ObjCaptureSystem : ObjectiveSystem
     {
         base.Initialize();
         _logs = Logger.GetSawmill("obj-capture");
-        SubscribeLocalEvent<CaptureObjectiveComponent, FlagHoistStartedEvent>(OnFlagHoistStarted);
-        SubscribeLocalEvent<CaptureObjectiveComponent, HoistFlagDoAfterEvent>(OnHoistFlagDoAfter);
+        SubscribeLocalEvent<CaptureObjectiveComponent, CaptureHoistFlagStartedEvent>(OnFlagHoistStarted);
+        SubscribeLocalEvent<CaptureObjectiveComponent, CaptureHoistFlagDoAfterEvent>(OnHoistFlagDoAfter);
     }
 
     private string? GetPlatoonNameForFaction(string faction)
@@ -35,7 +39,7 @@ public sealed class ObjCaptureSystem : ObjectiveSystem
         };
     }
 
-    private void OnFlagHoistStarted(EntityUid uid, CaptureObjectiveComponent comp, FlagHoistStartedEvent args)
+    private void OnFlagHoistStarted(EntityUid uid, CaptureObjectiveComponent comp, CaptureHoistFlagStartedEvent args)
     {
         if (comp.ActionState != CaptureObjectiveComponent.FlagActionState.Idle)
         {
@@ -55,7 +59,6 @@ public sealed class ObjCaptureSystem : ObjectiveSystem
         {
             comp.ActionState = CaptureObjectiveComponent.FlagActionState.Lowering;
             comp.ActionUser = args.User;
-            comp.ActionTimeRemaining = comp.HoistTime;
             comp.ActionUserFaction = comp.CurrentController;
             _popup.PopupEntity($"You begin lowering the flag...", uid, args.User, PopupType.Medium);
             return;
@@ -79,7 +82,6 @@ public sealed class ObjCaptureSystem : ObjectiveSystem
 
         comp.ActionState = CaptureObjectiveComponent.FlagActionState.Hoisting;
         comp.ActionUser = args.User;
-        comp.ActionTimeRemaining = comp.HoistTime;
         comp.ActionUserFaction = allowed;
 
         var platoonName = GetPlatoonNameForFaction(allowed);
@@ -87,12 +89,11 @@ public sealed class ObjCaptureSystem : ObjectiveSystem
         _popup.PopupEntity($"You begin raising the flag for {displayName}...", uid, args.User, PopupType.Medium);
     }
 
-    private void OnHoistFlagDoAfter(EntityUid uid, CaptureObjectiveComponent comp, HoistFlagDoAfterEvent args)
+    private void OnHoistFlagDoAfter(EntityUid uid, CaptureObjectiveComponent comp, CaptureHoistFlagDoAfterEvent args)
     {
         comp.ActionState = CaptureObjectiveComponent.FlagActionState.Idle;
         comp.ActionUser = null;
         comp.ActionUserFaction = null;
-        comp.ActionTimeRemaining = 0f;
 
         if (args.Cancelled)
             return;

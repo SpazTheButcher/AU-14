@@ -18,6 +18,6 @@ public sealed partial class DestroyObjectiveComponent : Robust.Shared.GameObject
     [DataField("amountToDestroy")]
     public int DestroyCount { get; private set; } = 1;
 
-    public int DestroyedCount = 0; // AmountDestroyed
+    public Dictionary<string, int> AmountDestroyedPerFaction = new();
     public bool HasSpawned = false; // EntitiesSpawned
 }

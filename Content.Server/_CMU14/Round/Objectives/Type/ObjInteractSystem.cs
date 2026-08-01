@@ -1,6 +1,8 @@
+using System.Linq;
 using Content.Server.Popups;
 using Content.Shared._CMU14.Round.Objectives;
 using Content.Shared._CMU14.Round.Objectives.Type;
+using Content.Shared._CMU14.Round.Objectives.Component;
 using Content.Shared.Popups;
 
 namespace Content.Server._CMU14.Round.Objectives.Type;
@@ -16,15 +18,15 @@ public sealed class ObjInteractSystem : ObjectiveSystem
     {
         base.Initialize();
         _logs = Logger.GetSawmill("obj-interact");
-        SubscribeLocalEvent<CMUObjectiveComponent, ObjectiveActivatedEvent>(OnActivated);
+        SubscribeLocalEvent<InteractObjectiveComponent, ObjectiveActivatedEvent>(OnActivated);
         SubscribeLocalEvent<InteractObjectiveComponent, ObjectiveResetEvent>(OnReset);
         SubscribeLocalEvent<InteractTrackerComponent, InteractObjectiveDoAfterEvent>(OnDoAfterComplete);
-        SubscribeLocalEvent<MetaDataComponent, ComponentStartup>(OnEntityMetaStartup);
+        SubscribeLocalEvent<ObjectiveWatchedEntityStartupEvent>(OnEntityMetaStartup);
     }
 
-    private void OnActivated(EntityUid uid, CMUObjectiveComponent comp, ref ObjectiveActivatedEvent _)
+    private void OnActivated(EntityUid uid, InteractObjectiveComponent interactComp, ref ObjectiveActivatedEvent _)
     {
-        if (!TryComp(uid, out InteractObjectiveComponent? interactComp)
+        if (!TryComp(uid, out CMUObjectiveComponent? comp)
                 || !comp.Active
                 || interactComp.HasSpawned)
             return;
@@ -73,7 +75,6 @@ public sealed class ObjInteractSystem : ObjectiveSystem
             if (tracker.ObjectiveUid != uid || xform.MapID != Transform(uid).MapID)
                 continue;
 
-            tracker.CurrentInteractions = 0;
             tracker.CompletionsPerFaction.Clear();
             tracker.InteractionsPerFaction.Clear();
         }
@@ -99,8 +100,12 @@ public sealed class ObjInteractSystem : ObjectiveSystem
         return registered;
     }
 
-    private void OnEntityMetaStartup(EntityUid uid, MetaDataComponent meta, ref ComponentStartup args)
+    private void OnEntityMetaStartup(ObjectiveWatchedEntityStartupEvent ev)
     {
+        var uid = ev.Uid;
+        if (!TryComp(uid, out MetaDataComponent? meta))
+            return;
+
         var proto = meta.EntityPrototype?.ID;
         if (string.IsNullOrEmpty(proto))
             return;

@@ -5,4 +5,5 @@ public sealed partial class ArrestMarkedForComponent : Robust.Shared.GameObjects
 {
     public Dictionary<EntityUid, string> AssociatedObjectives = new();
     public Dictionary<EntityUid, string?> AssociatedObjectiveJobs = new();
+    public HashSet<EntityUid> CreditedObjectives = new();
 }

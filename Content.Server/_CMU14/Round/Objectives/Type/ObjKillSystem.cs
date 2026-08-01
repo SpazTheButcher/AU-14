@@ -3,10 +3,13 @@ using Content.Server.GameTicking;
 using Content.Server.Roles.Jobs;
 using Content.Shared._CMU14.Round.Objectives;
 using Content.Shared._CMU14.Round.Objectives.Type;
+using Content.Shared._CMU14.Round.Objectives.Component;
+using Content.Server._CMU14.Round.Objectives.Component;
 using Content.Shared._RMC14.Synth;
 using Content.Shared.Mobs;
 using Content.Shared.NPC.Components;
 using Content.Shared.Mind.Components;
+using Robust.Shared.Map;
 
 namespace Content.Server._CMU14.Round.Objectives.Type;
 
@@ -24,9 +27,9 @@ public sealed class ObjKillSystem : ObjectiveSystem
         base.Initialize();
         _logs = Logger.GetSawmill("obj-kill");
         _shuttingDown = false;
-        SubscribeLocalEvent<CMUObjectiveComponent, ObjectiveActivatedEvent>(OnActivated);
+        SubscribeLocalEvent<KillObjectiveComponent, ObjectiveActivatedEvent>(OnActivated);
         SubscribeLocalEvent<KillObjectiveComponent, ObjectiveResetEvent>(OnReset);
-        SubscribeLocalEvent<MetaDataComponent, ComponentStartup>(OnEntityMetaStartup);
+        SubscribeLocalEvent<ObjectiveWatchedEntityStartupEvent>(OnEntityMetaStartup);
         SubscribeLocalEvent<KillMarkedForComponent, MobStateChangedEvent>(OnMobStateChanged);
     }
 
@@ -36,9 +39,9 @@ public sealed class ObjKillSystem : ObjectiveSystem
         base.Shutdown();
     }
 
-    private void OnActivated(EntityUid uid, CMUObjectiveComponent comp, ref ObjectiveActivatedEvent _)
+    private void OnActivated(EntityUid uid, KillObjectiveComponent killComp, ref ObjectiveActivatedEvent _)
     {
-        if (!TryComp(uid, out KillObjectiveComponent? killComp) || !comp.Active || killComp.HasSpawned)
+        if (!TryComp(uid, out CMUObjectiveComponent? comp) || !comp.Active || killComp.HasSpawned)
             return;
 
         if (killComp.SpawnMob && !string.IsNullOrEmpty(killComp.TargetPrototype))
@@ -55,57 +58,70 @@ public sealed class ObjKillSystem : ObjectiveSystem
     private void OnReset(EntityUid uid, KillObjectiveComponent comp, ref ObjectiveResetEvent args)
     {
         comp.AmountKilledPerFaction.Clear();
+        if (!comp.RespawnOnRepeat)
+            return;
+
+        var query = EntityQueryEnumerator<ObjSpawnedByComponent>();
+        while (query.MoveNext(out var ent, out var spawnedBy))
+        {
+            if (spawnedBy.ObjectiveUid != uid)
+                continue;
+
+            if (TryComp(ent, out KillMarkedForComponent? marked))
+            {
+                marked.AssociatedObjectives.Remove(uid);
+                marked.AssociatedObjectiveJobs.Remove(uid);
+            }
+
+            if (Exists(ent))
+                QueueDel(ent);
+        }
+
         comp.HasSpawned = false;
     }
 
     private void ActivateKillObjective(EntityUid uid, KillObjectiveComponent killComp)
     {
         var objMap = Transform(uid).MapID;
-        var (specific, generic) = FindMarkers(objMap, killComp.SpawnMarkerId);
-        List<EntityUid> markers;
-        if (!string.IsNullOrEmpty(killComp.SpawnMarkerId))
-            markers = specific;
-        else
-            markers = specific.Count > 0 ? specific : generic;
-
-        for (var i = 0; i < killComp.SpawnCount; i++)
-        {
-            if (markers.Count == 0) break;
-            var markerUid = markers[i % markers.Count];
-            var xform = Comp<TransformComponent>(markerUid);
-            Spawn(killComp.TargetPrototype, xform.Coordinates);
-        }
+        var markers = ResolveMarkers(objMap, killComp.SpawnMarkerId);
+        var spawned = SpawnEntitiesAtMarkersWithReuse(killComp.TargetPrototype, killComp.SpawnCount, markers);
+        foreach (var ent in spawned)
+            EnsureComp<ObjSpawnedByComponent>(ent).ObjectiveUid = uid;
         killComp.HasSpawned = true;
     }
 
-    private void OnEntityMetaStartup(EntityUid uid, MetaDataComponent meta, ref ComponentStartup args)
+    private void OnEntityMetaStartup(ObjectiveWatchedEntityStartupEvent ev)
     {
+        var uid = ev.Uid;
         if (_shuttingDown) return;
         if (HasComp<KillMarkedForComponent>(uid)) return;
+        if (!TryComp(uid, out MetaDataComponent? meta)) return;
 
         var protoId = meta.EntityPrototype?.ID ?? string.Empty;
         var factions = new List<string>();
-        if (TryComp<FactionComponent>(uid, out var factionComp))
-            factions.AddRange(factionComp.Factions.Select(f => f.ToLowerInvariant()));
+        if (TryComp<NpcFactionMemberComponent>(uid, out var factionComp))
+            factions.AddRange(factionComp.Factions.Select(f => f.ToString().ToLowerInvariant()));
 
         var map = Transform(uid).MapID;
         var interested = _objInt.GetInterestedObjectives(map, factions);
 
         foreach (var objUid in interested)
         {
-            if (!TryComp(objUid, out KillObjectiveComponent? killComp) ||
-                !TryComp(objUid, out CMUObjectiveComponent? auComp) || !auComp.Active)
+            if (!TryComp(objUid, out KillObjectiveComponent? killComp)
+                    || !TryComp(objUid, out CMUObjectiveComponent? auComp) || !auComp.Active)
                 continue;
 
             string? creditFaction = GetCreditFaction(auComp, factions, killComp.FactionToKill, _gameTicker.Preset?.ID, _objCtrl);
             if (creditFaction == null)
                 continue;
 
+            string? jobId = null;
             if (!string.IsNullOrEmpty(killComp.SpecificJob))
             {
-                string? jobId = null;
-                if (TryComp<MindComponent>(uid, out var mindCont) && mindCont.Mind != null)
-                    _jobSystem.MindTryGetJob(mindCont.Mind.Value, out var jobProto);
+                if (TryComp<MindContainerComponent>(uid, out var mindCont) &&
+                    _jobSystem.MindTryGetJob(mindCont.Mind, out var jobProto))
+                    jobId = jobProto.ID;
+
                 if (jobId == null || !jobId.Equals(killComp.SpecificJob, StringComparison.OrdinalIgnoreCase))
                     continue;
             }
@@ -117,24 +133,19 @@ public sealed class ObjKillSystem : ObjectiveSystem
             var mark = EnsureComp<KillMarkedForComponent>(uid);
             mark.AssociatedObjectives[objUid] = creditFaction;
             if (!string.IsNullOrEmpty(killComp.SpecificJob))
-            {
-                string? jobId = null;
-                if (TryComp<MindComponent>(uid, out var mindCont) && mindCont.Mind != null)
-                    _jobSystem.MindTryGetJob(mindCont.Mind.Value, out var jobProto);
                 mark.AssociatedObjectiveJobs[objUid] = jobId;
-            }
         }
     }
 
     private void MarkExistingEntities(EntityUid uid, KillObjectiveComponent comp, CMUObjectiveComponent auComp, MapId objMap)
     {
-        var query = AllEntityQuery<MetaDataComponent, TransformComponent, FactionComponent>();
+        var query = AllEntityQuery<MetaDataComponent, TransformComponent, NpcFactionMemberComponent>();
         while (query.MoveNext(out var ent, out var meta, out var xform, out var factionComp))
         {
             if (ent == uid || xform.MapID != objMap)
                 continue;
 
-            var factions = factionComp.Factions.Select(f => f.ToLowerInvariant()).ToList();
+            var factions = factionComp.Factions.Select(f => f.ToString().ToLowerInvariant()).ToList();
             if (factions.Count == 0) continue;
 
             if (!string.IsNullOrEmpty(comp.TargetPrototype) && meta.EntityPrototype?.ID != comp.TargetPrototype)
@@ -144,9 +155,23 @@ public sealed class ObjKillSystem : ObjectiveSystem
             if (creditFaction == null)
                 continue;
 
+            string? jobId = null;
+            if (!string.IsNullOrEmpty(comp.SpecificJob))
+            {
+                if (TryComp<MindContainerComponent>(ent, out var mindCont)
+                        && _jobSystem.MindTryGetJob(mindCont.Mind, out var jobProto))
+                    jobId = jobProto.ID;
+
+                if (jobId == null || !jobId.Equals(comp.SpecificJob, StringComparison.OrdinalIgnoreCase))
+                    continue;
+            }
+
+            if (comp.SynthOnly && !HasComp<SynthComponent>(ent)) continue;
+
             var mark = EnsureComp<KillMarkedForComponent>(ent);
             mark.AssociatedObjectives[uid] = creditFaction;
-            // Job caching?
+            if (!string.IsNullOrEmpty(comp.SpecificJob))
+                mark.AssociatedObjectiveJobs[uid] = jobId;
         }
     }
 
@@ -158,8 +183,8 @@ public sealed class ObjKillSystem : ObjectiveSystem
         var objectivesToRemove = new List<EntityUid>();
         foreach (var (objectiveUid, factionToCredit) in comp.AssociatedObjectives)
         {
-            if (!TryComp(objectiveUid, out KillObjectiveComponent? killComp) ||
-                !TryComp(objectiveUid, out CMUObjectiveComponent? auComp))
+            if (!TryComp(objectiveUid, out KillObjectiveComponent? killComp)
+                    || !TryComp(objectiveUid, out CMUObjectiveComponent? auComp))
                 continue;
 
             var factionKey = factionToCredit.ToLowerInvariant();
@@ -181,5 +206,4 @@ public sealed class ObjKillSystem : ObjectiveSystem
             RemComp<ArrestMarkedForComponent>(uid);
     }
 
-    // public bool IsKillObjectiveCompletable(EntityUid uid) { }
 }

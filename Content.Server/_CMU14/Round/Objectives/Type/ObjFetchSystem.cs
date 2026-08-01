@@ -1,6 +1,5 @@
 using Content.Shared._CMU14.Round.Objectives.Component;
 using Content.Shared._CMU14.Round.Objectives.Type;
-using Content.Shared.AU14;
 using Content.Shared.DragDrop;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Movement.Pulling.Events;
@@ -21,18 +20,18 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
     {
         base.Initialize();
         _logs = Logger.GetSawmill("obj-fetch");
-        SubscribeLocalEvent<CMUObjectiveComponent, ObjectiveActivatedEvent>(OnActivated);
+        SubscribeLocalEvent<FetchObjectiveComponent, ObjectiveActivatedEvent>(OnActivated);
         SubscribeLocalEvent<FetchObjectiveComponent, ObjectiveResetEvent>(OnReset);
-        SubscribeLocalEvent<MetaDataComponent, ComponentStartup>(OnEntityMetaStartup);
+        SubscribeLocalEvent<ObjectiveWatchedEntityStartupEvent>(OnEntityMetaStartup);
         SubscribeLocalEvent<FetchItemComponent, DroppedEvent>(OnDropped);
         SubscribeLocalEvent<FetchItemComponent, PullStoppedMessage>(OnUndragged);
         SubscribeLocalEvent<FetchReturnPointComponent, DragDropTargetEvent>(OnReturnPointDragDrop);
         SubscribeLocalEvent<FetchItemComponent, EntityTerminatingEvent>(OnFetchItemDestroyed);
     }
 
-    private void OnActivated(EntityUid uid, CMUObjectiveComponent comp, ref ObjectiveActivatedEvent _)
+    private void OnActivated(EntityUid uid, FetchObjectiveComponent fetchComp, ref ObjectiveActivatedEvent _)
     {
-        if (!TryComp(uid, out FetchObjectiveComponent? fetchComp) || !comp.Active || fetchComp.HasSpawned)
+        if (!TryComp(uid, out CMUObjectiveComponent? comp) || !comp.Active || fetchComp.HasSpawned)
             return;
 
         if (!fetchComp.UseMarkers)
@@ -60,7 +59,18 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
             if (!string.IsNullOrEmpty(fetchComp.SpawnOther))
                 Spawn(fetchComp.SpawnOther, Transform(ent).Coordinates);
         }
-        fetchComp.HasSpawned = spawned.Count > 0;
+
+        if (spawned.Count == 0)
+        {
+            _logs.Error($"[OBJ-FETCH] Fetch objective '{ToPrettyString(uid)}' ('{comp.Id}', '{comp.ObjectiveDescription}') on map {objMap} " +
+                        $"has no spawn sources: no {(string.IsNullOrEmpty(fetchComp.SpawnMarkerId) ? "generic marker" : $"marker '{fetchComp.SpawnMarkerId}'")} " +
+                        $"and no pre-placed '{fetchComp.TargetPrototype}' entities. Refusing to spawn — mappers must place a " +
+                        $"CMUObjectiveMarker (or the item entities) on the planet map.");
+            _objCtrl.MarkObjectiveFailed(uid, comp);
+            return;
+        }
+
+        fetchComp.HasSpawned = true;
     }
 
     private void OnReset(EntityUid uid, FetchObjectiveComponent comp, ref ObjectiveResetEvent args)
@@ -99,8 +109,12 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
         return registered;
     }
 
-    private void OnEntityMetaStartup(EntityUid uid, MetaDataComponent meta, ref ComponentStartup args)
+    private void OnEntityMetaStartup(ObjectiveWatchedEntityStartupEvent ev)
     {
+        var uid = ev.Uid;
+        if (!TryComp(uid, out MetaDataComponent? meta))
+            return;
+
         var proto = meta.EntityPrototype?.ID;
         if (string.IsNullOrEmpty(proto))
             return;
@@ -189,7 +203,7 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
         if (!TryComp(analyzerUid, out TransformComponent? analyzerXform))
             return 0;
 
-        var analyzerFaction = TryComp(analyzerUid, out AnalyzerComponent? a) ? a.Faction.ToLowerInvariant() : string.Empty;
+        var analyzerFaction = TryComp(analyzerUid, out FetchAnalyzerComponent? a) ? a.Faction.ToLowerInvariant() : string.Empty;
         int totalFetched = 0;
 
         var query = EntityQueryEnumerator<FetchObjectiveComponent, CMUObjectiveComponent>();
@@ -202,6 +216,8 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
                 continue;
 
             var creditFaction = string.IsNullOrEmpty(analyzerFaction) ? auComp.Faction.ToLowerInvariant() : analyzerFaction;
+            if (string.IsNullOrEmpty(creditFaction))
+                continue;
 
             foreach (var ent in _lookup.GetEntitiesInRange(analyzerXform.Coordinates, 5f))
             {

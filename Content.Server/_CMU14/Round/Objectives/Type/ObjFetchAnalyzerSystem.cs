@@ -1,25 +1,30 @@
 using Content.Server.Popups;
 using Content.Shared._CMU14.Round.Objectives.Type;
 using Content.Shared.Stacks;
+using Content.Shared.Tag;
 using Content.Shared.Verbs;
 using Robust.Shared.Containers;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 
 namespace Content.Server._CMU14.Round.Objectives.Type;
 
 /// <summary>
-/// Handles the Analyzer Machine.
-/// - All factions: "Scan" context‑menu action that credits nearby items to active fetch objectives.
-/// - CLF only: cash can be inserted; every 15 credits awards 1 win point directly to CLF.
+/// Handles the Analyzer Machine:
+///     All factions get a "Scan" context action that credits nearby active fetch objs
+///     CLF only: cash can be inserted & every 15 creds awards 1 win point directly to CLF victory
 /// </summary>
 public sealed class ObjFetchAnalyzerSystem : EntitySystem
 {
     [Dependency] private ObjFetchSystem _fetchSystem = default!;
     [Dependency] private ObjectiveControlSystem _objCtrl = default!;
     [Dependency] private PopupSystem _popupSystem = default!;
+    [Dependency] private TagSystem _tag = default!;
 
     private const string ClfFaction = "clf";
     private const int CashPerPoint = 15;
+
+    private static readonly ProtoId<TagPrototype> CurrencyTag = "Currency";
 
     public override void Initialize()
     {
@@ -56,15 +61,82 @@ public sealed class ObjFetchAnalyzerSystem : EntitySystem
         if (component.Faction.ToLowerInvariant() != ClfFaction)
             return;
 
+        if (component.Conversions.Count > 0 && TryCreditConfigured(uid, component, args.Entity))
+            return;
+
+        if (component.IncludeDollars && _tag.HasTag(args.Entity, CurrencyTag))
+            CreditDollars(uid, component, args.Entity);
+    }
+
+    private bool TryCreditConfigured(EntityUid uid, FetchAnalyzerComponent component, EntityUid inserted)
+    {
+        var protoId = MetaData(inserted).EntityPrototype?.ID;
+        if (protoId == null)
+            return false;
+
+        AnalyzerConversionEntry? match = null;
+        foreach (var entry in component.Conversions)
+        {
+            if (string.Equals(entry.Entity.Id, protoId, System.StringComparison.Ordinal))
+            {
+                match = entry;
+                break;
+            }
+        }
+
+        if (match == null)
+            return false;
+
+        var amount = 1;
+        if (TryComp(inserted, out StackComponent? stack))
+            amount = stack.Count;
+
+        var name = Name(inserted);
+        string msg;
+
+        if (match.PointsPerItemMode)
+        {
+            var per = System.Math.Max(1, match.PointsPerItem);
+            var points = amount * per;
+
+            QueueDel(inserted);
+            _objCtrl.AwardRawPointsToFaction(ClfFaction, points);
+            msg = $"Analyzer credited {points} point(s) to CLF for {amount} {name}.";
+        }
+        else
+        {
+            var perPoint = System.Math.Max(1, match.AmountPerPoint);
+
+            var banked = component.Banked.GetValueOrDefault(protoId) + amount;
+            var points = banked / perPoint;
+            banked -= points * perPoint;
+            component.Banked[protoId] = banked;
+
+            QueueDel(inserted);
+
+            if (points > 0)
+                _objCtrl.AwardRawPointsToFaction(ClfFaction, points);
+
+            msg = points > 0
+                ? $"Analyzer credited {points} point(s) to CLF. ({banked}/{perPoint} until next point)"
+                : $"Analyzer banked {amount} {name}. ({banked}/{perPoint} until next point)";
+        }
+
+        _popupSystem.PopupEntity(msg, uid);
+        return true;
+    }
+
+    private void CreditDollars(EntityUid uid, FetchAnalyzerComponent component, EntityUid inserted)
+    {
         int credits = 1;
-        if (TryComp(args.Entity, out StackComponent? stack))
+        if (TryComp(inserted, out StackComponent? stack))
             credits = stack.Count;
 
         component.CashStored += credits;
         int points = component.CashStored / CashPerPoint;
         component.CashStored -= points * CashPerPoint;
 
-        QueueDel(args.Entity);
+        QueueDel(inserted);
 
         if (points > 0)
             _objCtrl.AwardRawPointsToFaction(ClfFaction, points);

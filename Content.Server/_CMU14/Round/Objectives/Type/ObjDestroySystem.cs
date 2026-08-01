@@ -15,15 +15,15 @@ public sealed partial class ObjDestroySystem : ObjectiveSystem
     {
         base.Initialize();
         _logs = Logger.GetSawmill("obj-destroy");
-        SubscribeLocalEvent<CMUObjectiveComponent, ObjectiveActivatedEvent>(OnActivated);
+        SubscribeLocalEvent<DestroyObjectiveComponent, ObjectiveActivatedEvent>(OnActivated);
         SubscribeLocalEvent<DestroyObjectiveComponent, ObjectiveResetEvent>(OnReset);
-        SubscribeLocalEvent<MetaDataComponent, ComponentStartup>(OnEntityMetaStartup);
+        SubscribeLocalEvent<ObjectiveWatchedEntityStartupEvent>(OnEntityMetaStartup);
         SubscribeLocalEvent<DestroyMarkedForComponent, EntityTerminatingEvent>(OnMarkedEntityDestroyed);
     }
 
-    private void OnActivated(EntityUid uid, CMUObjectiveComponent comp, ref ObjectiveActivatedEvent _)
+    private void OnActivated(EntityUid uid, DestroyObjectiveComponent destroyComp, ref ObjectiveActivatedEvent _)
     {
-        if (!HasComp<DestroyObjectiveComponent>(uid) || !comp.Active)
+        if (!TryComp(uid, out CMUObjectiveComponent? comp) || !comp.Active)
             return;
 
         ActivateDestroyObjective(uid, comp);
@@ -48,7 +48,7 @@ public sealed partial class ObjDestroySystem : ObjectiveSystem
                 QueueDel(ent);
         }
 
-        comp.DestroyedCount = 0;
+        comp.AmountDestroyedPerFaction.Clear();
         comp.HasSpawned = false;
     }
 
@@ -91,13 +91,29 @@ public sealed partial class ObjDestroySystem : ObjectiveSystem
             else if (!string.Equals(comp.TargetPrototype, proto, StringComparison.OrdinalIgnoreCase))
                 continue;
 
+            var creditFaction = GetDestroyCreditFaction(auComp);
+            if (creditFaction == null)
+                continue;
+
             var mark = EnsureComp<DestroyMarkedForComponent>(ent);
-            mark.AssociatedObjectives[uid] = auComp.Faction.ToLowerInvariant();
+            mark.AssociatedObjectives[uid] = creditFaction;
         }
     }
 
-    private void OnEntityMetaStartup(EntityUid uid, MetaDataComponent meta, ref ComponentStartup args)
+    private static string? GetDestroyCreditFaction(CMUObjectiveComponent auComp)
     {
+        if (auComp.FactionNeutral || string.IsNullOrEmpty(auComp.Faction))
+            return null;
+
+        return auComp.Faction.ToLowerInvariant();
+    }
+
+    private void OnEntityMetaStartup(ObjectiveWatchedEntityStartupEvent ev)
+    {
+        var uid = ev.Uid;
+        if (!TryComp(uid, out MetaDataComponent? meta))
+            return;
+
         var proto = meta.EntityPrototype?.ID;
         if (string.IsNullOrEmpty(proto))
             return;
@@ -117,8 +133,12 @@ public sealed partial class ObjDestroySystem : ObjectiveSystem
             if (TryComp(uid, out DestroyMarkedForComponent? existing) && existing.AssociatedObjectives.ContainsKey(objUid))
                 continue;
 
+            var creditFaction = GetDestroyCreditFaction(auComp);
+            if (creditFaction == null)
+                continue;
+
             var mark = EnsureComp<DestroyMarkedForComponent>(uid);
-            mark.AssociatedObjectives[objUid] = auComp.Faction.ToLowerInvariant();
+            mark.AssociatedObjectives[objUid] = creditFaction;
         }
     }
 
@@ -131,8 +151,10 @@ public sealed partial class ObjDestroySystem : ObjectiveSystem
                     || !TryComp(objectiveUid, out CMUObjectiveComponent? auComp))
                 continue;
 
-            destroyComp.DestroyedCount++;
-            if (destroyComp.DestroyedCount < destroyComp.DestroyCount)
+            var factionKey = factionToCredit.ToLowerInvariant();
+            destroyComp.AmountDestroyedPerFaction.TryAdd(factionKey, 0);
+            destroyComp.AmountDestroyedPerFaction[factionKey]++;
+            if (destroyComp.AmountDestroyedPerFaction[factionKey] < destroyComp.DestroyCount)
                 continue;
 
             _objInt.UnregisterInterest(objectiveUid);
@@ -142,7 +164,4 @@ public sealed partial class ObjDestroySystem : ObjectiveSystem
         foreach (var o in objectivesToRemove)
             comp.AssociatedObjectives.Remove(o);
     }
-
-    // _objCtrl.AwardPointsToFaction()
-    // ResetObjectiveComponents()
 }

@@ -3,11 +3,14 @@ using Content.Server.GameTicking;
 using Content.Server.Roles.Jobs;
 using Content.Shared._CMU14.Round.Objectives;
 using Content.Shared._CMU14.Round.Objectives.Type;
+using Content.Shared._CMU14.Round.Objectives.Component;
+using Content.Server._CMU14.Round.Objectives.Component;
 using Content.Shared._RMC14.Synth;
 using Content.Shared.Cuffs;
 using Content.Shared.Cuffs.Components;
 using Content.Shared.NPC.Components;
 using Content.Shared.Mind.Components;
+using Robust.Shared.Map;
 using Robust.Shared.Timing;
 
 namespace Content.Server._CMU14.Round.Objectives.Type;
@@ -27,9 +30,9 @@ public sealed class ObjArrestSystem : ObjectiveSystem
         base.Initialize();
         _logs = Logger.GetSawmill("obj-arrest");
         _shuttingDown = false;
-        SubscribeLocalEvent<CMUObjectiveComponent, ObjectiveActivatedEvent>(OnActivated);
+        SubscribeLocalEvent<ArrestObjectiveComponent, ObjectiveActivatedEvent>(OnActivated);
         SubscribeLocalEvent<ArrestObjectiveComponent, ObjectiveResetEvent>(OnReset);
-        SubscribeLocalEvent<MetaDataComponent, ComponentStartup>(OnEntityMetaStartup);
+        SubscribeLocalEvent<ObjectiveWatchedEntityStartupEvent>(OnEntityMetaStartup);
         SubscribeLocalEvent<ArrestMarkedForComponent, CuffedStateChangeEvent>(OnCuffStateChanged);
     }
 
@@ -39,9 +42,9 @@ public sealed class ObjArrestSystem : ObjectiveSystem
         base.Shutdown();
     }
 
-    private void OnActivated(EntityUid uid, CMUObjectiveComponent comp, ref ObjectiveActivatedEvent _)
+    private void OnActivated(EntityUid uid, ArrestObjectiveComponent arrestComp, ref ObjectiveActivatedEvent _)
     {
-        if (!TryComp(uid, out ArrestObjectiveComponent? arrestComp) || !comp.Active || arrestComp.HasSpawned)
+        if (!TryComp(uid, out CMUObjectiveComponent? comp) || !comp.Active || arrestComp.HasSpawned)
             return;
 
         if (arrestComp.SpawnMob && !string.IsNullOrEmpty(arrestComp.TargetPrototype))
@@ -58,56 +61,70 @@ public sealed class ObjArrestSystem : ObjectiveSystem
     private void OnReset(EntityUid uid, ArrestObjectiveComponent comp, ref ObjectiveResetEvent args)
     {
         comp.AmountArrestedPerFaction.Clear();
+        if (!comp.RespawnOnRepeat)
+            return;
+
+        var query = EntityQueryEnumerator<ObjSpawnedByComponent>();
+        while (query.MoveNext(out var ent, out var spawnedBy))
+        {
+            if (spawnedBy.ObjectiveUid != uid)
+                continue;
+
+            if (TryComp(ent, out ArrestMarkedForComponent? marked))
+            {
+                marked.AssociatedObjectives.Remove(uid);
+                marked.AssociatedObjectiveJobs.Remove(uid);
+                marked.CreditedObjectives.Remove(uid);
+            }
+
+            if (Exists(ent))
+                QueueDel(ent);
+        }
+
         comp.HasSpawned = false;
     }
 
     private void ActivateArrestObjective(EntityUid uid, ArrestObjectiveComponent arrestComp)
     {
         var objMap = Transform(uid).MapID;
-        var (specific, generic) = FindMarkers(objMap, arrestComp.SpawnMarkerId);
-        List<EntityUid> markers;
-        if (!string.IsNullOrEmpty(arrestComp.SpawnMarkerId))
-            markers = specific;
-        else
-            markers = specific.Count > 0 ? specific : generic;
-
-        for (var i = 0; i < arrestComp.SpawnCount; i++)
-        {
-            if (markers.Count == 0) break;
-            var markerUid = markers[i % markers.Count];
-            var xform = Comp<TransformComponent>(markerUid);
-            Spawn(arrestComp.TargetPrototype, xform.Coordinates);
-        }
+        var markers = ResolveMarkers(objMap, arrestComp.SpawnMarkerId);
+        var spawned = SpawnEntitiesAtMarkersWithReuse(arrestComp.TargetPrototype, arrestComp.SpawnCount, markers);
+        foreach (var ent in spawned)
+            EnsureComp<ObjSpawnedByComponent>(ent).ObjectiveUid = uid;
         arrestComp.HasSpawned = true;
     }
 
-    private void OnEntityMetaStartup(EntityUid uid, MetaDataComponent meta, ref ComponentStartup args)
+    private void OnEntityMetaStartup(ObjectiveWatchedEntityStartupEvent ev)
     {
+        var uid = ev.Uid;
         if (_shuttingDown) return;
         if (HasComp<ArrestMarkedForComponent>(uid)) return;
+        if (!TryComp(uid, out MetaDataComponent? meta)) return;
 
         var protoId = meta.EntityPrototype?.ID ?? string.Empty;
         var factions = new List<string>();
-        if (TryComp<FactionComponent>(uid, out var factionComp))
-            factions.AddRange(factionComp.Factions.Select(f => f.ToLowerInvariant()));
+        if (TryComp<NpcFactionMemberComponent>(uid, out var factionComp))
+            factions.AddRange(factionComp.Factions.Select(f => f.ToString().ToLowerInvariant()));
 
         var map = Transform(uid).MapID;
         var interested = _objInt.GetInterestedObjectives(map, factions);
 
         foreach (var objUid in interested)
         {
-            if (!TryComp(objUid, out ArrestObjectiveComponent? arrestComp) ||
-                !TryComp(objUid, out CMUObjectiveComponent? auComp) || !auComp.Active)
+            if (!TryComp(objUid, out ArrestObjectiveComponent? arrestComp)
+                    || !TryComp(objUid, out CMUObjectiveComponent? auComp) || !auComp.Active)
                 continue;
 
             string? creditFaction = GetCreditFaction(auComp, factions, arrestComp.FactionToArrest, _gameTicker.Preset?.ID, _objCtrl);
             if (creditFaction == null) continue;
 
+            string? jobId = null;
             if (!string.IsNullOrEmpty(arrestComp.SpecificJob))
             {
-                string? jobId = null;
-                if (TryComp<MindComponent>(uid, out var mindCont) && mindCont.Mind != null)
-                    _jobSystem.MindTryGetJob(mindCont.Mind.Value, out var jobProto);
+                if (TryComp<MindContainerComponent>(uid, out var mindCont)
+                        && _jobSystem.MindTryGetJob(mindCont.Mind, out var jobProto))
+                    jobId = jobProto.ID;
+
                 if (jobId == null || !jobId.Equals(arrestComp.SpecificJob, StringComparison.OrdinalIgnoreCase))
                     continue;
             }
@@ -119,24 +136,19 @@ public sealed class ObjArrestSystem : ObjectiveSystem
             var mark = EnsureComp<ArrestMarkedForComponent>(uid);
             mark.AssociatedObjectives[objUid] = creditFaction;
             if (!string.IsNullOrEmpty(arrestComp.SpecificJob))
-            {
-                string? jobId = null;
-                if (TryComp<MindComponent>(uid, out var mindCont) && mindCont.Mind != null)
-                    _jobSystem.MindTryGetJob(mindCont.Mind.Value, out var jobProto);
                 mark.AssociatedObjectiveJobs[objUid] = jobId;
-            }
         }
     }
 
     private void MarkExistingEntities(EntityUid uid, ArrestObjectiveComponent comp, CMUObjectiveComponent auComp, MapId objMap)
     {
-        var query = AllEntityQuery<MetaDataComponent, TransformComponent, FactionComponent>();
+        var query = AllEntityQuery<MetaDataComponent, TransformComponent, NpcFactionMemberComponent>();
         while (query.MoveNext(out var ent, out var meta, out var xform, out var factionComp))
         {
             if (ent == uid || xform.MapID != objMap)
                 continue;
 
-            var factions = factionComp.Factions.Select(f => f.ToLowerInvariant()).ToList();
+            var factions = factionComp.Factions.Select(f => f.ToString().ToLowerInvariant()).ToList();
             if (factions.Count == 0) continue;
 
             if (!string.IsNullOrEmpty(comp.TargetPrototype) && meta.EntityPrototype?.ID != comp.TargetPrototype)
@@ -145,9 +157,23 @@ public sealed class ObjArrestSystem : ObjectiveSystem
             string? creditFaction = GetCreditFaction(auComp, factions, comp.FactionToArrest, _gameTicker.Preset?.ID, _objCtrl);
             if (creditFaction == null) continue;
 
+            string? jobId = null;
+            if (!string.IsNullOrEmpty(comp.SpecificJob))
+            {
+                if (TryComp<MindContainerComponent>(ent, out var mindCont)
+                        && _jobSystem.MindTryGetJob(mindCont.Mind, out var jobProto))
+                    jobId = jobProto.ID;
+
+                if (jobId == null || !jobId.Equals(comp.SpecificJob, StringComparison.OrdinalIgnoreCase))
+                    continue;
+            }
+
+            if (comp.SynthOnly && !HasComp<SynthComponent>(ent)) continue;
+
             var mark = EnsureComp<ArrestMarkedForComponent>(ent);
             mark.AssociatedObjectives[uid] = creditFaction;
-            // Job caching?
+            if (!string.IsNullOrEmpty(comp.SpecificJob))
+                mark.AssociatedObjectiveJobs[uid] = jobId;
         }
     }
 
@@ -159,8 +185,11 @@ public sealed class ObjArrestSystem : ObjectiveSystem
         var objectivesToRemove = new List<EntityUid>();
         foreach (var (objectiveUid, factionToCredit) in comp.AssociatedObjectives)
         {
-            if (!TryComp(objectiveUid, out ArrestObjectiveComponent? arrestComp) ||
-                !TryComp(objectiveUid, out CMUObjectiveComponent? auComp))
+            if (!TryComp(objectiveUid, out ArrestObjectiveComponent? arrestComp)
+                    || !TryComp(objectiveUid, out CMUObjectiveComponent? auComp))
+                continue;
+
+            if (!comp.CreditedObjectives.Add(objectiveUid))
                 continue;
 
             var factionKey = factionToCredit.ToLowerInvariant();
@@ -176,7 +205,11 @@ public sealed class ObjArrestSystem : ObjectiveSystem
         }
 
         foreach (var o in objectivesToRemove)
+        {
             comp.AssociatedObjectives.Remove(o);
+            comp.AssociatedObjectiveJobs.Remove(o);
+            comp.CreditedObjectives.Remove(o);
+        }
 
         if (HasComp<KillMarkedForComponent>(uid) && objectivesToRemove.Any(o => TryComp(o, out ArrestObjectiveComponent? a) && a.RemoveKillMark))
             RemComp<KillMarkedForComponent>(uid);
