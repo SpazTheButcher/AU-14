@@ -559,6 +559,24 @@ namespace Content.Server.GameTicking
                             Log.Error($"StartThirdPartySpawning threw — round will continue without third-party spawn. {thirdPartyEx}");
                         }
                     }
+                    else if (_auRoundSystem.SelectedPreset is { ThirdPartyAutoSpawn: true } presetSchedule)
+                    {
+                        if (_sawmill.Level <= LogLevel.Debug)
+                        {
+                            int roundstartThirdParties = _auRoundSystem.SelectedThirdParties.Count(party => party.RoundStart);
+                            _sawmill.Debug(
+                                $"[RoundStart] Starting preset-owned third-party spawning for '{presetSchedule.ID}'; selectedThirdParties={_auRoundSystem.SelectedThirdParties.Count}, roundstartThirdParties={roundstartThirdParties}, intervalSeconds={presetSchedule.ThirdPartyInterval}.");
+                        }
+
+                        try
+                        {
+                            _thirdParty.StartThirdPartySpawning(presetSchedule, assignedJobs);
+                        }
+                        catch (Exception thirdPartyEx)
+                        {
+                            Log.Error($"Preset-owned StartThirdPartySpawning threw — round will continue without third-party spawns. {thirdPartyEx}");
+                        }
+                    }
                     else
                         Log.Debug("StartThirdPartySpawning debug — no threat selected, skipping third-party spawn.");
 
