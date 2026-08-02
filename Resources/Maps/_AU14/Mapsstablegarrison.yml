@@ -23317,7 +23317,7 @@ entities:
     - type: Transform
       pos: 118.31633,-111.34891
       parent: 1
-- proto: CMStampCMO
+- proto: AU14StampCMO
   entities:
   - uid: 2214
     components:
