@@ -12,7 +12,7 @@ public static class IntelConsoleClaimFax
             ? "No further operatives could be identified during the debrief."
             : BuildRosterList(roster);
 
-        return "[head=3][color=#7a1f1f]▮ MILITARY CONFIDENTIAL ▮[/color][/head]\n" +
+        return "[head=3][color=#7a1f1f]⬢ MILITARY CONFIDENTIAL ⬢[/color][/head]\n" +
                "[color=#7a1f1f][italic]Provost Marshal Office | Counter-Intelligence Liaison Bulletin[/italic][/color]\n\n" +
                "[color=#7a1f1f]▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄[/color]\n\n" +
                "[bold]Case File:[/bold] [color=#7a1f1f]PMO-CI-CLFHUM[/color]\n" +

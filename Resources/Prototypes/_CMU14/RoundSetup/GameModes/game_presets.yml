@@ -23,8 +23,8 @@
   - CMUPlanetHopesRetreat
   rules:
   - AuVoteRule
-  - RemoveAllJobs
   - PlatoonSpawn
+  - RemoveAllJobs
   - AddGovfor
   - AddOpfor
 
@@ -81,8 +81,8 @@
   - CMUPlanetHopesRetreat
   rules:
   - AuVoteRule
-  - RemoveAllJobs
   - PlatoonSpawn
+  - RemoveAllJobs
   - AddGovfor
   - AddGovforCorrespondent
 
