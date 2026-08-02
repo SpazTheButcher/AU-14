@@ -29,9 +29,6 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
         if (!TryComp(uid, out CMUObjectiveComponent? comp) || !comp.Active || fetchComp.HasSpawned)
             return;
 
-        if (!fetchComp.UseMarkers)
-            return;
-
         if (args.LateActivation)
             fetchComp.LateActivation = true;
 
@@ -79,6 +76,13 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
     private void OnReset(EntityUid uid, FetchObjectiveComponent comp, ref ObjectiveResetEvent args)
     {
         comp.AmountFetchedPerFaction.Clear();
+
+        if (comp.UseAnyEntity)
+        {
+            ObjInt.RegisterInterest(uid, Transform(uid).MapID, keys: string.IsNullOrEmpty(comp.TargetPrototype)
+                ? null : new[] { comp.TargetPrototype }, wildcard: true);
+        }
+
         if (!comp.RespawnOnRepeat)
             return;
 
@@ -231,7 +235,7 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
         var query = EntityQueryEnumerator<FetchObjectiveComponent, CMUObjectiveComponent>();
         while (query.MoveNext(out var objUid, out var fetchComp, out var auComp))
         {
-            if (!auComp.Active || fetchComp.UseMarkers || string.IsNullOrEmpty(fetchComp.TargetPrototype))
+            if (!auComp.Active || string.IsNullOrEmpty(fetchComp.TargetPrototype))
                 continue;
 
             if (!string.IsNullOrEmpty(analyzerFaction) && !auComp.FactionNeutral && auComp.Faction.ToLowerInvariant() != analyzerFaction)

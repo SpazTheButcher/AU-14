@@ -233,13 +233,18 @@ public sealed partial class ObjectiveControlSystem
 
         foreach (var (otherUid, other) in _allObjectives)
         {
-            if (otherUid == uid || !other.Active || other.Id != comp.Id)
+            if (otherUid == uid || other.Id != comp.Id)
+                continue;
+
+            var stillInProgress = other.Active
+                && other.StatusesPerFaction.Values.Any(s => s == CMUObjectiveComponent.ObjectiveStatus.Incomplete);
+            if (!stillInProgress)
                 continue;
 
             if (Exists(otherUid) && Transform(otherUid).MapID == _planetMapId)
             {
                 _logs.Info($"[OBJ-LATE] Skipping late activation of '{comp.ObjectiveDescription}':" +
-                           $" an active copy ('{comp.Id}') already exists on this map.");
+                           $" an in-progress copy ('{comp.Id}') already exists on this map.");
                 return;
             }
         }
