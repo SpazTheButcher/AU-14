@@ -47,11 +47,12 @@ public static class InsurgencyBuiltinFactions
     /// </summary>
     private static readonly EntProtoId[] VanillaClfPlaceables =
     {
-        "RMCComputerIntelCLF",
+        "CMUComputerIntelCLFClaimable",
         "ComputerObjectivesCLF",
         "RMCTechTreeConsoleCLF",
         "CMFaxCLF",
         "AU14AnalyzerMachineCLF",
+        "AU14CLFBaseStation",
         "RMCLampTripod",
     };
 

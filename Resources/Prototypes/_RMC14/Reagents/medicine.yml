@@ -295,6 +295,8 @@
       metabolismRate: 0.1
       effects:
       - !type:ChemHealEyeDamage
+      - !type:Oculopeutic
+        potency: 2
       - !type:HealthChange
         conditions:
         - !type:ReagentThreshold

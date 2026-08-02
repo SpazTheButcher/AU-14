@@ -941,3 +941,23 @@
     - id: RMCMagazineM2C
     - id: AU14MagazineM2CTracter
     - id: RMCBeltMachineGunner
+
+- type: entity
+  parent: RMCCaseBase
+  id: CMUGunCaseRifleNSG23
+  name: NSG23 Rifle case
+  description: A gun case containing the NSG23.
+  components:
+  - type: Storage
+    maxItemSize: Huge
+    grid:
+    - 0,0,5,1
+  - type: StorageFill
+    contents:
+    - id: RMCWeaponRifleSSG45NoLockStripped
+    - id: RMCMagazineRifleSSG45
+      amount: 7
+    - id: RMCMagazineRifleSSG45Extended
+      amount: 2
+    - id: RMCMagazineRifleSSG45AP
+      amount: 2

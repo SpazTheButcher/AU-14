@@ -36,6 +36,12 @@ public sealed partial class CCVars
         GameJoinTimingWarnSeconds = CVarDef.Create("game.join_timing_warn_seconds", 5f, CVar.ARCHIVE | CVar.SERVERONLY);
 
     /// <summary>
+    ///     Enable the [JOIN-TIMING] log output.
+    /// </summary>
+    public static readonly CVarDef<bool>
+        GameJoinTimingLogEnabled = CVarDef.Create("game.join_timing_log_enabled", false, CVar.ARCHIVE | CVar.SERVERONLY);
+
+    /// <summary>
     ///     Controls the default game preset.
     /// </summary>
     public static readonly CVarDef<string>
