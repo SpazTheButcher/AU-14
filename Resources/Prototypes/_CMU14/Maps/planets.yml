@@ -157,6 +157,11 @@
     jobScalingIns: DefaultInsurgencyScale
 
 - type: entity
+  parent: AUPlanetStableGarrison
+  id: CMUPlanetStableGarrisonRedux
+  name: Stable Garrison Redux
+
+- type: entity
   id: AUPlanetStableGarrison
   name: Stable Garrison
   components:

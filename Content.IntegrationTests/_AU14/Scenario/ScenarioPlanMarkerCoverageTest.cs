@@ -514,7 +514,7 @@ public sealed class ScenarioPlanMarkerCoverageTest
         yield return new TestCaseData(
                 ColonyFallVotingChoices.Id,
                 ColonyFallPreset,
-                "AUPlanetStableGarrison",
+                "CMUPlanetStableGarrisonRedux",
                 new[] { ColonyFallCultistThreat.Id, ColonyFallXenoThreat.Id, WendigoThreat.Id, ColonyFallAbominationThreat.Id })
             .SetName("ColonyFall Stable Garrison package slice matches adapter");
         yield return new TestCaseData(
