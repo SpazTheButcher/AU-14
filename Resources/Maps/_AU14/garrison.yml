@@ -85311,6 +85311,8 @@ entities:
       parent: 1
     - type: FaxMachine
       destinationAddress: CMB Marshal's Office
+      groups:
+      - marshal-bureau
   - uid: 2032
     components:
     - type: Transform

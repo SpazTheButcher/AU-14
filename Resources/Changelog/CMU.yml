@@ -8732,16 +8732,37 @@
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1750
 - author: CatoChristopherMrow
   changes:
+  - message: Brute/burn kits now auto-reapply if needed/valid
+    type: Tweak
+  id: 552
+  time: '2026-08-01T13:27:56.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1750
+- author: CatoChristopherMrow
+  changes:
   - message: Fixed survivors failing to spawn a large amount of the time
     type: Fix
-  id: 552
+  id: 553
+  time: '2026-08-01T13:40:03.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1752
+- author: CatoChristopherMrow
+  changes:
+  - message: Fixed survivors failing to spawn a large amount of the time
+    type: Fix
+  id: 554
   time: '2026-08-01T13:40:03.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1752
 - author: CatoChristopherMrow
   changes:
   - message: Fixed third party spawning on insurgency
     type: Fix
-  id: 553
+  id: 555
+  time: '2026-08-01T13:46:28.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1753
+- author: CatoChristopherMrow
+  changes:
+  - message: Fixed third party spawning on insurgency
+    type: Fix
+  id: 556
   time: '2026-08-01T13:46:28.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1753
 - author: maertayn
@@ -8752,8 +8773,110 @@
   - message: Total rewrite of objectives, reduced file sizes by half and kept all
       functionality, see _CMU14/Round/Objectives (shared/client/server)
     type: Code
-  id: 554
+  id: 557
   time: '2026-08-01T20:39:50.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1762
+- author: maertayn
+  changes:
+  - message: The full objectives system is back on the menu, it's been gone for far
+      too long
+    type: Add
+  - message: Total rewrite of objectives, reduced file sizes by half and kept all
+      functionality, see _CMU14/Round/Objectives (shared/client/server)
+    type: Code
+  id: 558
+  time: '2026-08-01T20:39:50.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1762
+- author: maertayn
+  changes:
+  - message: Upon CLF Intel Computer capture, sends faxes to military/warship command
+      and CMB with the remaining CLF roster and a colonyAlert - uses announce for
+      Govfor as fallback (missing valid fax) - happy hunting!
+    type: Add
+  - message: Insfor Editor (Vanilla CLF) would spawn the upstream Intel Computer not
+      the CMU claimable one
+    type: Fix
+  - message: Prodigy (PART) Tech Unlock spawning 32nd & removed random tier 2 skip
+    type: Fix
+  - message: Updated the Objective Console UI
+    type: Add
+  - message: Late/admin spawned objectives are now added to Intel (except duplicate/other
+      preset objectives)
+    type: Add
+  - message: Player count check for preset votes is skipped in DEBUG builds
+    type: Code
+  id: 559
+  time: '2026-08-02T15:49:30.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1766
+- author: johnnny34y
+  changes:
+  - message: XM20A2 maybe fixed
+    type: Fix
+  id: 560
+  time: '2026-08-02T16:20:34.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1765
+- author: verentr
+  changes:
+  - message: 'temperature requirements from the newly added reagents in #1673.'
+    type: Remove
+  id: 561
+  time: '2026-08-02T16:22:15.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1758
+- author: blueDev2
+  changes:
+  - message: Hive collapse occurs 10 minutes after queen dies without replacement.
+    type: Tweak
+  id: 562
+  time: '2026-08-02T16:36:35.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1760
+- author: CatoChristopherMrow
+  changes:
+  - message: Fixed default sentry IFF
+    type: Fix
+  id: 563
+  time: '2026-08-02T16:40:17.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1764
+- author: Vencallium
+  changes:
+  - message: Added chemistry and surgical bays to Joint Base Schaefer's medbay
+    type: Add
+  - message: Added catwalk and firing platforms to Joint Base Schaefer
+    type: Add
+  - message: Expanded cargo and added vehicle lift to Joint Base Schaefer
+    type: Add
+  - message: Added an ordnance technicians' room in the cargo in Joint Base Schaefer
+    type: Add
+  - message: Added an auxiliary entrance to Joint Base Schaefer accessible via Hangar
+      Bay leading to filtration
+    type: Add
+  - message: Added a 2nd floor and roof access to CMB precinct
+    type: Add
+  - message: Added a 2nd floor and roof access to the University of Albacetrie Medical
+      Center
+    type: Add
+  - message: Added a 2nd floor and a Cuppa Joe's shop to the University of Albacetrie
+      School of Xenogbi
+    type: Add
+  - message: Added roofs to everything; you can access all of them
+    type: Add
+  - message: Added massive sewer expansion housing 4 new discreet CLF spawns
+    type: Add
+  - message: Added massive Weyland-Yutani biomedical research facility
+    type: Add
+  - message: Added catwalks to spaceport
+    type: Add
+  - message: Relocated LZ2 to be apart of the CMB precinct
+    type: Add
+  - message: Map now has copious amounts of rechargers
+    type: Add
+  - message: Caves reworked with a lot of mineable rock
+    type: Add
+  - message: Added journalist office
+    type: Add
+  - message: Added copious amounts of television to city and fort
+    type: Add
+  id: 564
+  time: '2026-08-02T16:47:31.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1743
 Name: CMU
 Order: -1

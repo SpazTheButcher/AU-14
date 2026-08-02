@@ -59,7 +59,7 @@ public sealed partial class TechSystem : EntitySystem
     private void OnTechAnnounce(TechAnnounceEvent ev)
     {
         var msg = Loc.GetString("rmc-announcement-message-raw", ("author", ev.Author), ("message", ev.Message));
-        _marineAnnounce.AnnounceToMarines(msg, ev.Sound);
+        _marineAnnounce.AnnounceToMarines(msg, ev.Sound, faction: ev.Team);
     }
 
     private void OnTechUnlockTier(TechUnlockTierEvent ev)
