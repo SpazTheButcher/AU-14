@@ -17,6 +17,7 @@
   - AUPlanetCorsatStation
   - AUPlanetSorokyne
   - AUPlanetStableGarrison
+  - CMUPlanetStableGarrisonRedux
   - AUPlanetTrijent
   - CMUPlanetLament
   - CMUPlanetHopesRetreat
@@ -45,6 +46,7 @@
    # - AUPlanetLV327
     - CMUPlanetLament
     - AUPlanetStableGarrison
+    - CMUPlanetStableGarrisonRedux
     #- AUPlanetLV747
     #- AUPlanetSorokyne
     #- AuPlanetChances
@@ -96,6 +98,7 @@
     - AUPlanetShepherdsPride
 #    - AUPlanetLV327
     - AUPlanetStableGarrison
+    - CMUPlanetStableGarrisonRedux
     - CMUPlanetLament
 #    - AUPlanetSorokyne
 #    - AuPlanetChances
