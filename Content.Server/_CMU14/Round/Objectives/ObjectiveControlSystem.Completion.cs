@@ -193,11 +193,7 @@ public sealed partial class ObjectiveControlSystem
             if (TryComp(uid, out KillObjectiveComponent? _) && !IsKillObjectiveCompletable(uid))
                 continue;
 
-            comp.Faction = factionKey;
-            InitializeObjectiveStatuses(comp);
-            comp.Active = true;
-            Dirty(uid, comp);
-            RaiseLocalEvent(uid, new ObjectiveActivatedEvent());
+            ActivateObjective(uid, comp, factionKey);
 
             if (GetOrReselectObjMaster() is not { } master)
                 return;
@@ -235,17 +231,7 @@ public sealed partial class ObjectiveControlSystem
         if (TryComp(newEnt, out CMUObjectiveComponent? newObjComp))
         {
             newObjComp.StatusesPerFaction.Clear();
-            newObjComp.Faction = newObjComp.FactionNeutral ? string.Empty : completingFaction.ToLowerInvariant();
-            newObjComp.Active = true;
-            InitializeObjectiveStatuses(newObjComp);
-            Dirty(newEnt, newObjComp);
-            RaiseLocalEvent(newEnt, new ObjectiveActivatedEvent());
-
-            if (newObjComp.FactionNeutral)
-                foreach (var f in newObjComp.Factions)
-                    _objConsole.RefreshConsolesForFaction(f);
-            else
-                _objConsole.RefreshConsolesForFaction(newObjComp.Faction);
+            ActivateObjective(newEnt, newObjComp, completingFaction.ToLowerInvariant());
         }
         else
             _logs.Warning($"[OBJ-TIER] Spawned prototype {protoIdStr} but it does not contain a CMUObjectiveComponent!");

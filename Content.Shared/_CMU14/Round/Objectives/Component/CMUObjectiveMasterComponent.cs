@@ -39,8 +39,8 @@ public sealed partial class CMUObjectiveMasterComponent : Robust.Shared.GameObje
 
     public HashSet<string> FactionsGivenFinalObjective { get; set; } = new();
 
-    [AutoNetworkedField]
-    public bool IsActive;
+    [AutoNetworkedField] public bool IsActive;
+    public bool SelectionComplete;
 
     public FactionObjectiveData GetOrCreateFactionData(string faction)
     {

@@ -24,7 +24,7 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
         SubscribeLocalEvent<FetchItemComponent, EntityTerminatingEvent>(OnFetchItemDestroyed);
     }
 
-    private void OnActivated(EntityUid uid, FetchObjectiveComponent fetchComp, ref ObjectiveActivatedEvent _)
+    private void OnActivated(EntityUid uid, FetchObjectiveComponent fetchComp, ref ObjectiveActivatedEvent args)
     {
         if (!TryComp(uid, out CMUObjectiveComponent? comp) || !comp.Active || fetchComp.HasSpawned)
             return;
@@ -32,13 +32,15 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
         if (!fetchComp.UseMarkers)
             return;
 
-        var objMap = Transform(uid).MapID;
+        if (args.LateActivation)
+            fetchComp.LateActivation = true;
 
+        var objMap = Transform(uid).MapID;
         ObjInt.RegisterInterest(uid, objMap,
             keys: string.IsNullOrEmpty(fetchComp.TargetPrototype) ? null : new[] { fetchComp.TargetPrototype },
             wildcard: fetchComp.UseAnyEntity);
 
-        if (fetchComp.UseAnyEntity && !string.IsNullOrEmpty(fetchComp.TargetPrototype)
+        if ((fetchComp.UseAnyEntity || fetchComp.LateActivation) && !string.IsNullOrEmpty(fetchComp.TargetPrototype)
             && RegisterPreplacedFetchEntities(uid, fetchComp) > 0)
         {
             fetchComp.HasSpawned = true;
@@ -57,10 +59,16 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
 
         if (spawned.Count == 0)
         {
-            _logs.Error($"[OBJ-FETCH] Fetch objective '{ToPrettyString(uid)}' ('{comp.Id}', '{comp.ObjectiveDescription}') on map {objMap} " +
-                        $"has no spawn sources: no {(string.IsNullOrEmpty(fetchComp.SpawnMarkerId) ? "generic marker" : $"marker '{fetchComp.SpawnMarkerId}'")} " +
-                        $"and no pre-placed '{fetchComp.TargetPrototype}' entities. Refusing to spawn — mappers must place a " +
-                        $"CMUObjectiveMarker (or the item entities) on the planet map.");
+            if (fetchComp.LateActivation)
+            {
+                _logs.Info($"[OBJ-FETCH] Late activated fetch objective '{ToPrettyString(uid)}' ('{comp.Id}') on map {objMap}" +
+                           $" found no free spawn source or pre-placed '{fetchComp.TargetPrototype}'!");
+                return;
+            }
+
+            _logs.Error($"[OBJ-FETCH] Fetch objective refusing to spawn! '{ToPrettyString(uid)}' ('{comp.Id}', '{comp.ObjectiveDescription}') on map={objMap}" +
+                        $" has no spawn sources: no {(string.IsNullOrEmpty(fetchComp.SpawnMarkerId) ? "generic marker" : $"marker '{fetchComp.SpawnMarkerId}'")}" +
+                        $" and no pre-placed '{fetchComp.TargetPrototype}' entities. Mappers must place CMUObjectiveMarker (or item ents) on the planet map.");
             ObjCtrl.MarkObjectiveFailed(uid, comp);
             return;
         }
