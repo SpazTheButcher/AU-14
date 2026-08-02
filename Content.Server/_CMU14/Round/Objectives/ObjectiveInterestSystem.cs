@@ -110,6 +110,6 @@ public sealed class ObjectiveInterestSystem : EntitySystem
             return false;
 
         var mapUidB = _mapSystem.GetMap(b);
-        return network.Value.Comp.ZLevelByEntity.ContainsKey(mapUidB);
+        return _zLevels.IsMapInNetwork(network.Value, mapUidB);
     }
 }
