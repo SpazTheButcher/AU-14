@@ -105,11 +105,12 @@ public sealed class ObjectiveInterestSystem : EntitySystem
         if (a == b)
             return true;
 
-        var mapUidA = _mapSystem.GetMap(a);
-        if (!_zLevels.TryGetZNetwork(mapUidA, out var network))
+        if (!_mapSystem.TryGetMap(a, out var mapUidA) || !_mapSystem.TryGetMap(b, out var mapUidB))
             return false;
 
-        var mapUidB = _mapSystem.GetMap(b);
-        return _zLevels.IsMapInNetwork(network.Value, mapUidB);
+        if (!_zLevels.TryGetZNetwork(mapUidA.Value, out var network))
+            return false;
+
+        return _zLevels.IsMapInNetwork(network.Value, mapUidB.Value);
     }
 }
