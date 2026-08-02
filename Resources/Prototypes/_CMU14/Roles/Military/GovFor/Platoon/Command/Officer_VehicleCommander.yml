@@ -22,12 +22,25 @@
   roundProfiles:
   - AU14RoundJobProfileMilitaryBase
   roundComponents:
+  - type: MarineOrders
   - type: AU14CallsignRole
     suffix: "6"
     commandElement: true
     category: ARMOR
   - type: Skills
-    preset: AU14SkillPresetPlatoonVehicleCrewman
+    skills:
+      RMCSkillConstruction: 2
+      RMCSkillCqc: 1
+      RMCSkillEndurance: 1
+      RMCSkillEngineer: 2
+      RMCSkillFirearms: 1
+      RMCSkillFireman: 2
+      RMCSkillJtac: 1
+      RMCSkillPowerLoader: 1
+      RMCSkillVehicles: 3
+      RMCSkillOverwatch: 1
+      RMCSkillNavigations: 1
+      RMCSkillIntel: 1
   - type: JobPrefix
     prefix: au14-job-prefix-vehiclecommander
   - type: TacticalMapIcon
