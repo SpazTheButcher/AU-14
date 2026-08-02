@@ -108,6 +108,31 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
         Dirty(sentry, targeting);
     }
 
+    public bool TryApplyDefaultFaction(EntityUid sentry, string? faction = null)
+    {
+        if (!TryComp<SentryTargetingComponent>(sentry, out var targeting))
+            return false;
+
+        faction = string.IsNullOrWhiteSpace(faction) ? targeting.OriginalFaction : faction;
+        var sentryFaction = SentryAllowedFactions.FirstOrDefault(allowed =>
+            allowed.Equals(faction, StringComparison.OrdinalIgnoreCase));
+        if (sentryFaction == null)
+            return false;
+
+        targeting.OriginalFaction = sentryFaction;
+        targeting.FriendlyFactions.Clear();
+        targeting.FriendlyFactions.Add(sentryFaction);
+        targeting.DeployedFriendlyFactions.Clear();
+        targeting.DeployedFriendlyFactions.Add(sentryFaction);
+        targeting.HumanoidAdded.Clear();
+
+        if (_net.IsServer)
+            ApplyTargeting((sentry, targeting));
+
+        Dirty(sentry, targeting);
+        return true;
+    }
+
     public void SetFriendlyFactions(Entity<SentryTargetingComponent> ent, HashSet<string> factions)
     {
         ent.Comp.FriendlyFactions.Clear();
