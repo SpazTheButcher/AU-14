@@ -16,11 +16,11 @@
   maxRandomOffset: 0
   randomRotation: false
   stations:
-    StableGarrisonRedux:
+    stablegarrison:
       stationProto: StandardUNMCWarship
       components:
         - type: StationNameSetup
-          mapNameTemplate: 'Stable Garrison Redux'
+          mapNameTemplate: 'Stable Garrison'
         - type: StationJobs
           availableJobs:
             AU14JobCivilianColonist: [-1, -1]
