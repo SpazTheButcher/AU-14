@@ -4,8 +4,8 @@ meta:
   engineVersion: v278.0.0
   forkId: ""
   forkVersion: ""
-  time: 08/01/2026 05:57:04
-  entityCount: 24558
+  time: 08/02/2026 22:47:29
+  entityCount: 24560
 maps:
 - 1
 grids:
@@ -109427,6 +109427,18 @@ entities:
     - type: Transform
       rot: -1.5707963267948966 rad
       pos: 166.5,-99.5
+      parent: 1
+- proto: RMCGeneratorFusion
+  entities:
+  - uid: 24559
+    components:
+    - type: Transform
+      pos: 197.5,-121.5
+      parent: 1
+  - uid: 24560
+    components:
+    - type: Transform
+      pos: 197.5,-113.5
       parent: 1
 - proto: RMCGeneratorFusionCell
   entities:

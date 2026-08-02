@@ -162,7 +162,7 @@
   components:
   - type: RMCPlanetMapPrototype
     votename: "Stable Garrison"
-    mapId: stablegarrison
+    mapId: StableGarrisonRedux
     lorePrimer: AU14PrimerPlanetStableGarrison
     Allegiance: UA
     camouflage: Desert

@@ -4,7 +4,7 @@ meta:
   engineVersion: v278.0.0
   forkId: ""
   forkVersion: ""
-  time: 08/01/2026 05:57:01
+  time: 08/02/2026 22:46:41
   entityCount: 61699
 maps:
 - 1
@@ -717,6 +717,26 @@ entities:
             state: supply
           indices: 231,-46
         29794:
+          image:
+            sprite: /Textures/_RMC14/Interface/map_blips.rsi
+            state: supply
+          indices: 116,-87
+        29824:
+          image:
+            sprite: /Textures/_RMC14/Interface/map_blips.rsi
+            state: supply
+          indices: -5,-122
+        29825:
+          image:
+            sprite: /Textures/_RMC14/Interface/map_blips.rsi
+            state: supply
+          indices: 125,-149
+        29826:
+          image:
+            sprite: /Textures/_RMC14/Interface/map_blips.rsi
+            state: supply
+          indices: 231,-46
+        29827:
           image:
             sprite: /Textures/_RMC14/Interface/map_blips.rsi
             state: supply
@@ -104189,6 +104209,38 @@ entities:
       parent: 235
     - type: Physics
       canCollide: False
+- proto: AU14CommunicationsTower
+  entities:
+  - uid: 15059
+    components:
+    - type: Transform
+      pos: -4.5,-121.5
+      parent: 1
+    - type: ActiveTacticalMapTracked
+      map: 1
+- proto: AU14CommunicationsTowerOn
+  entities:
+  - uid: 15060
+    components:
+    - type: Transform
+      pos: 125.5,-148.5
+      parent: 1
+    - type: ActiveTacticalMapTracked
+      map: 1
+  - uid: 15061
+    components:
+    - type: Transform
+      pos: 231.5,-45.5
+      parent: 1
+    - type: ActiveTacticalMapTracked
+      map: 1
+  - uid: 15062
+    components:
+    - type: Transform
+      pos: 116.5,-86.5
+      parent: 1
+    - type: ActiveTacticalMapTracked
+      map: 1
 - proto: AU14ContainerLightHyperdyneLeft
   entities:
   - uid: 238
@@ -105485,7 +105537,7 @@ entities:
   - uid: 460
     components:
     - type: Transform
-      pos: 17.381802,-18.384731
+      pos: 17.413765,-21.70483
       parent: 1
   - uid: 461
     components:
@@ -105954,6 +106006,13 @@ entities:
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
+- proto: AU14SensorTower
+  entities:
+  - uid: 21750
+    components:
+    - type: Transform
+      pos: 224.5,-103.5
+      parent: 1
 - proto: AU14SlingSatchelBlack
   entities:
   - uid: 526
@@ -110473,6 +110532,12 @@ entities:
     components:
     - type: Transform
       pos: 229.5,-46.5
+      parent: 1
+  - uid: 12258
+    components:
+    - type: Transform
+      rot: 1.5707963267948966 rad
+      pos: 264.5,-48.5
       parent: 1
 - proto: CMArmorM2MP
   entities:
@@ -129156,6 +129221,13 @@ entities:
     - type: Transform
       pos: 13.5,-25.5
       parent: 1
+- proto: CMUColonyRosterConsole
+  entities:
+  - uid: 12260
+    components:
+    - type: Transform
+      pos: 234.5,-53.5
+      parent: 1
 - proto: CMUDefibrillatorCabinetFilled
   entities:
   - uid: 6592
@@ -129163,6 +129235,14 @@ entities:
     - type: Transform
       rot: 3.141592653589793 rad
       pos: 205.5,-67.5
+      parent: 1
+- proto: CMUGovforRosterConsole
+  entities:
+  - uid: 12261
+    components:
+    - type: Transform
+      rot: 3.141592653589793 rad
+      pos: 55.03948,0.5
       parent: 1
 - proto: CMULimbPrinter
   entities:
@@ -160843,7 +160923,7 @@ entities:
       lastSignals:
         DoorStatus: True
     - type: Door
-      secondsUntilStateChange: -610297.75
+      secondsUntilStateChange: -612098.56
       state: Opening
   - uid: 13075
     components:
@@ -168241,6 +168321,11 @@ entities:
     - type: Transform
       pos: 15.5,-16.5
       parent: 1
+    - type: RMCChemicalStorage
+      baseRecharge: 20
+      baseMax: 3000
+      maxEnergy: 3000
+      energy: 3000
 - proto: RMCChemStorageGround
   entities:
   - uid: 15035
@@ -168255,6 +168340,10 @@ entities:
     - type: Transform
       pos: 15.5,-16.5
       parent: 1
+    - type: RMCChemicalStorage
+      baseRecharge: 50
+      baseMax: 500
+      energy: 500
 - proto: RMCChemStorageOCP
   entities:
   - uid: 15037
@@ -168262,6 +168351,10 @@ entities:
     - type: Transform
       pos: 15.5,-16.5
       parent: 1
+    - type: RMCChemicalStorage
+      baseRecharge: 50
+      baseMax: 500
+      energy: 500
 - proto: RMCChemStorageResearch
   entities:
   - uid: 15038
@@ -168269,6 +168362,10 @@ entities:
     - type: Transform
       pos: 15.5,-16.5
       parent: 1
+    - type: RMCChemicalStorage
+      maxPer: 500
+      baseMax: 500
+      energy: 500
 - proto: RMCCigarCase
   entities:
   - uid: 15039
@@ -168355,38 +168452,6 @@ entities:
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
-- proto: AU14CommunicationsTower
-  entities:
-  - uid: 15059
-    components:
-    - type: Transform
-      pos: -4.5,-121.5
-      parent: 1
-    - type: ActiveTacticalMapTracked
-      map: 1
-- proto: AU14CommunicationsTowerOn
-  entities:
-  - uid: 15060
-    components:
-    - type: Transform
-      pos: 125.5,-148.5
-      parent: 1
-    - type: ActiveTacticalMapTracked
-      map: 1
-  - uid: 15061
-    components:
-    - type: Transform
-      pos: 231.5,-45.5
-      parent: 1
-    - type: ActiveTacticalMapTracked
-      map: 1
-  - uid: 15062
-    components:
-    - type: Transform
-      pos: 116.5,-86.5
-      parent: 1
-    - type: ActiveTacticalMapTracked
-      map: 1
 - proto: RMCComputerIntel
   entities:
   - uid: 15063
@@ -169678,7 +169743,7 @@ entities:
       pos: 179.5,-120.5
       parent: 1
     - type: Door
-      secondsUntilStateChange: -456480.06
+      secondsUntilStateChange: -458280.84
       state: Closing
   - uid: 15264
     components:
@@ -184115,10 +184180,24 @@ entities:
       parent: 1
 - proto: RMCMarkerAreaLabel
   entities:
+  - uid: 12256
+    components:
+    - type: MetaData
+      name: Northern Caverns
+    - type: Transform
+      pos: -43.5,-12.5
+      parent: 1
+  - uid: 12257
+    components:
+    - type: MetaData
+      name: Southern Caverns
+    - type: Transform
+      pos: -44.5,-110.5
+      parent: 1
   - uid: 18160
     components:
     - type: MetaData
-      name: Western Greenhouse
+      name: Newport Greenhouseses
     - type: Transform
       rot: 1.5707963267948966 rad
       pos: 105.5,-98.5
@@ -184217,6 +184296,13 @@ entities:
       parent: 1
 - proto: RMCMarkerAreaLabelRed
   entities:
+  - uid: 12259
+    components:
+    - type: MetaData
+      name: LZ2 - CMB Precinct
+    - type: Transform
+      pos: 308.5,-108.5
+      parent: 1
   - uid: 18174
     components:
     - type: MetaData
@@ -201719,13 +201805,6 @@ entities:
     - type: Transform
       pos: 96.5,-143.5
       parent: 1
-- proto: AU14SensorTower
-  entities:
-  - uid: 21750
-    components:
-    - type: Transform
-      pos: 224.5,-103.5
-      parent: 1
 - proto: RMCSentryOmni
   entities:
   - uid: 21751
@@ -207072,11 +207151,6 @@ entities:
       parent: 1
 - proto: RMCTablePrisonSoro
   entities:
-  - uid: 22850
-    components:
-    - type: Transform
-      pos: 25.5,-22.5
-      parent: 1
   - uid: 22851
     components:
     - type: Transform
@@ -207112,11 +207186,6 @@ entities:
     components:
     - type: Transform
       pos: 25.5,-28.5
-      parent: 1
-  - uid: 22858
-    components:
-    - type: Transform
-      pos: 25.5,-30.5
       parent: 1
   - uid: 22859
     components:
@@ -437559,26 +437628,6 @@ entities:
     components:
     - type: Transform
       pos: 33.5,-20.5
-      parent: 1
-  - uid: 84600
-    components:
-    - type: Transform
-      pos: 24.5,-22.5
-      parent: 1
-  - uid: 84601
-    components:
-    - type: Transform
-      pos: 26.5,-22.5
-      parent: 1
-  - uid: 84602
-    components:
-    - type: Transform
-      pos: 26.5,-30.5
-      parent: 1
-  - uid: 84603
-    components:
-    - type: Transform
-      pos: 24.5,-30.5
       parent: 1
 - proto: VMarkerGovforCombatTech
   entities:
