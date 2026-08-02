@@ -18,9 +18,7 @@ public sealed partial class HiveCollapseRuleSystem : GameRuleSystem<HiveCollapse
     [Dependency] private CMURoundStatisticsSystem _roundStats = default!;
 
     private const string DefaultWinMsg = "The hive has collapsed!";
-
     private TimeSpan? _hiveCollapseTime;
-    
 
     public override void Initialize()
     {
@@ -29,41 +27,54 @@ public sealed partial class HiveCollapseRuleSystem : GameRuleSystem<HiveCollapse
         SubscribeLocalEvent<XenoHiveQueenChangedEvent>(OnQueenChanged);
     }
 
+    protected override void Started(EntityUid uid, HiveCollapseRuleComponent component,
+        GameRuleComponent gameRule, GameRuleStartedEvent args)
+    {
+        base.Started(uid, component, gameRule, args);
+
+        _hiveCollapseTime = AnyHiveHasQueen()
+            ? null
+            : _timing.CurTime + component.HiveCollapseDuration;
+    }
+
+    private bool AnyHiveHasQueen()
+    {
+        var query = EntityQueryEnumerator<HiveComponent>();
+        while (query.MoveNext(out _, out var hive))
+        {
+            if (hive.CurrentQueen != null)
+                return true;
+        }
+
+        return false;
+    }
+
     private void OnQueenChanged(XenoHiveQueenChangedEvent ev)
     {
         if (!_gameTicker.IsGameRuleActive<HiveCollapseRuleComponent>())
-        {
             return;
-        }
+
         EntityQueryEnumerator<ActiveGameRuleComponent, HiveCollapseRuleComponent, GameRuleComponent> queryRule
             = QueryActiveRules();
         if (!ThreatRuleHelper.TryGetActiveRule(ref queryRule, out HiveCollapseRuleComponent ruleComp, out _))
             return;
 
-        if (ev.NewQueen == null)
-        {
-            _hiveCollapseTime = _timing.CurTime + ruleComp.HiveCollapseDuration;
-        }
-        else
-        {
+        if (AnyHiveHasQueen())
             _hiveCollapseTime = null;
-        }
+        else
+            _hiveCollapseTime ??= _timing.CurTime + ruleComp.HiveCollapseDuration;
     }
 
-    public override void Update(float frameTime)
+    protected override void ActiveTick(EntityUid uid, HiveCollapseRuleComponent component, GameRuleComponent gameRule,
+        float frameTime)
     {
-        base.Update(frameTime);
+        base.ActiveTick(uid, component, gameRule, frameTime);
 
-        if (!_gameTicker.IsGameRuleActive<HiveCollapseRuleComponent>() ||
-            _hiveCollapseTime == null)
+        if (_hiveCollapseTime == null || _timing.CurTime < _hiveCollapseTime)
             return;
 
-        
-        if (_timing.CurTime > _hiveCollapseTime)
-        {
-            string? winMessage = _auRoundSystem.SelectedThreat?.WinMessage;
-            _roundStats.RecordThreatDefeatedRule("HiveCollapseRule");
-            _gameTicker.EndRound(string.IsNullOrEmpty(winMessage) ? DefaultWinMsg : winMessage);
-        }
+        string? winMessage = _auRoundSystem.SelectedThreat?.WinMessage;
+        _roundStats.RecordThreatDefeatedRule("HiveCollapseRule");
+        _gameTicker.EndRound(string.IsNullOrEmpty(winMessage) ? DefaultWinMsg : winMessage);
     }
 }

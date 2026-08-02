@@ -7,7 +7,6 @@ public sealed partial class HiveCollapseRuleComponent : Component
     ///     Duration in seconds for the hive to collapse once the Queen has fallen.
     ///     Default 10 Minutes.
     /// </summary>
-    [DataField("hiveCollapseDuration")]
+    [DataField]
     public TimeSpan HiveCollapseDuration = TimeSpan.FromMinutes(10);
-
 }
