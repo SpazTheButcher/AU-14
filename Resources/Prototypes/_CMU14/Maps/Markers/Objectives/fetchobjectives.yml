@@ -22,6 +22,7 @@
     spawnMarkerId: fetchoreobjectivemarker
     fetchCount: 500
     useAnyEntity: true
+    catalog: false
 
 - type: entity
   name: Fetch BlackBox Objective Spawn Marker
