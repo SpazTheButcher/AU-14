@@ -22,7 +22,6 @@
   roundProfiles:
   - AU14RoundJobProfileMilitaryBase
   roundComponents:
-  - type: MarineOrders
   - type: AU14CallsignRole
     suffix: "6"
     commandElement: true
