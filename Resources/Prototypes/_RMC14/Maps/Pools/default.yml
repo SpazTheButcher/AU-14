@@ -3,6 +3,7 @@
   maps:
   # - Savannah # Ship for downstreams and events
   - USSBushRedux
+  - StableGarrisonRedux
 
 - type: gameMapPool
   id: RMCDefaultMapPoolAlmayer
