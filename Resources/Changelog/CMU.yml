@@ -8732,16 +8732,37 @@
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1750
 - author: CatoChristopherMrow
   changes:
+  - message: Brute/burn kits now auto-reapply if needed/valid
+    type: Tweak
+  id: 552
+  time: '2026-08-01T13:27:56.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1750
+- author: CatoChristopherMrow
+  changes:
   - message: Fixed survivors failing to spawn a large amount of the time
     type: Fix
-  id: 552
+  id: 553
+  time: '2026-08-01T13:40:03.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1752
+- author: CatoChristopherMrow
+  changes:
+  - message: Fixed survivors failing to spawn a large amount of the time
+    type: Fix
+  id: 554
   time: '2026-08-01T13:40:03.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1752
 - author: CatoChristopherMrow
   changes:
   - message: Fixed third party spawning on insurgency
     type: Fix
-  id: 553
+  id: 555
+  time: '2026-08-01T13:46:28.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1753
+- author: CatoChristopherMrow
+  changes:
+  - message: Fixed third party spawning on insurgency
+    type: Fix
+  id: 556
   time: '2026-08-01T13:46:28.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1753
 - author: maertayn
@@ -8752,7 +8773,18 @@
   - message: Total rewrite of objectives, reduced file sizes by half and kept all
       functionality, see _CMU14/Round/Objectives (shared/client/server)
     type: Code
-  id: 554
+  id: 557
+  time: '2026-08-01T20:39:50.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1762
+- author: maertayn
+  changes:
+  - message: The full objectives system is back on the menu, it's been gone for far
+      too long
+    type: Add
+  - message: Total rewrite of objectives, reduced file sizes by half and kept all
+      functionality, see _CMU14/Round/Objectives (shared/client/server)
+    type: Code
+  id: 558
   time: '2026-08-01T20:39:50.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1762
 Name: CMU
