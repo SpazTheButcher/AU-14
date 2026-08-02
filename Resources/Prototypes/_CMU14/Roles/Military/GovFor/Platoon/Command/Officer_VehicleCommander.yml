@@ -41,7 +41,10 @@
       RMCSkillOverwatch: 1
       RMCSkillNavigations: 1
       RMCSkillIntel: 1
-      RMCSkillMedical: 1
+      RMCSkillMedical: 2
+      RMCSkillSurgery: 1
+      RMCSkillPolice: 1
+      RMCSkillLeadership: 3
   - type: JobPrefix
     prefix: au14-job-prefix-vehiclecommander
   - type: TacticalMapIcon
