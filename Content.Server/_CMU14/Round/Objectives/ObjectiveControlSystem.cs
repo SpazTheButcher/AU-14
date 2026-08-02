@@ -58,6 +58,9 @@ public sealed partial class ObjectiveControlSystem : EntitySystem
         _logs.Debug($"[OBJ START] CMUObjectiveComponent started: [{ToPrettyString(uid)}]");
         _allObjectives.Add((uid, component));
         InitializeObjectiveStatuses(component);
+
+        if (TryComp(_objectiveMasterUid, out CMUObjectiveMasterComponent? master) && master.SelectionComplete)
+            Timer.Spawn(0, () => TryLateActivateObjective(uid));
     }
 
     private void OnPostGameMapLoad(PostGameMapLoad ev)
@@ -268,15 +271,11 @@ public sealed partial class ObjectiveControlSystem : EntitySystem
 
             foreach (var (uid, obj) in neutralCandidates)
             {
-                obj.Active = true;
-                Dirty(uid, obj);
-                RaiseLocalEvent(uid, new ObjectiveActivatedEvent());
+                ActivateObjective(uid, obj);
                 _logs.Debug($"[OBJ-CTRL] Activated neutral objective '{obj.ObjectiveDescription}'");
             }
         }
-        catch (Exception ex)
-        {
-            _logs.Error($"[OBJ-CTRL] Failed to activate neutral objectives: {ex.Message}!");
-        }
+        catch (Exception ex) { _logs.Error($"[OBJ-CTRL] Failed to activate neutral objectives: {ex.Message}!"); }
+        master.SelectionComplete = true;
     }
 }

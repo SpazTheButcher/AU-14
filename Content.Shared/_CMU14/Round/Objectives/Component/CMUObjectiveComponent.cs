@@ -3,7 +3,10 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Shared._CMU14.Round.Objectives.Component;
 
-public sealed class ObjectiveActivatedEvent : EntityEventArgs;
+public sealed class ObjectiveActivatedEvent(bool lateActivation = false) : EntityEventArgs
+{
+    public readonly bool LateActivation = lateActivation;
+}
 
 public sealed class ObjectiveResetEvent : EntityEventArgs;
 

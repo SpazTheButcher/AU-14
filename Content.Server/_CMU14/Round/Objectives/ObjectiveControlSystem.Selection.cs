@@ -170,13 +170,84 @@ public sealed partial class ObjectiveControlSystem
 
         foreach (var (objUid, obj) in objectives)
         {
-            obj.Faction = faction;
-            InitializeObjectiveStatuses(obj);
-            obj.Active = true;
-            Dirty(objUid, obj);
-            RaiseLocalEvent(objUid, new ObjectiveActivatedEvent());
+            ActivateObjective(objUid, obj, faction);
             _logs.Debug($"[OBJ-SEL] Activated {faction} {levelName}: {obj.ObjectiveDescription}");
         }
+    }
+
+    private void ActivateObjective(EntityUid uid, CMUObjectiveComponent comp, string? faction = null, bool lateActivation = false)
+    {
+        if (!comp.FactionNeutral && !string.IsNullOrEmpty(faction))
+            comp.Faction = faction;
+
+        InitializeObjectiveStatuses(comp);
+        comp.Active = true;
+        Dirty(uid, comp);
+        RaiseLocalEvent(uid, new ObjectiveActivatedEvent(lateActivation));
+
+        if (comp.FactionNeutral)
+        {
+            foreach (var f in comp.Factions)
+                _objConsole.RefreshConsolesForFaction(f);
+        }
+        else if (!string.IsNullOrEmpty(comp.Faction))
+        {
+            _objConsole.RefreshConsolesForFaction(comp.Faction);
+        }
+    }
+
+    private void TryLateActivateObjective(EntityUid uid)
+    {
+        if (!Exists(uid) || TerminatingOrDeleted(uid))
+            return;
+
+        if (!TryComp(uid, out CMUObjectiveComponent? comp) || comp.Active)
+            return;
+
+        if (_planetMapId == MapId.Nullspace || Transform(uid).MapID != _planetMapId)
+        {
+            _logs.Debug($"[OBJ-LATE] Not activating '{comp.ObjectiveDescription}': entity's map" +
+                        $" ({Transform(uid).MapID}) isn't the voted planet ({_planetMapId})!");
+            return;
+        }
+
+        var presetId = _gameTicker.Preset?.ID;
+        if (string.IsNullOrWhiteSpace(presetId))
+            return;
+
+        var modeMatch = comp.FactionNeutral
+            ? comp.AllowedPresets.Count == 0 || comp.AllowedPresets.Any(m => m.Equals(presetId, StringComparison.OrdinalIgnoreCase))
+            : comp.AllowedPresets.Any(m => m.Equals(presetId, StringComparison.OrdinalIgnoreCase));
+        if (!modeMatch)
+        {
+            _logs.Debug($"[OBJ-LATE] Not activating '{comp.ObjectiveDescription}': allowedPresets" +
+                        $" [{string.Join(", ", comp.AllowedPresets)}] doesn't include the current preset '{presetId}'!");
+            return;
+        }
+
+        if (!comp.FactionNeutral && comp.Factions.Count == 0)
+        {
+            _logs.Debug($"[OBJ-LATE] Not activating '{comp.ObjectiveDescription}': not faction neutral and has no factions assigned!");
+            return;
+        }
+
+        foreach (var (otherUid, other) in _allObjectives)
+        {
+            if (otherUid == uid || !other.Active || other.Id != comp.Id)
+                continue;
+
+            if (Exists(otherUid) && Transform(otherUid).MapID == _planetMapId)
+            {
+                _logs.Info($"[OBJ-LATE] Skipping late activation of '{comp.ObjectiveDescription}':" +
+                           $" an active copy ('{comp.Id}') already exists on this map.");
+                return;
+            }
+        }
+
+        var faction = comp.FactionNeutral ? null : comp.Factions[0];
+        ActivateObjective(uid, comp, faction, lateActivation: true);
+        _logs.Info($"[OBJ-LATE] Auto activated a late spawned objective '{comp.ObjectiveDescription}'" +
+                   (faction != null ? $" for faction '{faction}'." : "."));
     }
 
     public string GetOppositeFaction(string faction, string? mode) => (mode?.ToLowerInvariant(), faction.ToLowerInvariant()) switch
