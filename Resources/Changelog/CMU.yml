@@ -8636,6 +8636,19 @@
   id: 547
   time: '2026-07-31T12:02:43.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1749
+- author: JaSeNeSaJ
+  changes:
+  - message: ZLevel offset from 0.7 (22.5 pixels) to 0.75 (24 pixels)
+    type: Tweak
+  - message: MultiZ sprites for better look and new offset
+    type: Tweak
+  - message: 'Sheperds'': Increased WYGuard and Scientist jobslots by 1'
+    type: Tweak
+  - message: 'Sheperds'': Additional gear locker for WYGuards'
+    type: Add
+  id: 548
+  time: '2026-07-31T12:02:43.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1749
 - author: Michellechkya
   changes:
   - message: Added Ryan Gosling vibe
@@ -8670,8 +8683,109 @@
     type: Map
   - message: Remapped interior of CMB paddywagon
     type: Map
-  id: 548
+  id: 549
   time: '2026-07-31T14:08:36.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1748
+- author: Michellechkya
+  changes:
+  - message: Added Ryan Gosling vibe
+    type: Add
+  - message: Added Police car
+    type: Add
+  - message: Added Ambulance
+    type: Add
+  - message: Added Hyperdyne systems Van
+    type: Add
+  - message: Added civilian different cargo trucks
+    type: Add
+  - message: Added Civilian armored truck
+    type: Add
+  - message: Added Civilian truck
+    type: Add
+  - message: Added Civilian van
+    type: Add
+  - message: Added garbage truck
+    type: Add
+  - message: Added mining truck
+    type: Add
+  - message: Mapped interior of ambulance
+    type: Map
+  - message: Mapped interior of Vans
+    type: Map
+  - message: Mapped interior of Trucks
+    type: Map
+  - message: Mapped interior of police Mono Supron
+    type: Map
+  - message: Mapped interior of civilian paddywagon
+    type: Map
+  - message: Remapped interior of CMB paddywagon
+    type: Map
+  id: 550
+  time: '2026-07-31T14:08:36.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1748
+- author: CatoChristopherMrow
+  changes:
+  - message: Brute/burn kits now auto-reapply if needed/valid
+    type: Tweak
+  id: 551
+  time: '2026-08-01T13:27:56.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1750
+- author: CatoChristopherMrow
+  changes:
+  - message: Brute/burn kits now auto-reapply if needed/valid
+    type: Tweak
+  id: 552
+  time: '2026-08-01T13:27:56.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1750
+- author: CatoChristopherMrow
+  changes:
+  - message: Fixed survivors failing to spawn a large amount of the time
+    type: Fix
+  id: 553
+  time: '2026-08-01T13:40:03.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1752
+- author: CatoChristopherMrow
+  changes:
+  - message: Fixed survivors failing to spawn a large amount of the time
+    type: Fix
+  id: 554
+  time: '2026-08-01T13:40:03.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1752
+- author: CatoChristopherMrow
+  changes:
+  - message: Fixed third party spawning on insurgency
+    type: Fix
+  id: 555
+  time: '2026-08-01T13:46:28.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1753
+- author: CatoChristopherMrow
+  changes:
+  - message: Fixed third party spawning on insurgency
+    type: Fix
+  id: 556
+  time: '2026-08-01T13:46:28.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1753
+- author: maertayn
+  changes:
+  - message: The full objectives system is back on the menu, it's been gone for far
+      too long
+    type: Add
+  - message: Total rewrite of objectives, reduced file sizes by half and kept all
+      functionality, see _CMU14/Round/Objectives (shared/client/server)
+    type: Code
+  id: 557
+  time: '2026-08-01T20:39:50.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1762
+- author: maertayn
+  changes:
+  - message: The full objectives system is back on the menu, it's been gone for far
+      too long
+    type: Add
+  - message: Total rewrite of objectives, reduced file sizes by half and kept all
+      functionality, see _CMU14/Round/Objectives (shared/client/server)
+    type: Code
+  id: 558
+  time: '2026-08-01T20:39:50.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1762
 Name: CMU
 Order: -1
