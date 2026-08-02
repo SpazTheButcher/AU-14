@@ -17,13 +17,14 @@
   - AUPlanetCorsatStation
   - AUPlanetSorokyne
   - AUPlanetStableGarrison
+  - CMUPlanetStableGarrisonRedux
   - AUPlanetTrijent
   - CMUPlanetLament
   - CMUPlanetHopesRetreat
   rules:
   - AuVoteRule
-  - RemoveAllJobs
   - PlatoonSpawn
+  - RemoveAllJobs
   - AddGovfor
   - AddOpfor
 
@@ -45,6 +46,7 @@
    # - AUPlanetLV327
     - CMUPlanetLament
     - AUPlanetStableGarrison
+    - CMUPlanetStableGarrisonRedux
     #- AUPlanetLV747
     #- AUPlanetSorokyne
     #- AuPlanetChances
@@ -79,8 +81,8 @@
   - CMUPlanetHopesRetreat
   rules:
   - AuVoteRule
-  - RemoveAllJobs
   - PlatoonSpawn
+  - RemoveAllJobs
   - AddGovfor
   - AddGovforCorrespondent
 
@@ -96,6 +98,7 @@
     - AUPlanetShepherdsPride
 #    - AUPlanetLV327
     - AUPlanetStableGarrison
+    - CMUPlanetStableGarrisonRedux
     - CMUPlanetLament
 #    - AUPlanetSorokyne
 #    - AuPlanetChances

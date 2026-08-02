@@ -119513,6 +119513,8 @@ entities:
     - type: FaxMachine
       name: CMB Marshal's Office
       destinationAddress: CMB Marshal's Office
+      groups:
+      - marshal-bureau
   - uid: 2927
     components:
     - type: Transform
@@ -119525,6 +119527,8 @@ entities:
       parent: 1
     - type: FaxMachine
       name: Joint Base Schaefer CIC
+      groups:
+      - military-command
   - uid: 2934
     components:
     - type: Transform
@@ -119532,6 +119536,9 @@ entities:
       parent: 1
     - type: FaxMachine
       name: West Albacetrie Colonial Administration
+      groups:
+      - colony-command
+      - marshal-bureau
   - uid: 2935
     components:
     - type: Transform
@@ -119588,6 +119595,8 @@ entities:
       parent: 1
     - type: FaxMachine
       name: Colonial Marshals Bureau
+      groups:
+      - marshal-bureau
   - uid: 2943
     components:
     - type: Transform
@@ -119599,7 +119608,7 @@ entities:
       pos: 14.5,-3.5
       parent: 1
     - type: FaxMachine
-      name: Joint Base Schaefer Breifing
+      name: Joint Base Schaefer Briefing
   - uid: 2945
     components:
     - type: MetaData
@@ -119613,7 +119622,7 @@ entities:
       pos: 256.5,-46.5
       parent: 1
     - type: FaxMachine
-      name: Weyland Facility Enterance
+      name: Weyland Facility Entrance
 - proto: CMFaxCMB
   entities:
   - uid: 2946

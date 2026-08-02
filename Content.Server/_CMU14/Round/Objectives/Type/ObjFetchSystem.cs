@@ -29,9 +29,6 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
         if (!TryComp(uid, out CMUObjectiveComponent? comp) || !comp.Active || fetchComp.HasSpawned)
             return;
 
-        if (!fetchComp.UseMarkers)
-            return;
-
         if (args.LateActivation)
             fetchComp.LateActivation = true;
 
@@ -79,6 +76,13 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
     private void OnReset(EntityUid uid, FetchObjectiveComponent comp, ref ObjectiveResetEvent args)
     {
         comp.AmountFetchedPerFaction.Clear();
+
+        if (comp.UseAnyEntity)
+        {
+            ObjInt.RegisterInterest(uid, Transform(uid).MapID, keys: string.IsNullOrEmpty(comp.TargetPrototype)
+                ? null : new[] { comp.TargetPrototype }, wildcard: true);
+        }
+
         if (!comp.RespawnOnRepeat)
             return;
 
@@ -90,10 +94,11 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
         }
 
         var objMap = Transform(uid).MapID;
+        var searchMaps = GetZNetworkMapIds(objMap);
         var markerQuery = AllEntityQuery<CMUObjectiveMarkerComponent, TransformComponent>();
         while (markerQuery.MoveNext(out _, out var markerComp, out var markerXform))
         {
-            if (markerXform.MapID != objMap)
+            if (!searchMaps.Contains(markerXform.MapID))
                 continue;
 
             if (!string.IsNullOrEmpty(comp.SpawnMarkerId))
@@ -114,6 +119,26 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
             return 0;
 
         int registered = 0;
+
+        if (comp.Catalog)
+        {
+            var searchMaps = GetZNetworkMapIds(xform.MapID);
+            var query = EntityQueryEnumerator<MetaDataComponent, TransformComponent>();
+            while (query.MoveNext(out var ent, out var meta, out var entXform))
+            {
+                if (ent == objectiveUid || HasComp<FetchItemComponent>(ent))
+                    continue;
+
+                if (!searchMaps.Contains(entXform.MapID) || meta.EntityPrototype?.ID != comp.TargetPrototype)
+                    continue;
+
+                EnsureComp<FetchItemComponent>(ent).ObjectiveUid = objectiveUid;
+                registered++;
+            }
+
+            return registered;
+        }
+
         foreach (var ent in _lookup.GetEntitiesInRange(xform.Coordinates, radius))
         {
             if (ent == objectiveUid || HasComp<FetchItemComponent>(ent))
@@ -231,7 +256,7 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
         var query = EntityQueryEnumerator<FetchObjectiveComponent, CMUObjectiveComponent>();
         while (query.MoveNext(out var objUid, out var fetchComp, out var auComp))
         {
-            if (!auComp.Active || fetchComp.UseMarkers || string.IsNullOrEmpty(fetchComp.TargetPrototype))
+            if (!auComp.Active || string.IsNullOrEmpty(fetchComp.TargetPrototype))
                 continue;
 
             if (!string.IsNullOrEmpty(analyzerFaction) && !auComp.FactionNeutral && auComp.Faction.ToLowerInvariant() != analyzerFaction)

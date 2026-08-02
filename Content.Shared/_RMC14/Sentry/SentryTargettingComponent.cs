@@ -22,7 +22,7 @@ public sealed partial class SentryTargetingComponent : Component
     public HashSet<string> DeployedFriendlyFactions = new();
 
     [DataField, AutoNetworkedField]
-    public string OriginalFaction = "UNMC";
+    public string OriginalFaction = "GOVFOR";
 
     [DataField, AutoNetworkedField]
     public HashSet<string> TargetedFactions = new();
