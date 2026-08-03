@@ -16,7 +16,7 @@ namespace Content.IntegrationTests._CMU14.ZLevels;
 [TestFixture]
 public sealed class StableGarrisonZLevelSpawningTest
 {
-    private const string StableGarrison = "StableGarrisonRedux";
+    private static readonly ProtoId<GameMapPrototype> StableGarrison = "StableGarrisonRedux";
     private static readonly ProtoId<JobPrototype> CmbMarshal = "AU14JobCivilianCMBMarshal";
 
     [Test]
@@ -36,7 +36,7 @@ public sealed class StableGarrisonZLevelSpawningTest
 
         await server.WaitAssertion(() =>
         {
-            var mapPrototype = prototypes.Index<GameMapPrototype>(StableGarrison);
+            var mapPrototype = prototypes.Index(StableGarrison);
             var options = DeserializationOptions.Default with { InitializeMaps = false };
             ticker.LoadGameMap(mapPrototype, out var mainMapId, options);
             maps.InitializeMap(mainMapId);

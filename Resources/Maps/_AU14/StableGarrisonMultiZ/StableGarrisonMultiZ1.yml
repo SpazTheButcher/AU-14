@@ -89017,7 +89017,7 @@ entities:
         295,-157: AU14AreaStableGarrisonAmbassadorRoof
         296,-157: AU14AreaStableGarrisonAmbassadorRoof
     - type: BecomesStation
-      id: stablegarrison
+      id: StableGarrisonRedux
     - type: SpreaderGrid
     - type: ImplicitRoof
     - type: GridPathfinding

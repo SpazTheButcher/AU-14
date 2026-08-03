@@ -105481,7 +105481,7 @@ entities:
         -1,-172: AU14AreaStableGarrisonSouthCaverns
         -12,-138: AU14AreaGarrisonMiningCamp
     - type: BecomesStation
-      id: stablegarrison
+      id: StableGarrisonRedux
     - type: SpreaderGrid
     - type: ImplicitRoof
     - type: GridPathfinding
@@ -163637,7 +163637,7 @@ entities:
       rot: 3.141592653589793 rad
       pos: 0.5,-1.5
       parent: 1
-- proto: fetchobjectivemarkergenericspawnpoint
+- proto: fetchgenericmarker
   entities:
   - uid: 12441
     components:

@@ -87982,7 +87982,7 @@ entities:
         196,-214: AU14AreaStableGarrisonSewer3
         196,-216: AU14AreaStableGarrisonSewer3
     - type: BecomesStation
-      id: stablegarrison
+      id: StableGarrisonRedux
     - type: SpreaderGrid
     - type: ImplicitRoof
     - type: GridPathfinding
