@@ -56,6 +56,18 @@ public sealed partial class RMCEquipmentDeployerComponent : Component
     public bool AutoDeploy;
 
     /// <summary>
+    ///     Whether the dropship console should offer automatic deployment for this equipment.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public bool CanAutoDeploy = true;
+
+    /// <summary>
+    ///     Whether deployment must wait for server-side validation instead of being client-predicted.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public bool ServerAuthoritativeDeployment;
+
+    /// <summary>
     ///     Whether the deployer should automatically undeploy when a dropship goes into FTL.
     /// </summary>
     [DataField, AutoNetworkedField]

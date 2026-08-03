@@ -16,6 +16,9 @@ public sealed partial class DropshipPilotEyeComponent : Component
     public Vector2i Footprint = new(11, 21);
 
     [DataField, AutoNetworkedField]
+    public byte RotationQuarterTurns;
+
+    [DataField, AutoNetworkedField]
     public List<Vector2i> BlockedTiles = new();
 
     [DataField, AutoNetworkedField]

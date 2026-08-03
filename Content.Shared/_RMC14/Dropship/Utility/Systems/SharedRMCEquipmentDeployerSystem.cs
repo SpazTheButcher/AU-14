@@ -17,6 +17,7 @@ using Content.Shared.Popups;
 using Content.Shared.Whitelist;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
+using Robust.Shared.Network;
 
 namespace Content.Shared._RMC14.Dropship.Utility.Systems;
 
@@ -30,6 +31,7 @@ public abstract partial class SharedRMCEquipmentDeployerSystem : EntitySystem
     [Dependency] private EntityWhitelistSystem _entityWhitelist = default!;
     [Dependency] private SharedDropshipSystem _dropship = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private INetManager _net = default!;
     [Dependency] private SharedRMCNPCSystem _rmcNpc = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private SentrySystem _sentry = default!;
@@ -209,6 +211,10 @@ public abstract partial class SharedRMCEquipmentDeployerSystem : EntitySystem
         if (!equipmentDeployerComponent.IsDeployable)
             return false;
 
+        // Some equipment requires map/z-level checks that only the server can perform.
+        if (equipmentDeployerComponent.ServerAuthoritativeDeployment && _net.IsClient)
+            return false;
+
         var attempt = new RMCEquipmentDeployAttemptEvent(deploy, deployOffset, user);
         RaiseLocalEvent(deployer, attempt);
         if (attempt.Cancelled)
@@ -326,7 +332,7 @@ public abstract partial class SharedRMCEquipmentDeployerSystem : EntitySystem
     /// <param name="equipmentDeployer">The <see cref="RMCEquipmentDeployerComponent"/> of the deployer</param>
     public void SetAutoDeploy(EntityUid deployer, bool autoDeploy, RMCEquipmentDeployerComponent? equipmentDeployer = null)
     {
-        if (!Resolve(deployer, ref equipmentDeployer, false))
+        if (!Resolve(deployer, ref equipmentDeployer, false) || !equipmentDeployer.CanAutoDeploy)
             return;
 
         equipmentDeployer.AutoDeploy = autoDeploy;

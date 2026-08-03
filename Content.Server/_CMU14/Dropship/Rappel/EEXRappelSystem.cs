@@ -2,15 +2,15 @@ using System.Numerics;
 using Content.Server._CMU14.ZLevels.Core;
 using Content.Shared._CMU14.Dropship.Rappel;
 using Content.Shared._CMU14.Dropship.TacticalLand;
-using Content.Shared._CMU14.ZLevels.Core;
 using Content.Shared._CMU14.ZLevels.Core.Components;
 using Content.Shared._RMC14.Dropship.Utility.Components;
 using Content.Shared._RMC14.Dropship.Utility.Systems;
 using Content.Shared._RMC14.Ladder;
+using Content.Shared.Maps;
+using Content.Shared.Physics;
 using Content.Shared.Popups;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
-using Robust.Shared.Prototypes;
 
 namespace Content.Server._CMU14.Dropship.Rappel;
 
@@ -20,7 +20,7 @@ public sealed partial class EEXRappelSystem : SharedEEXRappelSystem
     [Dependency] private SharedRMCEquipmentDeployerSystem _equipmentDeployer = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
-    [Dependency] private ITileDefinitionManager _tile = default!;
+    [Dependency] private TurfSystem _turf = default!;
     [Dependency] private CMUZLevelsSystem _zLevels = default!;
 
     public override void Initialize()
@@ -71,6 +71,9 @@ public sealed partial class EEXRappelSystem : SharedEEXRappelSystem
                 out var groundCoordinates,
                 out _))
         {
+            // The placement changed between validation and deployment. Put the line back
+            // so the deployer and console cannot remain in a false deployed state.
+            _equipmentDeployer.TryDeploy(ent, false);
             return;
         }
 
@@ -124,13 +127,10 @@ public sealed partial class EEXRappelSystem : SharedEEXRappelSystem
         }
 
         var dropshipMapCoordinates = _transform.ToMapCoordinates(dropshipCoordinates);
+        // The rappel line deploys through the dropship's floor. That floor does not
+        // need to be an empty/transparent z-level opening; only the landing tile
+        // below must exist and be clear of impassable structures.
         var dropshipTile = _map.WorldToTile(dropship, dropshipGrid, dropshipMapCoordinates.Position);
-        if (!CMUZLevelOpeningCache.IsOpeningTile((dropship.Owner, dropshipGrid), dropshipTile, _map, _tile))
-        {
-            failure = "cmu-eex-rappel-no-opening";
-            return false;
-        }
-
         if (HasLadderAt((dropship.Owner, dropshipGrid), dropshipTile))
         {
             failure = "cmu-eex-rappel-blocked";
@@ -151,9 +151,19 @@ public sealed partial class EEXRappelSystem : SharedEEXRappelSystem
         }
 
         var groundTile = _map.WorldToTile(groundMap.Value.Owner, groundGrid, groundCoordinates.Position);
-        if (CMUZLevelOpeningCache.IsOpeningTile((groundMap.Value.Owner, groundGrid), groundTile, _map, _tile))
+        if (!_map.TryGetTileRef(groundMap.Value.Owner, groundGrid, groundTile, out var groundTileRef) ||
+            groundTileRef.Tile.IsEmpty)
         {
             failure = "cmu-eex-rappel-no-ground";
+            return false;
+        }
+
+        const CollisionGroup blockMask = CollisionGroup.Impassable |
+                                         CollisionGroup.MidImpassable |
+                                         CollisionGroup.HighImpassable;
+        if (_turf.IsTileBlocked(groundTileRef, blockMask))
+        {
+            failure = "cmu-eex-rappel-ground-blocked";
             return false;
         }
 

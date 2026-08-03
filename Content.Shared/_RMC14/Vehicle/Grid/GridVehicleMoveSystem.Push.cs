@@ -33,7 +33,11 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
                 dir = new Vector2i(0, Math.Sign(dir.Y));
         }
 
-        return dir;
+        // Match ordinary tile movement: movement keys are relative to the
+        // operator's current view/input rotation, then resolved onto the
+        // vehicle grid's cardinal axes.
+        var relative = input.TargetRelativeRotation.RotateVec(new Vector2(dir.X, dir.Y));
+        return Angle.FromWorldVec(relative).GetCardinalDir().ToIntVec();
     }
 
     private Vector2i GetMoverInput(EntityUid uid, GridVehicleMoverComponent mover, VehicleComponent vehicle, out bool pushing)

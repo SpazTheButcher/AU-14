@@ -5,6 +5,7 @@ using Content.Shared.Doors.Components;
 using Content.Shared.Shuttles.Systems;
 using JetBrains.Annotations;
 using Robust.Client.UserInterface;
+using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Timing;
 
 namespace Content.Client._RMC14.Dropship;
@@ -284,6 +285,46 @@ public sealed partial class DropshipNavigationBui : BoundUserInterface
         downButton.Button.ToggleMode = false;
         downButton.Button.OnPressed += _ => SendPredictedMessage(new DropshipNavigationTacticalLandMoveDownMsg());
         _window.DestinationsContainer.AddChild(downButton);
+
+        var rotationContainer = new BoxContainer
+        {
+            Orientation = BoxContainer.LayoutOrientation.Horizontal,
+            HorizontalExpand = true,
+        };
+
+        var rotateCounterClockwise = new DropshipButton
+        {
+            Text = "Rotate Left",
+            BorderColor = Color.FromHex("#4E6B8E"),
+            BorderThickness = new Thickness(1),
+            HorizontalExpand = true,
+        };
+        rotateCounterClockwise.Button.ToggleMode = false;
+        rotateCounterClockwise.Button.OnPressed += _ => SendPredictedMessage(new DropshipNavigationTacticalLandRotateMsg(false));
+        rotationContainer.AddChild(rotateCounterClockwise);
+
+        var heading = new DropshipButton
+        {
+            Text = $"Heading: {tactical.RotationDegrees}°",
+            Disabled = true,
+            BorderColor = Color.FromHex("#4E6B8E"),
+            BorderThickness = new Thickness(1),
+            HorizontalExpand = true,
+        };
+        rotationContainer.AddChild(heading);
+
+        var rotateClockwise = new DropshipButton
+        {
+            Text = "Rotate Right",
+            BorderColor = Color.FromHex("#4E6B8E"),
+            BorderThickness = new Thickness(1),
+            HorizontalExpand = true,
+        };
+        rotateClockwise.Button.ToggleMode = false;
+        rotateClockwise.Button.OnPressed += _ => SendPredictedMessage(new DropshipNavigationTacticalLandRotateMsg(true));
+        rotationContainer.AddChild(rotateClockwise);
+
+        _window.DestinationsContainer.AddChild(rotationContainer);
 
         _window.LaunchButton.Text = tactical.TacticalHover ? "Hover" : "Land";
         _window.LaunchButton.Button.Disabled = !tactical.ClearForLanding;

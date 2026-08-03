@@ -634,14 +634,18 @@ public sealed class DropshipWeaponsBui : RMCPopOutBui<DropshipWeaponsWindow>
                                               Loc.GetString("rmc-dropship-equipment-deployer-status",
                                                   ("deployed", equipmentDeployer.IsDeployed
                                                       ? Loc.GetString("rmc-dropship-equipment-deployed")
-                                                      : Loc.GetString("rmc-dropship-equipment-undeployed"))) + "\n" +
-                                              Loc.GetString("rmc-dropship-equipment-deployer-auto-deploy",
-                                                  ("autoDeploy", equipmentDeployer.AutoDeploy
-                                                      ? Loc.GetString("rmc-dropship-equipment-enabled")
-                                                      : Loc.GetString("rmc-dropship-equipment-disabled")));
+                                                      : Loc.GetString("rmc-dropship-equipment-undeployed"))) +
+                                              (equipmentDeployer.CanAutoDeploy
+                                                  ? "\n" + Loc.GetString("rmc-dropship-equipment-deployer-auto-deploy",
+                                                      ("autoDeploy", equipmentDeployer.AutoDeploy
+                                                          ? Loc.GetString("rmc-dropship-equipment-enabled")
+                                                          : Loc.GetString("rmc-dropship-equipment-disabled")))
+                                                  : string.Empty);
 
                     screen.LeftRow.SetData(one: !equipmentDeployer.IsDeployed ? equipmentDeploy : equipmentRetract,
-                        two: !equipmentDeployer.AutoDeploy ? equipmentAutoDeployOn : equipmentAutoDeployOff);
+                        two: equipmentDeployer.CanAutoDeploy
+                            ? !equipmentDeployer.AutoDeploy ? equipmentAutoDeployOn : equipmentAutoDeployOff
+                            : null);
                 }
                 break;
             }

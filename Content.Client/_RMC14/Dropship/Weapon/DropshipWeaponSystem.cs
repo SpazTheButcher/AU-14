@@ -1,3 +1,4 @@
+using Content.Shared._RMC14.Dropship.Utility.Components;
 using Content.Shared._RMC14.Dropship.Weapon;
 using Content.Shared._RMC14.TacticalMap;
 
@@ -9,11 +10,22 @@ public sealed class DropshipWeaponSystem : SharedDropshipWeaponSystem
     {
         base.Initialize();
         SubscribeLocalEvent<DropshipTerminalWeaponsComponent, AfterAutoHandleStateEvent>(OnWeaponsState);
+        SubscribeLocalEvent<RMCEquipmentDeployerComponent, AfterAutoHandleStateEvent>(OnEquipmentDeployerState);
     }
 
     private void OnWeaponsState(Entity<DropshipTerminalWeaponsComponent> ent, ref AfterAutoHandleStateEvent args)
     {
         RefreshWeaponsUI(ent);
+    }
+
+    private void OnEquipmentDeployerState(Entity<RMCEquipmentDeployerComponent> ent, ref AfterAutoHandleStateEvent args)
+    {
+        // The equipment deployer is a contained entity, not part of the terminal's
+        // own component state. Refresh open consoles when its authoritative state
+        // arrives so deploy/retract controls and status text do not stay stale.
+        var query = EntityQueryEnumerator<DropshipTerminalWeaponsComponent>();
+        while (query.MoveNext(out var uid, out var terminal))
+            RefreshWeaponsUI((uid, terminal));
     }
 
     protected override void RefreshWeaponsUI(Entity<DropshipTerminalWeaponsComponent> terminal)

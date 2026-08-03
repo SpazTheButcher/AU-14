@@ -182,7 +182,7 @@
   parent: RMCDropshipAttachmentUtility
   id: CMUDropshipAttachmentEEXRappelSystem
   name: EEX Rappel System
-  description: An extendable rappel system for deploying marines from a dropship in tactical hover. Requires an open tile beneath the mount and solid ground one level below.
+  description: An extendable rappel system for deploying marines from a dropship in tactical hover. Requires solid, unobstructed ground one level below.
   components:
   - type: Sprite
     layers:
@@ -197,6 +197,8 @@
   - type: RMCEquipmentDeployer
     deployPrototype: CMUEEXRappelDropshipEndpoint
     dropShipWindowButtonText: Rappel
+    canAutoDeploy: false
+    serverAuthoritativeDeployment: true
     utilityDeployedSprite:
       sprite: _RMC14/Objects/dropship_utility_attachments.rsi
       state: paradrop_system_deployed
@@ -207,6 +209,9 @@
   id: CMUEEXRappelDropshipEndpoint
   name: EEX rappel line
   description: An extendable rappel line leading down from the dropship.
+  components:
+  - type: Sprite
+    drawdepth: SmallObjects
 
 - type: entity
   parent: CMUZLevelRopeThroughUp

@@ -145,7 +145,7 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         _mover.SetRelay(pilot, eye);
 
         PushUiState(ent, pilot);
-        _popup.PopupEntity("Designating tactical landing site. Move to choose, adjust altitude for hover, then confirm.", ent, pilot, PopupType.Medium);
+        _popup.PopupEntity("Designating tactical landing site. Move to choose, rotate or adjust altitude, then confirm.", ent, pilot, PopupType.Medium);
     }
 
     protected override void OnTacticalLandConfirm(Entity<DropshipNavigationComputerComponent> ent, ref DropshipNavigationTacticalLandConfirmMsg args)
@@ -202,6 +202,8 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         var faction = GetConsoleFaction(ent) ?? GetPilotFaction(args.Actor) ?? string.Empty;
 
         var destination = Spawn(null, landingCoords);
+        // Headings increase clockwise from north, while engine angles increase counter-clockwise.
+        _transform.SetLocalRotation(destination, Angle.FromDegrees(-pilotEye.RotationQuarterTurns * 90));
         EnsureComp<DropshipDestinationComponent>(destination);
         _dropship.SetDestinationType(destination, DropshipDestinationComponent.DestinationType.Dropship.ToString());
         _dropship.SetFactionController(destination, faction);
@@ -254,7 +256,7 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         var footprint = console is { } c ? GetFootprint(c, dropship) : dropship.TacticalLandFootprint;
 
         _audio.PlayPvs(WarningSound, destCoords, AudioParams.Default.WithVolume(2f));
-        SpawnWarningBorder(destCoords, footprint, lifetime);
+        SpawnWarningBorder(destCoords, footprint, xform.LocalRotation, lifetime);
 
         EnsureComp<DropshipLandingMarkersSpawnedComponent>(destination);
     }
@@ -283,6 +285,24 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
     protected override void OnTacticalLandMoveDown(Entity<DropshipNavigationComputerComponent> ent, ref DropshipNavigationTacticalLandMoveDownMsg args)
     {
         TryMoveTacticalEye(ent, args.Actor, -TacticalHoverMapOffset);
+    }
+
+    protected override void OnTacticalLandRotate(Entity<DropshipNavigationComputerComponent> ent, ref DropshipNavigationTacticalLandRotateMsg args)
+    {
+        if (!TryComp(ent, out DropshipTacticalLandSessionComponent? session) ||
+            session.Pilot != args.Actor ||
+            session.Eye is not { } eye ||
+            !TryComp(eye, out DropshipPilotEyeComponent? pilotEye) ||
+            !TryComp(eye, out TransformComponent? eyeXform))
+        {
+            return;
+        }
+
+        var delta = args.Clockwise ? 1 : 3;
+        pilotEye.RotationQuarterTurns = (byte)((pilotEye.RotationQuarterTurns + delta) % 4);
+        Dirty(eye, pilotEye);
+        UpdateFootprint((eye, pilotEye), eyeXform);
+        PushUiState(ent, args.Actor);
     }
 
     protected override void OnTacticalHoverCancel(Entity<DropshipNavigationComputerComponent> ent, ref DropshipNavigationTacticalHoverCancelMsg args)
@@ -360,21 +380,21 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         return dropship.TacticalLandFootprint;
     }
 
-    private void SpawnWarningBorder(EntityCoordinates center, Vector2i footprint, float lifetime)
+    private void SpawnWarningBorder(EntityCoordinates center, Vector2i footprint, Angle rotation, float lifetime)
     {
         var halfW = footprint.X / 2;
         var halfH = footprint.Y / 2;
 
         for (var dx = -halfW; dx <= halfW; dx += 2)
         {
-            SpawnTimed(center.Offset(new Vector2(dx,  halfH)), lifetime);
-            SpawnTimed(center.Offset(new Vector2(dx, -halfH)), lifetime);
+            SpawnTimed(center.Offset(rotation.RotateVec(new Vector2(dx,  halfH))), lifetime);
+            SpawnTimed(center.Offset(rotation.RotateVec(new Vector2(dx, -halfH))), lifetime);
         }
 
         for (var dy = -halfH + 2; dy <= halfH - 2; dy += 2)
         {
-            SpawnTimed(center.Offset(new Vector2( halfW, dy)), lifetime);
-            SpawnTimed(center.Offset(new Vector2(-halfW, dy)), lifetime);
+            SpawnTimed(center.Offset(rotation.RotateVec(new Vector2( halfW, dy))), lifetime);
+            SpawnTimed(center.Offset(rotation.RotateVec(new Vector2(-halfW, dy))), lifetime);
         }
     }
 
@@ -387,8 +407,9 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
     private void UpdateFootprint(Entity<DropshipPilotEyeComponent> eye, TransformComponent xform)
     {
-        var w = eye.Comp.Footprint.X;
-        var h = eye.Comp.Footprint.Y;
+        var rotated = eye.Comp.RotationQuarterTurns % 2 != 0;
+        var w = rotated ? eye.Comp.Footprint.Y : eye.Comp.Footprint.X;
+        var h = rotated ? eye.Comp.Footprint.X : eye.Comp.Footprint.Y;
         var halfW = w / 2;
         var halfH = h / 2;
 
@@ -949,7 +970,8 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         var tacticalHover = TryComp(eye, out TransformComponent? eyeXform) && IsTacticalHover(session, eyeXform);
         var canMoveUp = CanMoveTacticalEye(eye, TacticalHoverMapOffset);
         var canMoveDown = CanMoveTacticalEye(eye, -TacticalHoverMapOffset);
-        var state = new DropshipNavigationTacticalLandBuiState(GetNetEntity(eye), clearForLanding, tacticalHover, canMoveUp, canMoveDown, doorLocks, false);
+        var rotationDegrees = pilotEye?.RotationQuarterTurns * 90 ?? 0;
+        var state = new DropshipNavigationTacticalLandBuiState(GetNetEntity(eye), clearForLanding, tacticalHover, canMoveUp, canMoveDown, rotationDegrees, doorLocks, false);
         _ui.SetUiState(ent.Owner, DropshipNavigationUiKey.Key, state);
     }
 

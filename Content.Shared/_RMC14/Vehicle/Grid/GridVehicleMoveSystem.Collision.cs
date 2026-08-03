@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using System.Collections.Generic;
+using Content.Shared.Access.Components;
 using Content.Shared._CMU14.ZLevels.Core.Components;
 using Content.Shared._CMU14.ZLevels.Vehicles;
 using Content.Shared.Containers.ItemSlots;
@@ -111,7 +112,10 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
 
         foreach (var other in hits)
         {
-            if (other == uid)
+            // The containing grid supplies the vehicle's local coordinate space;
+            // its child walls and structures are blockers, but the grid entity
+            // itself must never be treated as one.
+            if (other == uid || other == grid)
                 continue;
 
             if (TryComp(other, out VehicleRideSurfaceRiderComponent? rider) && rider.Vehicle == uid)
@@ -180,15 +184,17 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
                 continue;
             }
 
-            if (applyEffects && candidate.Door is { } door && !_net.IsClient && !isSmashingNow &&
-                (candidate.CollisionClass == VehicleCollisionClass.Breakable ||
-                 candidate.CollisionClass == VehicleCollisionClass.Ignore))
+            var bumpOpeningDoor = candidate.Door is { BumpOpen: true } &&
+                                  operatorUid != null &&
+                                  HasNoAccessRequirements(candidate.Entity) &&
+                                  !candidate.IsUnpoweredDoor &&
+                                  !isSmashingNow;
+
+            if (applyEffects && bumpOpeningDoor && candidate.Door is { } door && !_net.IsClient)
             {
-                if (!candidate.IsUnpoweredDoor)
+                if (_door.TryOpen(candidate.Entity, door, operatorUid) && candidate.IsBarricade)
                 {
-                    _door.TryOpen(candidate.Entity, door, operatorUid);
-                    if (candidate.IsBarricade)
-                        _door.OnPartialOpen(candidate.Entity, door);
+                    _door.OnPartialOpen(candidate.Entity, door);
                 }
             }
 
@@ -225,6 +231,25 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
 
             if (candidate.CollisionClass == VehicleCollisionClass.Hard)
             {
+                // A normal bump-open door should stop the vehicle harmlessly while
+                // it opens, just like it stops a walking mob. The server-side
+                // TryOpen above still enforces power, bolts, welds and driver access.
+                if (bumpOpeningDoor)
+                {
+                    AddBlockingCollision(
+                        uid,
+                        candidate.Entity,
+                        candidate.CollisionAabb,
+                        candidate.Aabb,
+                        clearance,
+                        world.MapId,
+                        debugEnabled,
+                        blockers);
+                    _hitsDepth--;
+                    AddProbe(true);
+                    return false;
+                }
+
                 var result = HandleHardCollision(
                     uid,
                     mover,
@@ -282,6 +307,18 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         AddProbe(false);
         _hitsDepth--;
         return true;
+    }
+
+    private bool HasNoAccessRequirements(EntityUid door)
+    {
+        if (!TryComp(door, out AccessReaderComponent? access))
+            return true;
+
+        return !access.Enabled ||
+               access.ContainerAccessProvider == null &&
+               access.AccessLists.Count == 0 &&
+               access.AccessKeys.Count == 0 &&
+               access.DenyTags.Count == 0;
     }
 
     private bool ShouldIgnoreZHighGroundCollision(EntityUid vehicle, EntityUid other)
