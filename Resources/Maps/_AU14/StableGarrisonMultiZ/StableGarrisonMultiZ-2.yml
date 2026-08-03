@@ -4,8 +4,8 @@ meta:
   engineVersion: v278.0.0
   forkId: ""
   forkVersion: ""
-  time: 08/02/2026 22:47:32
-  entityCount: 9006
+  time: 08/03/2026 01:23:12
+  entityCount: 9024
 maps:
 - 1
 grids:
@@ -700,7 +700,7 @@ entities:
           version: 7
         14,-7:
           ind: 14,-7
-          tiles: gwAAAAAAAKUAAAAAAAClAAAAAAAApQAAAAAAAKUAAAAAAAClAAAAAAAApQAAAAAAAKUAAAAAAACDAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAIMAAAAAAACDAAAAAAAAgwAAAAAAAIMAAAAAAACDAAAAAAAAgwAAAAAAAIMAAAAAAACDAAAAAAAAgwAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAACDAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAgwAAAAAAAMYAAAAAAADGAAAAAAAASAEAAAAAAEgBAAAAAABIAQAAAAAASAEAAAAAAEgBAAAAAADGAAAAAAAASAEAAAAAAEgBAAAAAABIAQAAAAAASAEAAAAAAEgBAAAAAABIAQAAAAAASAEAAAAAAH8AAAAAAABeAAAAAAAApQAAAAAAAO4AAAAAAADuAAAAAAAA7gAAAAAAAO4AAAAAAADuAAAAAAAApQAAAAAAAO4AAAAAAADuAAAAAAAA7gAAAAAAAO4AAAAAAADuAAAAAAAApQAAAAAAAF4AAAAAAAB/AAAAAAAAXgAAAAAAAKUAAAAAAACDAAAAAAAALgAAAAAAAC4AAAAAAAAuAAAAAAAAgwAAAAAAAKUAAAAAAACDAAAAAAAALgAAAAAAAC4AAAAAAAAuAAAAAAAAgwAAAAAAAKUAAAAAAABeAAAAAAAAfwAAAAAAAF4AAAAAAAClAAAAAAAAAwEAAAAAAAMBAAAAAAADAQAAAAAAAwEAAAAAAAMBAAAAAAClAAAAAAAAAwEAAAAAAIUBAAAAAACDAAAAAAAAgwEAAAAAAAMBAAAAAAClAAAAAAAAXgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAEgBAAAAAABIAQAAAAAASAEAAAAAAEgBAAAAAABIAQAAAAAAxgAAAAAAAEgBAAAAAAACAQAAAAAAAwEAAAAAAAQBAAAAAABIAQAAAAAASAEAAAAAAEgBAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAApQAAAAAAAKUAAAAAAAClAAAAAAAApQAAAAAAAMYAAAAAAADGAAAAAAAApQAAAAAAAKUAAAAAAAClAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAABIAQAAAAAA7QAAAAAAAO4AAAAAAADuAAAAAAAA7gAAAAAAAO4AAAAAAADvAAAAAAAApQAAAAAAAO0AAAAAAADuAAAAAAAA7gAAAAAAAO8AAAAAAADGAAAAAAAASAEAAAAAAMYAAAAAAADGAAAAAAAASAEAAAAAAP8AAAAAAACDAAAAAAAAgwAAAAAAAIMAAAAAAACDAAAAAAAAAQEAAAAAAKUAAAAAAAD/AAAAAAAAgwAAAAAAAIMAAAAAAAABAQAAAAAApQAAAAAAAF4AAAAAAADGAAAAAAAAxgAAAAAAAEgBAAAAAAD/AAAAAAAAgwAAAAAAAIMAAAAAAACDAAAAAAAAgwAAAAAAAAEBAAAAAAClAAAAAAAA/wAAAAAAAIMAAAAAAACDAAAAAAAAAQEAAAAAAKUAAAAAAAAuAAAAAAAAxgAAAAAAAMYAAAAAAABIAQAAAAAA/wAAAAAAAIMAAAAAAACDAAAAAAAAgwAAAAAAAIMAAAAAAAABAQAAAAAApQAAAAAAAP8AAAAAAACDAAAAAAAAgwAAAAAAAAEBAAAAAAClAAAAAAAALgAAAAAAAMYAAAAAAADGAAAAAAAASAEAAAAAAP8AAAAAAACDAAAAAAAAgwAAAAAAAIMAAAAAAACDAAAAAAAAAQEAAAAAAKUAAAAAAAD/AAAAAAAAgwEAAAAAAAMBAAAAAAAEAQAAAAAApQAAAAAAAC4AAAAAAADGAAAAAAAAxgAAAAAAAEgBAAAAAAACAQAAAAAAAwEAAAAAAAMBAAAAAAADAQAAAAAAAwEAAAAAAAQBAAAAAAClAAAAAAAA/wAAAAAAAAEBAAAAAABeAAAAAAAAXgAAAAAAAKUAAAAAAABeAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAApQAAAAAAAKUAAAAAAAClAAAAAAAApQAAAAAAAMYAAAAAAADGAAAAAAAApQAAAAAAAAIBAAAAAAAEAQAAAAAAXgAAAAAAAEgBAAAAAABIAQAAAAAASAEAAAAAAA==
+          tiles: gwAAAAAAAKUAAAAAAAClAAAAAAAApQAAAAAAAKUAAAAAAAClAAAAAAAApQAAAAAAAKUAAAAAAACDAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAIMAAAAAAACDAAAAAAAAgwAAAAAAAIMAAAAAAACDAAAAAAAAgwAAAAAAAIMAAAAAAACDAAAAAAAAgwAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAACDAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAgwAAAAAAAMYAAAAAAADGAAAAAAAASAEAAAAAAEgBAAAAAABIAQAAAAAASAEAAAAAAEgBAAAAAADGAAAAAAAASAEAAAAAAEgBAAAAAABIAQAAAAAASAEAAAAAAEgBAAAAAABIAQAAAAAASAEAAAAAAH8AAAAAAABeAAAAAAAApQAAAAAAAO0AAAAAAADuAAAAAAAA7gAAAAAAAO4AAAAAAADuAAAAAAAApQAAAAAAAO4AAAAAAADuAAAAAAAA7gAAAAAAAO4AAAAAAADuAAAAAAAApQAAAAAAAF4AAAAAAAB/AAAAAAAAXgAAAAAAAKUAAAAAAAD/AAAAAAAALgAAAAAAAC4AAAAAAAAuAAAAAAAAgwAAAAAAAKUAAAAAAACDAAAAAAAALgAAAAAAAC4AAAAAAAAuAAAAAAAAgwAAAAAAAKUAAAAAAABeAAAAAAAAfwAAAAAAAF4AAAAAAAClAAAAAAAAAgEAAAAAAAMBAAAAAAADAQAAAAAAAwEAAAAAAAMBAAAAAAClAAAAAAAAAwEAAAAAAIUBAAAAAACDAAAAAAAAgwEAAAAAAAMBAAAAAAClAAAAAAAAXgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAEgBAAAAAABIAQAAAAAASAEAAAAAAEgBAAAAAABIAQAAAAAAxgAAAAAAAEgBAAAAAAACAQAAAAAAAwEAAAAAAAQBAAAAAABIAQAAAAAASAEAAAAAAEgBAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAApQAAAAAAAKUAAAAAAAClAAAAAAAApQAAAAAAAMYAAAAAAADGAAAAAAAApQAAAAAAAKUAAAAAAAClAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAAxgAAAAAAAMYAAAAAAABIAQAAAAAA7QAAAAAAAO4AAAAAAADuAAAAAAAA7gAAAAAAAO4AAAAAAADvAAAAAAAApQAAAAAAAO0AAAAAAADuAAAAAAAA7gAAAAAAAO8AAAAAAADGAAAAAAAASAEAAAAAAMYAAAAAAADGAAAAAAAASAEAAAAAAP8AAAAAAACDAAAAAAAAgwAAAAAAAIMAAAAAAACDAAAAAAAAAQEAAAAAAKUAAAAAAAD/AAAAAAAAgwAAAAAAAIMAAAAAAAABAQAAAAAApQAAAAAAAF4AAAAAAADGAAAAAAAAxgAAAAAAAEgBAAAAAAD/AAAAAAAAgwAAAAAAAIMAAAAAAACDAAAAAAAAgwAAAAAAAAEBAAAAAAClAAAAAAAA/wAAAAAAAIMAAAAAAACDAAAAAAAAAQEAAAAAAKUAAAAAAAAuAAAAAAAAxgAAAAAAAMYAAAAAAABIAQAAAAAA/wAAAAAAAIMAAAAAAACDAAAAAAAAgwAAAAAAAIMAAAAAAAABAQAAAAAApQAAAAAAAP8AAAAAAACDAAAAAAAAgwAAAAAAAAEBAAAAAAClAAAAAAAALgAAAAAAAMYAAAAAAADGAAAAAAAASAEAAAAAAP8AAAAAAACDAAAAAAAAgwAAAAAAAIMAAAAAAACDAAAAAAAAAQEAAAAAAKUAAAAAAAD/AAAAAAAAgwEAAAAAAAMBAAAAAAAEAQAAAAAApQAAAAAAAC4AAAAAAADGAAAAAAAAxgAAAAAAAEgBAAAAAAACAQAAAAAAAwEAAAAAAAMBAAAAAAADAQAAAAAAAwEAAAAAAAQBAAAAAAClAAAAAAAA/wAAAAAAAAEBAAAAAABeAAAAAAAAXgAAAAAAAKUAAAAAAABeAAAAAAAAxgAAAAAAAMYAAAAAAADGAAAAAAAApQAAAAAAAKUAAAAAAAClAAAAAAAApQAAAAAAAMYAAAAAAADGAAAAAAAApQAAAAAAAAIBAAAAAAAEAQAAAAAAXgAAAAAAAEgBAAAAAABIAQAAAAAASAEAAAAAAA==
           version: 7
         14,-6:
           ind: 14,-6
@@ -91027,6 +91027,48 @@ entities:
     - type: Transform
       pos: 288.5,-90.5
       parent: 1
+- proto: AU14SpawnPointCivilianScientist
+  entities:
+  - uid: 1543
+    components:
+    - type: Transform
+      pos: 295.5,-98.5
+      parent: 1
+  - uid: 1545
+    components:
+    - type: Transform
+      pos: 295.5,-99.5
+      parent: 1
+  - uid: 1546
+    components:
+    - type: Transform
+      pos: 296.5,-98.5
+      parent: 1
+  - uid: 1547
+    components:
+    - type: Transform
+      pos: 296.5,-99.5
+      parent: 1
+  - uid: 1548
+    components:
+    - type: Transform
+      pos: 297.5,-98.5
+      parent: 1
+  - uid: 1549
+    components:
+    - type: Transform
+      pos: 298.5,-98.5
+      parent: 1
+  - uid: 1550
+    components:
+    - type: Transform
+      pos: 298.5,-99.5
+      parent: 1
+  - uid: 1551
+    components:
+    - type: Transform
+      pos: 297.5,-99.5
+      parent: 1
 - proto: AU14SpawnPointWYGuard
   entities:
   - uid: 102560
@@ -91607,6 +91649,13 @@ entities:
     - type: Transform
       rot: 3.141592653589793 rad
       pos: 272.5,-90.5
+      parent: 1
+- proto: CMAutolathe
+  entities:
+  - uid: 1536
+    components:
+    - type: Transform
+      pos: 221.5,-109.5
       parent: 1
 - proto: CMBeaker
   entities:
@@ -93747,11 +93796,6 @@ entities:
     - type: Transform
       pos: 222.5,-110.5
       parent: 1
-  - uid: 104044
-    components:
-    - type: Transform
-      pos: 221.5,-109.5
-      parent: 1
   - uid: 104045
     components:
     - type: Transform
@@ -93991,10 +94035,27 @@ entities:
       parent: 1
 - proto: CMSheetGlass
   entities:
+  - uid: 1552
+    components:
+    - type: Transform
+      pos: 221.48833,-110.5629
+      parent: 1
   - uid: 107705
     components:
     - type: Transform
       pos: 276.67352,-77.52574
+      parent: 1
+- proto: CMSheetMetal
+  entities:
+  - uid: 1553
+    components:
+    - type: Transform
+      pos: 222.50395,-111.51602
+      parent: 1
+  - uid: 1555
+    components:
+    - type: Transform
+      pos: 222.50804,-109.54727
       parent: 1
 - proto: CMSheetMetal50
   entities:
@@ -94002,6 +94063,13 @@ entities:
     components:
     - type: Transform
       pos: 275.6402,-77.53737
+      parent: 1
+- proto: CMSheetPlasteel50
+  entities:
+  - uid: 1554
+    components:
+    - type: Transform
+      pos: 222.50395,-110.53165
       parent: 1
 - proto: CMShower
   entities:
@@ -99148,6 +99216,35 @@ entities:
     - type: Transform
       pos: 265.5,-106.5
       parent: 1
+- proto: HydroponicsToolClippers
+  entities:
+  - uid: 1556
+    components:
+    - type: Transform
+      pos: 316.48837,-87.532555
+      parent: 1
+  - uid: 1557
+    components:
+    - type: Transform
+      pos: 316.48837,-87.532555
+      parent: 1
+  - uid: 1558
+    components:
+    - type: Transform
+      pos: 316.48837,-87.532555
+      parent: 1
+- proto: HydroponicsToolScythe
+  entities:
+  - uid: 1559
+    components:
+    - type: Transform
+      pos: 316.45712,-87.45443
+      parent: 1
+  - uid: 1560
+    components:
+    - type: Transform
+      pos: 316.45712,-87.45443
+      parent: 1
 - proto: PonderingOrb
   entities:
   - uid: 106434
@@ -100986,7 +101083,7 @@ entities:
       pos: 283.5,-103.5
       parent: 1
     - type: Door
-      secondsUntilStateChange: -219245.47
+      secondsUntilStateChange: -221977.34
       state: Closing
   - uid: 104771
     components:
@@ -100994,7 +101091,7 @@ entities:
       pos: 283.5,-102.5
       parent: 1
     - type: Door
-      secondsUntilStateChange: -224463.88
+      secondsUntilStateChange: -227195.75
       state: Closing
   - uid: 104927
     components:
@@ -101014,7 +101111,7 @@ entities:
       pos: 280.5,-95.5
       parent: 1
     - type: Door
-      secondsUntilStateChange: -224464.73
+      secondsUntilStateChange: -227196.61
       state: Closing
   - uid: 105575
     components:
@@ -101029,7 +101126,7 @@ entities:
       pos: 282.5,-95.5
       parent: 1
     - type: Door
-      secondsUntilStateChange: -224465.23
+      secondsUntilStateChange: -227197.11
       state: Closing
 - proto: RMCDeskFanTan
   entities:
@@ -106403,52 +106500,49 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 268.5,-102.5
       parent: 1
-- proto: RMCPodDoorAlmayerBlack
+- proto: RMCPodDoorAIBlackLockdown
   entities:
-  - uid: 106341
+  - uid: 1537
     components:
     - type: MetaData
       name: We-Yu Bunker Checkpoint Bottom
     - type: Transform
-      rot: 3.141592653589793 rad
-      pos: 264.5,-88.5
-      parent: 1
-  - uid: 106342
-    components:
-    - type: MetaData
-      name: We-Yu Bunker Checkpoint Bottom
-    - type: Transform
-      rot: 3.141592653589793 rad
-      pos: 265.5,-88.5
-      parent: 1
-  - uid: 106343
-    components:
-    - type: MetaData
-      name: We-Yu Bunker Checkpoint Bottom
-    - type: Transform
-      rot: 3.141592653589793 rad
       pos: 266.5,-88.5
       parent: 1
-  - uid: 107335
+  - uid: 1538
+    components:
+    - type: MetaData
+      name: We-Yu Bunker Checkpoint Bottom
+    - type: Transform
+      pos: 264.5,-88.5
+      parent: 1
+  - uid: 1539
+    components:
+    - type: MetaData
+      name: We-Yu Bunker Checkpoint Bottom
+    - type: Transform
+      pos: 265.5,-88.5
+      parent: 1
+  - uid: 1540
     components:
     - type: MetaData
       name: We-Yu Bunker Checkpoint Top
     - type: Transform
       pos: 264.5,-80.5
       parent: 1
-  - uid: 107336
-    components:
-    - type: MetaData
-      name: We-Yu Bunker Checkpoint Top
-    - type: Transform
-      pos: 265.5,-80.5
-      parent: 1
-  - uid: 107337
+  - uid: 1541
     components:
     - type: MetaData
       name: We-Yu Bunker Checkpoint Top
     - type: Transform
       pos: 266.5,-80.5
+      parent: 1
+  - uid: 1542
+    components:
+    - type: MetaData
+      name: We-Yu Bunker Checkpoint Top
+    - type: Transform
+      pos: 265.5,-80.5
       parent: 1
 - proto: RMCPodDoorAlmayerWhite
   entities:
@@ -106935,6 +107029,11 @@ entities:
       parent: 1
 - proto: RMCSheetPlastic
   entities:
+  - uid: 1544
+    components:
+    - type: Transform
+      pos: 221.5352,-111.5004
+      parent: 1
   - uid: 107703
     components:
     - type: Transform
