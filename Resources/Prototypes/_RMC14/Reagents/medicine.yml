@@ -348,6 +348,10 @@
     Medicine:
       metabolismRate: 0.1
       effects:
+      - !type:EqualHealthChange
+        conditions:
+        damage:
+        - Genetic: -0.1
       - !type:Toxic
         potency: 4
       - !type:Corrosive
