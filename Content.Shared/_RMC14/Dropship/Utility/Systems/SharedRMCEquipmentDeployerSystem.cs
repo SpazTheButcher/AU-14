@@ -209,6 +209,11 @@ public abstract partial class SharedRMCEquipmentDeployerSystem : EntitySystem
         if (!equipmentDeployerComponent.IsDeployable)
             return false;
 
+        var attempt = new RMCEquipmentDeployAttemptEvent(deploy, deployOffset, user);
+        RaiseLocalEvent(deployer, attempt);
+        if (attempt.Cancelled)
+            return false;
+
         if (user != null)
         {
             if (_entityWhitelist.IsBlacklistPass(equipmentDeployerComponent.Blacklist, user.Value))
@@ -263,6 +268,13 @@ public abstract partial class SharedRMCEquipmentDeployerSystem : EntitySystem
             : equipmentDeployerComponent.UnDeployAudio;
 
         _audio.PlayPredicted(audio, Transform(deployer).Coordinates, user);
+
+        if (deployingEntity is { } equipment)
+        {
+            var deployedEvent = new RMCEquipmentDeployedEvent(deploy, equipment);
+            RaiseLocalEvent(deployer, deployedEvent);
+        }
+
         return true;
     }
 

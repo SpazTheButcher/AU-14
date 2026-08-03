@@ -324,6 +324,7 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
     private void OnTacticalHoverShutdown(Entity<DropshipTacticalHoverComponent> ent, ref ComponentShutdown args)
     {
         CleanupHoverEffects(ent);
+        RaiseLocalEvent(new DropshipTacticalHoverEndedEvent(ent.Owner));
     }
 
     public override void Update(float frameTime)

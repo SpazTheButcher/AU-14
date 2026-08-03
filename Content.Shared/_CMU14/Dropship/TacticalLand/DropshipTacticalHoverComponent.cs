@@ -66,3 +66,11 @@ public sealed partial class DropshipTacticalHoverDownwashComponent : Component
     [DataField, AutoNetworkedField]
     public int ProjectedMapOffset = -1;
 }
+
+/// <summary>
+/// Raised after a dropship leaves tactical hover so hover-only equipment can clean itself up.
+/// </summary>
+public sealed class DropshipTacticalHoverEndedEvent(EntityUid dropship) : EntityEventArgs
+{
+    public readonly EntityUid Dropship = dropship;
+}
