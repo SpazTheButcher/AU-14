@@ -5,7 +5,7 @@ meta:
   forkId: ""
   forkVersion: ""
   time: 08/03/2026 03:45:55
-  entityCount: 61735
+  entityCount: 61729
 maps:
 - 1
 grids:
@@ -110374,40 +110374,6 @@ entities:
     components:
     - type: Transform
       pos: 291.5,-154.5
-      parent: 1
-- proto: AU14SpawnPointCivilianCMBDeputy
-  entities:
-  - uid: 12310
-    components:
-    - type: Transform
-      pos: 270.5,-105.5
-      parent: 1
-  - uid: 12380
-    components:
-    - type: Transform
-      pos: 271.5,-105.5
-      parent: 1
-  - uid: 12382
-    components:
-    - type: Transform
-      pos: 272.5,-105.5
-      parent: 1
-  - uid: 12385
-    components:
-    - type: Transform
-      pos: 274.5,-105.5
-      parent: 1
-  - uid: 12390
-    components:
-    - type: Transform
-      pos: 273.5,-105.5
-      parent: 1
-- proto: AU14SpawnPointCivilianCMBMarshal
-  entities:
-  - uid: 12391
-    components:
-    - type: Transform
-      pos: 268.5,-105.5
       parent: 1
 - proto: AU14SpawnPointCivilianColonist
   entities:
