@@ -244,7 +244,7 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
 
         var coords = transform.WithEntityId(xform.Coordinates, grid);
         var tile = map.TileIndicesFor(grid, gridComp, coords);
-        var preserveFallingMotion = ShouldPreserveVehicleZFallMotion(uid);
+        var preserveFallingMotion = ShouldPreserveVehicleZFallMotion(uid, xform);
 
         ent.Comp.SyncedGrid = grid;
         ent.Comp.CurrentTile = tile;
@@ -275,10 +275,12 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         return true;
     }
 
-    private bool ShouldPreserveVehicleZFallMotion(EntityUid uid)
+    private bool ShouldPreserveVehicleZFallMotion(EntityUid uid, TransformComponent? xform = null)
     {
+        xform ??= Transform(uid);
         return HasComp<CMUVehicleZTraversalComponent>(uid) &&
-               HasComp<CMUZFallingComponent>(uid);
+               HasComp<CMUZFallingComponent>(uid) &&
+               xform.MapUid == xform.ParentUid;
     }
 
     private void OnMoverCanRun(Entity<GridVehicleMoverComponent> ent, ref VehicleCanRunEvent args)
@@ -369,13 +371,15 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
             if (xform.GridUid is not { } grid || !gridQ.TryComp(grid, out var gridComp))
                 continue;
 
+            SyncMoverFacingToTransform(uid, mover, grid);
+
             if (_net.IsClient && !ShouldPredictVehicleMovement(vehicle))
             {
                 SmoothReplicatedVehicle(uid, grid, mover, frameTime);
                 continue;
             }
 
-            var inputDir = GetMoverInput(uid, mover, vehicle, out var pushing);
+            var inputDir = GetMoverInput(uid, mover, vehicle, grid, out var pushing);
             var accumulator = _movementAccumulator.GetValueOrDefault(uid) + frameTime;
             var maxAccum = MovementFixedStep * MaxFixedStepsPerFrame;
             if (accumulator > maxAccum)
@@ -389,8 +393,12 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
                 if (currentXform.GridUid is not { } currentGrid || !gridQ.TryComp(currentGrid, out var currentGridComp))
                     break;
 
+                // Z movement only applies to entities parented directly to a map.
+                // A replicated marker can briefly outlive reparenting onto a
+                // shuttle grid and must not suppress driver input there.
                 if (TryComp(uid, out CMUVehicleZTraversalComponent? zTraversal) &&
-                    HasComp<CMUZFallingComponent>(uid))
+                    HasComp<CMUZFallingComponent>(uid) &&
+                    currentXform.MapUid == currentXform.ParentUid)
                 {
                     UpdateFallingMovement(uid, mover, currentGrid, currentGridComp, zTraversal, MovementFixedStep);
                 }
@@ -416,6 +424,23 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
             return false;
 
         return vehicle.Operator != null && vehicle.Operator == _player.LocalEntity;
+    }
+
+    private void SyncMoverFacingToTransform(EntityUid uid, GridVehicleMoverComponent mover, EntityUid grid)
+    {
+        // Shuttle rotation can update a vehicle's transform without changing grids,
+        // so OnMoverMove has no parent-change event from which to resynchronize the
+        // mover. Keep its logical forward direction aligned with the visible chassis.
+        if (mover.CurrentDirection == Vector2i.Zero)
+            return;
+
+        var relativeRotation = transform.GetWorldRotation(uid) - transform.GetWorldRotation(grid);
+        var transformDirection = relativeRotation.GetCardinalDir().ToIntVec();
+        if (transformDirection == mover.CurrentDirection)
+            return;
+
+        mover.CurrentDirection = transformDirection;
+        Dirty(uid, mover);
     }
 
     private void SmoothReplicatedVehicle(EntityUid uid, EntityUid grid, GridVehicleMoverComponent mover, float frameTime)

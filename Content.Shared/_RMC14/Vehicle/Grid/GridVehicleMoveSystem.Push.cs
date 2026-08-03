@@ -12,7 +12,7 @@ namespace Content.Shared.Vehicle;
 
 public sealed partial class GridVehicleMoverSystem : EntitySystem
 {
-    private Vector2i GetInputDirection(InputMoverComponent input)
+    private Vector2i GetInputDirection(InputMoverComponent input, EntityUid movementGrid)
     {
         var buttons = input.HeldMoveButtons;
         var dir = Vector2i.Zero;
@@ -33,20 +33,30 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
                 dir = new Vector2i(0, Math.Sign(dir.Y));
         }
 
-        // Match ordinary tile movement: movement keys are relative to the
-        // operator's current view/input rotation, then resolved onto the
-        // vehicle grid's cardinal axes.
-        var relative = input.TargetRelativeRotation.RotateVec(new Vector2(dir.X, dir.Y));
-        return Angle.FromWorldVec(relative).GetCardinalDir().ToIntVec();
+        // The driver commonly lives on a separate vehicle-interior grid. Convert
+        // their view-relative input through world space into the exterior grid
+        // that the vehicle actually moves on.
+        var rotation = input.TargetRelativeRotation;
+        if (input.RelativeEntity is { } relative && TryComp(relative, out TransformComponent? relativeXform))
+            rotation += transform.GetWorldRotation(relativeXform);
+
+        rotation -= transform.GetWorldRotation(movementGrid);
+        var movementRelative = rotation.RotateVec(new Vector2(dir.X, dir.Y));
+        return Angle.FromWorldVec(movementRelative).GetCardinalDir().ToIntVec();
     }
 
-    private Vector2i GetMoverInput(EntityUid uid, GridVehicleMoverComponent mover, VehicleComponent vehicle, out bool pushing)
+    private Vector2i GetMoverInput(
+        EntityUid uid,
+        GridVehicleMoverComponent mover,
+        VehicleComponent vehicle,
+        EntityUid movementGrid,
+        out bool pushing)
     {
         pushing = false;
         if (vehicle.Operator is { } op && TryComp<InputMoverComponent>(op, out var inputComp))
         {
             _activeXenoPushers.Remove(uid);
-            var inputDir = GetInputDirection(inputComp);
+            var inputDir = GetInputDirection(inputComp, movementGrid);
             return TryGetBlackfootFlightInput(uid, mover, inputDir, out var blackfootDir)
                 ? blackfootDir
                 : inputDir;
@@ -148,7 +158,10 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
             if (!TryComp<InputMoverComponent>(other, out var input))
                 continue;
 
-            var dir = GetInputDirection(input);
+            if (Transform(uid).GridUid is not { } movementGrid)
+                continue;
+
+            var dir = GetInputDirection(input, movementGrid);
             if (dir == Vector2i.Zero)
                 continue;
 
@@ -158,7 +171,8 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
                 continue;
 
             var inputVec = new Vector2(dir.X, dir.Y);
-            var score = Vector2.Dot(inputVec, Vector2.Normalize(toVehicle));
+            var toVehicleLocal = (-transform.GetWorldRotation(movementGrid)).RotateVec(toVehicle);
+            var score = Vector2.Dot(inputVec, Vector2.Normalize(toVehicleLocal));
             if (score <= 0f)
                 continue;
 
@@ -182,6 +196,9 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         var delta = vehiclePos - pusherPos;
         if (delta.LengthSquared() <= 0.0001f)
             return Vector2i.Zero;
+
+        if (Transform(uid).GridUid is { } grid)
+            delta = (-transform.GetWorldRotation(grid)).RotateVec(delta);
 
         return Angle.FromWorldVec(delta).GetCardinalDir().ToIntVec();
     }

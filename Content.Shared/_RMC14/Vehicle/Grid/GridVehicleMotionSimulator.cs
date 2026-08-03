@@ -59,7 +59,7 @@ public static class GridVehicleMotionSimulator
             accel = acceleration;
         }
 
-        return StepTowardsTargetSpeed(currentSpeed, targetSpeed, accel, deceleration, frameTime);
+        return StepTowardsTargetSpeed(currentSpeed, targetSpeed, accel, frameTime);
     }
 
     public static DriveSpeedResult StepDriveSpeed(
@@ -109,7 +109,7 @@ public static class GridVehicleMotionSimulator
             }
         }
 
-        var steppedSpeed = StepTowardsTargetSpeed(currentSpeed, targetSpeed, accel, profile.Deceleration, frameTime);
+        var steppedSpeed = StepTowardsTargetSpeed(currentSpeed, targetSpeed, accel, frameTime);
         var changingDirection =
             MathF.Abs(steppedSpeed) > 0.01f &&
             ((reversing && steppedSpeed > 0f) ||
@@ -149,14 +149,13 @@ public static class GridVehicleMotionSimulator
         float currentSpeed,
         float targetSpeed,
         float accelerateTowardTarget,
-        float decelerateTowardTarget,
         float frameTime)
     {
         if (currentSpeed < targetSpeed)
             return MathF.Min(currentSpeed + accelerateTowardTarget * frameTime, targetSpeed);
 
         if (currentSpeed > targetSpeed)
-            return MathF.Max(currentSpeed - decelerateTowardTarget * frameTime, targetSpeed);
+            return MathF.Max(currentSpeed - accelerateTowardTarget * frameTime, targetSpeed);
 
         return currentSpeed;
     }

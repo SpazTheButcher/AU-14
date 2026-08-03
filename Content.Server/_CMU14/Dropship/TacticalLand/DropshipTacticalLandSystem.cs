@@ -407,11 +407,7 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
     private void UpdateFootprint(Entity<DropshipPilotEyeComponent> eye, TransformComponent xform)
     {
-        var rotated = eye.Comp.RotationQuarterTurns % 2 != 0;
-        var w = rotated ? eye.Comp.Footprint.Y : eye.Comp.Footprint.X;
-        var h = rotated ? eye.Comp.Footprint.X : eye.Comp.Footprint.Y;
-        var halfW = w / 2;
-        var halfH = h / 2;
+        var footprintOffsets = GetRotatedFootprintOffsets(eye.Comp);
 
         var blocked = new List<Vector2i>();
         var allBlocked = false;
@@ -439,51 +435,42 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
                 {
                     for (var ldy = -LandingZoneExclusionRadius; ldy <= LandingZoneExclusionRadius; ldy++)
                     {
-                        var ddx = destTile.X + ldx - centerTile.X;
-                        var ddy = destTile.Y + ldy - centerTile.Y;
-                        if (Math.Abs(ddx) <= halfW && Math.Abs(ddy) <= halfH)
-                            destinationTiles.Add(new Vector2i(ddx, ddy));
+                        destinationTiles.Add(destTile + new Vector2i(ldx, ldy));
                     }
                 }
             }
 
-
-            for (var dx = -halfW; dx <= halfW; dx++)
+            foreach (var offset in footprintOffsets)
             {
-                for (var dy = -halfH; dy <= halfH; dy++)
+                var t = centerTile + offset;
+                var blockedThis = false;
+
+                if (destinationTiles.Contains(t))
                 {
-                    var t = new Vector2i(centerTile.X + dx, centerTile.Y + dy);
-                    var blockedThis = false;
-
-                    if (destinationTiles.Contains(new Vector2i(dx, dy)))
-                    {
-                        blockedThis = true;
-                    }
-                    else if (!_map.TryGetTileRef(gridUid, grid, t, out var tileRef))
-                    {
-                        blockedThis = true;
-                    }
-                    else
-                    {
-                        var opening = CMUZLevelOpeningCache.IsOpeningTile(tileRef.Tile, _tile);
-                        if (tileRef.Tile.IsEmpty && !opening)
-                            blockedThis = true;
-                        else if (!opening && _turf.IsTileBlocked(tileRef, blockMask))
-                            blockedThis = true;
-                    }
-
-                    if (blockedThis)
-                        blocked.Add(new Vector2i(dx, dy));
+                    blockedThis = true;
                 }
+                else if (!_map.TryGetTileRef(gridUid, grid, t, out var tileRef))
+                {
+                    blockedThis = true;
+                }
+                else
+                {
+                    var opening = CMUZLevelOpeningCache.IsOpeningTile(tileRef.Tile, _tile);
+                    if (tileRef.Tile.IsEmpty && !opening)
+                        blockedThis = true;
+                    else if (!opening && _turf.IsTileBlocked(tileRef, blockMask))
+                        blockedThis = true;
+                }
+
+                if (blockedThis)
+                    blocked.Add(offset);
             }
         }
 
         if (allBlocked)
         {
             blocked.Clear();
-            for (var dx = -halfW; dx <= halfW; dx++)
-            for (var dy = -halfH; dy <= halfH; dy++)
-                blocked.Add(new Vector2i(dx, dy));
+            blocked.AddRange(footprintOffsets);
         }
 
         var clear = blocked.Count == 0;
@@ -505,6 +492,49 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         {
             PushUiState((console, nav), pilot);
         }
+    }
+
+    private List<Vector2i> GetRotatedFootprintOffsets(DropshipPilotEyeComponent eye)
+    {
+        var offsets = new List<Vector2i>();
+        if (eye.Console is { } console &&
+            !TerminatingOrDeleted(console) &&
+            Transform(console).GridUid is { } dropshipGrid &&
+            TryComp(dropshipGrid, out MapGridComponent? dropshipGridComp))
+        {
+            foreach (var tile in _map.GetAllTiles(dropshipGrid, dropshipGridComp))
+            {
+                offsets.Add(RotateFootprintOffset(tile.GridIndices, eye.RotationQuarterTurns));
+            }
+
+            if (offsets.Count > 0)
+                return offsets;
+        }
+
+        // Compatibility fallback for eyes created before exact hull offsets were
+        // populated, and for any non-grid tactical landing implementation.
+        var halfW = eye.Footprint.X / 2;
+        var halfH = eye.Footprint.Y / 2;
+        for (var x = -halfW; x <= halfW; x++)
+        {
+            for (var y = -halfH; y <= halfH; y++)
+            {
+                offsets.Add(RotateFootprintOffset(new Vector2i(x, y), eye.RotationQuarterTurns));
+            }
+        }
+
+        return offsets;
+    }
+
+    private static Vector2i RotateFootprintOffset(Vector2i offset, byte quarterTurns)
+    {
+        return (quarterTurns % 4) switch
+        {
+            1 => new Vector2i(offset.Y, -offset.X),
+            2 => new Vector2i(-offset.X, -offset.Y),
+            3 => new Vector2i(-offset.Y, offset.X),
+            _ => offset,
+        };
     }
 
     private void TryMoveTacticalEye(Entity<DropshipNavigationComputerComponent> ent, EntityUid pilot, int offset)
