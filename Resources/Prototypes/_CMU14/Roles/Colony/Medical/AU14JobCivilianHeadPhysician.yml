@@ -61,7 +61,6 @@
 - type: startingGear
   id: AU14GearCivilianHeadPhysician
   equipment: {}
-    ears: AU14ColonyAdminHeadset
   storage:
     back:
     - AU14StampHPHY
