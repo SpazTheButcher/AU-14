@@ -4,8 +4,8 @@ meta:
   engineVersion: v278.0.0
   forkId: ""
   forkVersion: ""
-  time: 08/03/2026 01:23:05
-  entityCount: 61717
+  time: 08/03/2026 01:33:08
+  entityCount: 61713
 maps:
 - 1
 grids:
@@ -1179,7 +1179,7 @@ entities:
           version: 7
         7,-2:
           ind: 7,-2
-          tiles: 0AUAAAAEANAFAAAABADQBQAAAAUA0AUAAAAFANAFAAAABwDQBQAAAAYA0AUAAAABANAFAAAABADQBQAAAAAA0AUAAAAAANAFAAAABwDQBQAAAAIA0AUAAAADANAFAAAABwDQBQAAAAAA0AUAAAAFAIgBAAAAAgCIAQAAAAYAiAEAAAAGAIgBAAAAAwCIAQAAAAIAiAEAAAADAIgBAAAABACIAQAAAAAA0AUAAAADANAFAAAAAQDQBQAAAAEA0AUAAAAHANAFAAAAAgDQBQAAAAIA0AUAAAAHANAFAAAAAACIAQAAAAYAiAEAAAAGAIgBAAAAAQCIAQAAAAYAiAEAAAAEAIgBAAAAAgCIAQAAAAAAiAEAAAAGANAFAAAABgDQBQAAAAEA0AUAAAAFANAFAAAAAQDQBQAAAAQA0AUAAAAEANAFAAAAAADQBQAAAAMAiAEAAAAFAIgBAAAAAACIAQAAAAUAiAEAAAACAIgBAAAABwCIAQAAAAEAiAEAAAAAAIgBAAAABADQBQAAAAMA0AUAAAADANAFAAAABgDQBQAAAAYA0AUAAAACANAFAAAABwDQBQAAAAUA0AUAAAAGAAIAAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAHUFAAAAAAB1BQAAAAAA0AUAAAAEANAFAAAAAwDQBQAAAAIA0AUAAAAAANAFAAAAAgDQBQAAAAUA0AUAAAAAANAFAAAABwACAAAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAIgBAAAAAwCIAQAAAAUA0AUAAAACANAFAAAABgDQBQAAAAcA0AUAAAAGANAFAAAAAADQBQAAAAYAdQUAAAAAAHUFAAAAAAB1BQAAAAAAdQUAAAAAAHUFAAAAAAB1BQAAAAAAAgAAAAAAAAIAAAAAAACIAQAAAAUAiAEAAAAEANAFAAAAAwDQBQAAAAEA0AUAAAACANAFAAAABADQBQAAAAUA0AUAAAAEAHUFAAAAAAB1BQAAAAAAdQUAAAAAAHUFAAAAAAB1BQAAAAAAdQUAAAAAAAIAAAAAAAACAAAAAAAAiAEAAAAHAIgBAAAAAgDQBQAAAAAA0AUAAAAAANAFAAAABwDQBQAAAAIA0AUAAAAGANAFAAAAAQB1BQAAAAAAdQUAAAAAAHUFAAAAAAB1BQAAAAAAdQUAAAAAAHUFAAAAAAACAAAAAAAAAgAAAAAAAIgBAAAAAQCIAQAAAAEA0AUAAAABANAFAAAAAwDQBQAAAAIA0AUAAAACANAFAAAABwDQBQAAAAEAdQUAAAAAAHUFAAAAAAB1BQAAAAAAdQUAAAAAAHUFAAAAAAB1BQAAAAAAAgAAAAAAAAIAAAAAAACIAQAAAAcAiAEAAAACANAFAAAAAgDQBQAAAAAA0AUAAAAGANAFAAAAAgDQBQAAAAEA0AUAAAADAHUFAAAAAAB1BQAAAAAAdQUAAAAAAHUFAAAAAAB1BQAAAAAAdQUAAAAAAAIAAAAAAAACAAAAAAAAiAEAAAAAAIgBAAAABQDQBQAAAAAA0AUAAAADANAFAAAAAQDQBQAAAAUA0AUAAAABANAFAAAAAgB1BQAAAAAAdQUAAAAAAHUFAAAAAAB1BQAAAAAAdQUAAAAAAHUFAAAAAAACAAAAAAAAAgAAAAAAAIgBAAAABQCIAQAAAAMA0AUAAAAEANAFAAAAAADQBQAAAAUA0AUAAAAAANAFAAAAAADQBQAAAAQAdQUAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAHUFAAAAAACIAQAAAAUAiAEAAAAAANAFAAAABwDQBQAAAAEA0AUAAAABANAFAAAABwDQBQAAAAcA0AUAAAAFAHUFAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAB1BQAAAAAA0AUAAAAAANAFAAAAAwDQBQAAAAQA0AUAAAACANAFAAAABADQBQAAAAUA0AUAAAABANAFAAAABQB1BQAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAB1BQAAAAAAdQUAAAAAANAFAAAABADQBQAAAAQA0AUAAAADANAFAAAAAgDQBQAAAAAA0AUAAAAEANAFAAAAAADQBQAAAAMAdQUAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAdQUAAAAAAHUFAAAAAADQBQAAAAQA0AUAAAABANAFAAAABwDQBQAAAAEA0AUAAAAGANAFAAAAAwDQBQAAAAEA0AUAAAADAA==
+          tiles: 0AUAAAAEANAFAAAABADQBQAAAAUA0AUAAAAFANAFAAAABwDQBQAAAAYA0AUAAAABANAFAAAABADQBQAAAAAA0AUAAAAAANAFAAAABwDQBQAAAAIA0AUAAAADANAFAAAABwDQBQAAAAAA0AUAAAAFAIgBAAAAAgCIAQAAAAYAiAEAAAAGAIgBAAAAAwCIAQAAAAIAiAEAAAADAIgBAAAABACIAQAAAAAA0AUAAAADANAFAAAAAQDQBQAAAAEA0AUAAAAHANAFAAAAAgDQBQAAAAIA0AUAAAAHANAFAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAACIAQAAAAAAiAEAAAAGANAFAAAABgDQBQAAAAEA0AUAAAAFANAFAAAAAQDQBQAAAAQA0AUAAAAEANAFAAAAAADQBQAAAAMAAgAAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAiAEAAAAAAIgBAAAABADQBQAAAAMA0AUAAAADANAFAAAABgDQBQAAAAYA0AUAAAACANAFAAAABwDQBQAAAAUA0AUAAAAGAAIAAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAHUFAAAAAAB1BQAAAAAA0AUAAAAEANAFAAAAAwDQBQAAAAIA0AUAAAAAANAFAAAAAgDQBQAAAAUA0AUAAAAAANAFAAAABwACAAAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAIgBAAAAAwCIAQAAAAUA0AUAAAACANAFAAAABgDQBQAAAAcA0AUAAAAGANAFAAAAAADQBQAAAAYAdQUAAAAAAHUFAAAAAAB1BQAAAAAAdQUAAAAAAHUFAAAAAAB1BQAAAAAAAgAAAAAAAAIAAAAAAACIAQAAAAUAiAEAAAAEANAFAAAAAwDQBQAAAAEA0AUAAAACANAFAAAABADQBQAAAAUA0AUAAAAEAHUFAAAAAAB1BQAAAAAAdQUAAAAAAHUFAAAAAAB1BQAAAAAAdQUAAAAAAAIAAAAAAAACAAAAAAAAiAEAAAAHAIgBAAAAAgDQBQAAAAAA0AUAAAAAANAFAAAABwDQBQAAAAIA0AUAAAAGANAFAAAAAQB1BQAAAAAAdQUAAAAAAHUFAAAAAAB1BQAAAAAAdQUAAAAAAHUFAAAAAAACAAAAAAAAAgAAAAAAAIgBAAAAAQCIAQAAAAEA0AUAAAABANAFAAAAAwDQBQAAAAIA0AUAAAACANAFAAAABwDQBQAAAAEAdQUAAAAAAHUFAAAAAAB1BQAAAAAAdQUAAAAAAHUFAAAAAAB1BQAAAAAAAgAAAAAAAAIAAAAAAACIAQAAAAcAiAEAAAACANAFAAAAAgDQBQAAAAAA0AUAAAAGANAFAAAAAgDQBQAAAAEA0AUAAAADAHUFAAAAAAB1BQAAAAAAdQUAAAAAAHUFAAAAAAB1BQAAAAAAdQUAAAAAAAIAAAAAAAACAAAAAAAAiAEAAAAAAIgBAAAABQDQBQAAAAAA0AUAAAADANAFAAAAAQDQBQAAAAUA0AUAAAABANAFAAAAAgB1BQAAAAAAdQUAAAAAAHUFAAAAAAB1BQAAAAAAdQUAAAAAAHUFAAAAAAACAAAAAAAAAgAAAAAAAIgBAAAABQCIAQAAAAMA0AUAAAAEANAFAAAAAADQBQAAAAUA0AUAAAAAANAFAAAAAADQBQAAAAQAdQUAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAHUFAAAAAACIAQAAAAUAiAEAAAAAANAFAAAABwDQBQAAAAEA0AUAAAABANAFAAAABwDQBQAAAAcA0AUAAAAFAHUFAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAB1BQAAAAAA0AUAAAAAANAFAAAAAwDQBQAAAAQA0AUAAAACANAFAAAABADQBQAAAAUA0AUAAAABANAFAAAABQB1BQAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAB1BQAAAAAAdQUAAAAAANAFAAAABADQBQAAAAQA0AUAAAADANAFAAAAAgDQBQAAAAAA0AUAAAAEANAFAAAAAADQBQAAAAMAdQUAAAAAAAIAAAAAAAACAAAAAAAAAgAAAAAAAAIAAAAAAAACAAAAAAAAdQUAAAAAAHUFAAAAAADQBQAAAAQA0AUAAAABANAFAAAABwDQBQAAAAEA0AUAAAAGANAFAAAAAwDQBQAAAAEA0AUAAAADAA==
           version: 7
         7,-1:
           ind: 7,-1
@@ -105379,17 +105379,17 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 222.5,-91.5
       parent: 1
-  - uid: 12268
+  - uid: 12287
     components:
     - type: Transform
       pos: 273.5,-60.5
       parent: 1
-  - uid: 12269
+  - uid: 12288
     components:
     - type: Transform
       pos: 274.5,-60.5
       parent: 1
-  - uid: 12270
+  - uid: 12289
     components:
     - type: Transform
       pos: 275.5,-60.5
@@ -106111,21 +106111,21 @@ entities:
         title: null
 - proto: AU14SpawnPointCivilianAmbassadorTWE
   entities:
-  - uid: 12265
+  - uid: 12283
     components:
     - type: Transform
       pos: 301.5,-149.5
       parent: 1
 - proto: AU14SpawnPointCivilianAmbassadorUA
   entities:
-  - uid: 12258
+  - uid: 5104
     components:
     - type: Transform
       pos: 272.5,-162.5
       parent: 1
 - proto: AU14SpawnPointCivilianAmbassadorUPP
   entities:
-  - uid: 12266
+  - uid: 12285
     components:
     - type: Transform
       pos: 291.5,-154.5
@@ -106328,7 +106328,7 @@ entities:
       parent: 1
 - proto: AU14SpawnPointCivilianHeadPhysician
   entities:
-  - uid: 12271
+  - uid: 12290
     components:
     - type: Transform
       pos: 181.5,-68.5
@@ -106474,44 +106474,44 @@ entities:
       parent: 1
 - proto: AU14SpawnPointCivilianNurse
   entities:
-  - uid: 12272
+  - uid: 12291
     components:
     - type: Transform
       pos: 182.5,-71.5
       parent: 1
-  - uid: 12273
+  - uid: 12292
     components:
     - type: Transform
       pos: 182.5,-72.5
       parent: 1
-  - uid: 12274
+  - uid: 12293
     components:
     - type: Transform
       pos: 181.5,-72.5
       parent: 1
 - proto: AU14SpawnPointCivilianPhysician
   entities:
-  - uid: 12275
+  - uid: 12294
     components:
     - type: Transform
       pos: 180.5,-70.5
       parent: 1
-  - uid: 12276
+  - uid: 12295
     components:
     - type: Transform
       pos: 181.5,-70.5
       parent: 1
-  - uid: 12277
+  - uid: 12296
     components:
     - type: Transform
       pos: 182.5,-70.5
       parent: 1
-  - uid: 12278
+  - uid: 12297
     components:
     - type: Transform
       pos: 182.5,-69.5
       parent: 1
-  - uid: 12279
+  - uid: 12298
     components:
     - type: Transform
       pos: 181.5,-69.5
@@ -106588,6 +106588,23 @@ entities:
     - type: Transform
       pos: 26.5,-38.5
       parent: 1
+  - uid: 5106
+    components:
+    - type: Transform
+      pos: 97.5,-3.5
+      parent: 1
+  - uid: 12276
+    components:
+    - type: Transform
+      pos: 97.5,-2.5
+      parent: 1
+- proto: AU14SpawnPointGOVFORCombatCorrespondent
+  entities:
+  - uid: 12275
+    components:
+    - type: Transform
+      pos: 45.5,2.5
+      parent: 1
 - proto: AU14SpawnPointGOVFORDCC
   entities:
   - uid: 610
@@ -106611,6 +106628,13 @@ entities:
     components:
     - type: Transform
       pos: 46.5,-0.5
+      parent: 1
+- proto: AU14SpawnPointGOVFOREngineeringTech
+  entities:
+  - uid: 12273
+    components:
+    - type: Transform
+      pos: 98.5,-7.5
       parent: 1
 - proto: AU14SpawnPointGOVFORMilitaryDoctor
   entities:
@@ -106675,6 +106699,34 @@ entities:
     components:
     - type: Transform
       pos: 16.5,9.5
+      parent: 1
+- proto: AU14SpawnPointGOVFOROfficerEngi
+  entities:
+  - uid: 5126
+    components:
+    - type: Transform
+      pos: 99.5,-7.5
+      parent: 1
+- proto: AU14SpawnPointGOVFOROfficerLogistics
+  entities:
+  - uid: 12258
+    components:
+    - type: Transform
+      pos: 97.5,-1.5
+      parent: 1
+- proto: AU14SpawnPointGOVFOROfficerMedical
+  entities:
+  - uid: 12284
+    components:
+    - type: Transform
+      pos: 12.5,-19.5
+      parent: 1
+- proto: AU14SpawnPointGOVFOROfficerMP
+  entities:
+  - uid: 12272
+    components:
+    - type: Transform
+      pos: 10.5,8.5
       parent: 1
 - proto: AU14SpawnPointGOVFORPlatCo
   entities:
@@ -106758,6 +106810,18 @@ entities:
     components:
     - type: Transform
       pos: 27.5,-38.5
+      parent: 1
+- proto: AU14SpawnPointGOVFORRadioTrafficOperator
+  entities:
+  - uid: 5122
+    components:
+    - type: Transform
+      pos: 26.5,-38.5
+      parent: 1
+  - uid: 5123
+    components:
+    - type: Transform
+      pos: 26.5,-37.5
       parent: 1
 - proto: AU14SpawnPointGOVFORSectionSergeant
   entities:
@@ -106879,6 +106943,40 @@ entities:
     - type: Transform
       pos: 38.5,-38.5
       parent: 1
+- proto: AU14SpawnPointGOVFORVehicleCommander
+  entities:
+  - uid: 5130
+    components:
+    - type: Transform
+      pos: 113.5,-27.5
+      parent: 1
+  - uid: 12269
+    components:
+    - type: Transform
+      pos: 113.5,-26.5
+      parent: 1
+- proto: AU14SpawnPointGOVFORVehicleCrewman
+  entities:
+  - uid: 12262
+    components:
+    - type: Transform
+      pos: 115.5,-27.5
+      parent: 1
+  - uid: 12263
+    components:
+    - type: Transform
+      pos: 114.5,-26.5
+      parent: 1
+  - uid: 12265
+    components:
+    - type: Transform
+      pos: 115.5,-26.5
+      parent: 1
+  - uid: 12274
+    components:
+    - type: Transform
+      pos: 114.5,-27.5
+      parent: 1
 - proto: AU14SpawnPointGOVFORWorkingJoe
   entities:
   - uid: 663
@@ -106893,12 +106991,12 @@ entities:
       parent: 1
 - proto: AU14SpawnPointWYGuard
   entities:
-  - uid: 12262
+  - uid: 12280
     components:
     - type: Transform
       pos: 258.5,-47.5
       parent: 1
-  - uid: 12263
+  - uid: 12281
     components:
     - type: Transform
       pos: 258.5,-48.5
@@ -110690,13 +110788,13 @@ entities:
     - type: Transform
       pos: 229.5,-46.5
       parent: 1
-  - uid: 12264
+  - uid: 12282
     components:
     - type: Transform
       rot: 1.5707963267948966 rad
       pos: 264.5,-48.5
       parent: 1
-  - uid: 12267
+  - uid: 12286
     components:
     - type: Transform
       pos: 215.5,-161.5
@@ -123154,23 +123252,11 @@ entities:
       rot: -1.5707963267948966 rad
       pos: 120.5,-8.5
       parent: 1
-  - uid: 5104
-    components:
-    - type: Transform
-      rot: 3.141592653589793 rad
-      pos: 116.5,-28.5
-      parent: 1
   - uid: 5105
     components:
     - type: Transform
       rot: -1.5707963267948966 rad
       pos: 120.5,-7.5
-      parent: 1
-  - uid: 5106
-    components:
-    - type: Transform
-      rot: 3.141592653589793 rad
-      pos: 112.5,-28.5
       parent: 1
   - uid: 5107
     components:
@@ -123255,18 +123341,6 @@ entities:
     - type: Transform
       pos: 117.5,-4.5
       parent: 1
-  - uid: 5122
-    components:
-    - type: Transform
-      rot: 3.141592653589793 rad
-      pos: 113.5,-28.5
-      parent: 1
-  - uid: 5123
-    components:
-    - type: Transform
-      rot: 3.141592653589793 rad
-      pos: 115.5,-28.5
-      parent: 1
   - uid: 5124
     components:
     - type: Transform
@@ -123277,12 +123351,6 @@ entities:
     - type: Transform
       rot: 3.141592653589793 rad
       pos: 107.5,-28.5
-      parent: 1
-  - uid: 5126
-    components:
-    - type: Transform
-      rot: 3.141592653589793 rad
-      pos: 117.5,-28.5
       parent: 1
   - uid: 5127
     components:
@@ -123300,12 +123368,6 @@ entities:
     - type: Transform
       rot: 3.141592653589793 rad
       pos: 105.5,-28.5
-      parent: 1
-  - uid: 5130
-    components:
-    - type: Transform
-      rot: 3.141592653589793 rad
-      pos: 114.5,-28.5
       parent: 1
   - uid: 5131
     components:
@@ -161094,7 +161156,7 @@ entities:
       lastSignals:
         DoorStatus: True
     - type: Door
-      secondsUntilStateChange: -614830.44
+      secondsUntilStateChange: -615403
       state: Opening
   - uid: 13075
     components:
@@ -166644,45 +166706,15 @@ entities:
     - type: Transform
       pos: 104.5,-28.5
       parent: 1
-  - uid: 14528
-    components:
-    - type: Transform
-      pos: 116.5,-28.5
-      parent: 1
-  - uid: 14529
-    components:
-    - type: Transform
-      pos: 115.5,-28.5
-      parent: 1
-  - uid: 14530
-    components:
-    - type: Transform
-      pos: 113.5,-28.5
-      parent: 1
-  - uid: 14531
-    components:
-    - type: Transform
-      pos: 112.5,-28.5
-      parent: 1
   - uid: 14532
     components:
     - type: Transform
       pos: 108.5,-28.5
       parent: 1
-  - uid: 14533
-    components:
-    - type: Transform
-      pos: 118.5,-28.5
-      parent: 1
   - uid: 14534
     components:
     - type: Transform
       pos: 111.5,-28.5
-      parent: 1
-  - uid: 14535
-    components:
-    - type: Transform
-      pos: 114.5,-28.5
       parent: 1
   - uid: 14536
     components:
@@ -168059,11 +168091,6 @@ entities:
     - type: Transform
       pos: 120.5,-22.5
       parent: 1
-  - uid: 14957
-    components:
-    - type: Transform
-      pos: 116.5,-28.5
-      parent: 1
   - uid: 14958
     components:
     - type: Transform
@@ -168088,11 +168115,6 @@ entities:
     components:
     - type: Transform
       pos: 115.5,-4.5
-      parent: 1
-  - uid: 14963
-    components:
-    - type: Transform
-      pos: 113.5,-28.5
       parent: 1
   - uid: 14964
     components:
@@ -168124,20 +168146,10 @@ entities:
     - type: Transform
       pos: 120.5,-23.5
       parent: 1
-  - uid: 14970
-    components:
-    - type: Transform
-      pos: 115.5,-28.5
-      parent: 1
   - uid: 14971
     components:
     - type: Transform
       pos: 107.5,-28.5
-      parent: 1
-  - uid: 14972
-    components:
-    - type: Transform
-      pos: 112.5,-28.5
       parent: 1
   - uid: 14973
     components:
@@ -168194,20 +168206,10 @@ entities:
     - type: Transform
       pos: 106.5,-28.5
       parent: 1
-  - uid: 14984
-    components:
-    - type: Transform
-      pos: 114.5,-28.5
-      parent: 1
   - uid: 14985
     components:
     - type: Transform
       pos: 120.5,-24.5
-      parent: 1
-  - uid: 14986
-    components:
-    - type: Transform
-      pos: 117.5,-28.5
       parent: 1
   - uid: 14987
     components:
@@ -169914,7 +169916,7 @@ entities:
       pos: 179.5,-120.5
       parent: 1
     - type: Door
-      secondsUntilStateChange: -461012.72
+      secondsUntilStateChange: -461585.28
       state: Closing
   - uid: 15264
     components:
@@ -173980,20 +173982,10 @@ entities:
       rot: 3.141592653589793 rad
       pos: 83.5,-13.5
       parent: 1
-  - uid: 16228
-    components:
-    - type: Transform
-      pos: 116.5,-28.5
-      parent: 1
   - uid: 16229
     components:
     - type: Transform
       pos: 113.5,-4.5
-      parent: 1
-  - uid: 16230
-    components:
-    - type: Transform
-      pos: 115.5,-28.5
       parent: 1
   - uid: 16231
     components:
@@ -180893,18 +180885,6 @@ entities:
     components:
     - type: Transform
       pos: 119.5,-25.5
-      parent: 1
-  - uid: 17372
-    components:
-    - type: Transform
-      rot: -1.5707963267948966 rad
-      pos: 112.5,-27.5
-      parent: 1
-  - uid: 17373
-    components:
-    - type: Transform
-      rot: 1.5707963267948966 rad
-      pos: 117.5,-27.5
       parent: 1
   - uid: 17374
     components:
@@ -206716,11 +206696,6 @@ entities:
     - type: Transform
       pos: 106.5,-110.5
       parent: 1
-  - uid: 22693
-    components:
-    - type: Transform
-      pos: 112.5,-28.5
-      parent: 1
 - proto: RMCStructureLatticeDoubleC
   entities:
   - uid: 22697
@@ -206742,11 +206717,6 @@ entities:
     components:
     - type: Transform
       pos: 120.5,-7.5
-      parent: 1
-  - uid: 22734
-    components:
-    - type: Transform
-      pos: 117.5,-28.5
       parent: 1
   - uid: 22735
     components:
@@ -207322,11 +207292,6 @@ entities:
       parent: 1
 - proto: RMCTablePrisonSoro
   entities:
-  - uid: 22851
-    components:
-    - type: Transform
-      pos: 25.5,-18.5
-      parent: 1
   - uid: 22852
     components:
     - type: Transform
@@ -207973,7 +207938,7 @@ entities:
   - uid: 22950
     components:
     - type: Transform
-      pos: 25.503954,-14.699576
+      pos: 25.481619,-14.42214
       parent: 1
 - proto: RMCToolboxEmergencyFilled
   entities:
@@ -419650,6 +419615,11 @@ entities:
       rot: 3.141592653589793 rad
       pos: 67.5,-25.5
       parent: 1
+  - uid: 12264
+    components:
+    - type: Transform
+      pos: 118.5,-28.5
+      parent: 1
   - uid: 12449
     components:
     - type: Transform
@@ -420513,11 +420483,6 @@ entities:
     - type: Transform
       rot: 3.141592653589793 rad
       pos: 114.5,-22.5
-      parent: 1
-  - uid: 79138
-    components:
-    - type: Transform
-      pos: 118.5,-28.5
       parent: 1
   - uid: 79139
     components:
@@ -437750,6 +437715,16 @@ entities:
       parent: 1
 - proto: VMarkerGovforClothing
   entities:
+  - uid: 12268
+    components:
+    - type: Transform
+      pos: 115.5,-28.5
+      parent: 1
+  - uid: 12277
+    components:
+    - type: Transform
+      pos: 113.5,-28.5
+      parent: 1
   - uid: 84590
     components:
     - type: Transform
@@ -437862,11 +437837,6 @@ entities:
       parent: 1
 - proto: VMarkerGovforradiotelephoneOperator
   entities:
-  - uid: 84613
-    components:
-    - type: Transform
-      pos: 24.5,-16.5
-      parent: 1
   - uid: 84614
     components:
     - type: Transform
@@ -437881,6 +437851,16 @@ entities:
       parent: 1
 - proto: VMarkerGovforRifleman
   entities:
+  - uid: 12267
+    components:
+    - type: Transform
+      pos: 116.5,-28.5
+      parent: 1
+  - uid: 12270
+    components:
+    - type: Transform
+      pos: 117.5,-28.5
+      parent: 1
   - uid: 84616
     components:
     - type: Transform
@@ -437918,17 +437898,17 @@ entities:
       parent: 1
 - proto: VMarkerGovforsectionSergeant
   entities:
-  - uid: 84623
+  - uid: 12279
     components:
     - type: Transform
-      rot: -1.5707963267948966 rad
-      pos: 26.5,-18.5
-      parent: 1
-  - uid: 84624
-    components:
-    - type: Transform
-      rot: -1.5707963267948966 rad
       pos: 24.5,-18.5
+      parent: 1
+- proto: VMarkerGovforSquadSergeant
+  entities:
+  - uid: 12278
+    components:
+    - type: Transform
+      pos: 24.5,-16.5
       parent: 1
 - proto: VMarkerGovforSWeapons
   entities:
@@ -437941,6 +437921,18 @@ entities:
     components:
     - type: Transform
       pos: 43.5,-31.5
+      parent: 1
+- proto: VMarkerGovforVehicleCrewVendor
+  entities:
+  - uid: 12266
+    components:
+    - type: Transform
+      pos: 114.5,-28.5
+      parent: 1
+  - uid: 12271
+    components:
+    - type: Transform
+      pos: 112.5,-28.5
       parent: 1
 - proto: VMarkerGovforWeapons
   entities:

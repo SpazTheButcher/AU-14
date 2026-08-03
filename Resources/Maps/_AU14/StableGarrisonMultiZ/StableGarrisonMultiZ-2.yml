@@ -4,7 +4,7 @@ meta:
   engineVersion: v278.0.0
   forkId: ""
   forkVersion: ""
-  time: 08/03/2026 01:23:12
+  time: 08/03/2026 01:33:11
   entityCount: 9024
 maps:
 - 1
@@ -93637,7 +93637,7 @@ entities:
   - uid: 1071
     components:
     - type: Transform
-      pos: 310.5,-100.5
+      pos: 310.48813,-100.43194
       parent: 1
 - proto: CMPottedPlant21
   entities:
@@ -101083,7 +101083,7 @@ entities:
       pos: 283.5,-103.5
       parent: 1
     - type: Door
-      secondsUntilStateChange: -221977.34
+      secondsUntilStateChange: -222549.9
       state: Closing
   - uid: 104771
     components:
@@ -101091,7 +101091,7 @@ entities:
       pos: 283.5,-102.5
       parent: 1
     - type: Door
-      secondsUntilStateChange: -227195.75
+      secondsUntilStateChange: -227768.31
       state: Closing
   - uid: 104927
     components:
@@ -101111,7 +101111,7 @@ entities:
       pos: 280.5,-95.5
       parent: 1
     - type: Door
-      secondsUntilStateChange: -227196.61
+      secondsUntilStateChange: -227769.17
       state: Closing
   - uid: 105575
     components:
@@ -101126,7 +101126,7 @@ entities:
       pos: 282.5,-95.5
       parent: 1
     - type: Door
-      secondsUntilStateChange: -227197.11
+      secondsUntilStateChange: -227769.67
       state: Closing
 - proto: RMCDeskFanTan
   entities:
