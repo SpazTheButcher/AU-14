@@ -174534,7 +174534,7 @@ entities:
     - type: Transform
       pos: 117.5,93.5
       parent: 1
-- proto: fetchobjectivemarkergenericspawnpoint
+- proto: fetchgenericmarker
   entities:
   - uid: 545
     components:
