@@ -292,8 +292,9 @@ public sealed class CMUXenoWarlockTest
     [Test]
     public void PsychicShieldUsesTgmcTimingsCostsAndIntegrity()
     {
-        Assert.That(CMUXenoWarlockSystem.GetPsychicShieldCost(), Is.EqualTo(FixedPoint2.New(200)));
-        Assert.That(CMUXenoWarlockSystem.GetPsychicShieldDetonationCost(), Is.EqualTo(FixedPoint2.New(200)));
+        Assert.That(CMUXenoWarlockSystem.GetPsychicShieldCost(), Is.EqualTo(FixedPoint2.New(300)));
+        // Detonating is free: the raise pays for the whole raise-and-reflect cycle.
+        Assert.That(CMUXenoWarlockSystem.GetPsychicShieldDetonationCost(), Is.EqualTo(FixedPoint2.Zero));
         Assert.That(CMUXenoWarlockSystem.GetPsychicShieldDuration().TotalSeconds, Is.EqualTo(6).Within(0.001));
         Assert.That(CMUXenoWarlockSystem.GetPsychicShieldCooldownDuration().TotalSeconds, Is.EqualTo(10).Within(0.001));
         // 2000 is the current tuned value. TGMC baseline is 650; the local rework raised the
@@ -432,24 +433,20 @@ public sealed class CMUXenoWarlockTest
     [Test]
     public void PsychicShieldReflectsProjectileAcrossShieldFace()
     {
-        var reflected = CMUXenoWarlockSystem.ReflectProjectileVelocity(new Vector2(0, -10), Direction.North, Angle.Zero);
+        var reflected = CMUXenoWarlockSystem.ReflectProjectileVelocity(new Vector2(0, -10), Direction.North);
 
         Assert.That(reflected.X, Is.EqualTo(0).Within(0.001));
         Assert.That(reflected.Y, Is.EqualTo(10).Within(0.001));
     }
 
     [Test]
-    public void PsychicShieldManualReflectionAllowsEightyDegreeCone()
+    public void PsychicShieldReflectionKeepsSpeedAndAddsNoScatter()
     {
-        var reflected = CMUXenoWarlockSystem.ReflectProjectileVelocity(
-            new Vector2(0, -10),
-            Direction.North,
-            Angle.FromDegrees(40));
+        var reflected = CMUXenoWarlockSystem.ReflectProjectileVelocity(new Vector2(6, -8), Direction.North);
 
-        Assert.That(CMUXenoWarlockSystem.GetPsychicShieldReflectionSpreadDegrees(), Is.EqualTo(80).Within(0.001));
         Assert.That(reflected.Length(), Is.EqualTo(10).Within(0.001));
-        Assert.That(reflected.Y, Is.GreaterThan(0));
-        Assert.That(reflected.X, Is.LessThan(0));
+        Assert.That(reflected.X, Is.EqualTo(6).Within(0.001));
+        Assert.That(reflected.Y, Is.EqualTo(8).Within(0.001));
     }
 
     [Test]
@@ -508,8 +505,8 @@ public sealed class CMUXenoWarlockTest
         var amount = CMUXenoWarlockSystem.GetPlasmaTransferAmount(
             FixedPoint2.New(250),
             FixedPoint2.New(500),
-            FixedPoint2.New(1625),
-            FixedPoint2.New(1700));
+            FixedPoint2.New(625),
+            FixedPoint2.New(700));
 
         Assert.That(amount, Is.EqualTo(FixedPoint2.New(75)));
     }
@@ -520,8 +517,8 @@ public sealed class CMUXenoWarlockTest
         var amount = CMUXenoWarlockSystem.GetPlasmaTransferAmount(
             FixedPoint2.New(250),
             FixedPoint2.New(60),
-            FixedPoint2.New(1000),
-            FixedPoint2.New(1700));
+            FixedPoint2.New(300),
+            FixedPoint2.New(700));
 
         Assert.That(amount, Is.EqualTo(FixedPoint2.New(60)));
     }
@@ -532,8 +529,8 @@ public sealed class CMUXenoWarlockTest
         var amount = CMUXenoWarlockSystem.GetPlasmaTransferAmount(
             FixedPoint2.New(250),
             FixedPoint2.New(500),
-            FixedPoint2.New(1700),
-            FixedPoint2.New(1700));
+            FixedPoint2.New(700),
+            FixedPoint2.New(700));
 
         Assert.That(amount, Is.EqualTo(FixedPoint2.Zero));
     }
