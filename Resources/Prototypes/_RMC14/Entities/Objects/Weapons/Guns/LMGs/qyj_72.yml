@@ -104,9 +104,6 @@
   - type: Corrodible
     isCorrodible: false
   - type: SmartGun
-  - type: GunIFF
-    enabled: true
-    preventFriendlyFire: true
   - type: RMCMagneticItem
 
 - type: entity
