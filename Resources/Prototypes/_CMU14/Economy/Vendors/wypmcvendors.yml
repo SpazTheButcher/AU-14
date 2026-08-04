@@ -992,7 +992,7 @@
         amount: 8
       - id: AU14WeaponRifleF44AA
         amount: 1
-      - id: RMCWeaponRifleSSG45
+      - id: RMCWeaponRifleSSG45NoLock
         amount: 3
       - id: WeaponShotgunM890
         amount: 3
