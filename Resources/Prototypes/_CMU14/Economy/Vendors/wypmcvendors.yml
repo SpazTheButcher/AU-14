@@ -982,6 +982,8 @@
         amount: 30
       - id: RMCWeaponSMGM63B2
         amount: 20
+      - id: RMCWeaponRifleSSG45NoLockStripped
+        amount: 20
     - name: standard issue secondaries
       entries:
       - id: RMCWeaponPistolM77Empty
