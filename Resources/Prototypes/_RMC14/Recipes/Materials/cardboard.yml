@@ -848,6 +848,7 @@
   - RMCBoxPackFlareCASEmptyBuild
   - RMCDividerConstruction
   - RMCBoxFlamerTankEmptyBuild
+  - RMCBoxFlamerTankBGelEmptyBuild
   - RMCDividerConstruction
   - RMCBoxFlashlightsEmptyBuild
   - RMCBoxMREEmptyBuild
@@ -870,6 +871,12 @@
   id: RMCBoxFlamerTankEmptyBuild
   name: UT-Napthal fuel tanks box
   prototype: RMCBoxFlamerTankEmpty
+
+- type: rmcConstruction
+  parent: RMCCardboardBuildBase
+  id: RMCBoxFlamerTankBGelEmptyBuild
+  name: B-Gel fuel tanks box
+  prototype: RMCBoxFlamerTankBGelEmpty
 
 - type: rmcConstruction
   parent: RMCCardboardBuildBase
