@@ -77,7 +77,7 @@
     actionId: CMU14ActionXenoPathogenEvolve
     canEvolveWithoutGranter: true
     requiresGranter: false
-    max: 300
+    max: 200
     evolvesTo:
     - CMU14XenoNeomorph
     - CMU14XenoBlight
