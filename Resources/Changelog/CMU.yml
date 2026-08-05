@@ -9099,5 +9099,30 @@
   id: 583
   time: '2026-08-04T11:11:03.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1755
+- author: P-MCT
+  changes:
+  - message: Double plus good news chaps! We trimmed the excess fat off of the  FV150
+      'Hobelar' chassis, and now it can finally fit in those tight enclosed spaces!
+      Give those insurgent devils the what for eh?
+    type: Tweak
+  - message: New weapon sounds for the L23, L54, SLRa1/2
+    type: Tweak
+  id: 584
+  time: '2026-08-05T04:48:35.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1791
+- author: deepdarkdepths
+  changes:
+  - message: Barricades and some other structures can no longer be built inside vehicles.
+    type: Fix
+  id: 585
+  time: '2026-08-05T04:58:48.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1792
+- author: HotdogMan52
+  changes:
+  - message: QYJ can now use an S4 2x mini-scope
+    type: Tweak
+  id: 586
+  time: '2026-08-05T10:46:18.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1793
 Name: CMU
 Order: -1
