@@ -323,7 +323,7 @@
     - name: AP Ammo
       entries:
       - cost: 1000
-        crate: AU14CrateBoxMagazineRifleL23AP
+        crate: AU14CrateBoxMagazineRifleL24AP
       - cost: 950
         crate: AU14CrateBoxMagazineSMGL90A2AP
     - name: Dropship Parts
