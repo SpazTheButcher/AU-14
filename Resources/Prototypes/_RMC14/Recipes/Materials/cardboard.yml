@@ -481,44 +481,44 @@
 - type: rmcConstruction
   parent: RMCCardboardBuildBase
   id: RMCBoxMagazineRifleL24EmptyBuild
-  name: L24 magazine box
+  name: L23 magazine box
   prototype: RMCBoxMagazineRifleL24Empty
 
 - type: rmcConstruction
   parent: RMCCardboardBuildBase
   id: RMCBoxMagazineRifleL24APEmptyBuild
-  name: L24 magazine box (AP)
+  name: L23 magazine box (AP)
   prototype: RMCBoxMagazineRifleL24APEmpty
 
 - type: rmcConstruction
   parent: RMCCardboardBuildBase
   id: RMCBoxMagazineRifleL24ExtEmptyBuild
-  name: L24 magazine box (Ext)
+  name: L23 magazine box (Ext)
   prototype: RMCBoxMagazineRifleL24ExtEmpty
 
 - type: rmcConstruction
   parent: RMCCardboardBuildBase
-  id: RMCBoxMagazineRifleSLREmptyBuild
+  id: RMCBoxMagazineRifleL90EmptyBuild
   name: SLR magazine box
-  prototype: RMCBoxMagazineRifleSLREmpty
+  prototype: RMCBoxMagazineRifleL90Empty
 
 - type: rmcConstruction
   parent: RMCCardboardBuildBase
-  id: RMCBoxMagazineRifleSLRAPEmptyBuild
+  id: RMCBoxMagazineRifleL90APEmptyBuild
   name: SLR magazine box (AP)
-  prototype: RMCBoxMagazineRifleSLRAPEmpty
+  prototype: RMCBoxMagazineRifleL90APEmpty
 
 - type: rmcConstruction
   parent: RMCCardboardBuildBase
-  id: RMCBoxMagazineRifleSLRDrumEmptyBuild
+  id: RMCBoxMagazineRifleL90DrumEmptyBuild
   name: SLR magazine box (Drum)
-  prototype: RMCBoxMagazineRifleSLRDrumEmpty
+  prototype: RMCBoxMagazineRifleL90DrumEmpty
 
 - type: rmcConstruction
   parent: RMCCardboardBuildBase
-  id: RMCBoxMagazineRifleSLRDrumAPEmptyBuild
+  id: RMCBoxMagazineRifleL90DrumAPEmptyBuild
   name: SLR magazine box (Drum, AP)
-  prototype: RMCBoxMagazineRifleSLRDrumAPEmpty
+  prototype: RMCBoxMagazineRifleL90DrumAPEmpty
 
 - type: rmcConstruction
   parent: RMCCardboardBuildBase
