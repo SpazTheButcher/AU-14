@@ -1371,7 +1371,7 @@
         amount: 200
     - name: Magazine Boxes
       entries:
-      - id: RMCBoxMagazineRifleL24
+      - id: RMCBoxMagazineRifleL23
         amount: 2
       - id: CMUBoxMagazineSMGL90A2
         amount: 2

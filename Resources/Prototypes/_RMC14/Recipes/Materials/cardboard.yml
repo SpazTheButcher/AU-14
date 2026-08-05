@@ -298,9 +298,9 @@
   name: TWE magazine boxes (1 cardboard) # cost named manually since lists won't name costs otherwise
   prototype: RMCBoxMagazineRifleBase
   listed:
-  - RMCBoxMagazineRifleL24EmptyBuild
-  - RMCBoxMagazineRifleL24APEmptyBuild
-  - RMCBoxMagazineRifleL24ExtEmptyBuild
+  - RMCBoxMagazineRifleL23EmptyBuild
+  - RMCBoxMagazineRifleL23APEmptyBuild
+  - RMCBoxMagazineRifleL23ExtEmptyBuild
   - RMCDividerConstruction
   - RMCBoxMagazineRifleSLREmptyBuild
   - RMCBoxMagazineRifleSLRAPEmptyBuild  
@@ -480,21 +480,21 @@
 
 - type: rmcConstruction
   parent: RMCCardboardBuildBase
-  id: RMCBoxMagazineRifleL24EmptyBuild
-  name: L24 magazine box
-  prototype: RMCBoxMagazineRifleL24Empty
+  id: RMCBoxMagazineRifleL23EmptyBuild
+  name: L23 magazine box
+  prototype: RMCBoxMagazineRifleL23Empty
 
 - type: rmcConstruction
   parent: RMCCardboardBuildBase
-  id: RMCBoxMagazineRifleL24APEmptyBuild
-  name: L24 magazine box (AP)
-  prototype: RMCBoxMagazineRifleL24APEmpty
+  id: RMCBoxMagazineRifleL23APEmptyBuild
+  name: L23 magazine box (AP)
+  prototype: RMCBoxMagazineRifleL23APEmpty
 
 - type: rmcConstruction
   parent: RMCCardboardBuildBase
-  id: RMCBoxMagazineRifleL24ExtEmptyBuild
-  name: L24 magazine box (Ext)
-  prototype: RMCBoxMagazineRifleL24ExtEmpty
+  id: RMCBoxMagazineRifleL23ExtEmptyBuild
+  name: L23 magazine box (Ext)
+  prototype: RMCBoxMagazineRifleL23ExtEmpty
 
 - type: rmcConstruction
   parent: RMCCardboardBuildBase

@@ -630,11 +630,11 @@
         tags:
         - CMMagazineRifleM4SPRExt
 
-# L24 REG
+# L23 REG
 - type: entity
   parent: RMCBoxMagazineRifleBase
-  id: RMCBoxMagazineRifleL24Empty
-  name: magazine box (L24 x 16)
+  id: RMCBoxMagazineRifleL23Empty
+  name: magazine box (L23 x 16)
   components:
   - type: Sprite
     layers:
@@ -663,8 +663,8 @@
         - RMCMagazineRifleL24
 
 - type: entity
-  parent: RMCBoxMagazineRifleL24Empty
-  id: RMCBoxMagazineRifleL24
+  parent: RMCBoxMagazineRifleL23Empty
+  id: RMCBoxMagazineRifleL23
   suffix: Full
   components:
   - type: CMItemSlots
@@ -675,11 +675,11 @@
         tags:
         - RMCMagazineRifleL24
 
-# L24 AP
+# L23 AP
 - type: entity
   parent: RMCBoxMagazineRifleBase
-  id: RMCBoxMagazineRifleL24APEmpty
-  name: magazine box (AP L24 x 16)
+  id: RMCBoxMagazineRifleL23APEmpty
+  name: magazine box (AP L23 x 16)
   components:
   - type: Sprite
     layers:
@@ -708,8 +708,8 @@
         - RMCMagazineRifleL24AP
 
 - type: entity
-  parent: RMCBoxMagazineRifleL24APEmpty
-  id: RMCBoxMagazineRifleL24AP
+  parent: RMCBoxMagazineRifleL23APEmpty
+  id: RMCBoxMagazineRifleL23AP
   suffix: Full
   components:
   - type: CMItemSlots
@@ -720,11 +720,11 @@
         tags:
         - RMCMagazineRifleL24AP
 
-# L24 EXT
+# L23 EXT
 - type: entity
   parent: RMCBoxMagazineRifleBase
-  id: RMCBoxMagazineRifleL24ExtEmpty
-  name: magazine box (Ext L24 x 12)
+  id: RMCBoxMagazineRifleL23ExtEmpty
+  name: magazine box (Ext L23 x 12)
   components:
   - type: Sprite
     layers:
@@ -753,8 +753,8 @@
         - RMCMagazineRifleL24Extended
 
 - type: entity
-  parent: RMCBoxMagazineRifleL24ExtEmpty
-  id: RMCBoxMagazineRifleL24Ext
+  parent: RMCBoxMagazineRifleL23ExtEmpty
+  id: RMCBoxMagazineRifleL23Ext
   suffix: Full
   components:
   - type: CMItemSlots
@@ -765,11 +765,11 @@
         tags:
         - RMCMagazineRifleL24Extended
 
-# L24 HEAP
+# L23 HEAP
 - type: entity
   parent: RMCBoxMagazineRifleBase
-  id: RMCBoxMagazineRifleL24HEAPEmpty
-  name: magazine box (HEAP L24 x 16)
+  id: RMCBoxMagazineRifleL23HEAPEmpty
+  name: magazine box (HEAP L23 x 16)
   components:
   - type: Sprite
     layers:
@@ -798,8 +798,8 @@
         - RMCMagazineRifleL24HEAP
 
 - type: entity
-  parent: RMCBoxMagazineRifleL24HEAPEmpty
-  id: RMCBoxMagazineRifleL24HEAP
+  parent: RMCBoxMagazineRifleL23HEAPEmpty
+  id: RMCBoxMagazineRifleL23HEAP
   suffix: Full
   components:
   - type: CMItemSlots
@@ -810,11 +810,11 @@
         tags:
         - RMCMagazineRifleL24HEAP
 
-# L24 Inc
+# L23 Inc
 - type: entity
   parent: RMCBoxMagazineRifleBase
-  id: RMCBoxMagazineRifleL24IncendiaryEmpty
-  name: magazine box (Inc L24 x 16)
+  id: RMCBoxMagazineRifleL23IncendiaryEmpty
+  name: magazine box (Inc L23 x 16)
   components:
   - type: Sprite
     layers:
@@ -843,8 +843,8 @@
         - RMCMagazineRifleL24Incendiary
 
 - type: entity
-  parent: RMCBoxMagazineRifleL24IncendiaryEmpty
-  id: RMCBoxMagazineRifleL24Incendiary
+  parent: RMCBoxMagazineRifleL23IncendiaryEmpty
+  id: RMCBoxMagazineRifleL23Incendiary
   suffix: Full
   components:
   - type: CMItemSlots
