@@ -633,7 +633,7 @@
 # L23 REG
 - type: entity
   parent: RMCBoxMagazineRifleBase
-  id: RMCBoxMagazineRifleL23Empty
+  id: RMCBoxMagazineRifleL24Empty
   name: magazine box (L23 x 16)
   components:
   - type: Sprite
@@ -663,8 +663,8 @@
         - RMCMagazineRifleL24
 
 - type: entity
-  parent: RMCBoxMagazineRifleL23Empty
-  id: RMCBoxMagazineRifleL23
+  parent: RMCBoxMagazineRifleL24Empty
+  id: RMCBoxMagazineRifleL24
   suffix: Full
   components:
   - type: CMItemSlots
@@ -678,7 +678,7 @@
 # L23 AP
 - type: entity
   parent: RMCBoxMagazineRifleBase
-  id: RMCBoxMagazineRifleL23APEmpty
+  id: RMCBoxMagazineRifleL24APEmpty
   name: magazine box (AP L23 x 16)
   components:
   - type: Sprite
@@ -708,8 +708,8 @@
         - RMCMagazineRifleL24AP
 
 - type: entity
-  parent: RMCBoxMagazineRifleL23APEmpty
-  id: RMCBoxMagazineRifleL23AP
+  parent: RMCBoxMagazineRifleL24APEmpty
+  id: RMCBoxMagazineRifleL24AP
   suffix: Full
   components:
   - type: CMItemSlots
@@ -723,7 +723,7 @@
 # L23 EXT
 - type: entity
   parent: RMCBoxMagazineRifleBase
-  id: RMCBoxMagazineRifleL23ExtEmpty
+  id: RMCBoxMagazineRifleL24ExtEmpty
   name: magazine box (Ext L23 x 12)
   components:
   - type: Sprite
@@ -753,8 +753,8 @@
         - RMCMagazineRifleL24Extended
 
 - type: entity
-  parent: RMCBoxMagazineRifleL23ExtEmpty
-  id: RMCBoxMagazineRifleL23Ext
+  parent: RMCBoxMagazineRifleL24ExtEmpty
+  id: RMCBoxMagazineRifleL24Ext
   suffix: Full
   components:
   - type: CMItemSlots
@@ -768,7 +768,7 @@
 # L23 HEAP
 - type: entity
   parent: RMCBoxMagazineRifleBase
-  id: RMCBoxMagazineRifleL23HEAPEmpty
+  id: RMCBoxMagazineRifleL24HEAPEmpty
   name: magazine box (HEAP L23 x 16)
   components:
   - type: Sprite
@@ -798,8 +798,8 @@
         - RMCMagazineRifleL24HEAP
 
 - type: entity
-  parent: RMCBoxMagazineRifleL23HEAPEmpty
-  id: RMCBoxMagazineRifleL23HEAP
+  parent: RMCBoxMagazineRifleL24HEAPEmpty
+  id: RMCBoxMagazineRifleL24HEAP
   suffix: Full
   components:
   - type: CMItemSlots
@@ -813,7 +813,7 @@
 # L23 Inc
 - type: entity
   parent: RMCBoxMagazineRifleBase
-  id: RMCBoxMagazineRifleL23IncendiaryEmpty
+  id: RMCBoxMagazineRifleL24IncendiaryEmpty
   name: magazine box (Inc L23 x 16)
   components:
   - type: Sprite
@@ -843,8 +843,8 @@
         - RMCMagazineRifleL24Incendiary
 
 - type: entity
-  parent: RMCBoxMagazineRifleL23IncendiaryEmpty
-  id: RMCBoxMagazineRifleL23Incendiary
+  parent: RMCBoxMagazineRifleL24IncendiaryEmpty
+  id: RMCBoxMagazineRifleL24Incendiary
   suffix: Full
   components:
   - type: CMItemSlots
