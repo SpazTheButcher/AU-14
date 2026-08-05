@@ -463,13 +463,13 @@
 - type: rmcConstruction
   parent: RMCCardboardBuildBase
   id: RMCBoxMagazineSMGM63APEmptyBuild
-  name: M63 magazine box (AP)
+  name: M39 magazine box (AP)
   prototype: RMCBoxMagazineSMGM63APEmpty
 
 - type: rmcConstruction
   parent: RMCCardboardBuildBase
   id: RMCBoxMagazineSMGM63ExtEmptyBuild
-  name: M63 magazine box (Ext)
+  name: M39 magazine box (Ext)
   prototype: RMCBoxMagazineSMGM63ExtEmpty
 
 - type: rmcConstruction

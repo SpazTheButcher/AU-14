@@ -1801,7 +1801,7 @@
 - type: entity
   parent: RMCBoxMagazineSMGBase
   id: RMCBoxMagazineSMGM63APEmpty
-  name: magazine box (AP M63 x 12)
+  name: magazine box (AP M39 x 12)
   components:
   - type: Construction
     graph: RMCBoxMagazine
@@ -1849,7 +1849,7 @@
 - type: entity
   parent: RMCBoxMagazineSMGBase
   id: RMCBoxMagazineSMGM63ExtEmpty
-  name: magazine box (Ext M63 x 10)
+  name: magazine box (Ext M39 x 10)
   components:
   - type: Construction
     graph: RMCBoxMagazine
@@ -1898,7 +1898,7 @@
 - type: entity
   parent: RMCBoxMagazineSMGBase
   id: RMCBoxMagazineSMGM63HEAPEmpty
-  name: magazine box (HEAP M63 x 12)
+  name: magazine box (HEAP M39 x 12)
   components:
   - type: Sprite
     layers:
