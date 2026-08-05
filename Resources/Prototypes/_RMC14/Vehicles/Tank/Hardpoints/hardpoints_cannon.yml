@@ -40,7 +40,7 @@
     accuracyMultiplierUnwielded: 5
   - type: BallisticAmmoProvider
     cycleable: false
-    proto: VehicleCartridgeLTBCannon
+    proto: CMUCartridgeLTBCannonHEAT
     capacity: 1
   - type: VehicleHardpointAmmo
     magazineSize: 1
