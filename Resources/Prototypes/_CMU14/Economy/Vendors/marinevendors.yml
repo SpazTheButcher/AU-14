@@ -260,6 +260,10 @@
         name: first-aid pouch (gauze, ointment)
       - id: RMCPouchFirstAidPills
         name: first-aid pouch (pills)
+    - name: Medical Headgear
+      entries:
+      - id: AU14DesertM10CorpsmanHelmet
+        amount: 9
     - name: Medical Storage
       choices: { CMUPlatoonMedicalStorage: 1 }
       entries:
