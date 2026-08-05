@@ -166,6 +166,16 @@ namespace Content.Client.Input
             human.AddFunction(CMUKeyFunctions.CMUTargetBodyZoneRightLeg);
             human.AddFunction(CMUKeyFunctions.CMUOpenMedicalCraftingMenu);
             human.AddFunction(CMUKeyFunctions.CMUToggleShootDownZLevel);
+            human.AddFunction(CMUKeyFunctions.CMUGunshipForward);
+            human.AddFunction(CMUKeyFunctions.CMUGunshipBack);
+            human.AddFunction(CMUKeyFunctions.CMUGunshipLeft);
+            human.AddFunction(CMUKeyFunctions.CMUGunshipRight);
+            human.AddFunction(CMUKeyFunctions.CMUGunshipRotateLeft);
+            human.AddFunction(CMUKeyFunctions.CMUGunshipRotateRight);
+            human.AddFunction(CMUKeyFunctions.CMUGunshipAscend);
+            human.AddFunction(CMUKeyFunctions.CMUGunshipDescend);
+            human.AddFunction(CMUKeyFunctions.CMUGunshipViewUp);
+            human.AddFunction(CMUKeyFunctions.CMUGunshipViewDown);
             human.AddFunction(CMUKeyFunctions.CMUEmoteSlot1);
             human.AddFunction(CMUKeyFunctions.CMUEmoteSlot2);
             human.AddFunction(CMUKeyFunctions.CMUEmoteSlot3);

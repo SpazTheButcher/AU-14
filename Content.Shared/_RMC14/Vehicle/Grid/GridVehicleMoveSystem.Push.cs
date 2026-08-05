@@ -12,6 +12,12 @@ namespace Content.Shared.Vehicle;
 
 public sealed partial class GridVehicleMoverSystem : EntitySystem
 {
+    private readonly record struct VehicleControlInput(
+        Vector2i Direction,
+        float Throttle,
+        float Steering,
+        bool CardinalSteering = false);
+
     private Vector2i GetInputDirection(InputMoverComponent input, EntityUid movementGrid)
     {
         var buttons = input.HeldMoveButtons;
@@ -45,7 +51,7 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         return Angle.FromWorldVec(movementRelative).GetCardinalDir().ToIntVec();
     }
 
-    private Vector2i GetMoverInput(
+    private VehicleControlInput GetMoverInput(
         EntityUid uid,
         GridVehicleMoverComponent mover,
         VehicleComponent vehicle,
@@ -57,15 +63,28 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         {
             _activeXenoPushers.Remove(uid);
             var inputDir = GetInputDirection(inputComp, movementGrid);
-            return TryGetBlackfootFlightInput(uid, mover, inputDir, out var blackfootDir)
-                ? blackfootDir
-                : inputDir;
+            if (TryGetBlackfootFlightInput(uid, mover, inputDir, out var blackfootDir))
+                return new VehicleControlInput(blackfootDir, 0f, 0f, CardinalSteering: true);
+
+            var buttons = inputComp.HeldMoveButtons;
+            var throttle = 0f;
+            var steering = 0f;
+            if ((buttons & MoveButtons.Up) != 0)
+                throttle += 1f;
+            if ((buttons & MoveButtons.Down) != 0)
+                throttle -= 1f;
+            if ((buttons & MoveButtons.Left) != 0)
+                steering += 1f;
+            if ((buttons & MoveButtons.Right) != 0)
+                steering -= 1f;
+
+            return new VehicleControlInput(inputDir, throttle, steering);
         }
 
         if (vehicle.Operator != null)
         {
             _activeXenoPushers.Remove(uid);
-            return Vector2i.Zero;
+            return default;
         }
 
         if (!TryGetActivePusher(uid, mover, out var pusher))
@@ -75,29 +94,29 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
                 mover.CurrentSpeed > MinVehicleSpeed)
             {
                 pushing = true;
-                return Vector2i.Zero;
+                return default;
             }
 
             _activeXenoPushers.Remove(uid);
-            return Vector2i.Zero;
+            return default;
         }
 
         pushing = true;
         if (!mover.IsPushMove && !CanPushNow(mover))
         {
             _activeXenoPushers.Remove(uid);
-            return Vector2i.Zero;
+            return default;
         }
 
         var pushDir = GetPushDirection(uid, pusher);
         if (pushDir == Vector2i.Zero)
         {
             _activeXenoPushers.Remove(uid);
-            return Vector2i.Zero;
+            return default;
         }
 
         _activeXenoPushers[uid] = pusher;
-        return pushDir;
+        return new VehicleControlInput(pushDir, 0f, 0f);
     }
 
     private bool TryGetBlackfootFlightInput(

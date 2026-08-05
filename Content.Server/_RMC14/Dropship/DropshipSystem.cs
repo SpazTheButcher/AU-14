@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Numerics;
 using Content.Server._CMU14.Dropship.TacticalLand;
+using Content.Shared._CMU14.Dropship.Integrity;
 using Content.Server._RMC14.GameStates;
 using Content.Server._RMC14.Marines;
 using Content.Server.AU14.Round;
@@ -564,14 +565,8 @@ public sealed partial class DropshipSystem : SharedDropshipSystem
             return false;
         }
 
-        if (TryComp(dropshipId.Value, out DropshipTacticalHoverComponent? tacticalHover) &&
-            tacticalHover.ReturnDestination != destination)
-        {
-            if (user != null)
-                _popup.PopupEntity("Tactical hover must return before routing elsewhere.", computer.Owner, user.Value, PopupType.MediumCaution);
-
-            return false;
-        }
+        var reroutingFromTacticalHover = TryComp(dropshipId.Value, out DropshipTacticalHoverComponent? tacticalHover) &&
+                                           tacticalHover.ReturnDestination != destination;
 
         if (HasComp<ThirdPartyDropshipReturnedComponent>(dropshipId.Value))
         {
@@ -594,7 +589,8 @@ public sealed partial class DropshipSystem : SharedDropshipSystem
         if (TryComp(dropshipId, out FTLComponent? existingFtl))
         {
             // During hijack, allow overriding FTL cooldown (the ship has already landed)
-            if (hijack && existingFtl.State == FTLState.Cooldown)
+            if ((hijack || reroutingFromTacticalHover) &&
+                existingFtl.State is FTLState.Cooldown or FTLState.Available)
             {
                 RemComp<FTLComponent>(dropshipId.Value);
             }
@@ -709,6 +705,8 @@ public sealed partial class DropshipSystem : SharedDropshipSystem
             destCoords = destCoords.Offset(new Vector2(-0.5f, -0.5f));
 
         _shuttle.FTLToCoordinates(dropshipId.Value, shuttleComp, destCoords, rotation, startupTime: startupTime, hyperspaceTime: hyperspaceTime);
+        if (reroutingFromTacticalHover)
+            _tacticalLand.EndTacticalHoverForReroute(dropshipId.Value);
         ResetThirdPartyAutoReturnCountdown(dropshipId.Value);
 
         if (hijack)
@@ -816,7 +814,8 @@ public sealed partial class DropshipSystem : SharedDropshipSystem
         var doorLockStatus = GetDoorLockStatus(grid);
         var canCancelTacticalHover = HasComp<DropshipTacticalHoverComponent>(grid);
 
-        if (!TryComp(grid, out FTLComponent? ftl) ||
+        if (canCancelTacticalHover ||
+            !TryComp(grid, out FTLComponent? ftl) ||
             !ftl.Running ||
             ftl.State == FTLState.Available)
         {
@@ -885,8 +884,7 @@ public sealed partial class DropshipSystem : SharedDropshipSystem
                 destinations.Add(destination);
             }
 
-            var canTacticalLand = !canCancelTacticalHover &&
-                                  (computer.Comp.CanTacticalLand || IsStrictThirdPartyFaction(whitelistedFaction));
+            var canTacticalLand = computer.Comp.CanTacticalLand || IsStrictThirdPartyFaction(whitelistedFaction);
 
             var canWithdrawReturn = false;
             if (whitelistedFaction != null && _withdrawConsole.IsWithdrawReturnUnlocked(whitelistedFaction))
@@ -1369,11 +1367,27 @@ public sealed partial class DropshipSystem : SharedDropshipSystem
 
             ftl.VisualizerProto = null;
 
-            if (dropship.Destination == null)
+            // Hull-integrity crashes have their own warning, impact, and
+            // explosion sequence. DropshipComponent.Crashed is still set to
+            // permanently lock out flight, but must not also start the legacy
+            // hijack-crash sequence below.
+            if (TryComp(uid, out DropshipIntegrityComponent? integrity) &&
+                (integrity.Crashing || integrity.Wrecked))
+            {
                 continue;
+            }
 
-            var destinationCoords = _transform.GetMapCoordinates(dropship.Destination.Value);
-            var destinationEntityCoords = _transform.GetMoverCoordinates(dropship.Destination.Value);
+            if (dropship.Destination is not { } destination ||
+                TerminatingOrDeleted(destination) ||
+                !TryComp(destination, out TransformComponent? destinationTransform))
+            {
+                dropship.Destination = null;
+                Dirty(uid, dropship);
+                continue;
+            }
+
+            var destinationCoords = _transform.GetMapCoordinates(destination, destinationTransform);
+            var destinationEntityCoords = _transform.GetMoverCoordinates(destination, destinationTransform);
             var destinationFilter = Filter.BroadcastMap(destinationCoords.MapId);
 
             if (dropship.HijackLandAt - dropship.AnnounceCrashTime <= time && !dropship.AnnouncedCrash)

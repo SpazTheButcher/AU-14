@@ -17,6 +17,20 @@ public sealed class CMUKeyFunctions
     public static readonly BoundKeyFunction CMUOpenMedicalCraftingMenu = "CMUOpenMedicalCraftingMenu";
     public static readonly BoundKeyFunction CMUToggleShootDownZLevel = "CMUToggleShootDownZLevel";
 
+    public static readonly BoundKeyFunction CMUGunshipForward = "CMUGunshipForward";
+    public static readonly BoundKeyFunction CMUGunshipBack = "CMUGunshipBack";
+    public static readonly BoundKeyFunction CMUGunshipLeft = "CMUGunshipLeft";
+    public static readonly BoundKeyFunction CMUGunshipRight = "CMUGunshipRight";
+    public static readonly BoundKeyFunction CMUGunshipRotateLeft = "CMUGunshipRotateLeft";
+    public static readonly BoundKeyFunction CMUGunshipRotateRight = "CMUGunshipRotateRight";
+    public static readonly BoundKeyFunction CMUGunshipAscend = "CMUGunshipAscend";
+    public static readonly BoundKeyFunction CMUGunshipDescend = "CMUGunshipDescend";
+    public static readonly BoundKeyFunction CMUGunshipViewUp = "CMUGunshipViewUp";
+    public static readonly BoundKeyFunction CMUGunshipViewDown = "CMUGunshipViewDown";
+    public static readonly BoundKeyFunction CMUGunshipRearView = "CMUGunshipRearView";
+    public static readonly BoundKeyFunction CMUGunshipIncreaseThrust = "CMUGunshipIncreaseThrust";
+    public static readonly BoundKeyFunction CMUGunshipDecreaseThrust = "CMUGunshipDecreaseThrust";
+
     // Emote keybinds - which emote each one plays is configured in the keybinds tab.
     public static readonly BoundKeyFunction CMUEmoteSlot1 = "CMUEmoteSlot1";
     public static readonly BoundKeyFunction CMUEmoteSlot2 = "CMUEmoteSlot2";

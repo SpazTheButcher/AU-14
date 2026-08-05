@@ -1,4 +1,5 @@
 using Content.Shared.NPC.Prototypes;
+using Content.Shared.AU14.AllianceConsole;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
@@ -36,4 +37,11 @@ public sealed partial class SentryTargetingComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public HashSet<ProtoId<NpcFactionPrototype>> AllianceFriendlyNpcFactions = new();
+
+    /// <summary>
+    /// Standing selected for targets that have no recognized IFF and do not belong to a faction
+    /// represented on the alliance console.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public AllianceStatus AllianceUnknownStatus = AllianceStatus.Neutral;
 }

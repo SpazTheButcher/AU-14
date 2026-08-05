@@ -1,0 +1,14 @@
+- type: entity
+  id: ActionGunshipMasterAlarmSilence
+  name: Master Alarm Silence
+  description: Silence or restore all audible gunship alarms. Visual warnings remain active.
+  components:
+  - type: InstantAction
+    event: !type:Content.Shared._CMU14.Dropship.TacticalLand.GunshipMasterAlarmToggleActionEvent
+  - type: Action
+    checkCanInteract: false
+    useDelay: 0.25
+    icon:
+      sprite: _CMU14/Structures/Vehicles/Blackfoot/blackfoot_hud.rsi
+      state: integrity
+    itemIconStyle: BigItem

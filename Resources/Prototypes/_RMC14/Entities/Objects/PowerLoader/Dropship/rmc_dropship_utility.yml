@@ -107,7 +107,9 @@
     attachableTypes:
     - RMCDropshipUtilityPoint
     - RMCDropshipWeaponPoint
+    - CMUGunshipHardpointAttachmentPoint
   - type: RMCEquipmentDeployer
+    deployPrototype: RMCML66DNestDropship
     isDeployableByHand: true
     utilityDeployedSprite:
       sprite: _RMC14/Objects/dropship_utility_attachments.rsi
@@ -118,6 +120,7 @@
     blacklist:
       components:
       - Xeno
+  - type: GunshipDoorGunnerAttachment
 
 - type: entity
   parent: RMCDropshipAttachmentUtility
@@ -177,6 +180,10 @@
       sprite: _RMC14/Objects/dropship_utility_attachments.rsi
       state: launch_bay_deployed
   - type: RMCOrbitalDeployer
+  - type: PowerLoaderAttachable
+    attachableTypes:
+    - RMCDropshipUtilityPoint
+    - CMUGunshipUtilityAttachmentPoint
 
 - type: entity
   parent: RMCDropshipAttachmentUtility
@@ -194,6 +201,10 @@
     sprite:
       sprite: _RMC14/Objects/dropship_utility_attachments.rsi
       state: paradrop_system_deployed
+  - type: PowerLoaderAttachable
+    attachableTypes:
+    - RMCDropshipUtilityPoint
+    - CMUGunshipUtilityAttachmentPoint
   - type: RMCEquipmentDeployer
     deployPrototype: CMUEEXRappelDropshipEndpoint
     dropShipWindowButtonText: Rappel

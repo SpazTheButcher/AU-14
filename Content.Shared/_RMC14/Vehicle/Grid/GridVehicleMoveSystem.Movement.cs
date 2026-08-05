@@ -28,7 +28,7 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         VehicleComponent vehicle,
         EntityUid grid,
         MapGridComponent gridComp,
-        Vector2i inputDir,
+        VehicleControlInput input,
         bool pushing,
         float frameTime)
     {
@@ -56,8 +56,10 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         }
 
         var moved = pushing
-            ? UpdatePushMovement(uid, mover, grid, gridComp, inputDir, frameTime)
-            : UpdateDriveMovement(uid, mover, grid, gridComp, inputDir, frameTime);
+            ? UpdatePushMovement(uid, mover, grid, gridComp, input.Direction, frameTime)
+            : input.CardinalSteering
+                ? UpdateDriveMovement(uid, mover, grid, gridComp, input.Direction, frameTime)
+                : UpdateDynamicDriveMovement(uid, mover, grid, gridComp, input.Throttle, input.Steering, frameTime);
 
         UpdateDerivedTileState(grid, gridComp, mover);
         mover.IsMoving = MathF.Abs(mover.CurrentSpeed) > MinVehicleSpeed;
@@ -77,6 +79,99 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
             physics.WakeBody(uid);
 
         Dirty(uid, mover);
+    }
+
+    private bool UpdateDynamicDriveMovement(
+        EntityUid uid,
+        GridVehicleMoverComponent mover,
+        EntityUid grid,
+        MapGridComponent gridComp,
+        float throttle,
+        float steering,
+        float frameTime)
+    {
+        var immobilized = _timing.CurTime < mover.ImmobileUntil;
+        if (immobilized)
+        {
+            mover.CurrentSpeed = GridVehicleMotionSimulator.StepIdleSpeed(
+                mover.CurrentSpeed,
+                mover.Deceleration,
+                frameTime);
+            mover.AngularVelocityDegrees = StepTowards(
+                mover.AngularVelocityDegrees,
+                0f,
+                mover.RotationDecelerationDegrees * frameTime);
+
+            if (throttle != 0f || steering != 0f)
+                TryShowImmobileRetryPopup(uid);
+
+            return false;
+        }
+
+        var rotation = transform.GetWorldRotation(uid) - transform.GetWorldRotation(grid);
+        var targetAngularVelocity = steering * MathF.Max(0f, mover.MaxRotationSpeedDegrees);
+        var angularAcceleration = steering == 0f
+            ? mover.RotationDecelerationDegrees
+            : mover.RotationAccelerationDegrees;
+        mover.AngularVelocityDegrees = StepTowards(
+            mover.AngularVelocityDegrees,
+            targetAngularVelocity,
+            MathF.Max(0f, angularAcceleration) * frameTime);
+
+        if (MathF.Abs(mover.AngularVelocityDegrees) > 0.001f)
+        {
+            var desiredRotation = rotation + Angle.FromDegrees(mover.AngularVelocityDegrees * frameTime);
+            if (CanOccupyTransform(uid, mover, grid, mover.Position, desiredRotation, Clearance, applyEffects: true))
+            {
+                rotation = desiredRotation;
+                transform.SetLocalRotation(uid, rotation);
+            }
+            else
+            {
+                mover.AngularVelocityDegrees = 0f;
+            }
+        }
+
+        mover.CurrentDirection = rotation.GetCardinalDir().ToIntVec();
+
+        var hasThrottle = throttle != 0f;
+        var profile = GetDriveProfile(uid, mover);
+        var throttleDirection = throttle < 0f ? new Vector2i(0, -1) : new Vector2i(0, 1);
+        var speedResult = hasThrottle
+            ? GridVehicleMotionSimulator.StepDriveSpeed(
+                mover.CurrentSpeed,
+                profile,
+                new Vector2i(0, 1),
+                throttleDirection,
+                true,
+                isCommittedToMove: false,
+                frameTime)
+            : new GridVehicleMotionSimulator.DriveSpeedResult(
+                GridVehicleMotionSimulator.StepIdleSpeed(mover.CurrentSpeed, mover.Deceleration, frameTime),
+                false,
+                false);
+
+        mover.CurrentSpeed = speedResult.CurrentSpeed;
+        if (speedResult.ChangingDirection)
+        {
+            mover.CurrentSpeed = 0f;
+            return false;
+        }
+
+        var travel = MathF.Abs(mover.CurrentSpeed) * frameTime;
+        if (travel <= MinMoveDistance)
+            return MathF.Abs(mover.AngularVelocityDegrees) > 0.001f;
+
+        var forward = rotation.ToWorldVec();
+        if (mover.CurrentSpeed < 0f)
+            forward = -forward;
+
+        var target = mover.Position + forward * travel;
+        var moved = TryMoveContinuous(uid, mover, grid, target, rotation, out var blocked);
+        if (blocked)
+            mover.CurrentSpeed = 0f;
+
+        return moved;
     }
 
     private bool UpdatePushMovement(
@@ -312,13 +407,12 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         if (mover.CurrentDirection != Vector2i.Zero &&
             MathF.Abs(mover.CurrentSpeed) > MinVehicleSpeed)
         {
-            var moveDir = mover.CurrentSpeed >= 0f
-                ? mover.CurrentDirection
-                : -mover.CurrentDirection;
-            var forward = new Vector2(moveDir.X, moveDir.Y);
+            var rotation = transform.GetWorldRotation(uid) - transform.GetWorldRotation(grid);
+            var forward = rotation.ToWorldVec();
+            if (mover.CurrentSpeed < 0f)
+                forward = -forward;
             var travel = MathF.Abs(mover.CurrentSpeed) * frameTime;
             var target = mover.Position + forward * travel;
-            var rotation = DirectionToVehicleRotation(mover.CurrentDirection);
 
             moved = TryMoveContinuous(uid, mover, grid, target, rotation, out var blocked);
             if (blocked)
@@ -1196,12 +1290,22 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
     private void StopMover(GridVehicleMoverComponent mover)
     {
         mover.CurrentSpeed = 0f;
+        mover.AngularVelocityDegrees = 0f;
         mover.IsCommittedToMove = false;
         mover.IsPushMove = false;
         mover.IsMoving = false;
         mover.TargetPosition = mover.Position;
         mover.TargetTile = mover.CurrentTile;
         mover.PushDirection = Vector2i.Zero;
+    }
+
+    private static float StepTowards(float current, float target, float maximumDelta)
+    {
+        if (current < target)
+            return MathF.Min(current + maximumDelta, target);
+        if (current > target)
+            return MathF.Max(current - maximumDelta, target);
+        return current;
     }
 
     private void UpdateDerivedTileState(EntityUid grid, MapGridComponent gridComp, GridVehicleMoverComponent mover)

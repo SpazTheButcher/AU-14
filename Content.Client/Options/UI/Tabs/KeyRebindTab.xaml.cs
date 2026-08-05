@@ -247,6 +247,21 @@ namespace Content.Client.Options.UI.Tabs
             AddHeader("ui-options-header-cmu-zlevels");
             AddButton(CMUKeyFunctions.CMUToggleShootDownZLevel);
 
+            AddHeader("ui-options-header-cmu-gunship");
+            AddButton(CMUKeyFunctions.CMUGunshipForward);
+            AddButton(CMUKeyFunctions.CMUGunshipBack);
+            AddButton(CMUKeyFunctions.CMUGunshipLeft);
+            AddButton(CMUKeyFunctions.CMUGunshipRight);
+            AddButton(CMUKeyFunctions.CMUGunshipRotateLeft);
+            AddButton(CMUKeyFunctions.CMUGunshipRotateRight);
+            AddButton(CMUKeyFunctions.CMUGunshipAscend);
+            AddButton(CMUKeyFunctions.CMUGunshipDescend);
+            AddButton(CMUKeyFunctions.CMUGunshipViewUp);
+            AddButton(CMUKeyFunctions.CMUGunshipViewDown);
+            AddButton(CMUKeyFunctions.CMUGunshipRearView);
+            AddButton(CMUKeyFunctions.CMUGunshipIncreaseThrust);
+            AddButton(CMUKeyFunctions.CMUGunshipDecreaseThrust);
+
             AddHeader("ui-options-header-rmc-xeno");
             AddButton(CMKeyFunctions.CMXenoWideSwing);
             AddButton(CMKeyFunctions.RMCXenoRest);

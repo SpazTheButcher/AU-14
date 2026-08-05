@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Content.Server._CMU14.ZLevels.Core;
+using Content.Server._CMU14.Dropship.Integrity;
 using Content.Server._RMC14.Dropship;
 using Content.Shared._CMU14.Dropship.TacticalLand;
 using Content.Shared._CMU14.ZLevels.Core;
@@ -47,10 +48,12 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private ITileDefinitionManager _tile = default!;
     [Dependency] private CMUZLevelsSystem _zLevels = default!;
+    [Dependency] private DropshipIntegritySystem _integrity = default!;
 
     private static readonly TimeSpan FootprintTickInterval = TimeSpan.FromMilliseconds(150);
     private static readonly TimeSpan MaxTacticalHoverDuration = TimeSpan.FromMinutes(3);
     private static readonly TimeSpan HoverReturnRetryInterval = TimeSpan.FromSeconds(5);
+    private static readonly TimeSpan GunshipAltitudeTransitionTime = TimeSpan.FromSeconds(5);
     private TimeSpan _nextFootprintTick;
 
     private static readonly SoundSpecifier WarningSound =
@@ -70,6 +73,7 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         SubscribeLocalEvent<DropshipTacticalLandSessionComponent, ComponentRemove>(OnSessionRemove);
         SubscribeLocalEvent<EphemeralDropshipDestinationComponent, DropshipRelayedEvent<FTLCompletedEvent>>(OnEphemeralFtlCompleted);
         SubscribeLocalEvent<DropshipTacticalHoverComponent, ComponentShutdown>(OnTacticalHoverShutdown);
+        InitializeGunshipPilot();
     }
 
     protected override void OnTacticalLandStart(Entity<DropshipNavigationComputerComponent> ent, ref DropshipNavigationTacticalLandStartMsg args)
@@ -92,12 +96,6 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
             !TryComp(gridUid, out DropshipComponent? dropship) ||
             dropship.Crashed)
         {
-            return;
-        }
-
-        if (HasComp<DropshipTacticalHoverComponent>(gridUid))
-        {
-            _popup.PopupEntity("This dropship is already in tactical hover.", ent, pilot, PopupType.MediumCaution);
             return;
         }
 
@@ -353,6 +351,8 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
         var now = _timing.CurTime;
         ProcessTacticalHovers(now);
+        ProcessGunshipAltitudeTransitions(now);
+        UpdateGunshipPilots(frameTime);
         UpdateHoverEffects();
 
         if (now >= _nextFootprintTick)
@@ -649,6 +649,11 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
         hover.ReturnDestination = returnDestination;
         hover.HoverDestination = ent.Owner;
+        if (Transform(dropshipGrid).MapUid is { } hoverMap &&
+            _zLevels.TryMapOffset(hoverMap, -1, out var groundMap))
+        {
+            hover.GroundMap = groundMap.Value.Owner;
+        }
         hover.ReturnAt = _timing.CurTime + duration;
         hover.NextReturnAttempt = hover.ReturnAt;
         hover.Footprint = ent.Comp.Footprint.X > 0 && ent.Comp.Footprint.Y > 0
@@ -665,6 +670,9 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         var query = EntityQueryEnumerator<DropshipTacticalHoverComponent>();
         while (query.MoveNext(out var uid, out var hover))
         {
+            if (hover.AltitudeTransitionAt != null)
+                continue;
+
             if (now < hover.ReturnAt || now < hover.NextReturnAttempt)
                 continue;
 
@@ -679,6 +687,12 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
     private void RequestTacticalHoverReturn(Entity<DropshipTacticalHoverComponent> hover, EntityUid user)
     {
+        if (hover.Comp.AltitudeTransitionAt != null)
+        {
+            _popup.PopupEntity("The dropship cannot return while changing flight levels.", hover.Owner, user, PopupType.MediumCaution);
+            return;
+        }
+
         if (!TryGetHoverReturnDestination(hover, out var returnDestination))
         {
             _popup.PopupEntity("Tactical hover return destination is no longer available.", hover.Owner, user, PopupType.MediumCaution);
@@ -727,6 +741,22 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
         RemCompDeferred<DropshipTacticalHoverComponent>(hover.Owner);
         return true;
+    }
+
+    public void EndTacticalHoverForReroute(EntityUid dropship)
+    {
+        if (!TryComp(dropship, out DropshipTacticalHoverComponent? hover))
+            return;
+
+        if (hover.HoverDestination is { } oldDestination &&
+            oldDestination != CompOrNull<DropshipComponent>(dropship)?.Destination &&
+            !TerminatingOrDeleted(oldDestination))
+        {
+            QueueDel(oldDestination);
+        }
+
+        CleanupHoverEffects((dropship, hover));
+        RemComp<DropshipTacticalHoverComponent>(dropship);
     }
 
     private void ShortenTacticalHoverCooldown(EntityUid dropshipGrid)

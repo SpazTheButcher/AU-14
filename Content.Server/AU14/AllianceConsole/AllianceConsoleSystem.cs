@@ -109,6 +109,12 @@ public sealed partial class AllianceConsoleSystem : EntitySystem
 
         sideState[targetFaction] = newStatus;
 
+        if (targetFaction == AllianceConsoleComponent.UnknownFaction)
+        {
+            _sentryTargeting.SetAllianceUnknownStatus(sideFactionUpper, newStatus);
+            return;
+        }
+
         // NPC faction relationship changes (bi-directional).
         if (oldStatus == AllianceStatus.Friendly && newStatus != AllianceStatus.Friendly)
         {

@@ -1172,6 +1172,9 @@ public sealed class DropshipWeaponsBui : RMCPopOutBui<DropshipWeaponsWindow>
                 EntMan.TryGetComponent(contained, out DropshipWeaponComponent? weapon);
                 EntMan.TryGetComponent(contained, out RMCEquipmentDeployerComponent? deployer);
 
+                if (weapon?.DirectFireOnly == true)
+                    continue;
+
                 if (weapon == null && deployer == null)
                     continue;
 

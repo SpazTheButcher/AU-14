@@ -283,7 +283,11 @@ public sealed partial class CMUZLevelsSystem
 
     private void OnViewerMapUidChanged(Entity<CMUZLevelViewerComponent> ent, ref MapUidChangedEvent args)
     {
-        UpdateViewer(ent);
+        // MapUidChangedEvent can be raised while SharedTransformSystem is recursively
+        // changing an entire grid's map. Refreshing here may spawn or remove a probe
+        // eye and modify that transform hierarchy while it is still being enumerated.
+        // Force a full refresh on the next system update, after the transfer finishes.
+        _nextZLevelViewerUpdate = TimeSpan.Zero;
     }
 
     private void OnViewerParentChange(Entity<CMUZLevelViewerComponent> ent, ref EntParentChangedMessage args)

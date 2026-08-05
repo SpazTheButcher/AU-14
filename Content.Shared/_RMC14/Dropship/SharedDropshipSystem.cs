@@ -1421,4 +1421,10 @@ public abstract partial class SharedDropshipSystem : EntitySystem
             Dirty(uid, comp);
         }
     }
+
+    public void SetDropshipCrashed(Entity<DropshipComponent> dropship, bool crashed)
+    {
+        dropship.Comp.Crashed = crashed;
+        Dirty(dropship);
+    }
 }

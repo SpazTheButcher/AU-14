@@ -10,6 +10,29 @@
     sprite: _RMC14/Structures/Dropships/normandy.rsi
   - type: Icon
     sprite: _RMC14/Structures/Dropships/normandy.rsi
+  - type: DropshipCrashDestructibleWall
+    components:
+    - type: Damageable
+      damageContainer: StructuralMarine
+      damageModifierSet: CMU14StructuralMarine
+    - type: Destructible
+      thresholds:
+      - trigger:
+          !type:DamageTrigger
+          damage: 500
+        behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - type: ExaminableDamage
+      messages: RMCWallMessages
+    - type: RMCIntegrityExamine
+    - type: RMCRepairable
+      heal: 250
+      delay: 2
+    - type: RMCWallExplosionDeletable
+    - type: DestroyedByExplosionType
+    - type: DamageMultiplierFlags
+      flags: Turf
 
 - type: entity
   parent: [CMBaseNormandyWall, CMAlamoWall1]
@@ -1277,6 +1300,31 @@
     state: "101a"
   - type: Icon
     state: "101a"
+
+- type: entity
+  parent: CMNormandyWall101a
+  id: CMNormandyDirectFireAttachPoint
+  name: direct-fire attach point
+  description: A forward-facing mount for pilot-controlled gunship weapons. Heavy equipment must be installed with a powerloader.
+  suffix: Direct Fire
+  components:
+  - type: Sprite
+    sprite: _RMC14/Structures/Dropships/normandy.rsi
+    layers:
+    - state: "101a"
+    - map: [ "enum.DropshipWeaponPointLayers.Layer" ]
+      offset: 0.5, 0.5
+  - type: Occluder
+    enabled: false
+  - type: InteractionOutline
+  - type: Clickable
+  - type: DropshipWeaponPoint
+    dirOffset: Flip
+  - type: GunshipDirectFirePoint
+  - type: Appearance
+  - type: Tag
+    tags:
+    - RMCDropshipDirectFirePoint
 
 - type: entity
   parent: [CMBaseNormandyWall, CMAlamoWall102]

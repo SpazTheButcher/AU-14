@@ -84,6 +84,30 @@ public sealed partial class GridVehicleMoverComponent : Component
     public float ReverseAcceleration = 4f;
 
     /// <summary>
+    /// maximum chassis rotation speed while steering, in degrees per second
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public float MaxRotationSpeedDegrees = 90f;
+
+    /// <summary>
+    /// chassis angular acceleration while steering, in degrees per second squared
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public float RotationAccelerationDegrees = 180f;
+
+    /// <summary>
+    /// chassis angular deceleration after steering is released, in degrees per second squared
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public float RotationDecelerationDegrees = 240f;
+
+    /// <summary>
+    /// current signed chassis angular speed, in degrees per second
+    /// </summary>
+    [AutoNetworkedField]
+    public float AngularVelocityDegrees;
+
+    /// <summary>
     /// forward offset used when placing the vehicle on tiles
     /// </summary>
     [DataField, AutoNetworkedField]

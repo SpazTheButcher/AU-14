@@ -664,6 +664,39 @@ binds:
   key: Space
   mod1: Shift
   mod2: Control
+- function: CMUGunshipForward
+  type: State
+  key: W
+- function: CMUGunshipBack
+  type: State
+  key: S
+- function: CMUGunshipLeft
+  type: State
+  key: A
+- function: CMUGunshipRight
+  type: State
+  key: D
+- function: CMUGunshipRotateLeft
+  type: State
+  key: Q
+- function: CMUGunshipRotateRight
+  type: State
+  key: E
+- function: CMUGunshipAscend
+  type: State
+  key: PageUp
+- function: CMUGunshipDescend
+  type: State
+  key: PageDown
+- function: CMUGunshipViewUp
+  type: State
+  key: Home
+- function: CMUGunshipViewDown
+  type: State
+  key: End
+- function: CMUGunshipRearView
+  type: State
+  key: Insert
 - function: CMUOpenMedicalCraftingMenu
   type: State
   key: C

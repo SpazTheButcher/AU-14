@@ -8,6 +8,8 @@ namespace Content.Shared.AU14.AllianceConsole;
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class AllianceConsoleComponent : Component
 {
+    public const string UnknownFaction = "Unknown";
+
     /// <summary>
     /// The military faction this console belongs to ("govfor" or "opfor").
     /// </summary>
@@ -27,6 +29,7 @@ public sealed partial class AllianceConsoleComponent : Component
     [DataField]
     public HashSet<string> ControllableFactions = new()
     {
+        UnknownFaction,
         "AUUpp",
         "AUWeYu",
         "CLF",
@@ -42,6 +45,7 @@ public sealed partial class AllianceConsoleComponent : Component
 
     public static readonly Dictionary<string, string> FactionDisplayNames = new()
     {
+        { UnknownFaction,       "Unknown" },
         { "AUUpp",             "UPP" },
         { "AUWeYu",            "Weyland-Yutani" },
         { "CLF",               "CLF" },

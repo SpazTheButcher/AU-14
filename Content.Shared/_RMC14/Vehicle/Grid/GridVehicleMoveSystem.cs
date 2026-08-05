@@ -229,6 +229,7 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
 
             ent.Comp.SyncedGrid = null;
             ent.Comp.CurrentSpeed = 0f;
+            ent.Comp.AngularVelocityDegrees = 0f;
             ent.Comp.PushDirection = Vector2i.Zero;
             ent.Comp.IsCommittedToMove = false;
             ent.Comp.IsPushMove = false;
@@ -255,6 +256,8 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         ent.Comp.TargetPosition = ent.Comp.Position;
         if (!preserveFallingMotion)
             ent.Comp.CurrentSpeed = 0f;
+        if (!preserveFallingMotion)
+            ent.Comp.AngularVelocityDegrees = 0f;
 
         ent.Comp.PushDirection = Vector2i.Zero;
         if (!preserveFallingMotion)

@@ -17,6 +17,9 @@ public sealed partial class DropshipTacticalHoverComponent : Component
     public EntityUid? HoverDestination;
 
     [DataField]
+    public EntityUid? GroundMap;
+
+    [DataField]
     public TimeSpan ReturnAt;
 
     [DataField]
@@ -27,6 +30,32 @@ public sealed partial class DropshipTacticalHoverComponent : Component
 
     [DataField]
     public int GroundMapOffset = -1;
+
+    /// <summary>
+    /// World-space velocity accumulated by gunship flight controls. Tactical
+    /// hover deliberately applies no passive damping, giving it weightless momentum.
+    /// </summary>
+    public Vector2 GunshipLinearVelocity;
+
+    /// <summary>
+    /// Angular velocity accumulated by gunship flight controls, in degrees per second.
+    /// Like linear velocity, tactical hover applies no passive damping.
+    /// </summary>
+    public float GunshipAngularVelocityDegrees;
+
+    /// <summary>
+    /// Pending five-second vertical movement. The dropship remains on its
+    /// current level until this time is reached.
+    /// </summary>
+    public TimeSpan? AltitudeTransitionAt;
+
+    public EntityUid? AltitudeTargetMap;
+
+    public int AltitudeOffset;
+
+    public bool AltitudeLanding;
+
+    public EntityUid? AltitudePilot;
 
     [DataField]
     public EntityUid? Shadow;

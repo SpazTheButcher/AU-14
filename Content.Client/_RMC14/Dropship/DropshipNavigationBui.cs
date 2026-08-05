@@ -150,7 +150,7 @@ public sealed partial class DropshipNavigationBui : BoundUserInterface
             var button = new DropshipButton();
 
             button.Text = name;
-            button.Disabled = _tacticalHoverActive || disabled;
+            button.Disabled = disabled;
             button.BorderColor = Color.Transparent;
             button.BorderThickness = new Thickness(0);
             button.Button.ToggleMode = false;
@@ -171,7 +171,7 @@ public sealed partial class DropshipNavigationBui : BoundUserInterface
         {
             var hoverStatus = new DropshipButton
             {
-                Text = "Tactical hover active - return now to cancel",
+                Text = "Tactical hover active - select another destination or return",
                 Disabled = true,
                 BorderColor = Color.FromHex("#4E6B8E"),
                 BorderThickness = new Thickness(1),

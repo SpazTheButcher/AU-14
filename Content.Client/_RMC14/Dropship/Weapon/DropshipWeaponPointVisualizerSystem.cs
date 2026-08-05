@@ -1,3 +1,4 @@
+using Content.Shared._CMU14.Dropship.DirectFire;
 using Content.Shared._RMC14.Dropship;
 using Content.Shared._RMC14.Dropship.AttachmentPoint;
 using Content.Shared._RMC14.Dropship.Weapon;
@@ -57,6 +58,14 @@ public sealed partial class DropshipWeaponPointVisualizerSystem : VisualizerSyst
 
         if (Enum.TryParse<DirectionOffset>(component.DirOffset, true, out var dir))
             _sprite.LayerSetDirOffset((uid, spriteComp), layer, dir);
+
+        if (AppearanceSystem.TryGetData(uid,
+                GunshipDirectFireVisuals.AimOffsetDegrees,
+                out float aimOffsetDegrees,
+                args.Component))
+        {
+            _sprite.LayerSetRotation((uid, spriteComp), layer, Angle.FromDegrees(aimOffsetDegrees));
+        }
 
         _sprite.LayerSetVisible((uid, spriteComp), layer, true);
     }

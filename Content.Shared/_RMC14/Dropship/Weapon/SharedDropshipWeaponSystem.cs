@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Content.Shared._CMU14.Dropship.AttachmentPoint;
 using Content.Shared._CMU14.ZLevels.Core.EntitySystems;
 using Content.Shared._RMC14.Areas;
 using Content.Shared._RMC14.Atmos;
@@ -1110,6 +1111,17 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
             dropship.Comp.AttachmentPoints.Count == 0)
             return;
 
+        if (!TryComp(selectedSystem, out RMCOrbitalDeployerComponent? deployer))
+            return;
+
+        var point = Transform(selectedSystem.Value).ParentUid;
+        if (HasComp<GunshipUtilityAttachmentPointComponent>(point))
+        {
+            _rmcOrbitalDeployable.TryDeploy(selectedSystem.Value, selectedSystem.Value, args.Actor, deployer);
+            RefreshWeaponsUI(ent);
+            return;
+        }
+
         if (ent.Comp.Target is not { } target)
             return;
 
@@ -1125,9 +1137,6 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
                 return;
             }
         }
-
-        if (!TryComp(selectedSystem, out RMCOrbitalDeployerComponent? deployer))
-            return;
 
         _rmcOrbitalDeployable.TryDeploy(selectedSystem.Value, target,  args.Actor, deployer);
 
@@ -2382,6 +2391,9 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
     private bool CanFire(EntityUid uid, DropshipWeaponStrikeType strikeType, EntityUid? actor = null, int requiredShots = 1, DropshipWeaponComponent? weapon = null)
     {
         if (!Resolve(uid, ref weapon, false))
+            return false;
+
+        if (weapon.DirectFireOnly)
             return false;
 
         Entity<DropshipComponent> dropship = default;

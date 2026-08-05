@@ -41,7 +41,6 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
     private readonly HashSet<Entity<NpcFactionMemberComponent>> _factionLookupBuffer = new();
     private readonly HashSet<Entity<UserIFFComponent>> _userIffLookupBuffer = new();
     private readonly HashSet<EntityUid> _candidateLookupBuffer = new();
-    private readonly HashSet<string> _friendlyNpcFactionBuffer = new();
 
     public override void Initialize()
     {
@@ -136,6 +135,15 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
             ApplyTargeting((sentry, targeting));
 
         Dirty(sentry, targeting);
+
+        // Automatic dropship assignment must notify the alliance system just like
+        // manual multitool assignment does, so previously selected standings apply now.
+        if (_net.IsServer)
+        {
+            var ev = new SentryFactionAssignedEvent(sentry);
+            RaiseLocalEvent(sentry, ref ev);
+        }
+
         return true;
     }
 
@@ -253,21 +261,6 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
         }
     }
 
-    private bool IsFriendlyByIff(EntityUid target)
-    {
-        _targetIffBuffer.Clear();
-        var ev = new GetIFFFactionEvent(SlotFlags.IDCARD, _targetIffBuffer);
-        RaiseLocalEvent(target, ref ev);
-
-        foreach (var faction in _targetIffBuffer)
-        {
-            if (_friendlyIffBuffer.Contains(faction))
-                return true;
-        }
-
-        return false;
-    }
-
     public bool IsValidTarget(Entity<SentryTargetingComponent> sentry, EntityUid target)
     {
         if (!HasComp<UserIFFComponent>(target) && !HasComp<NpcFactionMemberComponent>(target))
@@ -276,6 +269,24 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
         // Unconfigured sentry targets no one.
         if (sentry.Comp.FriendlyFactions.Count == 0)
             return false;
+
+        _targetIffBuffer.Clear();
+        var iffEvent = new GetIFFFactionEvent(SlotFlags.IDCARD, _targetIffBuffer);
+        RaiseLocalEvent(target, ref iffEvent);
+
+        var hasKnownIff = _targetIffBuffer.Any(targetIff => SentryFactionToIff.ContainsValue(targetIff));
+        var hasKnownNpcFaction = false;
+        if (TryComp<NpcFactionMemberComponent>(target, out var knownTargetFaction))
+        {
+            hasKnownNpcFaction = knownTargetFaction.Factions.Any(faction =>
+                AllianceConsoleComponent.FactionDisplayNames.ContainsKey(faction.Id));
+        }
+
+        if (!hasKnownIff && !hasKnownNpcFaction)
+        {
+            _targetIffBuffer.Clear();
+            return sentry.Comp.AllianceUnknownStatus != AllianceStatus.Friendly;
+        }
 
         // A matching NPC faction is friendly even when that faction also has an IFF mapping.
         // This covers corporate NPCs, synthetics, and other entities that do not carry an ID.
@@ -294,7 +305,7 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
         }
 
         BuildFriendlyIff(sentry.Comp);
-        var friendly = IsFriendlyByIff(target);
+        var friendly = _targetIffBuffer.Overlaps(_friendlyIffBuffer);
         _friendlyIffBuffer.Clear();
         _targetIffBuffer.Clear();
         return !friendly;
@@ -302,16 +313,6 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
 
     public IEnumerable<EntityUid> GetNearbyIffHostiles(Entity<SentryTargetingComponent> ent, float range)
     {
-        BuildFriendlyIff(ent.Comp);
-
-        // Check every friendly NPC faction so entities without wearable IFF are still protected.
-        _friendlyNpcFactionBuffer.Clear();
-        foreach (var faction in ent.Comp.FriendlyFactions)
-            _friendlyNpcFactionBuffer.Add(faction);
-
-        foreach (var faction in ent.Comp.AllianceFriendlyNpcFactions)
-            _friendlyNpcFactionBuffer.Add(faction.Id);
-
         var coords = _xform.GetMapCoordinates(ent);
 
         _candidateLookupBuffer.Clear();
@@ -331,24 +332,8 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
             if (_container.IsEntityInContainer(target))
                 continue;
 
-            if (IsFriendlyByIff(target))
+            if (!IsValidTarget(ent, target))
                 continue;
-
-            if (_friendlyNpcFactionBuffer.Count > 0 &&
-                TryComp<NpcFactionMemberComponent>(target, out var targetNpc))
-            {
-                var isFriendly = false;
-                foreach (var f in targetNpc.Factions)
-                {
-                    if (_friendlyNpcFactionBuffer.Contains(f.Id))
-                    {
-                        isFriendly = true;
-                        break;
-                    }
-                }
-                if (isFriendly)
-                    continue;
-            }
 
             yield return target;
         }
@@ -356,9 +341,6 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
         _candidateLookupBuffer.Clear();
         _userIffLookupBuffer.Clear();
         _factionLookupBuffer.Clear();
-        _friendlyIffBuffer.Clear();
-        _targetIffBuffer.Clear();
-        _friendlyNpcFactionBuffer.Clear();
     }
 
     private void ApplyTargeting(Entity<SentryTargetingComponent> ent)
@@ -423,6 +405,7 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
         Dictionary<string, Dictionary<string, AllianceStatus>> globalState)
     {
         var friendly = new HashSet<string>();
+        var unknownStatus = AllianceStatus.Neutral;
 
         foreach (var (sideFaction, sideState) in globalState)
         {
@@ -431,12 +414,32 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
 
             foreach (var (npcFaction, status) in sideState)
             {
+                if (npcFaction == AllianceConsoleComponent.UnknownFaction)
+                {
+                    unknownStatus = status;
+                    continue;
+                }
+
                 if (status == AllianceStatus.Friendly)
                     friendly.Add(npcFaction);
             }
         }
 
+        targeting.AllianceUnknownStatus = unknownStatus;
         ApplyAllianceFactions(sentryUid, targeting, friendly);
+    }
+
+    public void SetAllianceUnknownStatus(string sideFaction, AllianceStatus status)
+    {
+        var query = AllEntityQuery<SentryTargetingComponent>();
+        while (query.MoveNext(out var uid, out var comp))
+        {
+            if (!comp.FriendlyFactions.Contains(sideFaction))
+                continue;
+
+            comp.AllianceUnknownStatus = status;
+            Dirty(uid, comp);
+        }
     }
 
     /// <summary>
@@ -477,6 +480,7 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
         ent.Comp.FriendlyFactions.UnionWith(ent.Comp.LockedFriendlyFactions);
         ent.Comp.HumanoidAdded.Clear();
         ent.Comp.AllianceFriendlyNpcFactions.Clear();
+        ent.Comp.AllianceUnknownStatus = AllianceStatus.Neutral;
 
         if (updateDeployed)
         {

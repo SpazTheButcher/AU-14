@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using System.Numerics;
 using Content.Shared._RMC14.Vehicle;
 using Content.Shared.Vehicle.Components;
+using Content.Shared._ES.Camera;
+using Content.Shared.Movement.Components;
+using Content.Shared.Movement.Systems;
 using ClientPhysicsSystem = Robust.Client.Physics.PhysicsSystem;
 using Robust.Client.Player;
 using Robust.Client.Graphics;
@@ -17,6 +20,8 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
     [Dependency] private ClientPhysicsSystem _physics = default!;
     [Dependency] private IOverlayManager _overlayManager = default!;
     [Dependency] private SharedEyeSystem _eye = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private SharedMoverController _mover = default!;
 
     public static readonly List<Vector2> DebugCollisionPositions = new();
 
@@ -31,8 +36,27 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         _hardpointOverlay = new VehicleHardpointDebugOverlay(EntityManager);
 
         SubscribeLocalEvent<GridVehicleMoverComponent, UpdateIsPredictedEvent>(OnUpdateIsPredicted);
+        SubscribeLocalEvent<VehicleOperatorComponent, ESGetEyeRotationEvent>(OnGetDriverEyeRotation);
 
         _overlayManager.AddOverlay(_hardpointOverlay);
+    }
+
+    private void OnGetDriverEyeRotation(Entity<VehicleOperatorComponent> ent, ref ESGetEyeRotationEvent args)
+    {
+        if (ent.Comp.Vehicle is not { } vehicle ||
+            !TryComp(ent.Owner, out VehicleViewToggleComponent? viewToggle) ||
+            !viewToggle.IsOutside ||
+            viewToggle.OutsideTarget != vehicle ||
+            !TryComp(ent.Owner, out InputMoverComponent? inputMover))
+        {
+            return;
+        }
+
+        // Keep the chassis pointing toward the same part of the screen as it
+        // steers, matching the rotating exterior view used by gunships.
+        var baseRotation = -_mover.GetParentGridAngle(inputMover);
+        var vehicleRotation = -_transform.GetWorldRotation(vehicle);
+        args.Rotation += vehicleRotation - baseRotation;
     }
 
     public override void Shutdown()
