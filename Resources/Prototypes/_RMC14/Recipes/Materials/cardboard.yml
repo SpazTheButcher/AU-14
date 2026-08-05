@@ -848,6 +848,7 @@
   - RMCBoxPackFlareCASEmptyBuild
   - RMCDividerConstruction
   - RMCBoxFlamerTankEmptyBuild
+  - RMCBoxFlamerTankUTNapthalEmptyBuild
   - RMCBoxFlamerTankBGelEmptyBuild
   - RMCDividerConstruction
   - RMCBoxFlashlightsEmptyBuild
@@ -869,8 +870,14 @@
 - type: rmcConstruction
   parent: RMCCardboardBuildBase
   id: RMCBoxFlamerTankEmptyBuild
-  name: UT-Napthal fuel tanks box
+  name: Incinerator tanks box
   prototype: RMCBoxFlamerTankEmpty
+
+- type: rmcConstruction
+  parent: RMCCardboardBuildBase
+  id: RMCBoxFlamerTankUTNapthalEmptyBuild
+  name: UT-Napthal fuel tanks box
+  prototype: RMCBoxFlamerTankUTNapthalEmpty
 
 - type: rmcConstruction
   parent: RMCCardboardBuildBase

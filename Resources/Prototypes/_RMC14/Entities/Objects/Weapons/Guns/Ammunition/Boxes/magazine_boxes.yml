@@ -2482,6 +2482,33 @@
 - type: entity
   parent: RMCBoxFlamerTankBase
   id: RMCBoxFlamerTankEmpty
+  name: flamer tank box (Incinerator tank x 8)
+  components:
+  - type: Construction
+    graph: RMCBoxMagazine
+    node: RMCBoxFlamerTankEmpty
+  - type: Sprite
+    layers:
+    - state: flamer_box
+      color: "#3d3832"
+    - state: flamer_ammo_full_base
+      map: [ "enum.CMItemSlotsLayers.Fill" ]
+    - state: flamer_ammo_full_color
+      map: [ "enum.CMItemSlotsLayers2.Fill" ]
+      color: "#c18f1a"
+    - state: flamer_lid
+      map: [ "lid" ]
+      color: "#3d3832"
+  - type: CMItemSlots
+    count: 8
+    slot:
+      whitelist:
+        components:
+        - RMCFlamerTank
+
+- type: entity
+  parent: RMCBoxFlamerTankBase
+  id: RMCBoxFlamerTankUTNapthalEmpty
   name: flamer tank box (UT-Napthal Fuel x 8)
   components:
   - type: Construction
@@ -2509,8 +2536,8 @@
         - RMCFlamerTank
 
 - type: entity
-  parent: RMCBoxFlamerTankEmpty
-  id: RMCBoxFlamerTank
+  parent: RMCBoxFlamerTankUTNapthalEmpty
+  id: RMCBoxFlamerTankUTNapthal
   suffix: Full
   components:
   - type: CMItemSlots
