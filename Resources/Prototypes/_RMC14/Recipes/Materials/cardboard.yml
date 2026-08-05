@@ -302,10 +302,10 @@
   - RMCBoxMagazineRifleL24APEmptyBuild
   - RMCBoxMagazineRifleL24ExtEmptyBuild
   - RMCDividerConstruction
-  - RMCBoxMagazineRifleSLREmptyBuild
-  - RMCBoxMagazineRifleSLRAPEmptyBuild  
-  - RMCBoxMagazineRifleSLRDrumEmptyBuild
-  - RMCBoxMagazineRifleSLRDrumAPEmptyBuild
+  - RMCBoxMagazineRifleL90EmptyBuild
+  - RMCBoxMagazineRifleL90APEmptyBuild  
+  - RMCBoxMagazineRifleL90DrumEmptyBuild
+  - RMCBoxMagazineRifleL90DrumAPEmptyBuild
   - RMCDividerConstruction
   - RMCBoxMagazineRifleL88EmptyBuild
   - RMCDividerConstruction
