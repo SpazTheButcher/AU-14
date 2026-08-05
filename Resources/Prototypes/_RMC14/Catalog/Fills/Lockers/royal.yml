@@ -6,7 +6,7 @@
     - id: RMCLaserDesignatorPVE
     - id: RMCBackpackAmmoRCM
     - id: CMAdvFirstAidKit
-    - id: RMCBoxMagazineRifleSLRDrum
+    - id: RMCBoxMagazineRifleL90Drum
     - id: RMCArmorWebbingDrum
 
 - type: entityTable

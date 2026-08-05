@@ -56,12 +56,12 @@
 # L23/L24 AP (RMC)
 - type: entity
   parent: RMCCrateAmmo
-  id: AU14CrateBoxMagazineRifleL23AP
-  name: Magazine box (L23, 10x AP mags)
+  id: AU14CrateBoxMagazineRifleL24AP
+  name: Magazine box (L23/L24, 10x AP mags)
   components:
   - type: StorageFill
     contents:
-    - id: RMCBoxMagazineRifleL23AP
+    - id: RMCBoxMagazineRifleL24AP
 
 # L90A2 AP (RMC)
 - type: entity
