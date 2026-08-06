@@ -9124,5 +9124,12 @@
   id: 586
   time: '2026-08-05T10:46:18.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1793
+- author: HotdogMan52
+  changes:
+  - message: Added magazine boxes into cardboard crafting menu, categorized per faction
+    type: Add
+  id: 587
+  time: '2026-08-05T18:07:08.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1794
 Name: CMU
 Order: -1
