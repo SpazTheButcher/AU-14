@@ -25,7 +25,7 @@ using Content.Shared.Interaction.Components;
 using Content.Shared.Maps;
 using Content.Shared.Physics;
 using Content.Shared.Popups;
-using Content.Shared.Weapons.Ranged.Systems;
+using Content.Shared.Weapons.Ranged.Components;
 using Content.Server.Movement.Components;
 using Content.Server.Destructible;
 using Robust.Shared.Audio;
@@ -44,8 +44,6 @@ public sealed partial class DropshipTacticalLandSystem
     [Dependency] private InventorySystem _pilotInventory = default!;
     [Dependency] private SharedNightVisionSystem _nightVision = default!;
     [Dependency] private SharedContainerSystem _gunshipContainers = default!;
-    [Dependency] private SharedGunSystem _gunshipGun = default!;
-    [Dependency] private PowerLoaderSystem _gunshipPowerLoader = default!;
     [Dependency] private SharedAppearanceSystem _directFireAppearance = default!;
     [Dependency] private SharedActionsSystem _gunshipActions = default!;
     [Dependency] private SharedHandsSystem _gunshipHands = default!;
@@ -96,7 +94,6 @@ public sealed partial class DropshipTacticalLandSystem
         SubscribeNetworkEvent<GunshipCycleCameraInputEvent>(OnGunshipCycleCameraInput);
         SubscribeNetworkEvent<GunshipPilotPanningInputEvent>(OnGunshipPilotPanningInput);
         SubscribeNetworkEvent<GunshipDirectFireAimEvent>(OnGunshipDirectFireAim);
-        SubscribeNetworkEvent<GunshipDirectFireEvent>(OnGunshipDirectFire);
     }
 
     private void OnGunshipDirectFireAim(GunshipDirectFireAimEvent ev, EntitySessionEventArgs args)
@@ -108,60 +105,6 @@ public sealed partial class DropshipTacticalLandSystem
         }
 
         TryAimDirectFireMount(grid, point, weapon, GetCoordinates(ev.Coordinates), out _);
-    }
-
-    private void OnGunshipDirectFire(GunshipDirectFireEvent ev, EntitySessionEventArgs args)
-    {
-        if (args.SenderSession.AttachedEntity is not { } pilot ||
-            !TryGetPilotDirectFireMount(pilot,
-                out var grid,
-                out var hover,
-                out var point,
-                out var weaponUid,
-                out var weapon,
-                out var ammoUid,
-                out var ammo))
-        {
-            return;
-        }
-
-        if (TryComp(grid, out DropshipIntegrityComponent? weaponIntegrity) &&
-            weaponIntegrity.ActiveMalfunctions.Contains(DropshipMalfunction.WeaponShort))
-        {
-            _popup.PopupEntity("Weapon short detected. The direct-fire system is offline.", point.Owner, pilot, PopupType.SmallCaution);
-            return;
-        }
-
-        if (!TryAimDirectFireMount(grid, point, weapon, GetCoordinates(ev.Coordinates), out var direction))
-            return;
-
-        if (weapon.NextFireAt is { } nextFire && _timing.CurTime < nextFire)
-            return;
-
-        if (ammoUid is not { } loadedAmmo || ammo == null || ammo.Rounds < 1)
-        {
-            _popup.PopupEntity("The M4332 Signal Flare Launcher is out of ammunition.", point.Owner, pilot, PopupType.SmallCaution);
-            return;
-        }
-
-        var origin = _transform.GetWorldPosition(point.Owner) + direction * 1.25f;
-        var mapId = Transform(grid).MapID;
-        var projectile = Spawn(weapon.Projectile, new MapCoordinates(origin, mapId));
-        _gunshipGun.ShootProjectile(projectile,
-            direction,
-            hover.GunshipLinearVelocity,
-            weaponUid,
-            pilot,
-            weapon.ProjectileSpeed);
-
-        _audio.PlayPvs(weapon.FireSound, point.Owner);
-        ammo.Rounds--;
-        _directFireAppearance.SetData(loadedAmmo, DropshipAmmoVisuals.Fill, ammo.Rounds);
-        Dirty(loadedAmmo, ammo);
-        _gunshipPowerLoader.SyncAppearance(point.Owner);
-
-        weapon.NextFireAt = _timing.CurTime + weapon.FireDelay;
-        Dirty(weaponUid, weapon);
     }
 
     private bool TryGetPilotDirectFireMount(
@@ -1686,6 +1629,7 @@ public sealed partial class DropshipTacticalLandSystem
         {
             DisablePilotHudActions(pilot, seat);
             _gunshipVirtualItems.DeleteInHandsMatching(pilot, seat.Owner);
+            RemCompDeferred<RemoteWeaponOperatorComponent>(pilot);
         }
 
         TeardownGunshipPilotEye(seat);
@@ -1734,6 +1678,7 @@ public sealed partial class DropshipTacticalLandSystem
             var maxIntegrity = 0f;
             var thrustPercent = 0f;
             var hasDirectFireWeapon = false;
+            EntityUid? directFireWeapon = null;
             var directFireAmmo = -1;
             var malfunctions = new List<DropshipMalfunction>();
             var alarms = new List<DropshipAlarm>();
@@ -1777,10 +1722,17 @@ public sealed partial class DropshipTacticalLandSystem
                         alarms.Add(DropshipAlarm.LowIntegrity);
                 }
 
-                hasDirectFireWeapon = TryGetDirectFireMount(grid, out _, out _, out _, out _, out var directAmmo);
+                hasDirectFireWeapon = TryGetDirectFireMount(grid, out _, out var foundWeapon, out _, out _, out var directAmmo);
                 if (hasDirectFireWeapon)
+                {
+                    directFireWeapon = foundWeapon;
                     directFireAmmo = directAmmo?.Rounds ?? 0;
+                }
             }
+
+            UpdateRemoteDirectFireWeapon(wearer,
+                flightControlsAvailable ? dropship : null,
+                flightControlsAvailable ? directFireWeapon : null);
 
             if (visorChanged ||
                 hud.Dropship != dropship ||
@@ -1835,8 +1787,26 @@ public sealed partial class DropshipTacticalLandSystem
 
             CleanupGunshipNightVision((wearer, hud));
             CleanupGunshipStaticZoom((wearer, hud));
+            RemCompDeferred<RemoteWeaponOperatorComponent>(wearer);
             RemCompDeferred<GunshipPilotHudComponent>(wearer);
         }
+    }
+
+    private void UpdateRemoteDirectFireWeapon(EntityUid pilot, EntityUid? dropship, EntityUid? weapon)
+    {
+        if (dropship == null || weapon == null)
+        {
+            RemCompDeferred<RemoteWeaponOperatorComponent>(pilot);
+            return;
+        }
+
+        var remote = EnsureComp<RemoteWeaponOperatorComponent>(pilot);
+        if (remote.Platform == dropship && remote.SelectedWeapon == weapon)
+            return;
+
+        remote.Platform = dropship;
+        remote.SelectedWeapon = weapon;
+        Dirty(pilot, remote);
     }
 
     private void UpdateGunshipStaticZoom(Entity<GunshipPilotHudComponent> wearer, bool linked)

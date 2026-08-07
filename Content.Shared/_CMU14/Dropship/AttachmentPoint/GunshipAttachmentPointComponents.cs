@@ -14,6 +14,7 @@ public sealed partial class GunshipHardpointAttachmentPointComponent : Component
     public HashSet<string> AllowedAttachments = new()
     {
         "RMCDropshipAttachmentDoorGun",
+        "CMUDropshipAttachmentDoorGunM2C",
     };
 }
 

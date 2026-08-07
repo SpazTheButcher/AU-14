@@ -27,6 +27,7 @@ namespace Content.Client._CMU14.Dropship.TacticalLand;
 public sealed partial class GunshipPilotCameraSystem : EntitySystem
 {
     [Dependency] private IOverlayManager _overlay = default!;
+    [Dependency] private IEyeManager _eyeManager = default!;
     [Dependency] private SharedEyeSystem _eye = default!;
     [Dependency] private IPlayerManager _player = default!;
     [Dependency] private IGameTiming _timing = default!;
@@ -152,7 +153,6 @@ public sealed partial class GunshipPilotCameraSystem : EntitySystem
             hud.ViewOffset != 0 ||
             hud.RearView ||
             hud.Malfunctions.Contains(DropshipMalfunction.SensorArrayFault) ||
-            !TryComp(local, out EyeComponent? eye) ||
             !TryComp(local, out ContentEyeComponent? contentEye))
         {
             _pilotZoomMultiplier = 1f;
@@ -176,8 +176,8 @@ public sealed partial class GunshipPilotCameraSystem : EntitySystem
             _pilotZoomMultiplier = targetMultiplier;
 
         var desiredZoom = contentEye.TargetZoom * _pilotZoomMultiplier;
-        if (Vector2.DistanceSquared(eye.Eye.Zoom, desiredZoom) > 0.0001f)
-            _eye.SetZoom(local, desiredZoom, eye);
+        if (Vector2.DistanceSquared(_eyeManager.CurrentEye.Zoom, desiredZoom) > 0.0001f)
+            _eyeManager.CurrentEye.Zoom = desiredZoom;
     }
 
     private static void RemoveFromClientOccluderTree(OccluderComponent occluder)

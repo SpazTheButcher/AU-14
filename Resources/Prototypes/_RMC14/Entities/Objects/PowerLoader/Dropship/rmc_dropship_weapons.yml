@@ -84,9 +84,15 @@
     projectile: RMCFlareCASBullet
     ammoPrototype: CMUDropshipAttachmentAmmoM4332Flares
     gimbalDegrees: 30
+  - type: Gun
     projectileSpeed: 20
-    fireDelay: 1.5
-    fireSound: /Audio/Weapons/Guns/Gunshots/flaregun.ogg
+    fireRate: 0.6666667
+    selectedMode: SemiAuto
+    availableModes:
+    - SemiAuto
+    soundGunshot: /Audio/Weapons/Guns/Gunshots/flaregun.ogg
+    cameraRecoilScalar: 0
+  - type: GunClickToFire
 
 - type: entity
   parent: RMCDropshipAttachmentWeapon

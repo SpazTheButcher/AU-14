@@ -201,6 +201,16 @@ public abstract partial class SharedGunSystem : EntitySystem
 
     public bool TryGetGun(EntityUid entity, out EntityUid gunEntity, [NotNullWhen(true)] out GunComponent? gunComp)
     {
+        if (TryComp(entity, out RemoteWeaponOperatorComponent? remoteOperator) &&
+            remoteOperator.SelectedWeapon is { } remoteWeapon &&
+            Exists(remoteWeapon) &&
+            TryComp(remoteWeapon, out GunComponent? remoteGun))
+        {
+            gunEntity = remoteWeapon;
+            gunComp = remoteGun;
+            return true;
+        }
+
         if (TryComp(entity, out VehiclePortGunOperatorComponent? portGunOperator) &&
             portGunOperator.Gun is { } portGun &&
             TryComp(portGun, out VehiclePortGunComponent? portGunComp) &&

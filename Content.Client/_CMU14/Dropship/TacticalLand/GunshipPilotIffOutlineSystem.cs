@@ -1,3 +1,5 @@
+using System.Numerics;
+using Content.Client._CMU14.ZLevels.Core;
 using Content.Shared._CMU14.Dropship.TacticalLand;
 using Content.Shared._RMC14.Weapons.Ranged.IFF;
 using Content.Shared.Inventory;
@@ -6,6 +8,8 @@ using Content.Shared.NPC.Components;
 using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
 using Robust.Client.Player;
+using Robust.Shared.Map;
+using Robust.Shared.Map.Components;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
@@ -25,8 +29,11 @@ public sealed partial class GunshipPilotIffOutlineSystem : EntitySystem
 
     [Dependency] private IEyeManager _eye = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
+    [Dependency] private IMapManager _mapManager = default!;
     [Dependency] private IPlayerManager _player = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
+    [Dependency] private SharedMapSystem _map = default!;
+    [Dependency] private ITileDefinitionManager _tile = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
 
@@ -39,6 +46,9 @@ public sealed partial class GunshipPilotIffOutlineSystem : EntitySystem
     private readonly HashSet<EntProtoId<IFFFactionComponent>> _pilotIff = new();
     private readonly HashSet<EntProtoId<IFFFactionComponent>> _targetIff = new();
     private readonly HashSet<Entity<MobStateComponent>> _viewportMobs = new();
+    private readonly List<Box2> _openingBounds = new();
+    private readonly List<Entity<MapGridComponent>> _openingGrids = new();
+    private CMUClientZLevelsSystem _zLevels = default!;
     private TimeSpan _nextUpdate;
 
     public override void Initialize()
@@ -48,6 +58,7 @@ public sealed partial class GunshipPilotIffOutlineSystem : EntitySystem
         _friendlyShader = CreateShader(FriendlyColor);
         _neutralShader = CreateShader(NeutralColor);
         _hostileShader = CreateShader(HostileColor);
+        _zLevels = EntityManager.System<CMUClientZLevelsSystem>();
     }
 
     public override void Shutdown()
@@ -72,7 +83,7 @@ public sealed partial class GunshipPilotIffOutlineSystem : EntitySystem
             return;
 
         _nextUpdate = _timing.CurTime + UpdateInterval;
-        RefreshHighlights(pilot, hud.Dropship.Value);
+        RefreshHighlights(pilot, hud);
     }
 
     private ShaderInstance CreateShader(Color color)
@@ -83,29 +94,77 @@ public sealed partial class GunshipPilotIffOutlineSystem : EntitySystem
         return shader;
     }
 
-    private void RefreshHighlights(EntityUid pilot, EntityUid dropship)
+    private void RefreshHighlights(EntityUid pilot, GunshipPilotHudComponent hud)
     {
         var eye = _eye.CurrentEye;
         var viewBounds = _eye.GetWorldViewbounds();
-        _viewportMobs.Clear();
-        _lookup.GetEntitiesIntersecting(eye.Position.MapId, viewBounds, _viewportMobs);
-
         _seen.Clear();
-        if (_viewportMobs.Count == 0)
+        GetIffFactions(pilot, _pilotIff);
+        AddHighlightsFromMap(pilot, hud.Dropship!.Value, eye.Position.MapId, viewBounds, null);
+
+        if (hud.PilotPanning && hud.ViewOffset == 0 && !hud.RearView)
+            AddVisibleLowerLevelHighlights(pilot, hud.Dropship.Value, eye.Position.MapId, viewBounds);
+
+        RemoveUnseenHighlights();
+    }
+
+    private void AddVisibleLowerLevelHighlights(
+        EntityUid pilot,
+        EntityUid dropship,
+        MapId currentMapId,
+        Box2Rotated viewBounds)
+    {
+        if (!_map.TryGetMap(currentMapId, out var currentMap) ||
+            currentMap is not { } currentMapUid ||
+            !_zLevels.TryMapOffset(currentMapUid, -1, out _, out var lowerMap))
         {
-            RemoveUnseenHighlights();
             return;
         }
 
-        GetIffFactions(pilot, _pilotIff);
+        _openingBounds.Clear();
+        if (!_zLevels.OpeningCache.TryFindOpeningBounds(
+                currentMapId,
+                viewBounds.CalcBoundingBox(),
+                _openingBounds,
+                out _,
+                int.MaxValue,
+                true,
+                _openingGrids,
+                _mapManager,
+                _map,
+                _transform,
+                _tile) ||
+            _openingBounds.Count == 0)
+        {
+            return;
+        }
+
+        AddHighlightsFromMap(pilot, dropship, lowerMap.MapId, viewBounds, _openingBounds);
+    }
+
+    private void AddHighlightsFromMap(
+        EntityUid pilot,
+        EntityUid dropship,
+        MapId mapId,
+        Box2Rotated viewBounds,
+        IReadOnlyList<Box2>? visibleOpenings)
+    {
+        _viewportMobs.Clear();
+        _lookup.GetEntitiesIntersecting(mapId, viewBounds, _viewportMobs);
 
         foreach (var (uid, _) in _viewportMobs)
         {
             if (!TryComp(uid, out SpriteComponent? sprite) ||
                 !sprite.Visible ||
                 !TryComp(uid, out TransformComponent? xform) ||
-                xform.GridUid == dropship ||
-                !viewBounds.Contains(_transform.GetWorldPosition(xform)))
+                xform.GridUid == dropship)
+            {
+                continue;
+            }
+
+            var worldPosition = _transform.GetWorldPosition(xform);
+            if (!viewBounds.Contains(worldPosition) ||
+                visibleOpenings != null && !IntersectsOpening(worldPosition, visibleOpenings))
             {
                 continue;
             }
@@ -115,7 +174,17 @@ public sealed partial class GunshipPilotIffOutlineSystem : EntitySystem
             _seen.Add(uid);
         }
 
-        RemoveUnseenHighlights();
+    }
+
+    private static bool IntersectsOpening(Vector2 position, IReadOnlyList<Box2> openings)
+    {
+        foreach (var opening in openings)
+        {
+            if (opening.Contains(position))
+                return true;
+        }
+
+        return false;
     }
 
     private void RemoveUnseenHighlights()

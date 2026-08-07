@@ -40,8 +40,6 @@ public sealed partial class GunshipPilotInputSystem : EntitySystem
         binds.BindBefore(EngineKeyFunctions.MoveDown, new GunshipMovementBlocker(this), typeof(SharedMoverController));
         binds.BindBefore(EngineKeyFunctions.MoveLeft, new GunshipMovementBlocker(this), typeof(SharedMoverController));
         binds.BindBefore(EngineKeyFunctions.MoveRight, new GunshipMovementBlocker(this), typeof(SharedMoverController));
-        binds.BindBefore(EngineKeyFunctions.Use,
-            new PointerInputCmdHandler(OnDirectFire, outsidePrediction: true));
         Bind(binds, CMUKeyFunctions.CMUGunshipForward, GunshipControlAction.Forward);
         Bind(binds, CMUKeyFunctions.CMUGunshipBack, GunshipControlAction.Back);
         Bind(binds, CMUKeyFunctions.CMUGunshipLeft, GunshipControlAction.Left);
@@ -79,15 +77,6 @@ public sealed partial class GunshipPilotInputSystem : EntitySystem
 
         var coordinates = _transform.ToCoordinates(mouse);
         RaiseNetworkEvent(new GunshipDirectFireAimEvent(GetNetCoordinates(coordinates)));
-    }
-
-    private bool OnDirectFire(in PointerInputCmdHandler.PointerInputCmdArgs args)
-    {
-        if (!TryGetDirectFirePilot(out _))
-            return false;
-
-        RaiseNetworkEvent(new GunshipDirectFireEvent(GetNetCoordinates(args.Coordinates)));
-        return true;
     }
 
     private bool TryGetDirectFirePilot(out EntityUid pilot)

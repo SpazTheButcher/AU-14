@@ -1,4 +1,5 @@
 using System.Numerics;
+using Content.Client.Eye;
 using Content.Client.Movement.Systems;
 using Content.Shared._CMU14.Dropship.TacticalLand;
 using Content.Shared.Mobs.Components;
@@ -13,10 +14,10 @@ namespace Content.Client._CMU14.Dropship.TacticalLand;
 public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalLandSystem
 {
     [Dependency] private IOverlayManager _overlay = default!;
+    [Dependency] private IEyeManager _eyeManager = default!;
     [Dependency] private IPlayerManager _player = default!;
     [Dependency] private SpriteSystem _sprite = default!;
     [Dependency] private IGameTiming _timing = default!;
-    [Dependency] private ContentEyeSystem _contentEye = default!;
 
     private static readonly Vector2 TacticalLandZoom = new(2.25f, 2.25f);
     private static readonly TimeSpan MobVisibilityRefreshInterval = TimeSpan.FromMilliseconds(100);
@@ -27,11 +28,11 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
     private bool _zoomApplied;
     private EntityUid? _zoomedEntity;
-    private Vector2 _originalZoom = Vector2.One;
 
     public override void Initialize()
     {
         base.Initialize();
+        UpdatesAfter.Add(typeof(EyeLerpingSystem));
         _overlay.AddOverlay(new DropshipTacticalLandOverlay(EntityManager, _player));
     }
 
@@ -45,9 +46,9 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
             RestoreZoom();
     }
 
-    public override void Update(float frameTime)
+    public override void FrameUpdate(float frameTime)
     {
-        base.Update(frameTime);
+        base.FrameUpdate(frameTime);
 
         var inEye = IsLocalPlayerInPilotEye();
 
@@ -75,41 +76,28 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
     private void ApplyZoom()
     {
-        // RequestZoom raises a predictive event; valid only during the first-time prediction pass.
-        if (!_timing.IsFirstTimePredicted)
-            return;
-
         if (_player.LocalEntity is not { } local)
-            return;
-
-        if (!TryComp(local, out ContentEyeComponent? content))
-            return;
-
-        if (_zoomApplied && _zoomedEntity == local)
             return;
 
         if (_zoomApplied && _zoomedEntity is { } prev && prev != local)
             RestoreZoom();
 
-        _originalZoom = content.TargetZoom;
         _zoomedEntity = local;
-        _contentEye.RequestZoom(local, TacticalLandZoom, ignoreLimit: true, scalePvs: true, content);
+        _eyeManager.CurrentEye.Zoom = TacticalLandZoom;
         _zoomApplied = true;
     }
 
     private void RestoreZoom()
     {
-        if (!_timing.IsFirstTimePredicted)
-            return;
-
-        if (_zoomedEntity is { } prev && !TerminatingOrDeleted(prev) && TryComp(prev, out ContentEyeComponent? content))
+        if (_zoomedEntity is { } prev &&
+            !TerminatingOrDeleted(prev) &&
+            TryComp(prev, out ContentEyeComponent? content))
         {
-            _contentEye.RequestZoom(prev, _originalZoom, ignoreLimit: true, scalePvs: true, content);
+            _eyeManager.CurrentEye.Zoom = content.TargetZoom;
         }
 
         _zoomApplied = false;
         _zoomedEntity = null;
-        _originalZoom = Vector2.One;
     }
 
     private bool IsLocalPlayerInPilotEye()

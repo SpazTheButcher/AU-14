@@ -123,6 +123,18 @@
   - type: GunshipDoorGunnerAttachment
 
 - type: entity
+  parent: RMCDropshipAttachmentDoorGun
+  id: CMUDropshipAttachmentDoorGunM2C
+  name: MTU-4C M2C Door Gunner Hardpoint System
+  description: A box that deploys a crew-served M2C heavy machine gun. Fits on gunship hardpoint attachment points.
+  components:
+  - type: PowerLoaderAttachable
+    attachableTypes:
+    - CMUGunshipHardpointAttachmentPoint
+  - type: RMCEquipmentDeployer
+    deployPrototype: CMUM2CDoorGunDropship
+
+- type: entity
   parent: RMCDropshipAttachmentUtility
   id: RMCDropshipAttachmentSentryDefenseSystem
   name: A/A-32-P Sentry Defense System

@@ -1,4 +1,7 @@
 using Content.Shared._RMC14.Attachable.Components;
+using Content.Shared._RMC14.Marines.Skills;
+using Content.Shared._CMU14.Inventory;
+using Content.Shared.Containers;
 using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Storage.Components;
 using Content.Shared.Tag;
@@ -102,6 +105,52 @@ public sealed class MP5A5LoadoutPrototypeTest
                         Contains.Item("CMUMagazineSMGMP5Drum"));
                 });
             }
+        });
+
+        await pair.CleanReturnAsync();
+    }
+
+    [Test]
+    public async Task FilledMP5A5RackStartsWithDrumLoadoutInItsSlot()
+    {
+        await using var pair = await PoolManager.GetServerClient();
+        var server = pair.Server;
+
+        await server.WaitAssertion(() =>
+        {
+            var prototypes = server.ResolveDependency<IPrototypeManager>();
+            var factory = server.EntMan.ComponentFactory;
+            var rackId = "CMUGunRackMP5AltWallFilled";
+            var weaponId = "CMUWeaponSMGMP5AltDrum";
+
+            Assert.That(prototypes.TryIndex<EntityPrototype>(rackId, out var rack), Is.True);
+            Assert.That(rack!.TryComp<ItemSlotsComponent>(out var itemSlots, factory), Is.True);
+            Assert.That(rack.TryComp<ContainerFillComponent>(out _, factory), Is.False,
+                "The one-slot rack should use ItemSlots.startingItem so mapped instances initialize consistently.");
+
+            var slot = itemSlots!.Slots["item_1"];
+            Assert.Multiple(() =>
+            {
+                Assert.That(slot.StartingItem, Is.EqualTo(weaponId));
+                Assert.That(slot.Whitelist?.Tags, Contains.Item("RMCWeaponSMGMP5Alt"));
+            });
+
+            Assert.That(prototypes.TryIndex<EntityPrototype>(weaponId, out var weapon), Is.True);
+            Assert.That(weapon!.TryComp<TagComponent>(out var weaponTags, factory), Is.True);
+            Assert.That(weaponTags!.Tags, Contains.Item("RMCWeaponSMGMP5Alt"));
+
+            var skilledRackId = "CMUGunRackMP5AltWallFilledPilotSkill";
+            Assert.That(prototypes.TryIndex<EntityPrototype>(skilledRackId, out var skilledRack), Is.True);
+            Assert.That(skilledRack!.TryComp<ItemSlotsComponent>(out var skilledSlots, factory), Is.True);
+            Assert.That(skilledRack.TryComp<CMUItemSlotSkillRequiredComponent>(out var skillGate, factory), Is.True);
+
+            var pilotSkill = new EntProtoId<SkillDefinitionComponent>("RMCSkillPilot");
+            Assert.Multiple(() =>
+            {
+                Assert.That(skilledSlots!.Slots["item_1"].StartingItem, Is.EqualTo(weaponId));
+                Assert.That(skillGate!.Skills.TryGetValue(pilotSkill, out var level), Is.True);
+                Assert.That(level, Is.EqualTo(1));
+            });
         });
 
         await pair.CleanReturnAsync();
