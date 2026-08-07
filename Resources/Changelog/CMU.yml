@@ -9131,5 +9131,74 @@
   id: 587
   time: '2026-08-05T18:07:08.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1794
+- author: rokudara-sen
+  changes:
+  - message: CLF earpieces now work when clipped to a vest, coat, webbing, or armour,
+      rather than only to a jumpsuit
+    type: Fix
+  - message: Earpiece users are now notified when no relay is in range instead of
+      receiving no feedback
+    type: Fix
+  - message: RADIO CHECK now includes headsets and earpieces, preventing a cell with
+      one manpack from incorrectly reporting NOTHING HEARD
+    type: Fix
+  - message: The CLF Cell Leader can now draw the cell's communications kit alongside
+      the Radio Operator
+    type: Tweak
+  - message: The CLF now receives two clandestine relay sets at round start instead
+      of one
+    type: Tweak
+  - message: The issued CLF manpack now starts tuned to the cell and command nets
+    type: Tweak
+  - message: The CLF Cell Leader now receives a standing orders sheet. Writing the
+      cell's intent and passing the word adds it to every member's character brief,
+      including members recruited later. Orders may be issued three times per round
+      with a ten-minute cooldown
+    type: Add
+  - message: Added the clfcomms command, which disables the new communications system
+      for CLF and INSFOR without affecting GOVFOR or OPFOR
+    type: Admin
+  - message: AU14CommsToggleSystem is now the single source of truth for whether the
+      communications overhaul applies to a channel
+    type: Code
+  id: 588
+  time: '2026-08-06T12:18:48.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1796
+- author: Sniperzero112
+  changes:
+  - message: Turret upgrade kit to get variants on your turrets depending which one
+      you took!
+    type: Add
+  - message: Changed vendors to have flame turrets instead of sniper & mini variant
+      turrets because you got upgrade kits now!
+    type: Tweak
+  id: 589
+  time: '2026-08-06T12:19:30.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1795
+- author: Sniperzero112
+  changes:
+  - message: Removed free turrets from the British!
+    type: Fix
+  id: 590
+  time: '2026-08-06T23:37:13.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1798
+- author: ArturUr1
+  changes:
+  - message: Synthetic surgery has been upgraded to level 4
+    type: Tweak
+  id: 591
+  time: '2026-08-06T23:39:10.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1797
+- author: MACMAN2003
+  changes:
+  - message: Reagent grinders can now link to a smart chemical storage for the purposes
+      of bottling (and disposing) the reagents they have stored.
+    type: Add
+  - message: Monkey cube crates now have a 30 minute cooldown after being bought before
+      you can buy another.
+    type: Tweak
+  id: 592
+  time: '2026-08-06T23:42:25.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1799
 Name: CMU
 Order: -1
