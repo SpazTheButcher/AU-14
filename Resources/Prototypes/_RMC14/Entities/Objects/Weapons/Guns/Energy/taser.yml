@@ -20,8 +20,8 @@
       path: /Audio/Weapons/Guns/Gunshots/taser.ogg
   - type: Wieldable
   - type: Battery
-    maxCharge: 600
-    startingCharge: 600
+    maxCharge: 500
+    startingCharge: 500
   - type: ProjectileBatteryAmmoProvider
     proto: RMCProjectileTaser
     fireCost: 100
