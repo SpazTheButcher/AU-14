@@ -30,3 +30,14 @@
     sprite: _AU14/Clothing/ProdigySecurityForces/beret.rsi
   - type: Clothing
     sprite: _AU14/Clothing/ProdigySecurityForces/beret.rsi
+
+- type: entity
+  parent: ClothingHeadBase
+  id: CMU14ProdigyCapGrey
+  name: prodigy cap
+  description: A grey cap with Prodigy CORP logo on its front. Has some ventilation holes as well.
+  components:
+  - type: Sprite
+    sprite: _CMU14/Objects/Clothing/Prodigy/greycap.rsi
+  - type: Clothing
+    sprite: _CMU14/Objects/Clothing/Prodigy/greycap.rsi
