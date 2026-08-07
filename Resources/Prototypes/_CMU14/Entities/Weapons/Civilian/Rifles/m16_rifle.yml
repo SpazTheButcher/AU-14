@@ -94,7 +94,7 @@
     offsets:
       rmc-aslot-barrel: 0.83, 0.001
       rmc-aslot-rail: -0.1, 0.12
-      rmc-aslot-underbarrel: 0.2, -0.29
+      rmc-aslot-underbarrel: 0.31, -0.283
 
 - type: entity
   parent: AU14WeaponRifleM16A1
