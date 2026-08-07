@@ -1,11 +1,16 @@
 using System.Collections.Generic;
 using System.Numerics;
+using Content.Client.CombatMode;
+using Content.Client.Eye;
 using Content.Client.Movement.Components;
 using Content.Client.Resources;
 using Content.Shared._CMU14.Dropship.Integrity;
 using Content.Shared._CMU14.Dropship.TacticalLand;
 using Content.Shared.Eye;
+using Content.Shared.Movement.Components;
+using Content.Shared.Tag;
 using Robust.Client.Graphics;
+using Robust.Client.Input;
 using Robust.Client.Player;
 using Robust.Client.ResourceManagement;
 using Robust.Shared.ComponentTrees;
@@ -14,6 +19,7 @@ using Robust.Shared.IoC;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Physics;
 using Robust.Shared.Graphics;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
 namespace Content.Client._CMU14.Dropship.TacticalLand;
@@ -21,52 +27,59 @@ namespace Content.Client._CMU14.Dropship.TacticalLand;
 public sealed partial class GunshipPilotCameraSystem : EntitySystem
 {
     [Dependency] private IOverlayManager _overlay = default!;
-    [Dependency] private IEyeManager _eye = default!;
+    [Dependency] private SharedEyeSystem _eye = default!;
     [Dependency] private IPlayerManager _player = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private OccluderSystem _occluder = default!;
 
     private static readonly TimeSpan HullOccluderRefreshInterval = TimeSpan.FromSeconds(0.5);
+    private static readonly TimeSpan HullOccluderMaintenanceInterval = TimeSpan.FromMilliseconds(100);
     private const float PilotCursorMaxOffset = 24f;
+    // Larger than the maximum possible opposite-edge cursor delta, so the
+    // camera offset reaches the mouse-derived target in one rendered update.
+    private const float PilotCursorPanSpeed = 64f;
     private const float PilotCursorPvsIncrease = 2.4f;
     private const float PilotMaximumZoom = 2.25f;
     private readonly HashSet<EntityUid> _suppressedHullOccluders = new();
     private EntityUid? _suppressedGrid;
     private TimeSpan _nextHullOccluderRefresh;
-    private IEye? _zoomedEye;
-    private Vector2 _pilotBaseZoom;
+    private TimeSpan _nextHullOccluderMaintenance;
+    private float _pilotZoomMultiplier = 1f;
 
     public override void Initialize()
     {
         base.Initialize();
         UpdatesAfter.Add(typeof(OccluderSystem));
+        UpdatesAfter.Add(typeof(EyeLerpingSystem));
         _overlay.AddOverlay(new GunshipPilotOverlay(EntityManager, _player));
         _overlay.AddOverlay(new GunshipPilotHudOverlay(EntityManager, _player));
     }
 
     public override void Shutdown()
     {
-        RestorePilotZoom();
         RestoreHullOccluders();
         base.Shutdown();
         _overlay.RemoveOverlay<GunshipPilotOverlay>();
         _overlay.RemoveOverlay<GunshipPilotHudOverlay>();
     }
 
-    public override void Update(float frameTime)
-    {
-        base.Update(frameTime);
-        UpdatePilotHullOcclusion();
-        UpdatePilotZoom();
-    }
-
     public override void FrameUpdate(float frameTime)
     {
         base.FrameUpdate(frameTime);
 
+        // These are strictly local rendering changes. Running them from tick
+        // Update makes them execute during prediction and lets the normal eye
+        // lerper overwrite the pilot zoom later in the same rendered frame.
+        UpdatePilotHullOcclusion();
+        UpdatePilotZoom(frameTime);
+
         // Component state application can legitimately requeue these entries.
         // Remove them from the client rendering tree again without changing
         // any networked component data.
+        if (_timing.CurTime < _nextHullOccluderMaintenance)
+            return;
+
+        _nextHullOccluderMaintenance = _timing.CurTime + HullOccluderMaintenanceInterval;
         foreach (var uid in _suppressedHullOccluders)
         {
             if (!TerminatingOrDeleted(uid) &&
@@ -84,6 +97,9 @@ public sealed partial class GunshipPilotCameraSystem : EntitySystem
         if (_player.LocalEntity is { } local &&
             TryComp(local, out GunshipPilotHudComponent? hud) &&
             hud.Dropship is { } dropship &&
+            TryComp(dropship, out DropshipIntegrityComponent? integrity) &&
+            !integrity.Crashing &&
+            !integrity.Wrecked &&
             hud.ViewOffset == 0 &&
             !hud.RearView &&
             !hud.Malfunctions.Contains(DropshipMalfunction.SensorArrayFault))
@@ -95,7 +111,7 @@ public sealed partial class GunshipPilotCameraSystem : EntitySystem
             if (TryComp(local, out EyeCursorOffsetComponent? cursor))
             {
                 cursor.MaxOffset = PilotCursorMaxOffset;
-                cursor.OffsetSpeed = 0.35f;
+                cursor.OffsetSpeed = PilotCursorPanSpeed;
                 cursor.PvsIncrease = PilotCursorPvsIncrease;
             }
         }
@@ -125,40 +141,43 @@ public sealed partial class GunshipPilotCameraSystem : EntitySystem
         }
     }
 
-    private void UpdatePilotZoom()
+    private void UpdatePilotZoom(float frameTime)
     {
         if (_player.LocalEntity is not { } local ||
             !TryComp(local, out GunshipPilotHudComponent? hud) ||
-            hud.Dropship == null ||
+            hud.Dropship is not { } dropship ||
+            !TryComp(dropship, out DropshipIntegrityComponent? integrity) ||
+            integrity.Crashing ||
+            integrity.Wrecked ||
             hud.ViewOffset != 0 ||
             hud.RearView ||
             hud.Malfunctions.Contains(DropshipMalfunction.SensorArrayFault) ||
-            !TryComp(local, out EyeCursorOffsetComponent? cursor))
+            !TryComp(local, out EyeComponent? eye) ||
+            !TryComp(local, out ContentEyeComponent? contentEye))
         {
-            RestorePilotZoom();
+            _pilotZoomMultiplier = 1f;
             return;
         }
 
-        var eye = _eye.CurrentEye;
-        if (!ReferenceEquals(_zoomedEye, eye))
+        var targetMultiplier = hud.PilotZoom ? 1.5f : 1f;
+        if (hud.PilotPanning && TryComp(local, out EyeCursorOffsetComponent? cursor))
         {
-            RestorePilotZoom();
-            _zoomedEye = eye;
-            _pilotBaseZoom = eye.Zoom;
+            var distance = Math.Clamp(cursor.CurrentPosition.Length() / PilotCursorMaxOffset, 0f, 1f);
+            targetMultiplier = MathHelper.Lerp(1f, PilotMaximumZoom, distance);
         }
 
-        var distance = Math.Clamp(cursor.CurrentPosition.Length() / PilotCursorMaxOffset, 0f, 1f);
-        var multiplier = MathHelper.Lerp(1f, PilotMaximumZoom, distance);
-        eye.Zoom = _pilotBaseZoom * multiplier;
-    }
+        // This runs after EyeLerpingSystem every rendered frame. Updating only
+        // on ticks lets the normal eye lerper restore the base zoom between
+        // pilot updates, which presents as alternating/choppy zoom. Keep a
+        // local multiplier and ease it continuously instead.
+        var zoomBlend = 1f - MathF.Exp(-10f * MathF.Max(frameTime, 0f));
+        _pilotZoomMultiplier = MathHelper.Lerp(_pilotZoomMultiplier, targetMultiplier, zoomBlend);
+        if (MathF.Abs(_pilotZoomMultiplier - targetMultiplier) < 0.001f)
+            _pilotZoomMultiplier = targetMultiplier;
 
-    private void RestorePilotZoom()
-    {
-        if (_zoomedEye == null)
-            return;
-
-        _zoomedEye.Zoom = _pilotBaseZoom;
-        _zoomedEye = null;
+        var desiredZoom = contentEye.TargetZoom * _pilotZoomMultiplier;
+        if (Vector2.DistanceSquared(eye.Eye.Zoom, desiredZoom) > 0.0001f)
+            _eye.SetZoom(local, desiredZoom, eye);
     }
 
     private static void RemoveFromClientOccluderTree(OccluderComponent occluder)
@@ -190,6 +209,8 @@ public sealed class GunshipPilotHudOverlay : Overlay
     private readonly IEntityManager _entities;
     private readonly IPlayerManager _player;
     private readonly IGameTiming _timing;
+    private readonly IInputManager _input;
+    private readonly CombatModeSystem _combatMode;
     private readonly Font _font;
     private readonly Font _smallFont;
 
@@ -210,6 +231,8 @@ public sealed class GunshipPilotHudOverlay : Overlay
         _entities = entities;
         _player = player;
         _timing = IoCManager.Resolve<IGameTiming>();
+        _input = IoCManager.Resolve<IInputManager>();
+        _combatMode = entities.System<CombatModeSystem>();
         var cache = IoCManager.Resolve<IResourceCache>();
         _font = cache.GetFont("/Fonts/NotoSans/NotoSans-Bold.ttf", 18);
         _smallFont = cache.GetFont("/Fonts/NotoSans/NotoSans-Bold.ttf", 12);
@@ -218,7 +241,9 @@ public sealed class GunshipPilotHudOverlay : Overlay
     protected override bool BeforeDraw(in OverlayDrawArgs args)
     {
         return _player.LocalEntity is { } local &&
-               _entities.HasComponent<GunshipPilotHudComponent>(local);
+               _entities.HasComponent<GunshipPilotHudComponent>(local) &&
+               _entities.TryGetComponent(local, out EyeComponent? eye) &&
+               ReferenceEquals(args.Viewport.Eye, eye.Eye);
     }
 
     protected override void Draw(in OverlayDrawArgs args)
@@ -234,6 +259,7 @@ public sealed class GunshipPilotHudOverlay : Overlay
 
         if (hud.Dropship == null)
         {
+            DrawUnlinkedVisorTint(handle, bounds, hud);
             const string message = "No dropship controls linked.";
             var measured = handle.DrawString(_font, Vector2.Zero, message, Color.Transparent);
             var position = new Vector2(bounds.Left + (bounds.Width - measured.X) * 0.5f, bounds.Top + 18f);
@@ -247,6 +273,7 @@ public sealed class GunshipPilotHudOverlay : Overlay
         DrawIntegrityBar(handle, bounds, hud);
         DrawDirectFireAmmo(handle, bounds, hud);
         DrawWarnings(handle, bounds, hud);
+        DrawDirectFireReticle(handle, local, hud);
 
         var mode = hud.RearView ? "REAR CAMERA" : hud.ViewOffset switch
         {
@@ -258,6 +285,20 @@ public sealed class GunshipPilotHudOverlay : Overlay
         var modePosition = new Vector2(bounds.Left + (bounds.Width - modeSize.X) * 0.5f, bounds.Top + 14f);
         handle.DrawString(_smallFont, modePosition + Vector2.One, mode, Color.Black);
         handle.DrawString(_smallFont, modePosition, mode, HudColor);
+    }
+
+    private void DrawUnlinkedVisorTint(
+        DrawingHandleScreen handle,
+        UIBox2i bounds,
+        GunshipPilotHudComponent hud)
+    {
+        if (hud.Visor == EntityUid.Invalid ||
+            !_entities.TryGetComponent(hud.Visor, out GunshipPilotVisorComponent? visor))
+        {
+            return;
+        }
+
+        handle.DrawRect(bounds, visor.NightVisionTint.WithAlpha(0.05f));
     }
 
     private void DrawDriftIndicator(
@@ -396,6 +437,35 @@ public sealed class GunshipPilotHudOverlay : Overlay
         handle.DrawString(_smallFont, textPosition, text, AmmoColor);
     }
 
+    private void DrawDirectFireReticle(
+        DrawingHandleScreen handle,
+        EntityUid pilot,
+        GunshipPilotHudComponent hud)
+    {
+        if (!hud.HasDirectFireWeapon ||
+            hud.ViewOffset != 0 ||
+            hud.RearView ||
+            !_combatMode.IsInCombatMode(pilot))
+        {
+            return;
+        }
+
+        var center = _input.MouseScreenPosition.Position;
+        var top = center + new Vector2(0f, -9f);
+        var lowerLeft = center + new Vector2(-8f, 6f);
+        var lowerRight = center + new Vector2(8f, 6f);
+        var shadow = Vector2.One;
+
+        handle.DrawLine(top + shadow, lowerLeft + shadow, Color.Black);
+        handle.DrawLine(lowerLeft + shadow, lowerRight + shadow, Color.Black);
+        handle.DrawLine(lowerRight + shadow, top + shadow, Color.Black);
+        handle.DrawLine(top, lowerLeft, HudColor);
+        handle.DrawLine(lowerLeft, lowerRight, HudColor);
+        handle.DrawLine(lowerRight, top, HudColor);
+        handle.DrawCircle(center + shadow, 2.5f, Color.Black);
+        handle.DrawCircle(center, 2f, HudColor);
+    }
+
     private void DrawWarnings(
         DrawingHandleScreen handle,
         UIBox2i bounds,
@@ -405,49 +475,40 @@ public sealed class GunshipPilotHudOverlay : Overlay
             return;
 
         const float margin = 24f;
-        const float width = 260f;
         const float lineHeight = 20f;
         const float padding = 10f;
-        var warningLines = hud.Malfunctions.Count + hud.Alarms.Count;
+        var blinkOn = (int)_timing.CurTime.TotalSeconds % 2 == 0;
+        if (!blinkOn)
+            return;
+
+        var lines = new List<string> { "SYSTEM WARNINGS" };
+        foreach (var alarm in hud.Alarms)
+            lines.Add(DropshipAlarmData.GetAlertName(alarm));
+        foreach (var malfunction in hud.Malfunctions)
+            lines.Add($"{DropshipMalfunctionData.GetAlertName(malfunction)} detected.");
         if (hud.MasterAlarmSilenced && hud.Alarms.Count > 0)
-            warningLines++;
+            lines.Add("MASTER ALARM SILENCED");
 
-        var height = padding * 2f + lineHeight * (warningLines + 1);
+        var width = 260f;
+        foreach (var text in lines)
+            width = MathF.Max(width, handle.DrawString(_smallFont, Vector2.Zero, text, Color.Transparent).X + padding * 2f);
+
+        var height = padding * 2f + lineHeight * lines.Count;
+        var bottomMargin = hud.ManeuveringCamera != GunshipManeuveringCamera.None ? 224f : 24f;
         var box = new UIBox2(bounds.Right - margin - width,
-            bounds.Bottom - margin - height,
+            bounds.Bottom - bottomMargin - height,
             bounds.Right - margin,
-            bounds.Bottom - margin);
+            bounds.Bottom - bottomMargin);
 
-        var blinkOn = (int)(_timing.CurTime.TotalSeconds * 2) % 2 == 0;
-        var warningColor = MalfunctionColor.WithAlpha(blinkOn ? 0.98f : 0.32f);
+        var warningColor = MalfunctionColor;
         handle.DrawRect(box, HudBackground);
         handle.DrawRect(box, warningColor, false);
-        handle.DrawString(_smallFont, new Vector2(box.Left + padding, box.Top + padding), "SYSTEM WARNINGS", warningColor);
-
-        var line = 1;
-        foreach (var alarm in hud.Alarms)
+        for (var i = 0; i < lines.Count; i++)
         {
             handle.DrawString(_smallFont,
-                new Vector2(box.Left + padding, box.Top + padding + lineHeight * line++),
-                DropshipAlarmData.GetAlertName(alarm),
-                warningColor);
-        }
-
-        foreach (var malfunction in hud.Malfunctions)
-        {
-            var alert = $"{DropshipMalfunctionData.GetAlertName(malfunction)} detected.";
-            handle.DrawString(_smallFont,
-                new Vector2(box.Left + padding, box.Top + padding + lineHeight * line++),
-                alert,
-                warningColor);
-        }
-
-        if (hud.MasterAlarmSilenced && hud.Alarms.Count > 0)
-        {
-            handle.DrawString(_smallFont,
-                new Vector2(box.Left + padding, box.Top + padding + lineHeight * line),
-                "MASTER ALARM SILENCED",
-                HudColor);
+                new Vector2(box.Left + padding, box.Top + padding + lineHeight * i),
+                lines[i],
+                i == lines.Count - 1 && hud.MasterAlarmSilenced && hud.Alarms.Count > 0 ? HudColor : warningColor);
         }
     }
 }
@@ -457,12 +518,24 @@ public sealed class GunshipPilotOverlay : Overlay
     private readonly IEntityManager _entities;
     private readonly IPlayerManager _player;
     private readonly IGameTiming _timing;
+    private readonly TagSystem _tags;
     private readonly HashSet<Vector2i> _tiles = new();
-    private readonly List<(Vector2 LocalCenter, Vector2 Size)> _maskSpans = new();
+    private readonly HashSet<Vector2i> _hullTiles = new();
+    private readonly HashSet<Vector2i> _wallTiles = new();
+    private readonly HashSet<Vector2i> _maskTiles = new();
+    private readonly HashSet<Vector2i> _selectedMaskTiles = new();
+    private readonly List<Box2> _maskRectangles = new();
+    private EntityUid? _cachedPreviewGrid;
+    private TimeSpan _nextPreviewTileRefresh;
     private EntityUid? _cachedTileGrid;
     private TimeSpan _nextTileRefresh;
-    private Vector2i _tileMin;
-    private Vector2i _tileMax;
+    private int _hullRevision;
+    private int _batchedHullRevision = -1;
+    private Vector2i _batchedPilotTile;
+    private Vector2 _batchedForwardLocal;
+    private bool _hasBatchedMask;
+
+    private static readonly ProtoId<TagPrototype> WallTag = "Wall";
 
     private static readonly Color HullMask = Color.Black;
     private static readonly Color Fill = new(0.10f, 0.72f, 1f, 0.07f);
@@ -478,12 +551,15 @@ public sealed class GunshipPilotOverlay : Overlay
         _entities = entities;
         _player = player;
         _timing = IoCManager.Resolve<IGameTiming>();
+        _tags = entities.System<TagSystem>();
     }
 
     protected override void Draw(in OverlayDrawArgs args)
     {
         if (_player.LocalEntity is not { } local ||
             !_entities.TryGetComponent(local, out GunshipPilotHudComponent? hud) ||
+            !_entities.TryGetComponent(local, out EyeComponent? localEye) ||
+            !ReferenceEquals(args.Viewport.Eye, localEye.Eye) ||
             hud.Dropship is not { } linkedDropship)
         {
             return;
@@ -492,9 +568,11 @@ public sealed class GunshipPilotOverlay : Overlay
         if (hud.ViewOffset == 0 &&
             !hud.RearView &&
             !hud.Malfunctions.Contains(DropshipMalfunction.SensorArrayFault) &&
+            _entities.TryGetComponent(linkedDropship, out TransformComponent? linkedXform) &&
+            linkedXform.MapID == args.MapId &&
             _entities.TryGetComponent(linkedDropship, out MapGridComponent? linkedGrid))
         {
-            DrawHullMask(args.WorldHandle, linkedDropship, linkedGrid);
+            DrawHullMask(args.WorldHandle, local, linkedDropship, linkedGrid);
         }
 
         if (hud.ViewOffset == 0 &&
@@ -522,9 +600,14 @@ public sealed class GunshipPilotOverlay : Overlay
         var rotation = Angle.FromDegrees(gunshipEye.RotationDegrees);
         var handle = args.WorldHandle;
 
-        _tiles.Clear();
-        foreach (var tile in map.GetAllTiles(dropship, dropshipGrid))
-            _tiles.Add(tile.GridIndices);
+        if (_cachedPreviewGrid != dropship || _timing.CurTime >= _nextPreviewTileRefresh)
+        {
+            _cachedPreviewGrid = dropship;
+            _nextPreviewTileRefresh = _timing.CurTime + TimeSpan.FromSeconds(1);
+            _tiles.Clear();
+            foreach (var tile in map.GetAllTiles(dropship, dropshipGrid))
+                _tiles.Add(tile.GridIndices);
+        }
 
         var tileSize = dropshipGrid.TileSize;
         var halfTile = tileSize / 2f;
@@ -549,68 +632,128 @@ public sealed class GunshipPilotOverlay : Overlay
         handle.DrawCircle(center, 0.24f, Heading, false);
     }
 
-    private void DrawHullMask(DrawingHandleWorld handle, EntityUid gridUid, MapGridComponent grid)
+    private void DrawHullMask(
+        DrawingHandleWorld handle,
+        EntityUid pilot,
+        EntityUid gridUid,
+        MapGridComponent grid)
     {
         var map = _entities.System<SharedMapSystem>();
         if (_cachedTileGrid != gridUid || _timing.CurTime >= _nextTileRefresh)
         {
             _cachedTileGrid = gridUid;
             _nextTileRefresh = _timing.CurTime + TimeSpan.FromSeconds(1);
-            _tiles.Clear();
-            _maskSpans.Clear();
-            _tileMin = new Vector2i(int.MaxValue, int.MaxValue);
-            _tileMax = new Vector2i(int.MinValue, int.MinValue);
+            _hullTiles.Clear();
+            _wallTiles.Clear();
+            _maskTiles.Clear();
 
             foreach (var tile in map.GetAllTiles(gridUid, grid))
             {
-                var indices = tile.GridIndices;
-                _tiles.Add(indices);
-                _tileMin = Vector2i.ComponentMin(_tileMin, indices);
-                _tileMax = Vector2i.ComponentMax(_tileMax, indices);
+                _hullTiles.Add(tile.GridIndices);
+
+                foreach (var anchored in map.GetAnchoredEntities(gridUid, grid, tile.GridIndices))
+                {
+                    if (!_entities.TryGetComponent(anchored, out TagComponent? tags) ||
+                        !_tags.HasTag(tags, WallTag))
+                    {
+                        continue;
+                    }
+
+                    _wallTiles.Add(tile.GridIndices);
+                    break;
+                }
             }
 
-            if (_tiles.Count > 0)
-                CacheHullMaskSpans(map, gridUid, grid);
+            foreach (var tile in _hullTiles)
+            {
+                if (!_wallTiles.Contains(tile))
+                    _maskTiles.Add(tile);
+            }
+
+            _hullRevision++;
         }
 
-        if (_tiles.Count == 0)
+        if (_hullTiles.Count == 0)
             return;
 
         var transform = _entities.System<SharedTransformSystem>();
         var gridCenter = transform.GetWorldPosition(gridUid);
         var rotation = transform.GetWorldRotation(gridUid);
-        foreach (var (localCenter, size) in _maskSpans)
+        var pilotTile = map.TileIndicesFor(gridUid, grid, transform.GetMapCoordinates(pilot));
+        var pilotTileLocalCenter = map.TileCenterToVector(gridUid, grid, pilotTile);
+        // Character facing uses screen-forward (-Y), rather than the gunship
+        // movement convention (+Y). Mask only the hull half behind the pilot.
+        var pilotForward = transform.GetWorldRotation(pilot).RotateVec(-Vector2.UnitY);
+        var pilotForwardLocal = (-rotation).RotateVec(pilotForward);
+        if (!_hasBatchedMask ||
+            _batchedHullRevision != _hullRevision ||
+            _batchedPilotTile != pilotTile ||
+            Vector2.DistanceSquared(_batchedForwardLocal, pilotForwardLocal) > 0.0001f)
         {
-            var worldCenter = gridCenter + rotation.RotateVec(localCenter);
-            var box = Box2.CenteredAround(worldCenter, size);
-            handle.DrawRect(new Box2Rotated(box, rotation, worldCenter), HullMask);
+            BuildHullMaskRectangles(gridUid, grid, pilotTileLocalCenter, pilotForwardLocal);
+            _batchedHullRevision = _hullRevision;
+            _batchedPilotTile = pilotTile;
+            _batchedForwardLocal = pilotForwardLocal;
+            _hasBatchedMask = true;
         }
+
+        foreach (var localRect in _maskRectangles)
+            handle.DrawRect(new Box2Rotated(localRect.Translated(gridCenter), rotation, gridCenter), HullMask);
     }
 
-    private void CacheHullMaskSpans(SharedMapSystem map, EntityUid gridUid, MapGridComponent grid)
+    private void BuildHullMaskRectangles(
+        EntityUid gridUid,
+        MapGridComponent grid,
+        Vector2 pilotCenter,
+        Vector2 pilotForwardLocal)
     {
+        var map = _entities.System<SharedMapSystem>();
         var tileSize = grid.TileSize;
-        for (var y = _tileMin.Y; y <= _tileMax.Y; y++)
+        _selectedMaskTiles.Clear();
+        _maskRectangles.Clear();
+
+        var minX = int.MaxValue;
+        var maxX = int.MinValue;
+        var minY = int.MaxValue;
+        var maxY = int.MinValue;
+        foreach (var tile in _maskTiles)
+        {
+            var center = map.TileCenterToVector(gridUid, grid, tile);
+            // Put the cutoff at the rear edge of the pilot's tile. The tile
+            // occupied by the pilot remains visible; masking begins one tile back.
+            if (Vector2.Dot(center - pilotCenter, pilotForwardLocal) >= -tileSize * 0.5f)
+                continue;
+
+            _selectedMaskTiles.Add(tile);
+            minX = Math.Min(minX, tile.X);
+            maxX = Math.Max(maxX, tile.X);
+            minY = Math.Min(minY, tile.Y);
+            maxY = Math.Max(maxY, tile.Y);
+        }
+
+        if (_selectedMaskTiles.Count == 0)
+            return;
+
+        var halfTile = tileSize * 0.5f + 0.01f;
+        for (var y = minY; y <= maxY; y++)
         {
             int? runStart = null;
-            for (var x = _tileMin.X; x <= _tileMax.X + 1; x++)
+            for (var x = minX; x <= maxX + 1; x++)
             {
-                var occupied = x <= _tileMax.X && _tiles.Contains(new Vector2i(x, y));
-                if (occupied && runStart == null)
+                if (x <= maxX && _selectedMaskTiles.Contains(new Vector2i(x, y)))
                 {
-                    runStart = x;
+                    runStart ??= x;
                     continue;
                 }
 
-                if (occupied || runStart is not { } start)
+                if (runStart is not { } start)
                     continue;
 
-                var end = x - 1;
-                var first = map.TileCenterToVector(gridUid, grid, new Vector2i(start, y));
-                var last = map.TileCenterToVector(gridUid, grid, new Vector2i(end, y));
-                var localCenter = (first + last) * 0.5f;
-                var size = new Vector2((end - start + 1) * tileSize + 0.02f, tileSize + 0.02f);
-                _maskSpans.Add((localCenter, size));
+                var startCenter = map.TileCenterToVector(gridUid, grid, new Vector2i(start, y));
+                var endCenter = map.TileCenterToVector(gridUid, grid, new Vector2i(x - 1, y));
+                _maskRectangles.Add(new Box2(
+                    new Vector2(startCenter.X - halfTile, startCenter.Y - halfTile),
+                    new Vector2(endCenter.X + halfTile, endCenter.Y + halfTile)));
                 runStart = null;
             }
         }

@@ -256,11 +256,10 @@ namespace Content.Client.Options.UI.Tabs
             AddButton(CMUKeyFunctions.CMUGunshipRotateRight);
             AddButton(CMUKeyFunctions.CMUGunshipAscend);
             AddButton(CMUKeyFunctions.CMUGunshipDescend);
-            AddButton(CMUKeyFunctions.CMUGunshipViewUp);
-            AddButton(CMUKeyFunctions.CMUGunshipViewDown);
-            AddButton(CMUKeyFunctions.CMUGunshipRearView);
             AddButton(CMUKeyFunctions.CMUGunshipIncreaseThrust);
             AddButton(CMUKeyFunctions.CMUGunshipDecreaseThrust);
+            AddButton(CMUKeyFunctions.CMUGunshipCycleCamera);
+            AddButton(CMUKeyFunctions.CMUGunshipTogglePanning);
 
             AddHeader("ui-options-header-rmc-xeno");
             AddButton(CMKeyFunctions.CMXenoWideSwing);
@@ -344,6 +343,7 @@ namespace Content.Client.Options.UI.Tabs
             AddButton(EngineKeyFunctions.CameraRotateLeft);
             AddButton(EngineKeyFunctions.CameraRotateRight);
             AddButton(EngineKeyFunctions.CameraReset);
+            AddButton(ContentKeyFunctions.RotateCameraWithMouse);
             AddButton(ContentKeyFunctions.ZoomIn);
             AddButton(ContentKeyFunctions.ZoomOut);
             AddButton(ContentKeyFunctions.ResetZoom);

@@ -87,19 +87,19 @@ public sealed partial class GridVehicleMoverComponent : Component
     /// maximum chassis rotation speed while steering, in degrees per second
     /// </summary>
     [DataField, AutoNetworkedField]
-    public float MaxRotationSpeedDegrees = 90f;
+    public float MaxRotationSpeedDegrees = 22.5f;
 
     /// <summary>
     /// chassis angular acceleration while steering, in degrees per second squared
     /// </summary>
     [DataField, AutoNetworkedField]
-    public float RotationAccelerationDegrees = 180f;
+    public float RotationAccelerationDegrees = 45f;
 
     /// <summary>
     /// chassis angular deceleration after steering is released, in degrees per second squared
     /// </summary>
     [DataField, AutoNetworkedField]
-    public float RotationDecelerationDegrees = 240f;
+    public float RotationDecelerationDegrees = 60f;
 
     /// <summary>
     /// current signed chassis angular speed, in degrees per second

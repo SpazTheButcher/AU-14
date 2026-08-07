@@ -66,13 +66,6 @@
   name: dropship crash explosion
   categories: [ HideSpawnMenu, DoNotMap ]
   components:
-  - type: ExplodeOnTrigger
-  - type: Explosive
-    explosionType: RMC
-    maxIntensity: 20
-    intensitySlope: 6
-    totalIntensity: 240
-    canCreateVacuum: false
   - type: ProjectileGrenade
     fillPrototype: CMProjectileShrapnel
     capacity: 65
@@ -81,9 +74,6 @@
     containers:
       cluster-payload: !type:Container
   - type: ClusterLimitHits
-  - type: CMExplosionEffect
-    maxShrapnel: 0
-  - type: RMCScorchEffect
 
 - type: entity
   id: CMUDropshipTacticalHoverShadow

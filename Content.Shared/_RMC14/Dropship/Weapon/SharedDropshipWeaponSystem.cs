@@ -318,6 +318,9 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
 
     private void OnTerminalMapInit(Entity<DropshipTerminalWeaponsComponent> ent, ref MapInitEvent args)
     {
+        if (_net.IsClient)
+            return;
+
         var targets = new List<TargetEnt>();
         var targetsQuery = EntityQueryEnumerator<DropshipTargetComponent>();
 
@@ -360,6 +363,9 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
 
     private void OnDropshipTargetMapInit(Entity<DropshipTargetComponent> ent, ref MapInitEvent args)
     {
+        if (_net.IsClient)
+            return;
+
         var netEnt = GetNetEntity(ent);
         var terminals = EntityQueryEnumerator<DropshipTerminalWeaponsComponent>();
         while (terminals.MoveNext(out var uid, out var terminal))
@@ -378,13 +384,11 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
             var creatorFaction = string.IsNullOrWhiteSpace(ent.Comp.CreatorFaction) ? null : ent.Comp.CreatorFaction;
 
             // If the target is faction-bound, only add it to consoles of that faction
-            if (!string.IsNullOrEmpty(creatorFaction))
+            if (!string.IsNullOrEmpty(creatorFaction) &&
+                (string.IsNullOrEmpty(consoleFaction) ||
+                 !creatorFaction.Equals(consoleFaction, StringComparison.OrdinalIgnoreCase)))
             {
-                if (string.IsNullOrEmpty(consoleFaction) ||
-                    !creatorFaction.Equals(consoleFaction, StringComparison.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
+                continue;
             }
 
             targets.Add(new TargetEnt(netEnt, ent.Comp.Abbreviation));
@@ -404,6 +408,13 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
 
     private void OnDropshipTargetRemove<T>(Entity<DropshipTargetComponent> ent, ref T args)
     {
+        // Terminal target lists and target-eye ownership are replicated,
+        // server-authoritative state. Targets routinely leave client PVS during
+        // map transfers and crashes; changing those lists client-side dirties
+        // predicted entities during rollback.
+        if (_net.IsClient)
+            return;
+
         var netUid = GetNetEntity(ent);
         var terminals = EntityQueryEnumerator<DropshipTerminalWeaponsComponent>();
         while (terminals.MoveNext(out var uid, out var terminal))
@@ -442,9 +453,6 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
             _rmcCamera.RefreshCameras(prototype);
         }
 
-        if (_net.IsClient)
-            return;
-
         foreach (var (_, eye) in ent.Comp.Eyes)
         {
             QueueDel(eye);
@@ -453,6 +461,9 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
 
     private void OnDropshipTargetEyeRemove<T>(Entity<DropshipTargetEyeComponent> ent, ref T args)
     {
+        if (_net.IsClient)
+            return;
+
         if (TerminatingOrDeleted(ent.Comp.Target) ||
             !TryComp(ent.Comp.Target, out DropshipTargetComponent? target))
         {

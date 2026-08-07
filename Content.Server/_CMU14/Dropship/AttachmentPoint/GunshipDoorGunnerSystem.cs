@@ -55,8 +55,7 @@ public sealed partial class GunshipDoorGunnerSystem : EntitySystem
         if (!TryFindAdjacentExteriorDoor(point, out var door, out var doorComp, out var bolt) || bolt.BoltsDown)
             return;
 
-        var doorXform = Transform(door);
-        _transform.SetCoordinates(args.Equipment, new EntityCoordinates(doorXform.ParentUid, doorXform.LocalPosition));
+        MoveIntoDoorway(args.Equipment, point, door);
         HoldDoor((args.Equipment, gunner), (door, doorComp));
     }
 
@@ -70,7 +69,19 @@ public sealed partial class GunshipDoorGunnerSystem : EntitySystem
             return;
         }
 
+        MoveIntoDoorway(gunner.Owner, point, door);
         HoldDoor(gunner, (door, doorComp));
+    }
+
+    private void MoveIntoDoorway(EntityUid gunner, EntityUid point, EntityUid door)
+    {
+        var pointXform = Transform(point);
+        var doorXform = Transform(door);
+        var outward = doorXform.LocalPosition - pointXform.LocalPosition;
+
+        _transform.SetCoordinates(gunner,
+            new EntityCoordinates(doorXform.ParentUid, doorXform.LocalPosition));
+        _transform.SetLocalRotation(gunner, outward.ToWorldAngle());
     }
 
     private void HoldDoor(Entity<ActiveGunshipDoorGunnerComponent> gunner, Entity<DoorComponent> door)

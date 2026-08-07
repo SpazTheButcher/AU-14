@@ -133,6 +133,12 @@ public sealed partial class DropshipIntegritySystem
                 continue;
 
             args.Handled = true;
+            if (IsRepairerInsideDropship(args.User, integrity.Owner))
+            {
+                _popup.PopupEntity("You must be outside the dropship to repair it.", target, args.User, PopupType.SmallCaution);
+                return true;
+            }
+
             if (step.RequiresWelder &&
                 (!HasComp<BlowtorchComponent>(args.Used) ||
                  !_repairable.UseFuel(args.Used, args.User, integrity.Comp.RepairFuel, true)))
@@ -181,6 +187,7 @@ public sealed partial class DropshipIntegritySystem
         integrity.Comp.RepairingMalfunctions.Remove(args.Malfunction);
         if (args.Cancelled || args.Handled || args.Used is not { } used ||
             integrity.Comp.Wrecked || integrity.Comp.Crashing ||
+            IsRepairerInsideDropship(args.User, integrity.Owner) ||
             !integrity.Comp.ActiveMalfunctions.Contains(args.Malfunction))
         {
             return;

@@ -44,6 +44,53 @@ public sealed partial class DropshipTacticalHoverComponent : Component
     public float GunshipAngularVelocityDegrees;
 
     /// <summary>
+    /// Static local-space centers of every occupied dropship tile. Building
+    /// this once avoids enumerating the grid for every movement and alarm
+    /// check while the ship is hovering.
+    /// </summary>
+    public readonly List<Vector2> CachedFootprintCenters = new();
+
+    /// <summary>
+    /// Local-space centers of only the exterior footprint tiles, used by the
+    /// proximity alarm.
+    /// </summary>
+    public readonly List<Vector2> CachedFootprintBoundaryCenters = new();
+
+    /// <summary>
+    /// Footprint offsets rotated into the current candidate orientation. Both
+    /// rotation and translation validation can reuse these during one tick.
+    /// </summary>
+    public readonly List<Vector2> CachedRotatedFootprintCenters = new();
+    public Angle CachedFootprintRotation;
+    public bool HasCachedFootprintRotation;
+
+    public readonly List<Vector2> CachedRotatedFootprintBoundaryCenters = new();
+    public Angle CachedFootprintBoundaryRotation;
+    public bool HasCachedFootprintBoundaryRotation;
+
+    /// <summary>
+    /// Reused by collision validation. Callers consume it synchronously before
+    /// another footprint query is made.
+    /// </summary>
+    public readonly HashSet<EntityUid> CollisionBlockers = new();
+
+    /// <summary>
+    /// Direct children which belonged to the dropship when free-flight movement
+    /// began. Anchored terrain entities can otherwise be adopted by the moving
+    /// grid even when their fixtures are not part of the dropship obstruction
+    /// mask (platform edges are the common case).
+    /// </summary>
+    public readonly HashSet<EntityUid> FlightGridChildren = new();
+    public bool FlightGridChildrenInitialized;
+
+    public bool HoverEffectsPoseInitialized;
+    public EntityUid? HoverEffectsMap;
+    public Vector2 HoverEffectsPosition;
+    public Angle HoverEffectsRotation;
+    public int HoverEffectsGroundOffset;
+    public TimeSpan NextHoverEffectsUpdate;
+
+    /// <summary>
     /// Pending five-second vertical movement. The dropship remains on its
     /// current level until this time is reached.
     /// </summary>

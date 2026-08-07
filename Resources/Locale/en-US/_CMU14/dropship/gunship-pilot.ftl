@@ -12,3 +12,5 @@ ui-options-function-cmu-gunship-view-down = Toggle exterior camera below
 ui-options-function-cmu-gunship-rear-view = Toggle rear camera
 ui-options-function-cmu-gunship-increase-thrust = Increase thrust
 ui-options-function-cmu-gunship-decrease-thrust = Decrease thrust
+ui-options-function-cmu-gunship-cycle-camera = Cycle maneuvering camera
+ui-options-function-cmu-gunship-toggle-panning = Toggle pilot camera panning

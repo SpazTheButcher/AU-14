@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Content.Client.CombatMode;
 using Content.Shared._CMU14.Dropship.DirectFire;
 using Content.Shared._CMU14.Dropship.TacticalLand;
 using Content.Shared._CMU14.Input;
@@ -25,6 +26,7 @@ public sealed partial class GunshipPilotInputSystem : EntitySystem
     [Dependency] private IPlayerManager _player = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private CombatModeSystem _combatMode = default!;
 
     private readonly HashSet<GunshipControlAction> _pressedActions = new();
     private TimeSpan _nextDirectFireAimUpdate;
@@ -48,11 +50,10 @@ public sealed partial class GunshipPilotInputSystem : EntitySystem
         Bind(binds, CMUKeyFunctions.CMUGunshipRotateRight, GunshipControlAction.RotateRight);
         Bind(binds, CMUKeyFunctions.CMUGunshipAscend, GunshipControlAction.Ascend);
         Bind(binds, CMUKeyFunctions.CMUGunshipDescend, GunshipControlAction.Descend);
-        Bind(binds, CMUKeyFunctions.CMUGunshipViewUp, GunshipControlAction.ViewUp);
-        Bind(binds, CMUKeyFunctions.CMUGunshipViewDown, GunshipControlAction.ViewDown);
-        Bind(binds, CMUKeyFunctions.CMUGunshipRearView, GunshipControlAction.RearView);
         BindThrust(binds, CMUKeyFunctions.CMUGunshipIncreaseThrust, 1);
         BindThrust(binds, CMUKeyFunctions.CMUGunshipDecreaseThrust, -1);
+        BindPilotToggle(binds, CMUKeyFunctions.CMUGunshipCycleCamera, cycleCamera: true);
+        BindPilotToggle(binds, CMUKeyFunctions.CMUGunshipTogglePanning, cycleCamera: false);
         binds.Register<GunshipPilotInputSystem>();
     }
 
@@ -93,8 +94,10 @@ public sealed partial class GunshipPilotInputSystem : EntitySystem
     {
         pilot = default;
         if (_player.LocalEntity is not { } local ||
+            !_combatMode.IsInCombatMode(local) ||
             !TryComp(local, out GunshipPilotHudComponent? hud) ||
             hud.Dropship == null ||
+            !hud.FlightControlsAvailable ||
             !hud.HasDirectFireWeapon ||
             !TryComp(local, out BuckleComponent? buckle) ||
             buckle.BuckledTo is not { } seat ||
@@ -127,6 +130,25 @@ public sealed partial class GunshipPilotInputSystem : EntitySystem
                 handle: false));
     }
 
+    private void BindPilotToggle(
+        CommandBinds.BindingsBuilder binds,
+        BoundKeyFunction function,
+        bool cycleCamera)
+    {
+        binds.Bind(function, new PilotToggleHandler(this, cycleCamera));
+    }
+
+    private void SendPilotToggle(EntityUid? pilot, bool cycleCamera)
+    {
+        if (pilot is not { } user || !IsSeatedGunshipPilot(user))
+            return;
+
+        if (cycleCamera)
+            RaiseNetworkEvent(new GunshipCycleCameraInputEvent());
+        else
+            RaiseNetworkEvent(new GunshipPilotPanningInputEvent());
+    }
+
     /// <summary>
     /// Called by the main game viewport so the wheel remains a pilot control
     /// without consuming scroll input over unrelated UI windows.
@@ -156,6 +178,16 @@ public sealed partial class GunshipPilotInputSystem : EntitySystem
     {
         return TryComp(pilot, out GunshipPilotHudComponent? hud) &&
                hud.Dropship != null &&
+               hud.FlightControlsAvailable &&
+               TryComp(pilot, out BuckleComponent? buckle) &&
+               buckle.BuckledTo is { } seat &&
+               HasComp<GunshipPilotSeatComponent>(seat);
+    }
+
+    private bool IsSeatedGunshipPilot(EntityUid pilot)
+    {
+        return TryComp(pilot, out GunshipPilotHudComponent? hud) &&
+               hud.Dropship != null &&
                TryComp(pilot, out BuckleComponent? buckle) &&
                buckle.BuckledTo is { } seat &&
                HasComp<GunshipPilotSeatComponent>(seat);
@@ -174,6 +206,9 @@ public sealed partial class GunshipPilotInputSystem : EntitySystem
         }
 
         if (pilot is not { } user ||
+            !TryComp(user, out GunshipPilotHudComponent? hud) ||
+            hud.Dropship == null ||
+            !hud.FlightControlsAvailable ||
             !TryComp(user, out BuckleComponent? buckle) ||
             buckle.BuckledTo is not { } seat ||
             !HasComp<GunshipPilotSeatComponent>(seat))
@@ -221,6 +256,37 @@ public sealed partial class GunshipPilotInputSystem : EntitySystem
             }
 
             return system.ShouldBlockCharacterMovement(session);
+        }
+    }
+
+    private sealed class PilotToggleHandler(GunshipPilotInputSystem system, bool cycleCamera) : InputCmdHandler
+    {
+        private bool _pressed;
+
+        public override bool HandleCmdMessage(
+            IEntityManager entManager,
+            ICommonSession? session,
+            IFullInputCmdMessage message)
+        {
+            if (message.State == BoundKeyState.Down)
+            {
+                if (session?.AttachedEntity is not { } pilot || !system.IsSeatedGunshipPilot(pilot))
+                    return false;
+
+                if (!_pressed)
+                {
+                    _pressed = true;
+                    system.SendPilotToggle(pilot, cycleCamera);
+                }
+
+                return true;
+            }
+
+            if (!_pressed)
+                return false;
+
+            _pressed = false;
+            return true;
         }
     }
 }

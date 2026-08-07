@@ -3,6 +3,10 @@ using System.Numerics;
 using Content.Server._RMC14.Explosion;
 using Content.Server.Explosion.Components;
 using Content.Server.Explosion.EntitySystems;
+using Content.Server.Destructible;
+using Content.Server.Destructible.Thresholds;
+using Content.Server.Destructible.Thresholds.Behaviors;
+using Content.Server.Destructible.Thresholds.Triggers;
 using Content.Server.Shuttles.Components;
 using Content.Server.Station.Components;
 using Content.Shared._CMU14.Dropship.Integrity;
@@ -12,6 +16,7 @@ using Content.Shared._CMU14.ZLevels.Core.EntitySystems;
 using Content.Shared._RMC14.Dropship;
 using Content.Shared._RMC14.Repairable;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Prototypes;
 using Content.Shared.DoAfter;
 using Content.Shared.Examine;
 using Content.Shared.FixedPoint;
@@ -21,6 +26,7 @@ using Content.Shared.Popups;
 using Content.Shared.Shuttles.Components;
 using Content.Shared.Shuttles.Systems;
 using Content.Shared.Station.Components;
+using Content.Shared.Tag;
 using Content.Shared.Tools;
 using Content.Shared.Tools.Systems;
 using Robust.Shared.Audio.Systems;
@@ -47,13 +53,22 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
     [Dependency] private RMCExplosionSystem _explosion = default!;
     [Dependency] private RMCRepairableSystem _repairable = default!;
     [Dependency] private SharedDropshipSystem _dropships = default!;
+    [Dependency] private TagSystem _tag = default!;
     [Dependency] private ProjectileGrenadeSystem _projectileGrenades = default!;
     [Dependency] private TriggerSystem _trigger = default!;
     [Dependency] private CMUSharedZLevelsSystem _zLevels = default!;
+    [Dependency] private IPrototypeManager _prototypes = default!;
 
     private static readonly ProtoId<ToolQualityPrototype> WeldingQuality = "Welding";
+    private static readonly ProtoId<TagPrototype> WallTag = "Wall";
     private const string WarningSignPrototype = "CMUHolographicWarningSign";
     private static readonly EntProtoId CrashExplosion = "CMUDropshipCrashM15Explosion";
+    private static readonly TimeSpan ImpactAdoptionGuardTime = TimeSpan.FromSeconds(1);
+    private static readonly TimeSpan ImpactAdoptionCheckInterval = TimeSpan.FromMilliseconds(250);
+    private static readonly TimeSpan HullInitializationScanInterval = TimeSpan.FromMilliseconds(250);
+    private const byte HullInitializationFollowupScans = 4;
+    private readonly Dictionary<EntityUid, PendingImpactAdoption> _pendingImpactAdoptions = new();
+    private readonly HashSet<EntityUid> _emptyFlightObstructions = new();
 
     public override void Initialize()
     {
@@ -81,7 +96,9 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         integrity.Integrity = Math.Clamp(integrity.Integrity, 0f, integrity.MaxIntegrity);
         integrity.Wrecked |= ent.Comp.Crashed;
         Dirty(ent.Owner, integrity);
-        RefreshHullMarkers(ent.Owner, integrity);
+        MarkInitialHull(ent.Owner);
+        integrity.HullInitializationScansRemaining = HullInitializationFollowupScans;
+        integrity.NextHullInitializationScan = _timing.CurTime + HullInitializationScanInterval;
     }
 
     private void OnStationMemberStartup(Entity<StationMemberComponent> ent, ref ComponentStartup args)
@@ -125,12 +142,78 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             DamageIntegrity(dropship, amount);
     }
 
-    public void ApplyFlightImpact(EntityUid dropship, IReadOnlyCollection<EntityUid> obstructions, float speed)
+    /// <summary>
+    /// Applies an impact and returns the impact-speed budget left after breaking
+    /// every obstruction. A zero result means the ship must stop.
+    /// </summary>
+    public float ApplyFlightImpact(
+        EntityUid dropship,
+        IReadOnlyCollection<EntityUid> obstructions,
+        float speed,
+        EntityUid? terrainGrid = null)
     {
+        // Grid traversal can adopt an overlapping anchored obstruction before
+        // damage is applied. Snapshot the ship first and prefer the terrain
+        // grid supplied by the collision query over the obstruction's current
+        // (possibly already changed) parent.
+        HashSet<EntityUid> originalChildren;
+        if (TryComp(dropship, out DropshipTacticalHoverComponent? hover) &&
+            hover.FlightGridChildrenInitialized)
+        {
+            originalChildren = hover.FlightGridChildren;
+        }
+        else
+        {
+            originalChildren = new HashSet<EntityUid>();
+            var children = Transform(dropship).ChildEnumerator;
+            while (children.MoveNext(out var child))
+                originalChildren.Add(child);
+        }
+
+        Entity<MapGridComponent>? obstructionGrid = null;
+        if (terrainGrid is { } explicitGround &&
+            explicitGround != dropship &&
+            TryComp(explicitGround, out MapGridComponent? explicitGroundGrid))
+        {
+            obstructionGrid = (explicitGround, explicitGroundGrid);
+        }
+
+        if (obstructionGrid == null)
+        {
+            foreach (var obstruction in obstructions)
+            {
+                if (!TryComp(obstruction, out TransformComponent? obstructionXform) ||
+                    obstructionXform.GridUid is not { } grid ||
+                    grid == dropship ||
+                    !TryComp(grid, out MapGridComponent? gridComp))
+                {
+                    continue;
+                }
+
+                obstructionGrid = (grid, gridComp);
+                break;
+            }
+        }
+
+        // The Z-level map entity is also its terrain grid and remains the
+        // fallback for callers which cannot provide an authoritative grid.
+        if (obstructionGrid == null &&
+            Transform(dropship).MapUid is { } map &&
+            map != dropship &&
+            TryComp(map, out MapGridComponent? mapGrid))
+        {
+            obstructionGrid = (map, mapGrid);
+        }
+
+        var impactTiles = obstructionGrid is { } impactGround
+            ? GetImpactTiles(impactGround, obstructions)
+            : new HashSet<Vector2i>();
+
         if (!TryComp(dropship, out DropshipIntegrityComponent? integrity) ||
             integrity.Crashing || integrity.Wrecked || speed < integrity.MinimumDamagingImpactSpeed)
         {
-            return;
+            GuardImpactAdoptions(dropship, obstructionGrid, originalChildren, obstructions, impactTiles);
+            return 0f;
         }
 
         var shipDamage = speed * speed * integrity.ImpactDamageMultiplier;
@@ -142,59 +225,277 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             integrity.NextImpactSound = _timing.CurTime + integrity.ImpactSoundCooldown;
         }
 
+        if (integrity.Crashing || integrity.Wrecked)
+        {
+            GuardImpactAdoptions(dropship, obstructionGrid, originalChildren, obstructions, impactTiles);
+            return 0f;
+        }
+
         var obstacleDamage = speed * speed * integrity.ObstacleDamageMultiplier;
         if (obstacleDamage <= 0f)
-            return;
-
-        // Destructible debris is spawned from map coordinates. When the terrain
-        // grid and dropship grid overlap, Robust may choose the dropship as its
-        // parent. Remember the pre-impact ship contents and the obstruction's
-        // actual grid so anything adopted by this damage event can be restored.
-        var originalChildren = new HashSet<EntityUid>();
-        var children = Transform(dropship).ChildEnumerator;
-        while (children.MoveNext(out var child))
-            originalChildren.Add(child);
-
-        Entity<MapGridComponent>? obstructionGrid = null;
-        foreach (var obstruction in obstructions)
         {
-            if (!TryComp(obstruction, out TransformComponent? obstructionXform) ||
-                obstructionXform.GridUid is not { } grid ||
-                grid == dropship ||
-                !TryComp(grid, out MapGridComponent? gridComp))
-            {
+            GuardImpactAdoptions(dropship, obstructionGrid, originalChildren, obstructions, impactTiles);
+            return 0f;
+        }
+
+        var remainingSpeed = speed;
+        var removedEveryObstruction = true;
+        var removedAnyObstruction = false;
+        foreach (var obstruction in obstructions.Order())
+        {
+            if (TerminatingOrDeleted(obstruction))
                 continue;
+
+            if (remainingSpeed <= 0f)
+            {
+                removedEveryObstruction = false;
+                break;
             }
 
-            obstructionGrid = (grid, gridComp);
-            break;
+            if (!TryGetObstacleBreakCost(obstruction,
+                    remainingSpeed,
+                    integrity.ObstacleDamageMultiplier,
+                    out var breakCost))
+            {
+                // Spend whatever remains against the obstruction that stopped
+                // the ship. Do not also give every other blocker the original
+                // full-speed impact for free.
+                var remainingDamage = remainingSpeed * remainingSpeed * integrity.ObstacleDamageMultiplier;
+                ApplyObstacleDamage(obstruction, remainingDamage, dropship);
+                remainingSpeed = 0f;
+                removedEveryObstruction = false;
+                break;
+            }
+
+            var rawDamage = breakCost * breakCost * integrity.ObstacleDamageMultiplier;
+            ApplyObstacleDamage(obstruction, rawDamage, dropship);
+            remainingSpeed = MathF.Max(0f, remainingSpeed - breakCost);
+            removedAnyObstruction = true;
         }
 
-        var damage = new DamageSpecifier();
-        damage.DamageDict["Blunt"] = FixedPoint2.New(obstacleDamage);
-        foreach (var obstruction in obstructions)
+        GuardImpactAdoptions(dropship, obstructionGrid, originalChildren, obstructions, impactTiles);
+
+        return removedEveryObstruction && removedAnyObstruction
+            ? remainingSpeed
+            : 0f;
+    }
+
+    private void GuardImpactAdoptions(
+        EntityUid dropship,
+        Entity<MapGridComponent>? ground,
+        HashSet<EntityUid> originalChildren,
+        IReadOnlyCollection<EntityUid> obstructions,
+        HashSet<Vector2i> impactTiles)
+    {
+        if (ground is not { } impactGround)
+            return;
+
+        var forcedGround = obstructions.ToHashSet();
+        RestoreImpactAdoptions(dropship, impactGround, originalChildren, forcedGround);
+        _pendingImpactAdoptions[dropship] = new PendingImpactAdoption(
+            impactGround.Owner,
+            originalChildren,
+            forcedGround,
+            impactTiles,
+            _timing.CurTime + _timing.TickPeriod,
+            _timing.CurTime + ImpactAdoptionGuardTime);
+    }
+
+    /// <summary>
+    /// Guards ordinary free-flight movement against adopting anchored terrain
+    /// whose fixtures are not considered a blocking impact.
+    /// </summary>
+    public void GuardFlightAdoptions(
+        EntityUid dropship,
+        EntityUid terrainGrid,
+        HashSet<EntityUid> originalChildren)
+    {
+        if (terrainGrid == dropship ||
+            !TryComp(terrainGrid, out MapGridComponent? groundGrid))
         {
-            if (TerminatingOrDeleted(obstruction) || !HasComp<DamageableComponent>(obstruction))
+            return;
+        }
+
+        // A blocking impact in the same movement tick may already have
+        // scheduled a stricter guard with explicit obstruction entities and
+        // impact tiles. Do not replace that information with the general
+        // free-flight guard.
+        if (_pendingImpactAdoptions.TryGetValue(dropship, out var pending) &&
+            pending.Ground == terrainGrid &&
+            _timing.CurTime < pending.Expires)
+        {
+            return;
+        }
+
+        _pendingImpactAdoptions[dropship] = new PendingImpactAdoption(
+            terrainGrid,
+            originalChildren,
+            _emptyFlightObstructions,
+            null,
+            _timing.CurTime + TimeSpan.FromMilliseconds(100),
+            _timing.CurTime + ImpactAdoptionGuardTime);
+    }
+
+    private bool TryGetObstacleBreakCost(
+        EntityUid obstruction,
+        float availableSpeed,
+        float damageMultiplier,
+        out float requiredSpeed)
+    {
+        requiredSpeed = 0f;
+        if (!TryComp(obstruction, out DamageableComponent? damageable) ||
+            !TryComp(obstruction, out DestructibleComponent? destructible))
+        {
+            return false;
+        }
+
+        var destroyedAt = GetObstacleRemovalThreshold(destructible);
+        if (destroyedAt == FixedPoint2.MaxValue)
+            return false;
+
+        var remainingDamage = destroyedAt.Float() - damageable.TotalDamage.Float();
+        if (remainingDamage <= 0f)
+            return true;
+
+        if (GetEffectiveObstacleDamage(damageable,
+                availableSpeed * availableSpeed * damageMultiplier) < remainingDamage)
+        {
+            return false;
+        }
+
+        // Find the smallest speed whose post-modifier damage reaches the
+        // remaining destruction threshold. Twenty iterations are well beyond
+        // the precision useful to movement or FixedPoint2 damage.
+        var low = 0f;
+        var high = availableSpeed;
+        for (var i = 0; i < 12; i++)
+        {
+            var middle = (low + high) * 0.5f;
+            var rawDamage = middle * middle * damageMultiplier;
+            if (GetEffectiveObstacleDamage(damageable, rawDamage) >= remainingDamage)
+                high = middle;
+            else
+                low = middle;
+        }
+
+        requiredSpeed = high;
+        return true;
+    }
+
+    /// <summary>
+    /// Finds the damage threshold that actually removes an obstruction. The
+    /// generic DestructibleSystem helper intentionally treats Breakage as
+    /// destruction, but RMC walls use Breakage to turn into a still-solid
+    /// girder before their later Destruction threshold.
+    /// </summary>
+    private static FixedPoint2 GetObstacleRemovalThreshold(DestructibleComponent destructible)
+    {
+        var destructionAt = FixedPoint2.MaxValue;
+        var breakageAt = FixedPoint2.MaxValue;
+
+        foreach (var threshold in destructible.Thresholds)
+        {
+            if (threshold.Trigger is not DamageTrigger trigger)
                 continue;
 
-            _damageable.TryChangeDamage(obstruction, damage, origin: dropship);
+            foreach (var behavior in threshold.Behaviors)
+            {
+                if (behavior is not DoActsBehavior acts)
+                    continue;
+
+                if (acts.HasAct(ThresholdActs.Destruction))
+                    destructionAt = FixedPoint2.Min(destructionAt, FixedPoint2.New(trigger.Damage));
+                else if (acts.HasAct(ThresholdActs.Breakage))
+                    breakageAt = FixedPoint2.Min(breakageAt, FixedPoint2.New(trigger.Damage));
+            }
         }
 
-        if (obstructionGrid is { } ground)
-            RestoreImpactAdoptions(dropship, ground, originalChildren);
+        return destructionAt != FixedPoint2.MaxValue ? destructionAt : breakageAt;
+    }
+
+    private float GetEffectiveObstacleDamage(DamageableComponent damageable, float rawDamage)
+    {
+        var damage = new DamageSpecifier();
+        damage.DamageDict["Blunt"] = FixedPoint2.New(rawDamage);
+        if (damageable.DamageModifierSetId != null &&
+            _prototypes.TryIndex<DamageModifierSetPrototype>(damageable.DamageModifierSetId, out var modifierSet))
+        {
+            damage = DamageSpecifier.ApplyModifierSet(damage, modifierSet);
+        }
+
+        damage = _damageable.ApplyUniversalAllModifiers(damage);
+        return MathF.Max(0f, damage.GetTotal().Float());
+    }
+
+    private void ApplyObstacleDamage(EntityUid obstruction, float rawDamage, EntityUid dropship)
+    {
+        if (TerminatingOrDeleted(obstruction) || rawDamage <= 0f || !HasComp<DamageableComponent>(obstruction))
+            return;
+
+        var damage = new DamageSpecifier();
+        damage.DamageDict["Blunt"] = FixedPoint2.New(rawDamage);
+        _damageable.TryChangeDamage(obstruction, damage, origin: dropship);
+    }
+
+    private HashSet<Vector2i> GetImpactTiles(
+        Entity<MapGridComponent> ground,
+        IReadOnlyCollection<EntityUid> obstructions)
+    {
+        var tiles = new HashSet<Vector2i>();
+        var groundXform = Transform(ground);
+        foreach (var obstruction in obstructions)
+        {
+            if (!TryComp(obstruction, out TransformComponent? xform))
+                continue;
+
+            var worldPosition = _transform.GetWorldPosition(xform);
+            var localPosition = Vector2.Transform(worldPosition, groundXform.InvLocalMatrix);
+            tiles.Add(_map.TileIndicesFor(
+                ground,
+                ground.Comp,
+                new EntityCoordinates(ground, localPosition)));
+        }
+
+        return tiles;
     }
 
     private void RestoreImpactAdoptions(
         EntityUid dropship,
         Entity<MapGridComponent> ground,
-        HashSet<EntityUid> originalChildren)
+        HashSet<EntityUid> originalChildren,
+        HashSet<EntityUid> forcedGround,
+        bool anchoredOnly = false,
+        HashSet<Vector2i>? allowedGroundTiles = null)
     {
         var adopted = new List<EntityUid>();
         var children = Transform(dropship).ChildEnumerator;
         while (children.MoveNext(out var child))
         {
-            if (!originalChildren.Contains(child))
-                adopted.Add(child);
+            if (originalChildren.Contains(child) && !forcedGround.Contains(child))
+                continue;
+
+            if (anchoredOnly &&
+                (!TryComp(child, out TransformComponent? adoptedXform) || !adoptedXform.Anchored))
+            {
+                continue;
+            }
+
+            if (anchoredOnly &&
+                !forcedGround.Contains(child) &&
+                allowedGroundTiles != null &&
+                TryComp(child, out TransformComponent? tileXform))
+            {
+                var worldPosition = _transform.GetWorldPosition(tileXform);
+                var groundPosition = Vector2.Transform(worldPosition, Transform(ground).InvLocalMatrix);
+                var groundTile = _map.TileIndicesFor(
+                    ground,
+                    ground.Comp,
+                    new EntityCoordinates(ground, groundPosition));
+                if (!allowedGroundTiles.Contains(groundTile))
+                    continue;
+            }
+
+            adopted.Add(child);
         }
 
         var groundXform = Transform(ground);
@@ -251,6 +552,9 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         integrity.Comp.CrashMap = xform.MapUid;
         if (TryComp(integrity.Owner, out DropshipTacticalHoverComponent? hover))
         {
+            var crashStarted = new GunshipCrashStartedEvent();
+            RaiseLocalEvent(integrity.Owner, ref crashStarted);
+
             if (xform.MapUid is { } currentMap &&
                 _zLevels.TryMapOffset(currentMap, hover.GroundMapOffset, out var groundMap))
             {
@@ -304,11 +608,29 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
 
     public override void Update(float frameTime)
     {
+        ProcessPendingImpactAdoptions();
+
         var query = EntityQueryEnumerator<DropshipIntegrityComponent>();
         while (query.MoveNext(out var uid, out var integrity))
         {
-            if (_timing.CurTime >= integrity.NextHullScan)
-                RefreshHullMarkers(uid, integrity);
+            if (integrity.HullInitializationScansRemaining > 0 &&
+                _timing.CurTime >= integrity.NextHullInitializationScan)
+            {
+                MarkInitialHull(uid);
+                integrity.HullInitializationScansRemaining--;
+                integrity.NextHullInitializationScan = _timing.CurTime + HullInitializationScanInterval;
+            }
+
+            if (integrity.CrashAftermathAt is { } aftermathAt && _timing.CurTime >= aftermathAt)
+            {
+                integrity.CrashAftermathAt = null;
+                if (TryComp(uid, out MapGridComponent? wreckGrid))
+                {
+                    ConvertCrashWalls((uid, wreckGrid));
+                    SpawnCrashExplosions((uid, wreckGrid));
+                    SpawnConsoleShrapnel((uid, wreckGrid));
+                }
+            }
 
             if (!integrity.Crashing)
                 continue;
@@ -325,14 +647,64 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         }
     }
 
-    private void RefreshHullMarkers(EntityUid dropship, DropshipIntegrityComponent integrity)
+    private void ProcessPendingImpactAdoptions()
     {
-        integrity.NextHullScan = _timing.CurTime + TimeSpan.FromSeconds(1);
+        if (_pendingImpactAdoptions.Count == 0)
+            return;
 
+        var finished = new List<EntityUid>();
+        foreach (var (dropship, pending) in _pendingImpactAdoptions)
+        {
+            if (TerminatingOrDeleted(dropship) ||
+                _timing.CurTime >= pending.Expires ||
+                !TryComp(pending.Ground, out MapGridComponent? groundGrid))
+            {
+                finished.Add(dropship);
+                continue;
+            }
+
+            if (_timing.CurTime < pending.NextCheck)
+                continue;
+
+            RestoreImpactAdoptions(
+                dropship,
+                (pending.Ground, groundGrid),
+                pending.OriginalChildren,
+                pending.ForcedGround,
+                anchoredOnly: true,
+                allowedGroundTiles: pending.ImpactTiles);
+            pending.NextCheck = _timing.CurTime + ImpactAdoptionCheckInterval;
+        }
+
+        foreach (var dropship in finished)
+            _pendingImpactAdoptions.Remove(dropship);
+    }
+
+    private sealed class PendingImpactAdoption(
+        EntityUid ground,
+        HashSet<EntityUid> originalChildren,
+        HashSet<EntityUid> forcedGround,
+        HashSet<Vector2i>? impactTiles,
+        TimeSpan nextCheck,
+        TimeSpan expires)
+    {
+        public readonly EntityUid Ground = ground;
+        public readonly HashSet<EntityUid> OriginalChildren = originalChildren;
+        public readonly HashSet<EntityUid> ForcedGround = forcedGround;
+        public readonly HashSet<Vector2i>? ImpactTiles = impactTiles;
+        public TimeSpan NextCheck = nextCheck;
+        public readonly TimeSpan Expires = expires;
+    }
+
+    private void MarkInitialHull(EntityUid dropship)
+    {
         var children = Transform(dropship).ChildEnumerator;
         while (children.MoveNext(out var child))
         {
-            if (!HasComp<DamageableComponent>(child))
+            // Intact dropship walls are deliberately invincible and only gain
+            // Damageable when the ship becomes a wreck. Still expose the
+            // shared hull status and repair interaction on every wall.
+            if (!HasComp<DamageableComponent>(child) && !_tag.HasTag(child, WallTag))
                 continue;
 
             var childTransform = Transform(child);
@@ -375,9 +747,10 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         if (TryComp(integrity.Owner, out DropshipComponent? dropship))
             _audio.PlayPvs(dropship.CrashSound, integrity.Owner);
 
-        ConvertCrashWalls((integrity.Owner, shipGrid));
-        SpawnCrashExplosions((integrity.Owner, shipGrid));
-        SpawnConsoleShrapnel((integrity.Owner, shipGrid));
+        // Keep the recursive map transfer and tactical-hover component removal
+        // in a separate game state from the large batch of wreck components,
+        // triggered explosions, and shrapnel entities.
+        integrity.Comp.CrashAftermathAt = _timing.CurTime + _timing.TickPeriod;
     }
 
     private void ConvertCrashWalls(Entity<MapGridComponent> ship)
@@ -441,7 +814,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             var tile = _random.Pick(tiles);
             var local = _map.TileCenterToVector(ship.Owner, ship.Comp, tile.GridIndices);
             var world = _transform.GetWorldPosition(ship.Owner) + _transform.GetWorldRotation(ship.Owner).RotateVec(local);
-            QueueCrashExplosion(new MapCoordinates(world, mapId), 650f, 35f, 120f, ship.Owner);
+            QueueCrashExplosion(new MapCoordinates(world, mapId), ship.Owner);
         }
 
         var radius = MathF.Max(ship.Comp.LocalAABB.Width, ship.Comp.LocalAABB.Height) * 0.65f;
@@ -449,31 +822,30 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         {
             var angle = _random.NextAngle();
             var world = _transform.GetWorldPosition(ship.Owner) + angle.ToVec() * radius;
-            QueueCrashExplosion(new MapCoordinates(world, mapId), 450f, 30f, 100f, ship.Owner);
+            QueueCrashExplosion(new MapCoordinates(world, mapId), ship.Owner);
         }
     }
 
     private void QueueCrashExplosion(
         MapCoordinates coordinates,
-        float totalIntensity,
-        float slope,
-        float maxTileIntensity,
         EntityUid cause)
     {
+        // Match the M15's RMC blast once. The spawned helper below supplies
+        // only its fragmentation payload, avoiding the previous duplicate
+        // explosion at every crash site.
         _explosion.QueueExplosion(
             coordinates,
             "RMC",
-            totalIntensity,
-            slope,
-            maxTileIntensity,
+            240f,
+            6f,
+            20f,
             cause,
             tileBreakScale: 3f,
             canCreateVacuum: false);
 
-        // This invisible effect uses the M15's exact RMC blast and shrapnel
-        // components without creating a grenade item in the wreck.
         var effect = Spawn(CrashExplosion, coordinates);
         _trigger.Trigger(effect, cause);
+        QueueDel(effect);
     }
 
     private void SpawnConsoleShrapnel(Entity<MapGridComponent> ship)
@@ -496,6 +868,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
                 _projectileGrenades.SetPayloadCount((effect, projectileGrenade), _random.Next(18, 46));
 
             _trigger.Trigger(effect, ship.Owner);
+            QueueDel(effect);
         }
     }
 
@@ -523,6 +896,12 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             TryComp(integrity.Owner, out FTLComponent? ftl) && ftl.State is FTLState.Starting or FTLState.Travelling or FTLState.Arriving)
         {
             _popup.PopupEntity("The dropship must be landed before its hull can be repaired.", target, args.User, PopupType.SmallCaution);
+            return;
+        }
+
+        if (IsRepairerInsideDropship(args.User, integrity.Owner))
+        {
+            _popup.PopupEntity("You must be outside the dropship to repair it.", target, args.User, PopupType.SmallCaution);
             return;
         }
 
@@ -565,6 +944,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         if (args.Cancelled || args.Handled || args.Used is not { } tool ||
             !TryGetDropship(target.Owner, out var integrity) || integrity.Comp.Wrecked || integrity.Comp.Crashing ||
             HasComp<DropshipTacticalHoverComponent>(integrity.Owner) ||
+            IsRepairerInsideDropship(args.User, integrity.Owner) ||
             !_repairable.UseFuel(tool, args.User, integrity.Comp.RepairFuel))
         {
             return;
@@ -592,5 +972,10 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
 
         dropship = (grid, integrity);
         return true;
+    }
+
+    private bool IsRepairerInsideDropship(EntityUid user, EntityUid dropship)
+    {
+        return TryComp(user, out TransformComponent? xform) && xform.GridUid == dropship;
     }
 }

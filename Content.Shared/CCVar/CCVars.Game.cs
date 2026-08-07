@@ -24,6 +24,18 @@ public sealed partial class CCVars
         GameLobbyDuration = CVarDef.Create("game.lobbyduration", 150, CVar.ARCHIVE);
 
     /// <summary>
+    ///     Development helper that readies the first player after their preferences load and starts the round.
+    /// </summary>
+    public static readonly CVarDef<bool>
+        GameAutoStartOnPlayerJoin = CVarDef.Create("game.auto_start_on_player_join", false, CVar.SERVERONLY);
+
+    /// <summary>
+    ///     Development helper that forces every round-start player into the specified job.
+    /// </summary>
+    public static readonly CVarDef<string>
+        GameRoundStartForcedJob = CVarDef.Create("game.roundstart_forced_job", string.Empty, CVar.SERVERONLY);
+
+    /// <summary>
     ///     Controls if players can latejoin at all.
     /// </summary>
     public static readonly CVarDef<bool>

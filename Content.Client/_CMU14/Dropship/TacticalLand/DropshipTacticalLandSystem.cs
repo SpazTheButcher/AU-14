@@ -19,9 +19,11 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
     [Dependency] private ContentEyeSystem _contentEye = default!;
 
     private static readonly Vector2 TacticalLandZoom = new(2.25f, 2.25f);
+    private static readonly TimeSpan MobVisibilityRefreshInterval = TimeSpan.FromMilliseconds(100);
 
     private bool _mobsHidden;
     private readonly HashSet<EntityUid> _hiddenMobs = new();
+    private TimeSpan _nextMobVisibilityRefresh;
 
     private bool _zoomApplied;
     private EntityUid? _zoomedEntity;
@@ -51,7 +53,11 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
         if (inEye)
         {
-            HideMobsTick();
+            if (_timing.CurTime >= _nextMobVisibilityRefresh)
+            {
+                _nextMobVisibilityRefresh = _timing.CurTime + MobVisibilityRefreshInterval;
+                HideMobsTick();
+            }
             _mobsHidden = true;
             ApplyZoom();
         }

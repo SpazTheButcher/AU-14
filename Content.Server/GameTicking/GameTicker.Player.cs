@@ -103,6 +103,8 @@ namespace Content.Server.GameTicking
                         {
                             PlayerJoinLobby(session, inGameAt);
                             StartUserDataLoad(session);
+                            if (_autoStartOnPlayerJoin)
+                                AutoStartRoundWaitDb();
                         }
                         else
                         {
@@ -189,6 +191,29 @@ namespace Content.Server.GameTicking
                 }
 
                 JoinAsObserver(session);
+            }
+
+            async void AutoStartRoundWaitDb()
+            {
+                try
+                {
+                    await WaitUserDataLoad(session, "GameTicker waiting to auto-start round");
+                }
+                catch (OperationCanceledException)
+                {
+                    Log.Debug($"Database load cancelled while waiting to auto-start for {session}");
+                    return;
+                }
+
+                if (RunLevel != GameRunLevel.PreRoundLobby || _startingRound ||
+                    !_playerGameStatuses.ContainsKey(session.UserId))
+                {
+                    return;
+                }
+
+                _playerGameStatuses[session.UserId] = PlayerGameStatus.ReadyToPlay;
+                RaiseNetworkEvent(GetStatusMsg(session), session.Channel);
+                StartRound();
             }
 
             async void AddPlayerToDb(Guid id)

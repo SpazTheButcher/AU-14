@@ -102,7 +102,7 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
     public static bool CollisionDebugEnabled { get; set; }
     public static bool MovementDebugEnabled { get; set; }
 
-    private readonly HashSet<EntityUid> _intersecting = new();
+    private readonly HashSet<Entity<PhysicsComponent>> _intersectingPhysics = new();
     private readonly HashSet<EntityUid> _pushBlockedIntersecting = new();
     private readonly HashSet<EntityUid> _pushTileIntersecting = new();
     private readonly List<EntityUid>[] _hitsBuffers = { new(), new(), new() };

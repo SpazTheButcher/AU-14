@@ -4,6 +4,7 @@ using Content.Shared.DoAfter;
 using Content.Shared.FixedPoint;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
+using Robust.Shared.Maths;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
@@ -97,9 +98,22 @@ public sealed partial class DropshipIntegrityComponent : Component
 
     public EntityUid? CrashMap;
 
-    public TimeSpan NextHullScan;
+    public TimeSpan? CrashAftermathAt;
+
+    /// <summary>
+    /// A bounded set of startup scans catches map children initialized shortly
+    /// after their grid without permanently polling the dropship contents.
+    /// </summary>
+    public byte HullInitializationScansRemaining;
+    public TimeSpan NextHullInitializationScan;
 
     public TimeSpan NextImpactSound;
+
+    public TimeSpan NextStationaryProximityScan;
+    public EntityUid? LastProximityMap;
+    public Vector2 LastProximityPosition;
+    public Angle LastProximityRotation;
+    public bool HasLastProximityPose;
 
     [NonSerialized]
     public EntityUid? ProximityAlarmStream;
@@ -117,7 +131,7 @@ public sealed partial class DropshipIntegrityComponent : Component
 }
 
 /// <summary>
-/// Marks an anchored, damageable entity as part of a dropship's shared hull.
+/// Marks an anchored wall or damageable entity as part of a dropship's shared hull.
 /// Keeping the damage subscription on this marker avoids claiming the global
 /// DamageableComponent event pair used by other systems.
 /// </summary>

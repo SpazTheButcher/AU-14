@@ -76,6 +76,10 @@ binds:
 - function: CameraReset
   type: State
   key: NumpadNum8
+- function: RotateCameraWithMouse
+  type: State
+  key: MouseMiddle
+  priority: -10
 - function: ZoomOut
   type: State
   key: NumpadNum4
@@ -688,15 +692,14 @@ binds:
 - function: CMUGunshipDescend
   type: State
   key: PageDown
-- function: CMUGunshipViewUp
+- function: CMUGunshipCycleCamera
   type: State
-  key: Home
-- function: CMUGunshipViewDown
+  key: F
+  priority: 20
+- function: CMUGunshipTogglePanning
   type: State
-  key: End
-- function: CMUGunshipRearView
-  type: State
-  key: Insert
+  key: Space
+  priority: 20
 - function: CMUOpenMedicalCraftingMenu
   type: State
   key: C

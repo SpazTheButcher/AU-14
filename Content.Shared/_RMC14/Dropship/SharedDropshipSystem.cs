@@ -134,18 +134,21 @@ public abstract partial class SharedDropshipSystem : EntitySystem
 
     private void OnDropshipMapInit(Entity<DropshipComponent> ent, ref MapInitEvent args)
     {
-        var children = Transform(ent).ChildEnumerator;
-        while (children.MoveNext(out var uid))
+        if (!_net.IsClient)
         {
-            if (TerminatingOrDeleted(uid))
-                continue;
-
-            if (HasComp<DropshipWeaponPointComponent>(uid) ||
-                HasComp<DropshipEnginePointComponent>(uid) ||
-                HasComp<DropshipUtilityPointComponent>(uid) ||
-                HasComp<DropshipElectronicSystemPointComponent>(uid))
+            var children = Transform(ent).ChildEnumerator;
+            while (children.MoveNext(out var uid))
             {
-                ent.Comp.AttachmentPoints.Add(uid);
+                if (TerminatingOrDeleted(uid))
+                    continue;
+
+                if (HasComp<DropshipWeaponPointComponent>(uid) ||
+                    HasComp<DropshipEnginePointComponent>(uid) ||
+                    HasComp<DropshipUtilityPointComponent>(uid) ||
+                    HasComp<DropshipElectronicSystemPointComponent>(uid))
+                {
+                    ent.Comp.AttachmentPoints.Add(uid);
+                }
             }
         }
 
@@ -743,6 +746,13 @@ public abstract partial class SharedDropshipSystem : EntitySystem
 
     private void OnAttachmentPointRemove<TComp, TEvent>(Entity<TComp> ent, ref TEvent args) where TComp : IComponent?
     {
+        // AttachmentPoints is server-authoritative replicated state. Attachment
+        // points can terminate client-side while a dropship changes maps/PVS;
+        // mutating the set there dirties the networked dropship during
+        // prediction rollback and can trip ResetPredictedEntities.
+        if (_net.IsClient)
+            return;
+
         if (TryGetGridDropship(ent, out var dropship))
         {
             dropship.Comp.AttachmentPoints.Remove(ent);

@@ -36,6 +36,7 @@ namespace Content.Client.Input
             common.AddFunction(ContentKeyFunctions.RotateStoredItem);
             common.AddFunction(ContentKeyFunctions.SaveItemLocation);
             common.AddFunction(ContentKeyFunctions.Point);
+            common.AddFunction(ContentKeyFunctions.RotateCameraWithMouse);
             common.AddFunction(ContentKeyFunctions.ZoomOut);
             common.AddFunction(ContentKeyFunctions.ZoomIn);
             common.AddFunction(ContentKeyFunctions.ResetZoom);
@@ -47,9 +48,6 @@ namespace Content.Client.Input
 
             // Not in engine because the engine doesn't understand what a flipped object is
             common.AddFunction(ContentKeyFunctions.EditorFlipObject);
-
-            // Not in engine so that the RCD can rotate objects
-            common.AddFunction(EngineKeyFunctions.EditorRotateObject);
 
             var human = contexts.GetContext("human");
             human.AddFunction(EngineKeyFunctions.MoveUp);
@@ -84,7 +82,6 @@ namespace Content.Client.Input
             // RMC14
             human.AddFunction(ContentKeyFunctions.OpenBackpack);
             human.AddFunction(ContentKeyFunctions.OpenBelt);
-            human.AddFunction(ContentKeyFunctions.MouseMiddle);
             human.AddFunction(ContentKeyFunctions.RotateObjectClockwise);
             human.AddFunction(ContentKeyFunctions.RotateObjectCounterclockwise);
             human.AddFunction(ContentKeyFunctions.FlipObject);
@@ -174,8 +171,8 @@ namespace Content.Client.Input
             human.AddFunction(CMUKeyFunctions.CMUGunshipRotateRight);
             human.AddFunction(CMUKeyFunctions.CMUGunshipAscend);
             human.AddFunction(CMUKeyFunctions.CMUGunshipDescend);
-            human.AddFunction(CMUKeyFunctions.CMUGunshipViewUp);
-            human.AddFunction(CMUKeyFunctions.CMUGunshipViewDown);
+            human.AddFunction(CMUKeyFunctions.CMUGunshipCycleCamera);
+            human.AddFunction(CMUKeyFunctions.CMUGunshipTogglePanning);
             human.AddFunction(CMUKeyFunctions.CMUEmoteSlot1);
             human.AddFunction(CMUKeyFunctions.CMUEmoteSlot2);
             human.AddFunction(CMUKeyFunctions.CMUEmoteSlot3);

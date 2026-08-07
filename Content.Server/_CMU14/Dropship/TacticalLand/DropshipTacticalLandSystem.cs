@@ -53,8 +53,10 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
     private static readonly TimeSpan FootprintTickInterval = TimeSpan.FromMilliseconds(150);
     private static readonly TimeSpan MaxTacticalHoverDuration = TimeSpan.FromMinutes(3);
     private static readonly TimeSpan HoverReturnRetryInterval = TimeSpan.FromSeconds(5);
+    private static readonly TimeSpan HoverEffectUpdateInterval = TimeSpan.FromMilliseconds(50);
     private static readonly TimeSpan GunshipAltitudeTransitionTime = TimeSpan.FromSeconds(5);
     private TimeSpan _nextFootprintTick;
+    private int _destinationRevision;
 
     private static readonly SoundSpecifier WarningSound =
         new SoundPathSpecifier("/Audio/_RMC14/Dropship/dropship_incoming.ogg");
@@ -64,7 +66,7 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
     private static readonly Vector2i ThirdPartyFootprint = new(7, 13);
     private const int LandingZoneExclusionRadius = 2;
     private const int TacticalHoverMapOffset = 1;
-
+    private const float DropshipMinimumBlockingArea = 0.001f;
     public override void Initialize()
     {
         base.Initialize();
@@ -73,7 +75,19 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         SubscribeLocalEvent<DropshipTacticalLandSessionComponent, ComponentRemove>(OnSessionRemove);
         SubscribeLocalEvent<EphemeralDropshipDestinationComponent, DropshipRelayedEvent<FTLCompletedEvent>>(OnEphemeralFtlCompleted);
         SubscribeLocalEvent<DropshipTacticalHoverComponent, ComponentShutdown>(OnTacticalHoverShutdown);
+        SubscribeLocalEvent<DropshipDestinationComponent, ComponentStartup>(OnDestinationChanged);
+        SubscribeLocalEvent<DropshipDestinationComponent, ComponentShutdown>(OnDestinationChanged);
+        SubscribeLocalEvent<DropshipDestinationComponent, EntParentChangedMessage>(OnDestinationChanged);
+        SubscribeLocalEvent<DropshipDestinationComponent, MoveEvent>(OnDestinationChanged);
         InitializeGunshipPilot();
+    }
+
+    private void OnDestinationChanged<T>(Entity<DropshipDestinationComponent> ent, ref T args)
+    {
+        unchecked
+        {
+            _destinationRevision++;
+        }
     }
 
     protected override void OnTacticalLandStart(Entity<DropshipNavigationComputerComponent> ent, ref DropshipNavigationTacticalLandStartMsg args)
@@ -408,8 +422,8 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
     private void UpdateFootprint(Entity<DropshipPilotEyeComponent> eye, TransformComponent xform)
     {
         var footprintOffsets = GetRotatedFootprintOffsets(eye.Comp);
-
-        var blocked = new List<Vector2i>();
+        var blocked = eye.Comp.BlockedTilesScratch;
+        blocked.Clear();
         var allBlocked = false;
 
         if (!TryGetFootprintGrid(xform, out var gridUid, out var grid))
@@ -419,26 +433,12 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         else
         {
             var centerTile = _map.CoordinatesToTile(gridUid, grid, xform.Coordinates);
-            const CollisionGroup blockMask = CollisionGroup.Impassable | CollisionGroup.MidImpassable | CollisionGroup.HighImpassable;
+            const CollisionGroup blockMask = CollisionGroup.Impassable |
+                                                 CollisionGroup.LowImpassable |
+                                                 CollisionGroup.MidImpassable |
+                                                 CollisionGroup.HighImpassable;
 
-            var destinationTiles = new HashSet<Vector2i>();
-            var destQuery = EntityQueryEnumerator<DropshipDestinationComponent, TransformComponent>();
-            while (destQuery.MoveNext(out var destUid, out _, out var destXform))
-            {
-                if (HasComp<EphemeralDropshipDestinationComponent>(destUid))
-                    continue;
-                if (destXform.GridUid != gridUid)
-                    continue;
-
-                var destTile = _map.CoordinatesToTile(gridUid, grid, destXform.Coordinates);
-                for (var ldx = -LandingZoneExclusionRadius; ldx <= LandingZoneExclusionRadius; ldx++)
-                {
-                    for (var ldy = -LandingZoneExclusionRadius; ldy <= LandingZoneExclusionRadius; ldy++)
-                    {
-                        destinationTiles.Add(destTile + new Vector2i(ldx, ldy));
-                    }
-                }
-            }
+            var destinationTiles = GetDestinationTiles(eye.Comp, gridUid, grid);
 
             foreach (var offset in footprintOffsets)
             {
@@ -458,7 +458,8 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
                     var opening = CMUZLevelOpeningCache.IsOpeningTile(tileRef.Tile, _tile);
                     if (tileRef.Tile.IsEmpty && !opening)
                         blockedThis = true;
-                    else if (!opening && _turf.IsTileBlocked(tileRef, blockMask))
+                    else if (!opening &&
+                             _turf.IsTileBlocked(tileRef, blockMask, DropshipMinimumBlockingArea))
                         blockedThis = true;
                 }
 
@@ -482,7 +483,7 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         }
 
         eye.Comp.ClearForLanding = clear;
-        eye.Comp.BlockedTiles = blocked;
+        eye.Comp.BlockedTiles = new List<Vector2i>(blocked);
         Dirty(eye, eye.Comp);
 
         if (eye.Comp.Console is { } console &&
@@ -494,36 +495,91 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         }
     }
 
-    private List<Vector2i> GetRotatedFootprintOffsets(DropshipPilotEyeComponent eye)
+    private IReadOnlyList<Vector2i> GetRotatedFootprintOffsets(DropshipPilotEyeComponent eye)
     {
-        var offsets = new List<Vector2i>();
+        EntityUid? sourceGrid = null;
         if (eye.Console is { } console &&
             !TerminatingOrDeleted(console) &&
             Transform(console).GridUid is { } dropshipGrid &&
             TryComp(dropshipGrid, out MapGridComponent? dropshipGridComp))
         {
-            foreach (var tile in _map.GetAllTiles(dropshipGrid, dropshipGridComp))
+            sourceGrid = dropshipGrid;
+            if (eye.CachedFootprintGrid == sourceGrid &&
+                eye.CachedFootprintRotation == eye.RotationQuarterTurns &&
+                eye.CachedFootprintOffsets.Count > 0)
             {
-                offsets.Add(RotateFootprintOffset(tile.GridIndices, eye.RotationQuarterTurns));
+                return eye.CachedFootprintOffsets;
             }
 
-            if (offsets.Count > 0)
-                return offsets;
+            eye.CachedFootprintOffsets.Clear();
+            foreach (var tile in _map.GetAllTiles(dropshipGrid, dropshipGridComp))
+            {
+                eye.CachedFootprintOffsets.Add(RotateFootprintOffset(tile.GridIndices, eye.RotationQuarterTurns));
+            }
+
+            if (eye.CachedFootprintOffsets.Count > 0)
+            {
+                eye.CachedFootprintGrid = sourceGrid;
+                eye.CachedFootprintRotation = eye.RotationQuarterTurns;
+                return eye.CachedFootprintOffsets;
+            }
         }
 
         // Compatibility fallback for eyes created before exact hull offsets were
         // populated, and for any non-grid tactical landing implementation.
+        if (eye.CachedFootprintGrid == sourceGrid &&
+            eye.CachedFootprintRotation == eye.RotationQuarterTurns &&
+            eye.CachedFootprintOffsets.Count > 0)
+        {
+            return eye.CachedFootprintOffsets;
+        }
+
+        eye.CachedFootprintOffsets.Clear();
         var halfW = eye.Footprint.X / 2;
         var halfH = eye.Footprint.Y / 2;
         for (var x = -halfW; x <= halfW; x++)
         {
             for (var y = -halfH; y <= halfH; y++)
             {
-                offsets.Add(RotateFootprintOffset(new Vector2i(x, y), eye.RotationQuarterTurns));
+                eye.CachedFootprintOffsets.Add(RotateFootprintOffset(new Vector2i(x, y), eye.RotationQuarterTurns));
             }
         }
 
-        return offsets;
+        eye.CachedFootprintGrid = sourceGrid;
+        eye.CachedFootprintRotation = eye.RotationQuarterTurns;
+        return eye.CachedFootprintOffsets;
+    }
+
+    private IReadOnlySet<Vector2i> GetDestinationTiles(
+        DropshipPilotEyeComponent eye,
+        EntityUid gridUid,
+        MapGridComponent grid)
+    {
+        if (eye.CachedDestinationGrid == gridUid &&
+            eye.CachedDestinationRevision == _destinationRevision)
+        {
+            return eye.CachedDestinationTiles;
+        }
+
+        eye.CachedDestinationGrid = gridUid;
+        eye.CachedDestinationRevision = _destinationRevision;
+        eye.CachedDestinationTiles.Clear();
+
+        var destQuery = EntityQueryEnumerator<DropshipDestinationComponent, TransformComponent>();
+        while (destQuery.MoveNext(out var destUid, out _, out var destXform))
+        {
+            if (HasComp<EphemeralDropshipDestinationComponent>(destUid) || destXform.GridUid != gridUid)
+                continue;
+
+            var destTile = _map.CoordinatesToTile(gridUid, grid, destXform.Coordinates);
+            for (var x = -LandingZoneExclusionRadius; x <= LandingZoneExclusionRadius; x++)
+            {
+                for (var y = -LandingZoneExclusionRadius; y <= LandingZoneExclusionRadius; y++)
+                    eye.CachedDestinationTiles.Add(destTile + new Vector2i(x, y));
+            }
+        }
+
+        return eye.CachedDestinationTiles;
     }
 
     private static Vector2i RotateFootprintOffset(Vector2i offset, byte quarterTurns)
@@ -795,16 +851,43 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
     private void UpdateHoverEffects()
     {
-        var shadows = EntityQueryEnumerator<DropshipTacticalHoverShadowComponent>();
-        while (shadows.MoveNext(out var uid, out var shadow))
+        var now = _timing.CurTime;
+        var hovers = EntityQueryEnumerator<DropshipTacticalHoverComponent>();
+        while (hovers.MoveNext(out var dropship, out var hover))
         {
-            UpdateHoverShadow((uid, shadow));
-        }
+            if (now < hover.NextHoverEffectsUpdate)
+                continue;
 
-        var downwashes = EntityQueryEnumerator<DropshipTacticalHoverDownwashComponent>();
-        while (downwashes.MoveNext(out var uid, out var downwash))
-        {
-            UpdateHoverDownwash((uid, downwash));
+            hover.NextHoverEffectsUpdate = now + HoverEffectUpdateInterval;
+            var xform = Transform(dropship);
+            var position = _transform.GetWorldPosition(xform);
+            var rotation = _transform.GetWorldRotation(xform);
+            if (hover.HoverEffectsPoseInitialized &&
+                hover.HoverEffectsMap == xform.MapUid &&
+                hover.HoverEffectsGroundOffset == hover.GroundMapOffset &&
+                Vector2.DistanceSquared(hover.HoverEffectsPosition, position) < 0.0001f &&
+                MathF.Abs((float)(hover.HoverEffectsRotation - rotation).Theta) < 0.001f)
+            {
+                continue;
+            }
+
+            hover.HoverEffectsPoseInitialized = true;
+            hover.HoverEffectsMap = xform.MapUid;
+            hover.HoverEffectsGroundOffset = hover.GroundMapOffset;
+            hover.HoverEffectsPosition = position;
+            hover.HoverEffectsRotation = rotation;
+
+            if (hover.Shadow is { } shadow &&
+                TryComp(shadow, out DropshipTacticalHoverShadowComponent? shadowComp))
+            {
+                UpdateHoverShadow((shadow, shadowComp));
+            }
+
+            foreach (var downwash in hover.Downwashes)
+            {
+                if (TryComp(downwash, out DropshipTacticalHoverDownwashComponent? downwashComp))
+                    UpdateHoverDownwash((downwash, downwashComp));
+            }
         }
     }
 

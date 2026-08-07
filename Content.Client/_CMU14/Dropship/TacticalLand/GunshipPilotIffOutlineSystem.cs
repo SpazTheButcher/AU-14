@@ -18,7 +18,7 @@ namespace Content.Client._CMU14.Dropship.TacticalLand;
 public sealed partial class GunshipPilotIffOutlineSystem : EntitySystem
 {
     private static readonly ProtoId<ShaderPrototype> OutlineShader = "RMCAuraOutline";
-    private static readonly TimeSpan UpdateInterval = TimeSpan.FromMilliseconds(250);
+    private static readonly TimeSpan UpdateInterval = TimeSpan.FromMilliseconds(500);
     private static readonly Color FriendlyColor = new(0.14f, 1f, 0.25f, 0.95f);
     private static readonly Color NeutralColor = new(1f, 0.58f, 0.08f, 0.95f);
     private static readonly Color HostileColor = new(1f, 0.08f, 0.08f, 0.98f);
@@ -178,6 +178,9 @@ public sealed partial class GunshipPilotIffOutlineSystem : EntitySystem
             state = state with { OriginalShader = sprite.PostShader };
             _highlighted[uid] = state;
         }
+
+        if (sprite.PostShader == shader)
+            return;
 
         sprite.PostShader = shader;
     }

@@ -18,6 +18,7 @@ using Content.Shared.Whitelist;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.Network;
+using Robust.Shared.Timing;
 
 namespace Content.Shared._RMC14.Dropship.Utility.Systems;
 
@@ -32,6 +33,7 @@ public abstract partial class SharedRMCEquipmentDeployerSystem : EntitySystem
     [Dependency] private SharedDropshipSystem _dropship = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private INetManager _net = default!;
+    [Dependency] private IGameTiming _timing = default!;
     [Dependency] private SharedRMCNPCSystem _rmcNpc = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private SentrySystem _sentry = default!;
@@ -107,6 +109,16 @@ public abstract partial class SharedRMCEquipmentDeployerSystem : EntitySystem
 
     private void OnRemovedFromContainer(Entity<RMCEquipmentDeployerComponent> ent, ref EntGotRemovedFromContainerMessage args)
     {
+        // A server container/parent update can remove the deployer while the
+        // client is applying game state (notably when a crashed dropship's
+        // contents are reparented). Trying to insert its deployed equipment
+        // during that same removal recursively mutates container metadata and
+        // can produce the mutually-exclusive InContainer + Detached flags.
+        // The authoritative component/container state is already part of the
+        // update being applied, so do not predict another transition here.
+        if (_timing.ApplyingState)
+            return;
+
         if (ent.Comp.DeployEntity != null)
         {
             TryDeploy(ent,  false);

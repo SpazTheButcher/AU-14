@@ -59,6 +59,7 @@ namespace Content.Shared.Movement.Systems
             SubscribeLocalEvent<InputMoverComponent, EntParentChangedMessage>(OnInputParentChange);
 
             SubscribeLocalEvent<FollowedComponent, EntParentChangedMessage>(OnFollowedParentChange);
+            SubscribeNetworkEvent<CameraMouseRotationEvent>(OnCameraMouseRotation);
 
             Subs.CVar(_configManager, CCVars.CameraRotationLocked, obj => CameraRotationLocked = obj, true);
             Subs.CVar(_configManager, CCVars.GameDiagonalMovement, value => DiagonalMovementEnabled = value, true);
@@ -158,6 +159,32 @@ namespace Content.Shared.Movement.Systems
 
             mover.TargetRelativeRotation += angle;
             Dirty(uid, mover);
+        }
+
+        public bool SetCameraRotation(EntityUid uid, Angle angle, bool immediate = false)
+        {
+            if (CameraRotationLocked || !MoverQuery.TryGetComponent(uid, out var mover))
+                return false;
+
+            angle = angle.Reduced();
+            mover.TargetRelativeRotation = angle;
+            if (immediate)
+            {
+                mover.RelativeRotation = angle;
+                mover.LerpTarget = TimeSpan.Zero;
+            }
+
+            Dirty(uid, mover);
+            return true;
+        }
+
+        private void OnCameraMouseRotation(CameraMouseRotationEvent ev, EntitySessionEventArgs args)
+        {
+            if (args.SenderSession.AttachedEntity is not { } uid || !double.IsFinite(ev.Radians))
+                return;
+
+            if (SetCameraRotation(uid, new Angle(ev.Radians), immediate: true))
+                RaiseNetworkEvent(new CameraMouseRotationAckEvent(ev.Radians), args.SenderSession);
         }
 
         public void ResetCamera(EntityUid uid)

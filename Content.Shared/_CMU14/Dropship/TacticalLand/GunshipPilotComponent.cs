@@ -19,6 +19,10 @@ public sealed partial class GunshipPilotSeatComponent : Component
     [DataField, AutoNetworkedField]
     public EntityUid? Eye;
 
+    public EntityUid? UpperCameraEye;
+
+    public EntityUid? LowerCameraEye;
+
     [DataField, AutoNetworkedField]
     public int ViewOffset;
 
@@ -33,16 +37,16 @@ public sealed partial class GunshipPilotSeatComponent : Component
     public float ThrustPercent = 100f;
 
     [DataField]
-    public float TranslationAcceleration = 4f;
+    public float TranslationAcceleration = 8f;
 
     [DataField]
-    public float MaxTranslationSpeed = 8f;
+    public float MaxTranslationSpeed = 32f;
 
     [DataField]
-    public float RotationAccelerationDegrees = 30f;
+    public float RotationAccelerationDegrees = 60f;
 
     [DataField]
-    public float MaxRotationSpeedDegrees = 45f;
+    public float MaxRotationSpeedDegrees = 180f;
 
     [DataField]
     public EntProtoId EyePrototype = "CMUGunshipPilotEye";
@@ -50,13 +54,34 @@ public sealed partial class GunshipPilotSeatComponent : Component
     [DataField]
     public EntProtoId MasterAlarmActionId = "ActionGunshipMasterAlarmSilence";
 
+    [DataField]
+    public EntProtoId CameraCycleActionId = "ActionGunshipCycleCamera";
+
+    [DataField]
+    public EntProtoId DropshipOutlineActionId = "ActionGunshipDropshipOutline";
+
+    [DataField]
+    public EntProtoId PilotPanningActionId = "ActionGunshipPilotPanning";
+
+    [DataField]
+    public EntProtoId PilotZoomActionId = "ActionGunshipPilotZoom";
+
     public GunshipControlInput HeldInputs;
     public ushort PressedActions;
     public EntityUid? MasterAlarmAction;
+    public EntityUid? CameraCycleAction;
+    public EntityUid? DropshipOutlineAction;
+    public EntityUid? PilotPanningAction;
+    public EntityUid? PilotZoomAction;
+    public GunshipManeuveringCamera ManeuveringCamera;
+    public bool ShowDropshipOutline = true;
+    public bool PilotPanning = true;
+    public bool PilotZoom;
     public Vector2 OriginalZoom = Vector2.One;
     public float OriginalPvsScale = 1f;
     public bool AddedCursorOffset;
     public TimeSpan NextBlockedPopup;
+    public TimeSpan NextCameraUpdate;
 }
 
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
@@ -76,6 +101,7 @@ public sealed partial class GunshipPilotEyeComponent : Component
 
     [DataField, AutoNetworkedField]
     public bool RearView;
+
 }
 
 /// <summary>
@@ -105,6 +131,9 @@ public sealed partial class GunshipPilotHudComponent : Component
 
     [DataField, AutoNetworkedField]
     public EntityUid? Dropship;
+
+    [DataField, AutoNetworkedField]
+    public bool FlightControlsAvailable;
 
     [DataField, AutoNetworkedField]
     public Vector2 LinearVelocity;
@@ -142,10 +171,39 @@ public sealed partial class GunshipPilotHudComponent : Component
     [DataField, AutoNetworkedField]
     public bool RearView;
 
+    [DataField, AutoNetworkedField]
+    public GunshipManeuveringCamera ManeuveringCamera;
+
+    [DataField, AutoNetworkedField]
+    public bool ShowDropshipOutline = true;
+
+    [DataField, AutoNetworkedField]
+    public bool PilotPanning = true;
+
+    [DataField, AutoNetworkedField]
+    public bool PilotZoom;
+
     public bool AddedNightVisionItem;
+
+    public bool AddedStaticZoomLevel;
 }
 
 public sealed partial class GunshipMasterAlarmToggleActionEvent : InstantActionEvent;
+
+public sealed partial class GunshipCycleCameraActionEvent : InstantActionEvent;
+
+public sealed partial class GunshipDropshipOutlineToggleActionEvent : InstantActionEvent;
+
+public sealed partial class GunshipPilotPanningToggleActionEvent : InstantActionEvent;
+
+public sealed partial class GunshipPilotZoomToggleActionEvent : InstantActionEvent;
+
+/// <summary>
+/// Raised on a tactically hovering dropship as soon as its crash countdown begins.
+/// Pilot camera state must be removed before the grid changes maps at impact.
+/// </summary>
+[ByRefEvent]
+public readonly record struct GunshipCrashStartedEvent;
 
 [Flags]
 public enum GunshipControlInput : ushort
@@ -172,6 +230,14 @@ public enum GunshipControlAction : byte
     ViewUp,
     ViewDown,
     RearView,
+}
+
+public enum GunshipManeuveringCamera : byte
+{
+    None,
+    Rear,
+    Lower,
+    Upper,
 }
 
 [Serializable, NetSerializable]
@@ -205,3 +271,9 @@ public sealed class GunshipThrustAdjustEvent : EntityEventArgs
         Steps = steps;
     }
 }
+
+[Serializable, NetSerializable]
+public sealed class GunshipCycleCameraInputEvent : EntityEventArgs;
+
+[Serializable, NetSerializable]
+public sealed class GunshipPilotPanningInputEvent : EntityEventArgs;

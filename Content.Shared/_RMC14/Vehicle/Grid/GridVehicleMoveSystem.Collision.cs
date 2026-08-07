@@ -88,15 +88,24 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
 
         var wheelDamage = _net.IsClient ? 0f : GetWheelCollisionDamage(uid, mover);
 
-        if (!TryGetFixtureAabb(fixtures, tx, out var aabb))
+        if (!TryGetFixtureAabb(fixtures, tx, out var aabb) ||
+            !TryGetFixtureLocalAabb(fixtures, out var localAabb))
             return true;
 
         var movementAabb = GetMovementAabb(aabb, mover);
-        _intersecting.Clear();
-        lookup.GetEntitiesIntersecting(world.MapId, aabb, _intersecting, LookupFlags.Dynamic | LookupFlags.Static);
+        var fixtureBounds = new Box2Rotated(localAabb.Translated(tx.Position), rotation, tx.Position);
+        _intersectingPhysics.Clear();
+        lookup.GetEntitiesIntersecting(
+            world.MapId,
+            fixtureBounds,
+            _intersectingPhysics,
+            LookupFlags.Dynamic | LookupFlags.Static);
         var hits = _hitsBuffers[_hitsDepth++];
         hits.Clear();
-        hits.AddRange(_intersecting);
+        foreach (var hit in _intersectingPhysics)
+        {
+            hits.Add(hit.Owner);
+        }
         var playedCollisionSound = false;
         var mobHits = new ValueList<EntityUid>(0);
 
