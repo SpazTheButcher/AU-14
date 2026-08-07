@@ -1,23 +1,17 @@
 {
   "version": 1,
   "license": "CC-BY-SA-3.0",
-  "copyright": "Nzzy",
+  "copyright": "hotdog",
   "size": {
-    "x": 64,
+    "x": 32,
     "y": 32
   },
   "states": [
     {
-      "name": "mag-0"
-    },
-    {
-      "name": "icon"
-    },
-    {
       "name": "base"
     },
     {
-      "name": "mag-2"
+      "name": "mag-1"
     }
   ]
 }
