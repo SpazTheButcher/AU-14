@@ -329,9 +329,9 @@
   - type: BallisticAmmoProvider
     cycleable: false
     proto: VehicleCartridgeElectrolaser
-    capacity: 999
+    capacity: 520
   - type: VehicleHardpointAmmo
-    magazineSize: 999
+    magazineSize: 520
     maxStoredMagazines: 1
   - type: GunFireArc
     arc: 120
