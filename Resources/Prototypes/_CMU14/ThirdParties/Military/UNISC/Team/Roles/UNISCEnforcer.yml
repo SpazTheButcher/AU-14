@@ -13,7 +13,7 @@
   - type: Skills
     preset: AU14SkillPresetMilitaryPolice
   - type: JobPrefix
-    prefix: au14-job-prefix-govforsquadenforcerRMC
+    prefix: UNISC Enforcer
   - type: Language
     spokenLanguages:
     - English

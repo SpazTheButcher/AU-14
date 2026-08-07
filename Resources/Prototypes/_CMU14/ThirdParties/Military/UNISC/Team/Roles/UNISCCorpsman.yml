@@ -13,7 +13,7 @@
   - type: Skills
     preset: AU14SkillPresetPlatoonHospitalCorpsman
   - type: JobPrefix
-    prefix: au14-job-prefix-govforsquadcorpsman
+    prefix: UNISC Hospital Corpsman
   - type: Language
     spokenLanguages:
     - English

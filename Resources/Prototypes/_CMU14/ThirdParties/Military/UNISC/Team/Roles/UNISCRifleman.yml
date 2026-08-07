@@ -13,7 +13,7 @@
   - type: Skills
     preset: AU14SkillPresetPlatoonRifleman
   - type: JobPrefix
-    prefix: au-14-job-prefix-unisc-rifleman
+    prefix: UNISC Rifleman
   - type: Language
     spokenLanguages:
     - English

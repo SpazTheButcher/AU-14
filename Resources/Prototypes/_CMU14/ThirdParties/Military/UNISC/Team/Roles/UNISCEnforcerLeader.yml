@@ -13,7 +13,7 @@
   - type: Skills
     preset: AU14SkillPresetOfficerMP
   - type: JobPrefix
-    prefix: au14-job-prefix-govforsquadenforcerleaderRMC
+    prefix: UNISC Lead Enforcer
   - type: Language
     spokenLanguages:
     - English
