@@ -44,7 +44,7 @@
         role: AU14JobUNISCPltOpsOff
         time: 36000
     UNISC_FirstLieutenant:
-      entity: AU14ChevronUSArmyFirstLT
+      entity: AU14ChevronFirstLT
       requirements:
       - !type:RoleTimeRequirement
         role: AU14JobUNISCPltOpsOff

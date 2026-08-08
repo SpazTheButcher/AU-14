@@ -13,7 +13,7 @@
   - type: Skills
     preset: AU14SkillPresetPlatoonSeniorSergeant
   - type: JobPrefix
-    prefix: au-14-job-prefix-unisc-squadleader
+    prefix: UNISC Squad Leader
   - type: MarineOrders
   - type: RMCTrackable
   - type: SquadLeader
