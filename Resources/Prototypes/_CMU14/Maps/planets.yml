@@ -31,6 +31,8 @@
     - cultistThreat
     - XenoThreat
     - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
     - wendigoThreat
     - abominationsThreatDistress
 #    - badBloodClanThreat
@@ -145,6 +147,8 @@
     - cultistThreat
     - XenoThreat
     - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
     - wendigoThreat
     - abominationsThreat
     - abominationsThreatDistress
@@ -153,6 +157,74 @@
     joboverrides:
       AU14JobLEOLeaderBase: AU14JobCivilianCWPSRanger
       AU14JobLEOBase: AU14JobCivilianCWPSRanger
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: entity
+  id: CMUPlanetStableGarrisonRedux
+  name: Stable Garrison Redux
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Stable Garrison Redux"
+    mapId: StableGarrisonRedux
+    lorePrimer: AU14PrimerPlanetStableGarrison
+    Allegiance: UA
+    camouflage: Desert
+    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
+    platoonsOpfor:
+    - UPP
+    - VAIPO
+    - ProdigySF
+    platoonsGovfor:
+    - WEYU
+    - USCM
+    - RMC
+    defaultgovfor: USCM
+    defaultopfor: UPP
+    govforinship: false
+    opforinship: true
+    daycycleenabled: true
+    thirdparties:
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UPPGROM
+    - UPPGROMAlt
+    - UPPGROMAlt2
+    - USArmyTank
+    - UACGLostTeam
+    - LACNSniperteam
+    - cultistThirdParty
+    - CMBInvestigationParty
+    - CMBInvestigationPartyAlt
+    - cultistThirdPartyNoQueen
+    - ProfessorVonBandolier
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    - tribalThirdParty
+    - DrugSmuggler
+    - CMBParoleeTransport
+    - CMBParoleeTransportBig
+    - ForeignCrimeGang
+    - MigratingCivs
+    - MigratingCivsMedium
+    - MigratingCivsLarge
+    - MissionariesParty
+    - MissionariesPartyMedium
+    threats:
+    - cultistThreat
+    - XenoThreatCF
+    - wendigoThreat
+    - abominationsThreat
+    - abominationsThreatDistress
+    joboverrides:
+      AU14JobLEOLeaderBase: AU14JobCivilianCMBMarshal
+      AU14JobLEOBase: AU14JobCivilianCMBDeputy
     jobScalingFof: DefaultGovforOpforScale
     jobScalingIns: DefaultInsurgencyScale
 
@@ -215,6 +287,7 @@
     threats:
     - cultistThreat
     - XenoThreatCF
+    - NeomorphsThreatCF
     - wendigoThreat
     - abominationsThreat
     - abominationsThreatDistress
@@ -355,6 +428,7 @@
     daycycleenabled: true
     threats:
     - XenoThreat
+    - NeomorphsThreat
     - abominationsThreatDistress
     thirdparties:
     - USArmy
@@ -396,6 +470,7 @@
     faction: ua
     threats:
     - XenoThreatCF
+    - NeomorphsThreatCF
     - wendigoThreat
     - abominationsThreatDistress
 
@@ -463,6 +538,8 @@
     - cultistThreat
     - XenoThreat
     - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
     - wendigoThreat
     - abominationsThreatDistress
 #    - badBloodClanThreat
@@ -530,6 +607,8 @@
     - cultistThreat
     - XenoThreat
     - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
 #    - badBloodClanThreat
 
     thirdparties:
@@ -606,6 +685,8 @@
     - cultistThreatOnMarker
     - XenoThreat
     - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
     - wendigoThreat
     - abominationsThreat
     - abominationsThreatDistress
@@ -669,6 +750,7 @@
     threats:
     - cultistThreat
     - XenoThreat
+    - NeomorphsThreat
     - wendigoThreat
  #   - TribalsThreat
     - abominationsThreatDistress
@@ -732,6 +814,7 @@
     - abominationThirdParty
     threats:
     - XenoThreat
+    - NeomorphsThreat
     #- TribalsThreat
 #    - badBloodClanThreat
 
@@ -790,6 +873,7 @@
     - abominationThirdParty
     threats:
     - XenoThreat
+    - NeomorphsThreat
  #   - TribalsThreat
 #    - badBloodClanThreat
 
@@ -848,6 +932,7 @@
     - abominationThirdParty
     threats:
     - XenoThreat
+    - NeomorphsThreat
 #    - TribalsThreat
 #    - badBloodClanThreat
 
@@ -908,6 +993,7 @@
     threats:
     - abominationsThreatDistress
     - XenoThreat
+    - NeomorphsThreat
 #    - badBloodClanThreat
     jobScalingFof: DefaultGovforOpforScale
     jobScalingIns: DefaultInsurgencyScale
@@ -964,6 +1050,7 @@
     threats:
     - abominationsThreatDistress
     - XenoThreat
+    - NeomorphsThreat
 #    - badBloodClanThreat
 
     jobScalingFof: DefaultGovforOpforScale
@@ -1097,6 +1184,7 @@
     - WEYUSurvSmall
     threats:
     - XenoThreat
+    - NeomorphsThreat
     - cultistThreatOnMarker
     - abominationsThreat
     - abominationsThreatDistress

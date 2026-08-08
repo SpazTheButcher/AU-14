@@ -85311,6 +85311,8 @@ entities:
       parent: 1
     - type: FaxMachine
       destinationAddress: CMB Marshal's Office
+      groups:
+      - marshal-bureau
   - uid: 2032
     components:
     - type: Transform
@@ -115464,7 +115466,7 @@ entities:
       rot: 3.141592653589793 rad
       pos: -0.5,-1.5
       parent: 1
-- proto: fetchobjectivemarkergenericspawnpoint
+- proto: fetchgenericmarker
   entities:
   - uid: 7389
     components:

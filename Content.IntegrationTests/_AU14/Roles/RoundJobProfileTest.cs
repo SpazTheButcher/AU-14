@@ -6,7 +6,9 @@ using Content.Server.Station.Systems;
 using Content.Shared._CMU14.Round.Roles;
 using Content.Shared._RMC14.Marines;
 using Content.Shared._RMC14.Marines.Squads;
+using Content.Shared._RMC14.Weapons.Ranged.IFF;
 using Content.Shared.Inventory;
+using Content.Shared.NPC.Components;
 using Content.Shared.Preferences;
 using Content.Shared.Roles;
 using Robust.Shared.GameObjects;
@@ -129,6 +131,62 @@ public sealed class RoundJobProfileTest
             Assert.That(HasResolvedComponent(profiles, wypmc, "UserIFF"), Is.True);
             Assert.That(HasResolvedComponent(profiles, wypmc, "JobPrefix"), Is.True);
             Assert.That(HasResolvedComponent(profiles, wypmc, "Skills"), Is.True);
+        });
+
+        await pair.CleanReturnAsync();
+    }
+
+    [Test]
+    public async Task WypmcPlatoonJobsResolveCorporateFactionAndIff()
+    {
+        await using var pair = await PoolManager.GetServerClient();
+        var server = pair.Server;
+
+        await server.WaitAssertion(() =>
+        {
+            var prototypes = server.ResolveDependency<IPrototypeManager>();
+            var profiles = server.System<RoundJobProfileSystem>();
+            var jobs = prototypes.EnumeratePrototypes<JobPrototype>()
+                .Where(job => string.Equals(job.RoundForce, "WYPMC", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+            var failures = new List<string>();
+
+            Assert.That(jobs, Is.Not.Empty);
+
+            foreach (var job in jobs)
+            {
+                NpcFactionMemberComponent npcFaction = null!;
+                UserIFFComponent userIff = null!;
+
+                foreach (var resolved in profiles.GetProfileComponents(job))
+                {
+                    if (resolved.Components.TryGetValue("NpcFactionMember", out var npcEntry) &&
+                        npcEntry.Component is NpcFactionMemberComponent npc)
+                    {
+                        npcFaction = npc;
+                    }
+
+                    if (resolved.Components.TryGetValue("UserIFF", out var iffEntry) &&
+                        iffEntry.Component is UserIFFComponent iff)
+                    {
+                        userIff = iff;
+                    }
+                }
+
+                if (npcFaction == null ||
+                    !npcFaction.Factions.Select(faction => faction.Id).SequenceEqual(["AUWeYu"]))
+                {
+                    failures.Add($"{job.ID} does not resolve exclusively to the AUWeYu NPC faction");
+                }
+
+                if (userIff == null ||
+                    !userIff.Factions.Select(faction => faction.Id).SequenceEqual(["FactionWEYU"]))
+                {
+                    failures.Add($"{job.ID} does not resolve exclusively to the FactionWEYU IFF");
+                }
+            }
+
+            Assert.That(failures, Is.Empty, string.Join("\n", failures));
         });
 
         await pair.CleanReturnAsync();
