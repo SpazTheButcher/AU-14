@@ -78,7 +78,7 @@ au14-job-name-unisc-rifleman = UNISC Rifleman
 au14-job-name-unisc-corpsman = UNISC Corpsman
 au14-job-name-unisc-hospital-corpsman = UNISC Hospital Corpsman
 au14-unisc-description = United Nations Interstellar Space Corps personnel (peacekeepers).
-chat-radio-unisof = UNISOF
+chat-radio-unisc: UNISOF
 
 rmc-squad-info-GROMCommandingOfficer = GROM Commanding Officer
 
