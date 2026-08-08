@@ -108,14 +108,3 @@
 - type: playTimeTracker
   id: AU14JobUNISCSquadleader
 
-- type: entity
-  parent: CMIDCardBase
-  id: AU14IDCardUNISCSquadleader
-  categories: [ HideSpawnMenu ]
-  name: UNISC Section Leader ID card
-  components:
-  - type: PresetIdCard
-    job: AU14JobUNISCSquadleader
-  - type: ItemIFF
-    factions:
-    - GOVFOR

@@ -52,7 +52,7 @@ au14-uppgrom-greeting = You are a member of UPP's elite GROM special forces unit
 
     You are not hostile to the UPP and CCA and neutral to other countries!
 
-au14-unisc-rules = You are a mix of Volunteers from different countries put into a Peacekeeping force, Protect Civilians, Enforce Geneva, Always attempt to be neutral.
+au14-unisc-rules = You are a mix of Volunteers from different countries put into a Peacekeeping force, Protect Civilians, Enforce Geneva, Always attempt to be neutral. Remember, nobody is above Geneva.
 
 au14-unisc-greeting = You are a mix of Volunteers from different countries put into a Peacekeeping force.
 
@@ -66,7 +66,7 @@ au14-unisc-greeting = You are a mix of Volunteers from different countries put i
 
     ROE may always be changed by the Platoon Operations Officer or Platoon Commander.
 
-    You are netrual to all countries, corporations and organizations.
+    You are netrual to all countries, corporations and organizations. You are Allied to the United Nations.
 
 rmc-squad-info-GROMCommandingOfficer = GROM Commanding Officer
 
