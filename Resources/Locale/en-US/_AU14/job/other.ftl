@@ -68,6 +68,18 @@ au14-unisc-greeting = You are a mix of Volunteers from different countries put i
 
     You are netrual to all countries, corporations and organizations. You are Allied to the United Nations.
 
+UNISC Automatic Rifleman = UNISC Automatic Rifleman
+UNISC Ammo Bearer = UNISC Ammo Bearer
+UNISC Enforcer = UNISC Enforcer
+UNISC Squad Leader = UNISC Squad Leader
+UNISC Platoon Operations Officer = UNISC Platoon Operations Officer
+UNISC Lead Enforcer = UNISC Lead Enforcer
+UNISC Rifleman = UNISC Rifleman
+UNISC Corpsman = UNISC Corpsman
+UNISC Hospital Corpsman = UNISC Hospital Corpsman
+au14-unisc-description = United Nations Interstellar Space Corps personnel (peacekeepers).
+
+
 rmc-squad-info-GROMCommandingOfficer = GROM Commanding Officer
 
 au14-uppgrom-description = You are a member of UPP's elite GROM special forces unit. Survive with your squad and contact any friendly Command.
