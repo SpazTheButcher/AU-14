@@ -68,17 +68,16 @@ au14-unisc-greeting = You are a mix of Volunteers from different countries put i
 
     You are netrual to all countries, corporations and organizations. You are Allied to the United Nations.
 
-UNISC Automatic Rifleman = UNISC Automatic Rifleman
-UNISC Ammo Bearer = UNISC Ammo Bearer
-UNISC Enforcer = UNISC Enforcer
-UNISC Squad Leader = UNISC Squad Leader
-UNISC Platoon Operations Officer = UNISC Platoon Operations Officer
-UNISC Lead Enforcer = UNISC Lead Enforcer
-UNISC Rifleman = UNISC Rifleman
-UNISC Corpsman = UNISC Corpsman
-UNISC Hospital Corpsman = UNISC Hospital Corpsman
+au14-job-name-unisc-automatic-rifleman = UNISC Automatic Rifleman
+au14-job-name-unisc-ammo-bearer = UNISC Ammo Bearer
+au14-job-name-unisc-enforcer = UNISC Enforcer
+au14-job-name-unisc-lead-enforcer = UNISC Lead Enforcer
+au14-job-name-unisc-squad-leader = UNISC Squad Leader
+au14-job-name-unisc-platoon-operations-officer = UNISC Platoon Operations Officer
+au14-job-name-unisc-rifleman = UNISC Rifleman
+au14-job-name-unisc-corpsman = UNISC Corpsman
+au14-job-name-unisc-hospital-corpsman = UNISC Hospital Corpsman
 au14-unisc-description = United Nations Interstellar Space Corps personnel (peacekeepers).
-
 
 rmc-squad-info-GROMCommandingOfficer = GROM Commanding Officer
 

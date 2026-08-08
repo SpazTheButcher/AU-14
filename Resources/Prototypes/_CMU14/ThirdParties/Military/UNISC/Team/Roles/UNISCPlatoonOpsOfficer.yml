@@ -14,7 +14,7 @@
     preset: AU14SkillPresetPlatoonCommander
   - type: MarineOrders
   - type: JobPrefix
-    prefix: UNISC Platoon Operations Officer
+    prefix:  au14-job-name-unisc-platoon-operations-officer
   - type: RMCTrackable
   - type: RMCPointing
   - type: Language
