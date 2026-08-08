@@ -20,7 +20,7 @@
                 <BoxContainer Orientation="Vertical" Margin="6">
                     <BoxContainer Orientation="Vertical" Margin="4">
                         <RichTextLabel Text="[color=red][bold]Unlocked intel: [/bold][/color]" />
-                        <BoxContainer Name="UnlockedBox" Orientation="Vertical" SeparationOverride="30" Margin="10" />
+                        <BoxContainer Name="UnlockedBox" Orientation="Vertical" SeparationOverride="6" Margin="0 6 0 0" />
                     </BoxContainer>
                     <BoxContainer Orientation="Vertical" Margin="4">
                         <controls:StripeBack>
