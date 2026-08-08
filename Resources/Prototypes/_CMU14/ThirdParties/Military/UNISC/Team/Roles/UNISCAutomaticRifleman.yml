@@ -98,6 +98,7 @@
     outerClothing:
     - RMCGlassesSmartGunSight
     - RMCPowerCellSmartgun
+    - CMEncryptionKeyUNISC
 
 - type: playTimeTracker
   id: AU14JobUNISCAutomaticRifleman

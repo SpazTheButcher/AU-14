@@ -99,6 +99,8 @@
     - CMUBoxMagazineRifleM54CMK1
     - CMUBoxMagazineRifleM54CMK1
     - CMUBoxMagazineRifleM54CMK1
+    outerClothing:
+    - CMEncryptionKeyUNISC
 
 - type: playTimeTracker
   id: AU14JobUNISCAmmoBearer

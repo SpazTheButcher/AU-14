@@ -98,6 +98,7 @@
     back:
     - BedrollFolded
     - CMMRE
+    - CMEncryptionKeyUNISC
 
 - type: playTimeTracker
   id: AU14JobUNISCRifleman

@@ -94,6 +94,9 @@
     ears: AU14CMBHeadset
     gloves: CMHandsLatex
     suitstorage: RMCM1984BeltFilled
+  storage:
+    outerClothing:
+    - CMEncryptionKeyUNISC
 
 
 - type: playTimeTracker
