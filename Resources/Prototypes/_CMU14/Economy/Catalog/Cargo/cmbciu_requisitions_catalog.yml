@@ -144,7 +144,7 @@
       - cost: 750
         crate: RMCCrateMortarShellIncendiary
       - cost: 800
-        crate: AU14CrateMortarShellMP
+        crate: AU14CrateMortarShellHEATMP
       - cost: 950
         crate: AU14CrateMortarShellMixed
     - name: Supplies
