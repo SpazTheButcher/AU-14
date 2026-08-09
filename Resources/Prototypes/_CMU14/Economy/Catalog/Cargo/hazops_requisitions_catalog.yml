@@ -249,6 +249,10 @@
         crate: RMCCrateBoxMagazinePistolMK80
       - cost: 800
         crate: RMCCrateBoxAmmo458
+      - cost: 300
+        crate: RMCCrateMagazineRifleM54CE2
+      - cost: 300
+        crate: RMCCrateMagazineRifleM54CE2HT
       - cost: 600
         crate: RMCCrateBoxMagazineSentry
       - cost: 600
