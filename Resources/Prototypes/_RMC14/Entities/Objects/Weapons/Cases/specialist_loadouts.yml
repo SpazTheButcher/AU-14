@@ -238,6 +238,7 @@
     - id: RMCMagazineRifleM4SPRA19Impact
       amount: 4
     - id: RMCBackpackScout
+    - id: RMCBackpackScoutDS
     - id: WeaponRifleM4SPRCustom
     - id: RMCThermalTarpFolded
       amount: 2
@@ -279,6 +280,7 @@
     - id: RMCAttachmentFlashlightGrip
     - id: RMCAttachmentS5RedDotSight
     - id: RMCBackpackScout
+    - id: RMCBackpackScoutDS
     - id: WeaponRifleM5SPR2
     - id: RMCThermalTarpFolded
       amount: 2
