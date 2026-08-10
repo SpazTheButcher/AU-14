@@ -241,6 +241,8 @@
         crate: RMCCrateXM88
       - cost: 800
         crate: RMCCrateMOU53
+      - cost: 800
+        crate: RMCCrateM54CE2
       - cost: 400
         crate: RMCCrateM85A1
       - cost: 100
@@ -263,6 +265,10 @@
         crate: RMCCrateBoxMagazinePistolMK80
       - cost: 800
         crate: RMCCrateBoxAmmo458
+      - cost: 300
+        crate: RMCCrateMagazineRifleM54CE2
+      - cost: 300
+        crate: RMCCrateMagazineRifleM54CE2HT
       - cost: 600
         crate: RMCCrateBoxMagazineSentry
       - cost: 600
