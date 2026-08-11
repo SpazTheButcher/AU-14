@@ -107,7 +107,6 @@
   - type: Sprite
     sprite: _RMC14/Objects/Weapons/Guns/HMGs/m2c.rsi
     layers:
-    - state: m2c_gun_mount
     - state: m2c
       map: [ "enum.WeaponMountComponentVisualLayers.Mounted" ]
       visible: false

@@ -11,6 +11,7 @@ using Content.Shared._RMC14.Dropship.Weapon;
 using Content.Shared._RMC14.Camera;
 using Content.Shared._RMC14.NightVision;
 using Content.Shared._RMC14.PowerLoader;
+using Content.Shared._RMC14.Vehicle;
 using Content.Shared.Access.Components;
 using Content.Shared.Access.Systems;
 using Content.Shared.Actions;
@@ -747,8 +748,6 @@ public sealed partial class DropshipTacticalLandSystem
             hover.Comp.FlightGridChildrenInitialized = true;
         }
 
-        var movedWithoutImpact = false;
-
         var turn = 0f;
         if (seat.Comp.HeldInputs.HasFlag(GunshipControlInput.RotateLeft))
             turn += 1f;
@@ -772,14 +771,16 @@ public sealed partial class DropshipTacticalLandSystem
 
         if (hover.Comp.GunshipAngularVelocityDegrees != 0f)
         {
+            hover.Comp.FlightTerrainAnchors.Clear();
             var proposedRotation = rotation +
                 Angle.FromDegrees(hover.Comp.GunshipAngularVelocityDegrees * frameTime);
             if (IsGunshipFootprintClear((hover.Owner, dropshipGrid), map.Value, position, proposedRotation,
-                    boundaryOnly: true, out var rotationBlockers))
+                    boundaryOnly: false, out var rotationBlockers))
             {
                 rotation = proposedRotation;
                 _transform.SetWorldRotation(hover.Owner, rotation);
-                movedWithoutImpact = true;
+                _integrity.GuardFlightAdoptions(hover.Owner, map.Value, hover.Comp.FlightGridChildren,
+                    hover.Comp.FlightTerrainAnchors);
             }
             else
             {
@@ -799,6 +800,8 @@ public sealed partial class DropshipTacticalLandSystem
                         hover.Comp.GunshipAngularVelocityDegrees);
                     rotation = proposedRotation;
                     _transform.SetWorldRotation(hover.Owner, rotation);
+                    _integrity.GuardFlightAdoptions(hover.Owner, map.Value, hover.Comp.FlightGridChildren,
+                        hover.Comp.FlightTerrainAnchors);
                 }
                 else
                 {
@@ -837,18 +840,16 @@ public sealed partial class DropshipTacticalLandSystem
         }
 
         if (hover.Comp.GunshipLinearVelocity == Vector2.Zero)
-        {
-            if (movedWithoutImpact)
-                _integrity.GuardFlightAdoptions(hover.Owner, map.Value, hover.Comp.FlightGridChildren);
             return;
-        }
 
+        hover.Comp.FlightTerrainAnchors.Clear();
         var proposedPosition = position + hover.Comp.GunshipLinearVelocity * frameTime;
         if (IsGunshipFlightPathClear((hover.Owner, dropshipGrid), map.Value, position, proposedPosition, rotation,
                 out var translationBlockers))
         {
             _transform.SetWorldPosition(hover.Owner, proposedPosition);
-            movedWithoutImpact = true;
+            _integrity.GuardFlightAdoptions(hover.Owner, map.Value, hover.Comp.FlightGridChildren,
+                hover.Comp.FlightTerrainAnchors);
         }
         else
         {
@@ -862,6 +863,8 @@ public sealed partial class DropshipTacticalLandSystem
             {
                 hover.Comp.GunshipLinearVelocity = Vector2.Normalize(hover.Comp.GunshipLinearVelocity) * remainingSpeed;
                 _transform.SetWorldPosition(hover.Owner, proposedPosition);
+                _integrity.GuardFlightAdoptions(hover.Owner, map.Value, hover.Comp.FlightGridChildren,
+                    hover.Comp.FlightTerrainAnchors);
             }
             else
             {
@@ -870,8 +873,6 @@ public sealed partial class DropshipTacticalLandSystem
             }
         }
 
-        if (movedWithoutImpact)
-            _integrity.GuardFlightAdoptions(hover.Owner, map.Value, hover.Comp.FlightGridChildren);
     }
 
     private bool IsGunshipFootprintClearAfterImpact(
@@ -881,7 +882,7 @@ public sealed partial class DropshipTacticalLandSystem
         Angle targetRotation)
     {
         if (IsGunshipFootprintClear(dropship, targetMap, targetPosition, targetRotation,
-                boundaryOnly: true, out var remainingBlockers))
+                boundaryOnly: false, out var remainingBlockers))
             return true;
 
         // Destructible deletion is queued until the end of the tick, so its
@@ -918,6 +919,16 @@ public sealed partial class DropshipTacticalLandSystem
             {
                 return false;
             }
+        }
+
+        // Boundary sampling is sufficient for the swept path, but a thin
+        // fixture can already be inside the hull after a prior missed sample
+        // or an initial overlap. Validate the complete footprint once at the
+        // final pose so those structures enter the impact/destruction path.
+        if (!IsGunshipFootprintClear(dropship, targetMap, targetPosition, targetRotation,
+                boundaryOnly: false, out blockers))
+        {
+            return false;
         }
 
         if (TryComp(dropship.Owner, out DropshipTacticalHoverComponent? hover))
@@ -974,6 +985,7 @@ public sealed partial class DropshipTacticalLandSystem
             CollisionGroup.HighImpassable;
 
         var blocked = false;
+        var groundRotation = _transform.GetWorldRotation(targetMap);
         foreach (var rotatedCenter in GetRotatedGunshipFootprintCenters(dropship, targetRotation, boundaryOnly))
         {
             var sample = targetPosition + rotatedCenter;
@@ -984,11 +996,96 @@ public sealed partial class DropshipTacticalLandSystem
             if (targetTile.Tile.IsEmpty && !opening)
                 return false;
 
-            if (!opening &&
-                _turf.IsTileBlocked(targetTile, blockMask, DropshipMinimumBlockingArea))
+            var tileBlocked = !opening &&
+                _turf.IsTileBlocked(targetTile, blockMask, DropshipMinimumBlockingArea);
+            var foundPhysicalBlocker = false;
+            if (TryComp(dropship.Owner, out DropshipTacticalHoverComponent? flightHover))
             {
-                blocked = true;
-                var foundPhysicalBlocker = false;
+                var candidates = flightHover.FlightTerrainCandidates;
+                candidates.Clear();
+                var sampleBounds = Box2.UnitCentered.Scale(0.98f).Translated(sample);
+                var sampleWorldBounds = new Box2Rotated(sampleBounds, targetRotation, sample);
+                _entityLookup.GetEntitiesIntersecting(
+                    targetMap,
+                    sampleWorldBounds,
+                    candidates,
+                    LookupFlags.Static | LookupFlags.Dynamic);
+
+                // Raised walkways and their edge pieces may belong to a
+                // support grid rather than the primary terrain grid. Query
+                // every broadphase on this map as well or those fixtures can
+                // pass through the hull and collide with its occupants.
+                _entityLookup.GetEntitiesIntersecting(
+                    Transform(targetMap).MapID,
+                    sampleWorldBounds.CalcBoundingBox(),
+                    candidates,
+                    LookupFlags.Static | LookupFlags.Dynamic);
+
+                // Thin anchored fixtures such as raised platform edges can be
+                // omitted by the swept overlap when their anchor tile is an
+                // opening. Opening tiles deliberately skip the turf blocker
+                // check, so retain the anchored structures on the sampled
+                // hull tile as collision candidates as well. They still have
+                // to pass the hard blocking-fixture test below.
+                foreach (var anchored in _map.GetAnchoredEntities(
+                             targetMap,
+                             targetGrid,
+                             targetTile.GridIndices))
+                {
+                    candidates.Add(anchored);
+                }
+
+                foreach (var candidate in candidates)
+                {
+                    if (!TryComp(candidate, out TransformComponent? candidateXform) ||
+                        candidateXform.GridUid == dropship.Owner)
+                    {
+                        continue;
+                    }
+
+                    // Several multi-z maps serialize raised platform edges as
+                    // explicitly unanchored even though their prototype is an
+                    // anchored VehicleSmashable. They remain hard structures
+                    // which can collide with occupants, so they must enter the
+                    // dropship impact path. Do not broaden this to ordinary
+                    // loose entities.
+                    var anchored = candidateXform.Anchored;
+                    if (!anchored && !HasComp<VehicleSmashableComponent>(candidate))
+                        continue;
+
+                    var worldPosition = _transform.GetWorldPosition(candidateXform);
+                    if (candidateXform.GridUid != targetMap &&
+                        !sampleWorldBounds.Contains(worldPosition))
+                    {
+                        continue;
+                    }
+
+                    if (anchored &&
+                        candidateXform.GridUid == targetMap &&
+                        !flightHover.FlightTerrainAnchors.ContainsKey(candidate))
+                    {
+                        var localPosition = Vector2.Transform(worldPosition, Transform(targetMap).InvLocalMatrix);
+                        var localRotation = _transform.GetWorldRotation(candidateXform) - groundRotation;
+                        flightHover.FlightTerrainAnchors.Add(candidate,
+                            new DropshipTerrainAnchorPose(localPosition, localRotation));
+                    }
+
+                    if (!TryComp(candidate, out FixturesComponent? fixtures) ||
+                        !fixtures.Fixtures.Values.Any(fixture =>
+                            fixture.Hard && (fixture.CollisionLayer & (int) blockMask) != 0))
+                    {
+                        continue;
+                    }
+
+                    blockers.Add(candidate);
+                    foundPhysicalBlocker = true;
+                    blocked = true;
+                }
+            }
+            else
+            {
+                // Placement checks without a hover component do not need the
+                // terrain-adoption cache, but still retain the tile blocker.
                 foreach (var anchored in _map.GetAnchoredEntities(targetMap, targetGrid, targetTile.GridIndices))
                 {
                     if (!TryComp(anchored, out FixturesComponent? fixtures) ||
@@ -1001,15 +1098,93 @@ public sealed partial class DropshipTacticalLandSystem
                     blockers.Add(anchored);
                     foundPhysicalBlocker = true;
                 }
+            }
 
-                // A blocking tile with no physical anchored entity is terrain
+            if (tileBlocked)
+            {
+                blocked = true;
+                // A blocking tile with no matching physical entity is terrain
                 // supplied by the target grid itself and cannot be rammed away.
                 if (!foundPhysicalBlocker)
                     blockers.Add(targetMap);
             }
         }
 
+        if (!boundaryOnly &&
+            TryComp(dropship.Owner, out DropshipTacticalHoverComponent? overlapHover))
+        {
+            CollectOverlappingFlightSmashables(
+                dropship,
+                targetMap,
+                targetPosition,
+                targetRotation,
+                groundRotation,
+                blockMask,
+                overlapHover,
+                blockers,
+                ref blocked);
+        }
+
         return !blocked;
+    }
+
+    private void CollectOverlappingFlightSmashables(
+        Entity<MapGridComponent> dropship,
+        EntityUid targetMap,
+        Vector2 targetPosition,
+        Angle targetRotation,
+        Angle groundRotation,
+        CollisionGroup blockMask,
+        DropshipTacticalHoverComponent hover,
+        HashSet<EntityUid> blockers,
+        ref bool blocked)
+    {
+        var candidates = hover.FlightTerrainCandidates;
+        candidates.Clear();
+
+        var radius = dropship.Comp.LocalAABB.Size.Length() * 0.5f + 1f;
+        _entityLookup.GetEntitiesInRange(
+            Transform(targetMap).MapID,
+            targetPosition,
+            radius,
+            candidates,
+            LookupFlags.Static | LookupFlags.Dynamic);
+
+        var footprint = GetGunshipFootprintCenters(dropship, boundaryOnly: false);
+        foreach (var candidate in candidates)
+        {
+            if (!HasComp<VehicleSmashableComponent>(candidate) ||
+                !TryComp(candidate, out TransformComponent? candidateXform) ||
+                candidateXform.GridUid == dropship.Owner ||
+                !TryComp(candidate, out FixturesComponent? fixtures) ||
+                !fixtures.Fixtures.Values.Any(fixture =>
+                    fixture.Hard && (fixture.CollisionLayer & (int) blockMask) != 0))
+            {
+                continue;
+            }
+
+            var worldPosition = _transform.GetWorldPosition(candidateXform);
+            var localPosition = (-targetRotation).RotateVec(worldPosition - targetPosition);
+            if (!footprint.Any(center =>
+                    MathF.Abs(center.X - localPosition.X) <= 0.5f &&
+                    MathF.Abs(center.Y - localPosition.Y) <= 0.5f))
+            {
+                continue;
+            }
+
+            if (candidateXform.Anchored &&
+                candidateXform.GridUid == targetMap &&
+                !hover.FlightTerrainAnchors.ContainsKey(candidate))
+            {
+                var groundLocalPosition = Vector2.Transform(worldPosition, Transform(targetMap).InvLocalMatrix);
+                var localRotation = _transform.GetWorldRotation(candidateXform) - groundRotation;
+                hover.FlightTerrainAnchors.Add(candidate,
+                    new DropshipTerrainAnchorPose(groundLocalPosition, localRotation));
+            }
+
+            blockers.Add(candidate);
+            blocked = true;
+        }
     }
 
     private IReadOnlyList<Vector2> GetRotatedGunshipFootprintCenters(
@@ -1150,8 +1325,8 @@ public sealed partial class DropshipTacticalLandSystem
         hover.AltitudeTransitionAt = _timing.CurTime + GunshipAltitudeTransitionTime;
 
         var warningCoords = new EntityCoordinates(targetMap.Value.Owner, position);
-        SpawnWarningBorder(warningCoords,
-            hover.Footprint,
+        SpawnGunshipFootprintWarning(warningCoords,
+            (grid, dropshipGrid),
             snappedRotation,
             (float)GunshipAltitudeTransitionTime.TotalSeconds + 1f);
         _audio.PlayPvs(WarningSound, warningCoords, AudioParams.Default.WithVolume(2f));
@@ -1164,6 +1339,16 @@ public sealed partial class DropshipTacticalLandSystem
             seat,
             pilot,
             PopupType.Medium);
+    }
+
+    private void SpawnGunshipFootprintWarning(
+        EntityCoordinates center,
+        Entity<MapGridComponent> dropship,
+        Angle rotation,
+        float lifetime)
+    {
+        foreach (var offset in GetGunshipFootprintCenters(dropship, boundaryOnly: true))
+            SpawnTimed(center.Offset(rotation.RotateVec(offset)), lifetime);
     }
 
     private bool CanGunshipCrashThrough(IReadOnlyCollection<EntityUid> blockers)

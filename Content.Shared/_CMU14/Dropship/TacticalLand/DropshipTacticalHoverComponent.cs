@@ -83,6 +83,20 @@ public sealed partial class DropshipTacticalHoverComponent : Component
     public readonly HashSet<EntityUid> FlightGridChildren = new();
     public bool FlightGridChildrenInitialized;
 
+    /// <summary>
+    /// Exact terrain-grid poses captured immediately before a flight transform.
+    /// Moving grids can temporarily adopt overlapping anchored entities; using
+    /// their position after that happens makes each correction carry them along.
+    /// </summary>
+    public readonly Dictionary<EntityUid, DropshipTerrainAnchorPose> FlightTerrainAnchors = new();
+
+    /// <summary>
+    /// Scratch collection for fixture-overlap queries along the swept hull.
+    /// Unlike snap-grid lookup, this also finds edge fixtures anchored in an
+    /// adjacent tile.
+    /// </summary>
+    public readonly HashSet<EntityUid> FlightTerrainCandidates = new();
+
     public bool HoverEffectsPoseInitialized;
     public EntityUid? HoverEffectsMap;
     public Vector2 HoverEffectsPosition;
@@ -116,6 +130,8 @@ public sealed partial class DropshipTacticalHoverComponent : Component
     [DataField]
     public EntProtoId DownwashPrototype = "CMUDropshipTacticalHoverDownwash";
 }
+
+public readonly record struct DropshipTerrainAnchorPose(Vector2 Position, Angle Rotation);
 
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class DropshipTacticalHoverShadowComponent : Component

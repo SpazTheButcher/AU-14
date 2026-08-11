@@ -15,6 +15,7 @@ using Content.Shared._CMU14.Dropship.TacticalLand;
 using Content.Shared._CMU14.ZLevels.Core.EntitySystems;
 using Content.Shared._RMC14.Dropship;
 using Content.Shared._RMC14.Repairable;
+using Content.Shared._RMC14.Vehicle;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Prototypes;
 using Content.Shared.DoAfter;
@@ -32,6 +33,8 @@ using Content.Shared.Tools.Systems;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
+using Robust.Shared.Physics.Components;
+using Robust.Shared.Physics.Systems;
 using Robust.Shared.Random;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Spawners;
@@ -42,9 +45,11 @@ namespace Content.Server._CMU14.Dropship.Integrity;
 public sealed partial class DropshipIntegritySystem : EntitySystem
 {
     [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private DestructibleSystem _destructible = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
     [Dependency] private SharedMapSystem _map = default!;
+    [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedToolSystem _tool = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
@@ -205,14 +210,10 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             obstructionGrid = (map, mapGrid);
         }
 
-        var impactTiles = obstructionGrid is { } impactGround
-            ? GetImpactTiles(impactGround, obstructions)
-            : new HashSet<Vector2i>();
-
         if (!TryComp(dropship, out DropshipIntegrityComponent? integrity) ||
             integrity.Crashing || integrity.Wrecked || speed < integrity.MinimumDamagingImpactSpeed)
         {
-            GuardImpactAdoptions(dropship, obstructionGrid, originalChildren, obstructions, impactTiles);
+            GuardImpactAdoptions(dropship, obstructionGrid, originalChildren, obstructions);
             return 0f;
         }
 
@@ -227,14 +228,14 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
 
         if (integrity.Crashing || integrity.Wrecked)
         {
-            GuardImpactAdoptions(dropship, obstructionGrid, originalChildren, obstructions, impactTiles);
+            GuardImpactAdoptions(dropship, obstructionGrid, originalChildren, obstructions);
             return 0f;
         }
 
         var obstacleDamage = speed * speed * integrity.ObstacleDamageMultiplier;
         if (obstacleDamage <= 0f)
         {
-            GuardImpactAdoptions(dropship, obstructionGrid, originalChildren, obstructions, impactTiles);
+            GuardImpactAdoptions(dropship, obstructionGrid, originalChildren, obstructions);
             return 0f;
         }
 
@@ -250,6 +251,12 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             {
                 removedEveryObstruction = false;
                 break;
+            }
+
+            if (TrySmashFlightObstacle(obstruction, dropship, ref remainingSpeed))
+            {
+                removedAnyObstruction = true;
+                continue;
             }
 
             if (!TryGetObstacleBreakCost(obstruction,
@@ -273,30 +280,73 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             removedAnyObstruction = true;
         }
 
-        GuardImpactAdoptions(dropship, obstructionGrid, originalChildren, obstructions, impactTiles);
+        GuardImpactAdoptions(dropship, obstructionGrid, originalChildren, obstructions);
 
         return removedEveryObstruction && removedAnyObstruction
             ? remainingSpeed
             : 0f;
     }
 
+    /// <summary>
+    /// Uses the same explicit destruction contract as ordinary RMC vehicles.
+    /// Platform edges commonly change into a non-colliding broken construction
+    /// node under generic damage; VehicleSmashable instead means that a vehicle
+    /// impact should remove the structure completely.
+    /// </summary>
+    private bool TrySmashFlightObstacle(
+        EntityUid obstruction,
+        EntityUid dropship,
+        ref float remainingSpeed)
+    {
+        if (!TryComp(obstruction, out VehicleSmashableComponent? smashable) ||
+            !smashable.DeleteOnHit ||
+            smashable.RequiredVehicleTag is { } requiredTag && !_tag.HasTag(dropship, requiredTag))
+        {
+            return false;
+        }
+
+        if (smashable.SmashSound != null)
+            _audio.PlayPvs(smashable.SmashSound, Transform(obstruction).Coordinates);
+
+        var damage = new DamageSpecifier
+        {
+            DamageDict =
+            {
+                ["Blunt"] = FixedPoint2.New(smashable.DamageOnHit),
+            },
+        };
+        _damageable.TryChangeDamage(obstruction, damage, true, origin: dropship, tool: dropship);
+
+        if (TryComp(obstruction, out PhysicsComponent? physics))
+            _physics.SetCanCollide(obstruction, false, force: true, body: physics);
+
+        if (!TerminatingOrDeleted(obstruction))
+            _destructible.DestroyEntity(obstruction);
+
+        remainingSpeed *= Math.Clamp(smashable.SlowdownMultiplier, 0f, 1f);
+        return true;
+    }
+
     private void GuardImpactAdoptions(
         EntityUid dropship,
         Entity<MapGridComponent>? ground,
         HashSet<EntityUid> originalChildren,
-        IReadOnlyCollection<EntityUid> obstructions,
-        HashSet<Vector2i> impactTiles)
+        IReadOnlyCollection<EntityUid> obstructions)
     {
         if (ground is not { } impactGround)
             return;
 
         var forcedGround = obstructions.ToHashSet();
-        RestoreImpactAdoptions(dropship, impactGround, originalChildren, forcedGround);
+        var terrainAnchors = TryComp(dropship, out DropshipTacticalHoverComponent? hover)
+            ? new Dictionary<EntityUid, DropshipTerrainAnchorPose>(hover.FlightTerrainAnchors)
+            : new Dictionary<EntityUid, DropshipTerrainAnchorPose>();
+        RestoreImpactAdoptions(dropship, impactGround, originalChildren, forcedGround,
+            terrainAnchors: terrainAnchors);
         _pendingImpactAdoptions[dropship] = new PendingImpactAdoption(
             impactGround.Owner,
             originalChildren,
             forcedGround,
-            impactTiles,
+            terrainAnchors,
             _timing.CurTime + _timing.TickPeriod,
             _timing.CurTime + ImpactAdoptionGuardTime);
     }
@@ -308,7 +358,8 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
     public void GuardFlightAdoptions(
         EntityUid dropship,
         EntityUid terrainGrid,
-        HashSet<EntityUid> originalChildren)
+        HashSet<EntityUid> originalChildren,
+        IReadOnlyDictionary<EntityUid, DropshipTerrainAnchorPose> terrainAnchors)
     {
         if (terrainGrid == dropship ||
             !TryComp(terrainGrid, out MapGridComponent? groundGrid))
@@ -324,14 +375,30 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             pending.Ground == terrainGrid &&
             _timing.CurTime < pending.Expires)
         {
+            foreach (var (entity, pose) in terrainAnchors)
+                pending.TerrainAnchors.TryAdd(entity, pose);
+
+            RestoreImpactAdoptions(
+                dropship,
+                (terrainGrid, groundGrid),
+                originalChildren,
+                pending.ForcedGround,
+                terrainAnchors: pending.TerrainAnchors);
             return;
         }
 
+        var preservedAnchors = new Dictionary<EntityUid, DropshipTerrainAnchorPose>(terrainAnchors);
+        RestoreImpactAdoptions(
+            dropship,
+            (terrainGrid, groundGrid),
+            originalChildren,
+            _emptyFlightObstructions,
+            terrainAnchors: preservedAnchors);
         _pendingImpactAdoptions[dropship] = new PendingImpactAdoption(
             terrainGrid,
             originalChildren,
             _emptyFlightObstructions,
-            null,
+            preservedAnchors,
             _timing.CurTime + TimeSpan.FromMilliseconds(100),
             _timing.CurTime + ImpactAdoptionGuardTime);
     }
@@ -437,35 +504,12 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         _damageable.TryChangeDamage(obstruction, damage, origin: dropship);
     }
 
-    private HashSet<Vector2i> GetImpactTiles(
-        Entity<MapGridComponent> ground,
-        IReadOnlyCollection<EntityUid> obstructions)
-    {
-        var tiles = new HashSet<Vector2i>();
-        var groundXform = Transform(ground);
-        foreach (var obstruction in obstructions)
-        {
-            if (!TryComp(obstruction, out TransformComponent? xform))
-                continue;
-
-            var worldPosition = _transform.GetWorldPosition(xform);
-            var localPosition = Vector2.Transform(worldPosition, groundXform.InvLocalMatrix);
-            tiles.Add(_map.TileIndicesFor(
-                ground,
-                ground.Comp,
-                new EntityCoordinates(ground, localPosition)));
-        }
-
-        return tiles;
-    }
-
     private void RestoreImpactAdoptions(
         EntityUid dropship,
         Entity<MapGridComponent> ground,
         HashSet<EntityUid> originalChildren,
         HashSet<EntityUid> forcedGround,
-        bool anchoredOnly = false,
-        HashSet<Vector2i>? allowedGroundTiles = null)
+        IReadOnlyDictionary<EntityUid, DropshipTerrainAnchorPose>? terrainAnchors = null)
     {
         var adopted = new List<EntityUid>();
         var children = Transform(dropship).ChildEnumerator;
@@ -474,25 +518,13 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             if (originalChildren.Contains(child) && !forcedGround.Contains(child))
                 continue;
 
-            if (anchoredOnly &&
-                (!TryComp(child, out TransformComponent? adoptedXform) || !adoptedXform.Anchored))
+            // Entities added to the dropship legitimately during flight are
+            // not terrain. Only restore a foreign child when it was captured
+            // on the ground grid or explicitly identified as an obstruction.
+            if (!forcedGround.Contains(child) &&
+                (terrainAnchors == null || !terrainAnchors.ContainsKey(child)))
             {
                 continue;
-            }
-
-            if (anchoredOnly &&
-                !forcedGround.Contains(child) &&
-                allowedGroundTiles != null &&
-                TryComp(child, out TransformComponent? tileXform))
-            {
-                var worldPosition = _transform.GetWorldPosition(tileXform);
-                var groundPosition = Vector2.Transform(worldPosition, Transform(ground).InvLocalMatrix);
-                var groundTile = _map.TileIndicesFor(
-                    ground,
-                    ground.Comp,
-                    new EntityCoordinates(ground, groundPosition));
-                if (!allowedGroundTiles.Contains(groundTile))
-                    continue;
             }
 
             adopted.Add(child);
@@ -505,16 +537,27 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             if (TerminatingOrDeleted(child) || !TryComp(child, out TransformComponent? childXform))
                 continue;
 
-            var worldPosition = _transform.GetWorldPosition(childXform);
-            var worldRotation = _transform.GetWorldRotation(childXform);
-            var localPosition = Vector2.Transform(worldPosition, groundXform.InvLocalMatrix);
+            Vector2 localPosition;
+            Angle localRotation;
+            if (terrainAnchors != null && terrainAnchors.TryGetValue(child, out var terrainPose))
+            {
+                localPosition = terrainPose.Position;
+                localRotation = terrainPose.Rotation;
+            }
+            else
+            {
+                var worldPosition = _transform.GetWorldPosition(childXform);
+                var worldRotation = _transform.GetWorldRotation(childXform);
+                localPosition = Vector2.Transform(worldPosition, groundXform.InvLocalMatrix);
+                localRotation = worldRotation - groundRotation;
+            }
             var wasAnchored = childXform.Anchored;
 
             _transform.SetCoordinates(
                 child,
                 childXform,
                 new EntityCoordinates(ground, localPosition),
-                worldRotation - groundRotation);
+                localRotation);
 
             if (!wasAnchored || TerminatingOrDeleted(child))
                 continue;
@@ -671,8 +714,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
                 (pending.Ground, groundGrid),
                 pending.OriginalChildren,
                 pending.ForcedGround,
-                anchoredOnly: true,
-                allowedGroundTiles: pending.ImpactTiles);
+                terrainAnchors: pending.TerrainAnchors);
             pending.NextCheck = _timing.CurTime + ImpactAdoptionCheckInterval;
         }
 
@@ -684,14 +726,14 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         EntityUid ground,
         HashSet<EntityUid> originalChildren,
         HashSet<EntityUid> forcedGround,
-        HashSet<Vector2i>? impactTiles,
+        Dictionary<EntityUid, DropshipTerrainAnchorPose> terrainAnchors,
         TimeSpan nextCheck,
         TimeSpan expires)
     {
         public readonly EntityUid Ground = ground;
         public readonly HashSet<EntityUid> OriginalChildren = originalChildren;
         public readonly HashSet<EntityUid> ForcedGround = forcedGround;
-        public readonly HashSet<Vector2i>? ImpactTiles = impactTiles;
+        public readonly Dictionary<EntityUid, DropshipTerrainAnchorPose> TerrainAnchors = terrainAnchors;
         public TimeSpan NextCheck = nextCheck;
         public readonly TimeSpan Expires = expires;
     }
