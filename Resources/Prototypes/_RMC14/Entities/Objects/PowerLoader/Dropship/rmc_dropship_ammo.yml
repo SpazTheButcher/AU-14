@@ -65,8 +65,8 @@
     attachableTypes:
     - RMCDropshipDirectFirePoint
   - type: DropshipAmmo
-    rounds: 60
-    maxRounds: 60
+    rounds: 15
+    maxRounds: 15
     roundsPerShot: 1
     weapon: CMUDropshipAttachmentM4332FlareLauncher
   - type: DropshipFabricatorPrintable
