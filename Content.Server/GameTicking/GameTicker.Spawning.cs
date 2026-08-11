@@ -320,25 +320,6 @@ namespace Content.Server.GameTicking
                 _auJobSelectionSystem.AssignThreatAndThirdPartyJobs(assignmentProfiles);
             }
 
-            if (!string.IsNullOrWhiteSpace(_roundStartForcedJob))
-            {
-                if (_prototypeManager.HasIndex<JobPrototype>(_roundStartForcedJob))
-                {
-                    foreach (ICommonSession player in readyPlayers)
-                    {
-                        _auJobSelectionSystem.ForcedJobAssignments[player.UserId] = _roundStartForcedJob;
-                    }
-
-                    _sawmill.Info(
-                        $"[RoundStart] Forced {readyPlayers.Count} round-start player(s) into job '{_roundStartForcedJob}'.");
-                }
-                else
-                {
-                    _sawmill.Error(
-                        $"[RoundStart] Ignoring unknown game.roundstart_forced_job prototype '{_roundStartForcedJob}'.");
-                }
-            }
-
             if (GameTicker.ShouldGenerateScenarioPlanShadow(presetId))
             {
                 try
