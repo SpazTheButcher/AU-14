@@ -508,38 +508,55 @@ public abstract partial class SharedEvacuationSystem : EntitySystem
 
     public void ToggleEvacuation(SoundSpecifier? startSound, SoundSpecifier? cancelSound, EntityUid? map)
     {
+        if (_net.IsClient) return;
         DebugTools.Assert(map != null);
-
         var progress = EnsureComp<EvacuationProgressComponent>(map.Value);
 
+        if (progress.Enabled && progress.EnabledAt is { } enabledAt)
+        {
+            if (_timing.CurTime >= enabledAt + progress.AbortCutoff)
+            {
+                _marineAnnounce.AnnounceARESStaging(null,
+                    "ALL STATIONS. Engine is at critical mass, scuttling cannot be aborted. Abandon ship.",
+                    cancelSound, faction: progress.VictimFaction);
+                return;
+            }
+        }
+
         progress.Enabled = !progress.Enabled;
+        progress.EnabledAt = progress.Enabled ? _timing.CurTime : null;
+        progress.SelfDestructAt = progress.Enabled ? _timing.CurTime + progress.SelfDestructDelay : null;
+        progress.SelfDestructed = false;
         Dirty(map.Value, progress);
 
         if (progress.Enabled)
         {
-            _marineAnnounce.AnnounceARESStaging(
-                null,
+            _marineAnnounce.AnnounceARESStaging(null,
                 "ALL STATIONS. Emergency. Lifeboat fuel lines pressurized. Pumps at full capacity. Muster stations. Evacuation protocol engaged.",
-                startSound,
-                faction: progress.VictimFaction
-            );
+                startSound, faction: progress.VictimFaction);
 
-            Timer.Spawn(TimeSpan.FromSeconds(25), () =>
+            if (!_config.GetCVar(CCVars.EnableEvacSfx))
             {
-                if (map == null || !Exists(map.Value)) return;
-                if (!progress.Enabled || !TryComp<EvacuationProgressComponent>(map.Value, out var curProgress)) return;
+                Timer.Spawn(TimeSpan.FromSeconds(25), () =>
+                {
+                    if (map == null || !Exists(map.Value)) return;
+                    if (!TryComp<EvacuationProgressComponent>(map.Value, out var curProgress) || !curProgress.Enabled) return;
 
-                _marineAnnounce.AnnounceARESStaging(null,
-                    "ALL STATIONS. Scuttling failure. Self-destruct sequence unresponsive. All personnel abandon ship immediately.",
-                    startSound,
-                    faction: curProgress.VictimFaction);
-            });
+                    _marineAnnounce.AnnounceARESStaging(null,
+                        "ALL STATIONS. Scuttling malfunction. Self-destruct sequence failure. All personnel abandon ship immediately.",
+                        startSound, faction: curProgress.VictimFaction);
+                });
+            }
+
             var ev = new EvacuationEnabledEvent(map.Value);
             RaiseLocalEvent(map.Value, ref ev, true);
         }
         else
         {
-            _marineAnnounce.AnnounceARESStaging(null, "ALL STATIONS. Evacuation protocol aborted. Lifeboat launch suspended. Emergency stand-down.", cancelSound, faction: progress.VictimFaction);
+            _marineAnnounce.AnnounceARESStaging(null,
+                "ALL STATIONS. Evacuation protocol aborted. Lifeboat launch suspended. Emergency stand-down.",
+                cancelSound, faction: progress.VictimFaction);
+
             var ev = new EvacuationDisabledEvent(map.Value);
             RaiseLocalEvent(map.Value, ref ev, true);
         }
@@ -811,5 +828,29 @@ public abstract partial class SharedEvacuationSystem : EntitySystem
     {
         ProcessEvacuation();
         ProcessExplodingPods();
+        ProcessSelfDestruct();
+    }
+
+    private void ProcessSelfDestruct()
+    {
+        if (_net.IsClient)
+            return;
+
+        var time = _timing.CurTime;
+        var query = EntityQueryEnumerator<EvacuationProgressComponent>();
+        while (query.MoveNext(out var uid, out var progress))
+        {
+            if (progress.SelfDestructed || progress.SelfDestructAt is not { } at)
+                continue;
+
+            if (time < at)
+                continue;
+
+            progress.SelfDestructed = true;
+            Dirty(uid, progress);
+
+            var ev = new ShipSelfDestructEvent(uid);
+            RaiseLocalEvent(uid, ref ev, true);
+        }
     }
 }
