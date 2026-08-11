@@ -20,7 +20,6 @@ public abstract class SharedDropshipTacticalLandSystem : EntitySystem
                 subs.Event<DropshipNavigationTacticalLandMoveUpMsg>(OnTacticalLandMoveUp);
                 subs.Event<DropshipNavigationTacticalLandMoveDownMsg>(OnTacticalLandMoveDown);
                 subs.Event<DropshipNavigationTacticalLandRotateMsg>(OnTacticalLandRotate);
-                subs.Event<DropshipNavigationTacticalHoverCancelMsg>(OnTacticalHoverCancel);
             });
     }
 
@@ -62,7 +61,4 @@ public abstract class SharedDropshipTacticalLandSystem : EntitySystem
     {
     }
 
-    protected virtual void OnTacticalHoverCancel(Entity<DropshipNavigationComputerComponent> ent, ref DropshipNavigationTacticalHoverCancelMsg args)
-    {
-    }
 }

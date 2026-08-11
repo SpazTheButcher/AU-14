@@ -134,6 +134,8 @@ public sealed class GunshipPilotTopBar : PanelContainer
     private readonly Label _viewMode;
     private readonly Label _eta;
     private readonly Label _stage;
+    private string? _lastEta;
+    private string? _lastStage;
 
     public GunshipPilotTopBar(Action openNavigation)
     {
@@ -203,12 +205,22 @@ public sealed class GunshipPilotTopBar : PanelContainer
 
     public void SetViewMode(string mode)
     {
-        _viewMode.Text = mode;
+        if (_viewMode.Text != mode)
+            _viewMode.Text = mode;
     }
 
     public void SetFlightStatus(string eta, string stage)
     {
-        _eta.Text = $"ETA {eta}";
-        _stage.Text = $"STAGE {stage}";
+        if (_lastEta != eta)
+        {
+            _lastEta = eta;
+            _eta.Text = $"ETA {eta}";
+        }
+
+        if (_lastStage != stage)
+        {
+            _lastStage = stage;
+            _stage.Text = $"STAGE {stage}";
+        }
     }
 }

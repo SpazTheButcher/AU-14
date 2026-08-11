@@ -246,6 +246,14 @@ public sealed partial class GridVehicleMoverComponent : Component
     public bool IsMoving;
 
     /// <summary>
+    /// Whether the vehicle is currently driving a powered plow into a structure.
+    /// Counts as movement for engine audio and tread animation while collision
+    /// keeps the chassis stationary.
+    /// </summary>
+    [AutoNetworkedField]
+    public bool IsPoweredDemolishing;
+
+    /// <summary>
     /// minimum xeno size that blocks this vehicle
     /// </summary>
     [DataField, AutoNetworkedField]
@@ -348,9 +356,9 @@ public sealed partial class GridVehicleMoverComponent : Component
     [DataField]
     public float WallSmashMinSpeed;
 
-    /// <summary>Server-tracked time of the next allowed smash tick. Not for YAML.</summary>
+    /// <summary>Server-tracked time of the next mob-collision self-damage tick. Not for YAML.</summary>
     [AutoNetworkedField]
-    public TimeSpan NextWallSmashAt;
+    public TimeSpan NextMobCollisionSelfDamageAt;
 
     /// <summary>
     /// Hull integrity damage dealt to the vehicle when it rams a mob (not counting the damage to the mob itself).

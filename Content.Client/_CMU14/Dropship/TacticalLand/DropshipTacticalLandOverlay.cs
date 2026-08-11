@@ -58,7 +58,6 @@ public sealed class DropshipTacticalLandOverlay : Overlay
         var snapX = MathF.Floor(eyeWorld.X) + 0.5f;
         var snapY = MathF.Floor(eyeWorld.Y) + 0.5f;
 
-        var blocked = new HashSet<Vector2i>(pilotEye.BlockedTiles);
         var handle = args.WorldHandle;
         var clear = pilotEye.ClearForLanding;
 
@@ -70,7 +69,7 @@ public sealed class DropshipTacticalLandOverlay : Overlay
 
         handle.DrawRect(footprint, clear ? FootprintClearFill : FootprintBlockedFill);
         DrawGrid(handle, footprint, clear ? GridClear : GridBlocked);
-        DrawBlockedTiles(handle, blocked, snapX, snapY);
+        DrawBlockedTiles(handle, pilotEye.BlockedTiles, snapX, snapY);
 
         var perimeter = clear ? PerimeterClear : PerimeterBlocked;
         handle.DrawRect(footprint, perimeter, false);
@@ -90,7 +89,11 @@ public sealed class DropshipTacticalLandOverlay : Overlay
             handle.DrawLine(new Vector2(footprint.Left, y), new Vector2(footprint.Right, y), color);
     }
 
-    private static void DrawBlockedTiles(DrawingHandleWorld handle, HashSet<Vector2i> blocked, float snapX, float snapY)
+    private static void DrawBlockedTiles(
+        DrawingHandleWorld handle,
+        IReadOnlyList<Vector2i> blocked,
+        float snapX,
+        float snapY)
     {
         foreach (var offset in blocked)
         {

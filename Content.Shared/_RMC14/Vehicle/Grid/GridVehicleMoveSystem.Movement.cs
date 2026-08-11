@@ -4,6 +4,7 @@ using System.Numerics;
 using Content.Shared._CMU14.Blackfoot;
 using Content.Shared._CMU14.ZLevels.Core.Components;
 using Content.Shared._CMU14.ZLevels.Vehicles;
+using Content.Shared.Movement.Events;
 using Content.Shared.Vehicle.Components;
 using Content.Shared._RMC14.Vehicle;
 using Robust.Shared.Audio;
@@ -49,6 +50,7 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         GetSmashSlowdownMultiplier(mover);
 
         mover.IsCommittedToMove = false;
+        mover.IsPoweredDemolishing = false;
         if (!pushing)
         {
             mover.IsPushMove = false;
@@ -67,7 +69,10 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
             !movingLinearly &&
             (MathF.Abs(mover.AngularVelocityDegrees) > 0.001f ||
              mover.InPlaceTurnBlockUntil > _timing.CurTime);
-        mover.IsMoving = movingLinearly || turningInPlace;
+        mover.IsMoving = movingLinearly || turningInPlace || mover.IsPoweredDemolishing;
+
+        var spriteMove = new SpriteMoveEvent(mover.IsMoving);
+        RaiseLocalEvent(uid, ref spriteMove);
 
         if (!mover.IsMoving)
         {

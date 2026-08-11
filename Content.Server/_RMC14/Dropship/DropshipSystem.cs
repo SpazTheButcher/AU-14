@@ -565,8 +565,7 @@ public sealed partial class DropshipSystem : SharedDropshipSystem
             return false;
         }
 
-        var reroutingFromTacticalHover = TryComp(dropshipId.Value, out DropshipTacticalHoverComponent? tacticalHover) &&
-                                           tacticalHover.ReturnDestination != destination;
+        var reroutingFromTacticalHover = HasComp<DropshipTacticalHoverComponent>(dropshipId.Value);
 
         if (HasComp<ThirdPartyDropshipReturnedComponent>(dropshipId.Value))
         {
@@ -812,9 +811,9 @@ public sealed partial class DropshipSystem : SharedDropshipSystem
             return;
 
         var doorLockStatus = GetDoorLockStatus(grid);
-        var canCancelTacticalHover = HasComp<DropshipTacticalHoverComponent>(grid);
+        var tacticalHoverActive = HasComp<DropshipTacticalHoverComponent>(grid);
 
-        if (canCancelTacticalHover ||
+        if (tacticalHoverActive ||
             !TryComp(grid, out FTLComponent? ftl) ||
             !ftl.Running ||
             ftl.State == FTLState.Available)
@@ -894,7 +893,7 @@ public sealed partial class DropshipSystem : SharedDropshipSystem
                                     (HasComp<RMCPlanetComponent>(gridXform.MapUid.Value) || HasComp<RMCPlanetComponent>(grid));
             }
 
-            var state = new DropshipNavigationDestinationsBuiState(flyBy, destinations, doorLockStatus, computer.Comp.RemoteControl, canTacticalLand, computer.Comp.LaunchAlarmStatus, canWithdrawReturn, canCancelTacticalHover);
+            var state = new DropshipNavigationDestinationsBuiState(flyBy, destinations, doorLockStatus, computer.Comp.RemoteControl, canTacticalLand, computer.Comp.LaunchAlarmStatus, canWithdrawReturn, tacticalHoverActive);
             _ui.SetUiState(computer.Owner, DropshipNavigationUiKey.Key, state);
             return;
         }
@@ -912,7 +911,7 @@ public sealed partial class DropshipSystem : SharedDropshipSystem
                 departureName = Name(departureUid);
         }
 
-        var travelState = new DropshipNavigationTravellingBuiState(ftl.State, ftl.StateTime, destinationName, departureName, doorLockStatus, computer.Comp.RemoteControl, computer.Comp.LaunchAlarmStatus, canCancelTacticalHover);
+        var travelState = new DropshipNavigationTravellingBuiState(ftl.State, ftl.StateTime, destinationName, departureName, doorLockStatus, computer.Comp.RemoteControl, computer.Comp.LaunchAlarmStatus);
         _ui.SetUiState(computer.Owner, DropshipNavigationUiKey.Key, travelState);
     }
 

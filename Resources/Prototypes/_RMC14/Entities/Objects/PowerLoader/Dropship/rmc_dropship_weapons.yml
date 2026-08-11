@@ -92,6 +92,10 @@
     - SemiAuto
     soundGunshot: /Audio/Weapons/Guns/Gunshots/flaregun.ogg
     cameraRecoilScalar: 0
+  # Signal-flare projectiles intentionally remain visible during prediction.
+  # Make this remote mount authoritative so the predicted and server copies do
+  # not appear together as two separate flares to its pilot.
+  - type: GunIgnorePrediction
   - type: GunClickToFire
 
 - type: entity

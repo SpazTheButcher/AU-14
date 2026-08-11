@@ -1,3 +1,4 @@
+using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 
 namespace Content.Shared._RMC14.Vehicle;
@@ -26,4 +27,31 @@ public sealed partial class VehiclePlowChassisComponent : Component
 {
     [DataField]
     public float StructureDamageMultiplier = 1f;
+
+    /// <summary>
+    /// Raw structure damage applied per second while a functional plow is held
+    /// against the front of the chassis. This models continued engine force
+    /// rather than requiring the vehicle to repeatedly build ramming speed.
+    /// </summary>
+    [DataField]
+    public float PoweredDemolitionDamagePerSecond;
+
+    /// <summary>
+    /// Seconds of uninterrupted front-plow contact before powered demolition begins.
+    /// </summary>
+    [DataField]
+    public float PoweredDemolitionWarmup = 0.5f;
+
+    /// <summary>
+    /// Audible feedback while the plow is applying sustained force to a
+    /// destructible obstruction.
+    /// </summary>
+    [DataField]
+    public SoundSpecifier? PoweredDemolitionSound = new SoundPathSpecifier("/Audio/Machines/airlock_creaking.ogg");
+
+    /// <summary>
+    /// Minimum delay between powered-demolition creaks while contact continues.
+    /// </summary>
+    [DataField]
+    public float PoweredDemolitionSoundCooldown = 2f;
 }

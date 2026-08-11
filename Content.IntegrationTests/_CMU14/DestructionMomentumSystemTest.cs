@@ -82,4 +82,19 @@ public sealed class DestructionMomentumSystemTest
 
         await pair.CleanReturnAsync();
     }
+
+    [Test]
+    public void RemainingSpeedConservesSquaredSpeedBudget()
+    {
+        var remaining = DestructionMomentumSystem.GetRemainingSpeed(10f, 4f);
+
+        Assert.That(remaining, Is.EqualTo(MathF.Sqrt(84f)).Within(0.001f));
+        Assert.That(remaining * remaining + 4f * 4f, Is.EqualTo(100f).Within(0.001f));
+    }
+
+    [Test]
+    public void RemainingSpeedCannotGoBelowZero()
+    {
+        Assert.That(DestructionMomentumSystem.GetRemainingSpeed(3f, 5f), Is.Zero.Within(0.001f));
+    }
 }

@@ -11,19 +11,10 @@ namespace Content.Shared._CMU14.Dropship.TacticalLand;
 public sealed partial class DropshipTacticalHoverComponent : Component
 {
     [DataField]
-    public EntityUid? ReturnDestination;
-
-    [DataField]
     public EntityUid? HoverDestination;
 
     [DataField]
     public EntityUid? GroundMap;
-
-    [DataField]
-    public TimeSpan ReturnAt;
-
-    [DataField]
-    public TimeSpan NextReturnAttempt;
 
     [DataField]
     public Vector2i Footprint = new(9, 17);
@@ -49,6 +40,13 @@ public sealed partial class DropshipTacticalHoverComponent : Component
     /// check while the ship is hovering.
     /// </summary>
     public readonly List<Vector2> CachedFootprintCenters = new();
+
+    /// <summary>
+    /// Occupied grid indices matching <see cref="CachedFootprintCenters"/>.
+    /// Used by collision fallbacks to test local points without walking every
+    /// footprint center for each candidate.
+    /// </summary>
+    public readonly HashSet<Vector2i> CachedFootprintTiles = new();
 
     /// <summary>
     /// Local-space centers of only the exterior footprint tiles, used by the

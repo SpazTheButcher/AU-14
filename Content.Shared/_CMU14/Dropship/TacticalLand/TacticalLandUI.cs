@@ -48,6 +48,3 @@ public sealed class DropshipNavigationTacticalLandRotateMsg(bool clockwise) : Bo
 {
     public readonly bool Clockwise = clockwise;
 }
-
-[Serializable, NetSerializable]
-public sealed class DropshipNavigationTacticalHoverCancelMsg : BoundUserInterfaceMessage;

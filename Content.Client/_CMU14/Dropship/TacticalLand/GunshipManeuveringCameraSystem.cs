@@ -36,11 +36,11 @@ public sealed partial class GunshipManeuveringCameraSystem : EntitySystem
     [Dependency] private CMUSharedZLevelsSystem _zLevels = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private SharedMapSystem _map = default!;
-    [Dependency] private SharedEyeSystem _eye = default!;
     [Dependency] private IGameTiming _timing = default!;
 
     private readonly GraphicsEye _upperEye = CreateCameraEye();
     private readonly GraphicsEye _lowerEye = CreateCameraEye();
+    private readonly GraphicsEye _rearEye = CreateCameraEye();
     private readonly List<(Vector2 From, Vector2 To)> _outline = new();
 
     private GunshipCameraPanel? _panel;
@@ -133,11 +133,15 @@ public sealed partial class GunshipManeuveringCameraSystem : EntitySystem
             return false;
         }
 
-        // Rotation and zoom are deliberately non-networked EyeComponent data;
-        // the setters short-circuit when unchanged and do not dirty prediction.
-        _eye.SetRotation(eyeEntity, rotation, eye);
-        _eye.SetZoom(eyeEntity, new Vector2(1.5f * PreviewZoomMultiplier), eye);
-        rearEye = eye.Eye;
+        // ContentEyeSystem refreshes every entity-backed eye's rotation each
+        // frame. Copy the subscribed rear eye's position into a render-only eye
+        // so the preview can continuously retain the dropship's rotation.
+        _rearEye.Position = eye.Eye.Position;
+        _rearEye.Rotation = rotation;
+        _rearEye.Zoom = new Vector2(1.5f * PreviewZoomMultiplier);
+        _rearEye.DrawFov = eye.Eye.DrawFov;
+        _rearEye.DrawLight = eye.Eye.DrawLight;
+        rearEye = _rearEye;
         return true;
     }
 

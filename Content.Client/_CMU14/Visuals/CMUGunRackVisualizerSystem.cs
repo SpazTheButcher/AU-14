@@ -79,7 +79,7 @@ public sealed partial class CMUGunRackVisualizerSystem : EntitySystem
             var icon = _sprite.Frame0(new SpriteSpecifier.EntityPrototype(prototype.ID));
             _sprite.LayerSetTexture((ent.Owner, sprite), layer, icon);
             _sprite.LayerSetScale((ent.Owner, sprite), layer, ent.Comp.Scale);
-            _sprite.LayerSetRotation((ent.Owner, sprite), layer, Angle.Zero);
+            _sprite.LayerSetRotation((ent.Owner, sprite), layer, Angle.FromDegrees(90));
             _sprite.LayerSetOffset((ent.Owner, sprite), layer,
                 i < ent.Comp.Offsets.Count ? ent.Comp.Offsets[i] : Vector2.Zero);
             _sprite.LayerSetVisible((ent.Owner, sprite), layer, true);

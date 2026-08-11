@@ -75,6 +75,18 @@ public sealed partial class DestructionMomentumSystem : EntitySystem
         return query.CanDestroy;
     }
 
+    /// <summary>
+    /// Spends a destruction cost from the same squared-speed budget used to
+    /// calculate impact damage. Subtracting the required speed directly would
+    /// discard too much kinetic energy, especially across multiple obstacles.
+    /// </summary>
+    public static float GetRemainingSpeed(float availableSpeed, float requiredSpeed)
+    {
+        var available = MathF.Max(0f, availableSpeed);
+        var required = Math.Clamp(requiredSpeed, 0f, available);
+        return MathF.Sqrt(MathF.Max(0f, available * available - required * required));
+    }
+
     private bool TryGetRemovalThreshold(
         EntityUid obstruction,
         out DamageableComponent damageable,

@@ -7,6 +7,7 @@ using Content.Shared.Movement.Components;
 using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
 using Robust.Client.Player;
+using Robust.Shared.Map;
 using Robust.Shared.Timing;
 
 namespace Content.Client._CMU14.Dropship.TacticalLand;
@@ -18,12 +19,14 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
     [Dependency] private IPlayerManager _player = default!;
     [Dependency] private SpriteSystem _sprite = default!;
     [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
 
     private static readonly Vector2 TacticalLandZoom = new(2.25f, 2.25f);
     private static readonly TimeSpan MobVisibilityRefreshInterval = TimeSpan.FromMilliseconds(100);
 
     private bool _mobsHidden;
     private readonly HashSet<EntityUid> _hiddenMobs = new();
+    private readonly HashSet<Entity<MobStateComponent>> _viewportMobs = new();
     private TimeSpan _nextMobVisibilityRefresh;
 
     private bool _zoomApplied;
@@ -113,9 +116,17 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
     private void HideMobsTick()
     {
-        var query = EntityQueryEnumerator<MobStateComponent, SpriteComponent>();
-        while (query.MoveNext(out var uid, out _, out var sprite))
+        var eye = _eyeManager.CurrentEye;
+        if (eye.Position.MapId == MapId.Nullspace)
+            return;
+
+        _viewportMobs.Clear();
+        _lookup.GetEntitiesIntersecting(eye.Position.MapId, _eyeManager.GetWorldViewbounds(), _viewportMobs);
+        foreach (var (uid, _) in _viewportMobs)
         {
+            if (!TryComp(uid, out SpriteComponent? sprite))
+                continue;
+
             if (!sprite.Visible)
                 continue;
             _sprite.SetVisible((uid, sprite), false);

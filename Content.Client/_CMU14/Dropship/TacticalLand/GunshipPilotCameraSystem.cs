@@ -6,6 +6,7 @@ using Content.Client.Movement.Components;
 using Content.Client.Resources;
 using Content.Shared._CMU14.Dropship.Integrity;
 using Content.Shared._CMU14.Dropship.TacticalLand;
+using Content.Shared.Buckle.Components;
 using Content.Shared.Eye;
 using Content.Shared.Movement.Components;
 using Content.Shared.Tag;
@@ -32,6 +33,7 @@ public sealed partial class GunshipPilotCameraSystem : EntitySystem
     [Dependency] private IPlayerManager _player = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private OccluderSystem _occluder = default!;
+    [Dependency] private TagSystem _tags = default!;
 
     private static readonly TimeSpan HullOccluderRefreshInterval = TimeSpan.FromSeconds(0.5);
     private static readonly TimeSpan HullOccluderMaintenanceInterval = TimeSpan.FromMilliseconds(100);
@@ -46,14 +48,24 @@ public sealed partial class GunshipPilotCameraSystem : EntitySystem
     private TimeSpan _nextHullOccluderRefresh;
     private TimeSpan _nextHullOccluderMaintenance;
     private float _pilotZoomMultiplier = 1f;
+    private bool _pilotZoomActive;
+    private EntityUid? _configuredPilotCursor;
+    private GunshipPilotOverlay _pilotOverlay = default!;
+
+    private static readonly ProtoId<TagPrototype> WallTag = "Wall";
 
     public override void Initialize()
     {
         base.Initialize();
         UpdatesAfter.Add(typeof(OccluderSystem));
         UpdatesAfter.Add(typeof(EyeLerpingSystem));
-        _overlay.AddOverlay(new GunshipPilotOverlay(EntityManager, _player));
+        _pilotOverlay = new GunshipPilotOverlay(EntityManager, _player);
+        _overlay.AddOverlay(_pilotOverlay);
         _overlay.AddOverlay(new GunshipPilotHudOverlay(EntityManager, _player));
+        SubscribeLocalEvent<TileChangedEvent>(OnTileChanged);
+        SubscribeLocalEvent<TagComponent, ComponentStartup>(OnTaggedEntityStartup);
+        SubscribeLocalEvent<TagComponent, ComponentShutdown>(OnTaggedEntityShutdown);
+        SubscribeLocalEvent<TagComponent, EntParentChangedMessage>(OnTaggedEntityParentChanged);
     }
 
     public override void Shutdown()
@@ -92,10 +104,51 @@ public sealed partial class GunshipPilotCameraSystem : EntitySystem
         }
     }
 
+    private void OnTileChanged(ref TileChangedEvent args)
+    {
+        _pilotOverlay.InvalidateGrid(args.Entity.Owner);
+    }
+
+    private void OnTaggedEntityStartup(Entity<TagComponent> ent, ref ComponentStartup args)
+    {
+        InvalidateTaggedEntity(ent);
+    }
+
+    private void OnTaggedEntityShutdown(Entity<TagComponent> ent, ref ComponentShutdown args)
+    {
+        InvalidateTaggedEntity(ent);
+    }
+
+    private void InvalidateTaggedEntity(Entity<TagComponent> ent)
+    {
+        if (!_tags.HasTag(ent.Comp, WallTag) ||
+            !TryComp(ent.Owner, out TransformComponent? xform))
+        {
+            return;
+        }
+
+        _pilotOverlay.InvalidateGrid(xform.GridUid);
+    }
+
+    private void OnTaggedEntityParentChanged(Entity<TagComponent> ent, ref EntParentChangedMessage args)
+    {
+        if (!_tags.HasTag(ent.Comp, WallTag))
+            return;
+
+        _pilotOverlay.InvalidateGrid(args.OldParent);
+        _pilotOverlay.InvalidateGrid(args.Transform.GridUid);
+    }
+
     private void UpdatePilotHullOcclusion()
     {
         EntityUid? desiredGrid = null;
-        if (_player.LocalEntity is { } local &&
+        var localPilot = _player.LocalEntity;
+        var seatedInGunshipPilotSeat = localPilot is { } seatedPilot &&
+            TryComp(seatedPilot, out BuckleComponent? buckle) &&
+            buckle.BuckledTo is { } seat &&
+            HasComp<GunshipPilotSeatComponent>(seat);
+
+        if (localPilot is { } local &&
             TryComp(local, out GunshipPilotHudComponent? hud) &&
             hud.Dropship is { } dropship &&
             TryComp(dropship, out DropshipIntegrityComponent? integrity) &&
@@ -111,10 +164,33 @@ public sealed partial class GunshipPilotCameraSystem : EntitySystem
             // pilot-specific values must also be applied to the local copy.
             if (TryComp(local, out EyeCursorOffsetComponent? cursor))
             {
-                cursor.MaxOffset = PilotCursorMaxOffset;
+                cursor.MaxOffset = hud.PilotPanning ? PilotCursorMaxOffset : 0f;
                 cursor.OffsetSpeed = PilotCursorPanSpeed;
-                cursor.PvsIncrease = PilotCursorPvsIncrease;
+                cursor.PvsIncrease = hud.PilotPanning ? PilotCursorPvsIncrease : 0f;
+                if (!hud.PilotPanning)
+                    ResetPilotCursor(cursor);
+                _configuredPilotCursor = local;
             }
+        }
+        else if (localPilot is { } unlinkedPilot &&
+                 seatedInGunshipPilotSeat &&
+                 TryComp(unlinkedPilot, out EyeCursorOffsetComponent? unlinkedCursor))
+        {
+            // The cursor component's tuning fields are client-local. A newly
+            // replicated component therefore starts with its generic three-tile
+            // pan until the client explicitly neutralizes it.
+            ResetPilotCursor(unlinkedCursor);
+            _configuredPilotCursor = unlinkedPilot;
+        }
+        else if (_configuredPilotCursor is { } previousPilot)
+        {
+            if (!TerminatingOrDeleted(previousPilot) &&
+                TryComp(previousPilot, out EyeCursorOffsetComponent? previousCursor))
+            {
+                ResetPilotCursor(previousCursor);
+            }
+
+            _configuredPilotCursor = null;
         }
 
         if (_suppressedGrid != desiredGrid)
@@ -145,20 +221,28 @@ public sealed partial class GunshipPilotCameraSystem : EntitySystem
     private void UpdatePilotZoom(float frameTime)
     {
         if (_player.LocalEntity is not { } local ||
-            !TryComp(local, out GunshipPilotHudComponent? hud) ||
+            !TryComp(local, out ContentEyeComponent? contentEye))
+        {
+            _pilotZoomMultiplier = 1f;
+            _pilotZoomActive = false;
+            return;
+        }
+
+        if (!TryComp(local, out GunshipPilotHudComponent? hud) ||
             hud.Dropship is not { } dropship ||
             !TryComp(dropship, out DropshipIntegrityComponent? integrity) ||
             integrity.Crashing ||
             integrity.Wrecked ||
             hud.ViewOffset != 0 ||
             hud.RearView ||
-            hud.Malfunctions.Contains(DropshipMalfunction.SensorArrayFault) ||
-            !TryComp(local, out ContentEyeComponent? contentEye))
+            hud.Malfunctions.Contains(DropshipMalfunction.SensorArrayFault))
         {
-            _pilotZoomMultiplier = 1f;
+            if (_pilotZoomActive)
+                ResetPilotZoom(contentEye);
             return;
         }
 
+        _pilotZoomActive = true;
         var targetMultiplier = hud.PilotZoom ? 1.5f : 1f;
         if (hud.PilotPanning && TryComp(local, out EyeCursorOffsetComponent? cursor))
         {
@@ -178,6 +262,23 @@ public sealed partial class GunshipPilotCameraSystem : EntitySystem
         var desiredZoom = contentEye.TargetZoom * _pilotZoomMultiplier;
         if (Vector2.DistanceSquared(_eyeManager.CurrentEye.Zoom, desiredZoom) > 0.0001f)
             _eyeManager.CurrentEye.Zoom = desiredZoom;
+    }
+
+    private void ResetPilotZoom(ContentEyeComponent contentEye)
+    {
+        _pilotZoomMultiplier = 1f;
+        _pilotZoomActive = false;
+        if (Vector2.DistanceSquared(_eyeManager.CurrentEye.Zoom, contentEye.TargetZoom) > 0.0001f)
+            _eyeManager.CurrentEye.Zoom = contentEye.TargetZoom;
+    }
+
+    private static void ResetPilotCursor(EyeCursorOffsetComponent cursor)
+    {
+        cursor.MaxOffset = 0f;
+        cursor.OffsetSpeed = PilotCursorPanSpeed;
+        cursor.PvsIncrease = 0f;
+        cursor.TargetPosition = Vector2.Zero;
+        cursor.CurrentPosition = Vector2.Zero;
     }
 
     private static void RemoveFromClientOccluderTree(OccluderComponent occluder)
@@ -213,6 +314,7 @@ public sealed class GunshipPilotHudOverlay : Overlay
     private readonly CombatModeSystem _combatMode;
     private readonly Font _font;
     private readonly Font _smallFont;
+    private readonly List<string> _warningLines = new();
 
     private static readonly Color HudColor = new(0.25f, 0.88f, 1f, 0.95f);
     private static readonly Color HudBackground = new(0.015f, 0.06f, 0.08f, 0.78f);
@@ -471,7 +573,9 @@ public sealed class GunshipPilotHudOverlay : Overlay
         if (!blinkOn)
             return;
 
-        var lines = new List<string> { "SYSTEM WARNINGS" };
+        var lines = _warningLines;
+        lines.Clear();
+        lines.Add("SYSTEM WARNINGS");
         foreach (var alarm in hud.Alarms)
             lines.Add(DropshipAlarmData.GetAlertName(alarm));
         foreach (var malfunction in hud.Malfunctions)
@@ -507,7 +611,6 @@ public sealed class GunshipPilotOverlay : Overlay
 {
     private readonly IEntityManager _entities;
     private readonly IPlayerManager _player;
-    private readonly IGameTiming _timing;
     private readonly TagSystem _tags;
     private readonly HashSet<Vector2i> _tiles = new();
     private readonly HashSet<Vector2i> _hullTiles = new();
@@ -516,9 +619,7 @@ public sealed class GunshipPilotOverlay : Overlay
     private readonly HashSet<Vector2i> _selectedMaskTiles = new();
     private readonly List<Box2> _maskRectangles = new();
     private EntityUid? _cachedPreviewGrid;
-    private TimeSpan _nextPreviewTileRefresh;
     private EntityUid? _cachedTileGrid;
-    private TimeSpan _nextTileRefresh;
     private int _hullRevision;
     private int _batchedHullRevision = -1;
     private Vector2i _batchedPilotTile;
@@ -540,8 +641,22 @@ public sealed class GunshipPilotOverlay : Overlay
     {
         _entities = entities;
         _player = player;
-        _timing = IoCManager.Resolve<IGameTiming>();
         _tags = entities.System<TagSystem>();
+    }
+
+    public void InvalidateGrid(EntityUid? grid)
+    {
+        if (grid == null)
+            return;
+
+        if (_cachedPreviewGrid == grid)
+            _cachedPreviewGrid = null;
+
+        if (_cachedTileGrid == grid)
+        {
+            _cachedTileGrid = null;
+            _hasBatchedMask = false;
+        }
     }
 
     protected override void Draw(in OverlayDrawArgs args)
@@ -590,10 +705,9 @@ public sealed class GunshipPilotOverlay : Overlay
         var rotation = Angle.FromDegrees(gunshipEye.RotationDegrees);
         var handle = args.WorldHandle;
 
-        if (_cachedPreviewGrid != dropship || _timing.CurTime >= _nextPreviewTileRefresh)
+        if (_cachedPreviewGrid != dropship)
         {
             _cachedPreviewGrid = dropship;
-            _nextPreviewTileRefresh = _timing.CurTime + TimeSpan.FromSeconds(1);
             _tiles.Clear();
             foreach (var tile in map.GetAllTiles(dropship, dropshipGrid))
                 _tiles.Add(tile.GridIndices);
@@ -629,10 +743,9 @@ public sealed class GunshipPilotOverlay : Overlay
         MapGridComponent grid)
     {
         var map = _entities.System<SharedMapSystem>();
-        if (_cachedTileGrid != gridUid || _timing.CurTime >= _nextTileRefresh)
+        if (_cachedTileGrid != gridUid)
         {
             _cachedTileGrid = gridUid;
-            _nextTileRefresh = _timing.CurTime + TimeSpan.FromSeconds(1);
             _hullTiles.Clear();
             _wallTiles.Clear();
             _maskTiles.Clear();

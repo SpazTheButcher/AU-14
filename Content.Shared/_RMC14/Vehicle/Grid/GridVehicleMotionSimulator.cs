@@ -62,12 +62,29 @@ public static class GridVehicleMotionSimulator
         Box2 vehicleLocalBounds,
         Box2 obstacleWorldBounds)
     {
-        var obstacleLocal = (-vehicleWorldRotation).RotateVec(obstacleWorldBounds.Center - vehicleWorldPosition);
-        var offset = obstacleLocal - vehicleLocalBounds.Center;
+        var boundsCenter = vehicleWorldPosition + vehicleWorldRotation.RotateVec(vehicleLocalBounds.Center);
+        var offset = obstacleWorldBounds.Center - boundsCenter;
+        var forward = vehicleWorldRotation.ToWorldVec();
+        var right = new Vector2(-forward.Y, forward.X);
+        var forwardOffset = Vector2.Dot(offset, forward);
+        var lateralOffset = MathF.Abs(Vector2.Dot(offset, right));
         var halfWidth = MathF.Max(vehicleLocalBounds.Width * 0.5f, 0.001f);
         var halfHeight = MathF.Max(vehicleLocalBounds.Height * 0.5f, 0.001f);
 
-        return offset.X > 0f && offset.X / halfWidth > MathF.Abs(offset.Y) / halfHeight;
+        // Robust world angles face south (local -Y) at zero rotation. Match the
+        // same ToWorldVec convention used to advance the vehicle; treating local
+        // +X as forward incorrectly classified head-on impacts as side impacts.
+        return forwardOffset > 0f && forwardOffset / halfHeight > lateralOffset / halfWidth;
+    }
+
+    public static float GetPoweredDemolitionDamage(
+        float damagePerSecond,
+        float damageInterval,
+        float plowPerformance)
+    {
+        return MathF.Max(0f, damagePerSecond) *
+               MathF.Max(0f, damageInterval) *
+               Math.Clamp(plowPerformance, 0f, 1f);
     }
 
     public static float StepPushSpeed(

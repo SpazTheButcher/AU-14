@@ -111,7 +111,12 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
     private readonly DamageSpecifier _mobCollisionDamage = new() { DamageDict = { [CollisionDamageType] = MobCollisionDamage } };
     private readonly Dictionary<EntityUid, TimeSpan> _nextImmobilePopupAt = new();
     private readonly HashSet<EntityUid> _immobileAnnounced = new();
+    private readonly Dictionary<EntityUid, PoweredDemolitionContact> _poweredDemolitionContacts = new();
+    private readonly VehicleCollisionCooldownTracker _wallSmashCooldowns = new();
     private static readonly TimeSpan ImmobilePopupCooldown = TimeSpan.FromSeconds(4);
+    // Longer than the AEV's damage-pulse cooldown so a slow server frame cannot
+    // make uninterrupted forward pressure restart the demolition warmup.
+    private static readonly TimeSpan PoweredDemolitionContactGrace = TimeSpan.FromSeconds(0.75);
     private readonly Dictionary<EntityUid, bool> _hardState = new();
     private readonly Dictionary<EntityUid, bool> _lastMobPushAxis = new();
     private readonly Dictionary<EntityUid, float> _movementAccumulator = new();
@@ -121,6 +126,14 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
     private readonly HashSet<EntityUid> _vehiclePushIgnored = new();
     private readonly HashSet<EntityUid> _bypassInitialBlockers = new();
     private readonly HashSet<EntityUid> _bypassSampleBlockers = new();
+
+    private readonly record struct PoweredDemolitionContact(
+        EntityUid Target,
+        TimeSpan StartedAt,
+        TimeSpan LastContactAt,
+        TimeSpan NextSoundAt,
+        bool WorkingAnnounced,
+        bool IndestructibleAnnounced);
 
     private enum VehicleCollisionClass : byte
     {
@@ -197,6 +210,8 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         _activeXenoPushers.Remove(ent.Owner);
         _nextImmobilePopupAt.Remove(ent.Owner);
         _immobileAnnounced.Remove(ent.Owner);
+        _poweredDemolitionContacts.Remove(ent.Owner);
+        _wallSmashCooldowns.RemoveVehicle(ent.Owner);
     }
 
     private void OnMoverMove(Entity<GridVehicleMoverComponent> ent, ref MoveEvent args)

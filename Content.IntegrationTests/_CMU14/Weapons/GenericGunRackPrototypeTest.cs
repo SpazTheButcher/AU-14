@@ -1,3 +1,4 @@
+using System.Numerics;
 using Content.Shared._CMU14.Visuals;
 using Content.Shared.Containers;
 using Content.Shared.Containers.ItemSlots;
@@ -29,7 +30,11 @@ public sealed class GenericGunRackPrototypeTest
                 {
                     Assert.That(slots!.Slots, Has.Count.EqualTo(2));
                     Assert.That(visuals!.Slots, Is.EqualTo(new[] { "item_1", "item_2" }));
-                    Assert.That(visuals.Offsets, Has.Count.EqualTo(2));
+                    Assert.That(visuals.Offsets, Is.EqualTo(new[]
+                    {
+                        new Vector2(-0.125f, 0),
+                        new Vector2(0.125f, 0),
+                    }));
                 });
 
                 foreach (var slotId in new[] { "item_1", "item_2" })

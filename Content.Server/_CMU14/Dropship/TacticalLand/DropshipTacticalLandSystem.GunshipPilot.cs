@@ -76,6 +76,10 @@ public sealed partial class DropshipTacticalLandSystem
     private const float GunshipPilotPvsScale = 1f + GunshipCursorPvsIncrease;
     private TimeSpan _nextGunshipAlarmUpdate;
     private TimeSpan _nextGunshipHudUpdate;
+    private readonly HashSet<EntityUid> _validGunshipHudWearers = new();
+    private readonly HashSet<Vector2i> _proximityOccupiedTiles = new();
+    private readonly HashSet<Vector2i> _proximityHazardTiles = new();
+    private readonly List<Vector2> _proximityHazardsScratch = new();
 
     private void InitializeGunshipPilot()
     {
@@ -253,22 +257,17 @@ public sealed partial class DropshipTacticalLandSystem
             return false;
 
         var shipRotation = _transform.GetWorldRotation(grid);
-        var forward = shipRotation.RotateVec(Vector2.UnitY);
-        var origin = _transform.GetWorldPosition(point.Owner) + forward * point.Comp.ForwardOffset;
-        var desired = target.Position - origin;
-        if (desired.LengthSquared() <= 0.0001f)
+        if (!GunshipDirectFireSystem.TryGetClampedAim(
+                shipRotation,
+                _transform.GetWorldPosition(grid),
+                target.Position,
+                weapon.GimbalDegrees,
+                out direction,
+                out var aimDegrees))
+        {
             return false;
+        }
 
-        desired = Vector2.Normalize(desired);
-        var signedRadians = MathF.Atan2(
-            forward.X * desired.Y - forward.Y * desired.X,
-            Vector2.Dot(forward, desired));
-        var halfGimbal = MathHelper.DegreesToRadians(MathF.Max(0f, weapon.GimbalDegrees) * 0.5f);
-        var clampedRadians = Math.Clamp(signedRadians, -halfGimbal, halfGimbal);
-        var aimOffset = new Angle(clampedRadians);
-        direction = shipRotation.RotateVec(aimOffset.RotateVec(Vector2.UnitY));
-
-        var aimDegrees = (float) aimOffset.Degrees;
         if (!MathHelper.CloseToPercent(point.Comp.AimOffsetDegrees, aimDegrees))
         {
             point.Comp.AimOffsetDegrees = aimDegrees;
@@ -321,6 +320,7 @@ public sealed partial class DropshipTacticalLandSystem
 
         EnablePilotHudActions(args.Buckle, ent);
         OccupyPilotHands(args.Buckle, ent);
+        EnsurePilotControlComponents(args.Buckle, ent.Comp);
 
         if (Transform(ent).GridUid is { } grid && TryComp(grid, out DropshipTacticalHoverComponent? hover))
             EnsureGunshipPilotEye(ent, (grid, hover));
@@ -349,6 +349,29 @@ public sealed partial class DropshipTacticalLandSystem
             if (_gunshipVirtualItems.TrySpawnVirtualItemInHand(seat, pilot, out var virtualItem))
                 EnsureComp<UnremoveableComponent>(virtualItem.Value);
         }
+    }
+
+    private void EnsurePilotControlComponents(EntityUid pilot, GunshipPilotSeatComponent seat)
+    {
+        // Keep these networked components stable for the complete seated
+        // session. Adding or removing them exactly when hover starts can race
+        // client movement prediction rollback on the player entity.
+        if (!HasComp<EyeCursorOffsetComponent>(pilot))
+        {
+            EnsureComp<EyeCursorOffsetComponent>(pilot);
+            seat.AddedCursorOffset = true;
+        }
+
+        // EyeCursorOffset defaults to a small amount of panning. Keep the
+        // component inert until the lowered pilot HUD is actually linked.
+        if (TryComp(pilot, out EyeCursorOffsetComponent? cursor))
+        {
+            cursor.MaxOffset = 0f;
+            cursor.OffsetSpeed = GunshipCursorPanSpeed;
+            cursor.PvsIncrease = 0f;
+        }
+
+        EnsureComp<RemoteWeaponOperatorComponent>(pilot);
     }
 
     private void OnGunshipCrashStarted(
@@ -529,6 +552,13 @@ public sealed partial class DropshipTacticalLandSystem
 
     private void TogglePilotPanning(Entity<GunshipPilotSeatComponent> ent, EntityUid grid)
     {
+        if (ent.Comp.Pilot is not { } pilot ||
+            !TryComp(pilot, out GunshipPilotHudComponent? hud) ||
+            hud.Dropship != grid)
+        {
+            return;
+        }
+
         ent.Comp.PilotPanning = !ent.Comp.PilotPanning;
         if (ent.Comp.PilotPanning && ent.Comp.PilotZoom)
         {
@@ -1187,7 +1217,9 @@ public sealed partial class DropshipTacticalLandSystem
             candidates,
             LookupFlags.Static | LookupFlags.Dynamic);
 
-        var footprint = GetGunshipFootprintCenters(dropship, boundaryOnly: false);
+        if (hover.CachedFootprintCenters.Count == 0)
+            CacheGunshipFootprint((dropship.Owner, hover), dropship.Comp);
+
         foreach (var candidate in candidates)
         {
             if (!HasComp<VehicleSmashableComponent>(candidate) ||
@@ -1202,9 +1234,7 @@ public sealed partial class DropshipTacticalLandSystem
 
             var worldPosition = _transform.GetWorldPosition(candidateXform);
             var localPosition = (-targetRotation).RotateVec(worldPosition - targetPosition);
-            if (!footprint.Any(center =>
-                    MathF.Abs(center.X - localPosition.X) <= 0.5f &&
-                    MathF.Abs(center.Y - localPosition.Y) <= 0.5f))
+            if (!IsWithinGunshipFootprint(dropship, hover, localPosition))
             {
                 continue;
             }
@@ -1222,6 +1252,37 @@ public sealed partial class DropshipTacticalLandSystem
             blockers.Add(candidate);
             blocked = true;
         }
+    }
+
+    private bool IsWithinGunshipFootprint(
+        Entity<MapGridComponent> dropship,
+        DropshipTacticalHoverComponent hover,
+        Vector2 localPosition)
+    {
+        var localCoordinates = new EntityCoordinates(dropship.Owner, localPosition);
+        var localTile = _map.TileIndicesFor(dropship.Owner, dropship.Comp, localCoordinates);
+
+        // Preserve the old inclusive half-tile test at exact tile boundaries,
+        // but cap it to the point's immediate neighborhood instead of walking
+        // every occupied dropship tile.
+        for (var x = -1; x <= 1; x++)
+        {
+            for (var y = -1; y <= 1; y++)
+            {
+                var tile = localTile + new Vector2i(x, y);
+                if (!hover.CachedFootprintTiles.Contains(tile))
+                    continue;
+
+                var center = _map.TileCenterToVector(dropship.Owner, dropship.Comp, tile);
+                if (MathF.Abs(center.X - localPosition.X) <= 0.5f &&
+                    MathF.Abs(center.Y - localPosition.Y) <= 0.5f)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private IReadOnlyList<Vector2> GetRotatedGunshipFootprintCenters(
@@ -1286,6 +1347,7 @@ public sealed partial class DropshipTacticalLandSystem
         MapGridComponent grid)
     {
         hover.Comp.CachedFootprintCenters.Clear();
+        hover.Comp.CachedFootprintTiles.Clear();
         hover.Comp.CachedFootprintBoundaryCenters.Clear();
         hover.Comp.CachedRotatedFootprintCenters.Clear();
         hover.Comp.CachedRotatedFootprintBoundaryCenters.Clear();
@@ -1300,6 +1362,7 @@ public sealed partial class DropshipTacticalLandSystem
         {
             var center = _map.TileCenterToVector(hover.Owner, grid, tile);
             hover.Comp.CachedFootprintCenters.Add(center);
+            hover.Comp.CachedFootprintTiles.Add(tile);
             if (!tiles.Contains(tile + Vector2i.Left) ||
                 !tiles.Contains(tile + Vector2i.Right) ||
                 !tiles.Contains(tile + Vector2i.Down) ||
@@ -1471,7 +1534,6 @@ public sealed partial class DropshipTacticalLandSystem
                 TryComp(hoverDestination, out EphemeralDropshipDestinationComponent? ephemeral))
             {
                 ephemeral.TacticalHover = false;
-                ephemeral.ReturnDestination = null;
             }
 
             RemComp<DropshipTacticalHoverComponent>(hover.Owner);
@@ -1790,16 +1852,18 @@ public sealed partial class DropshipTacticalLandSystem
 
         if (linked && seat.Comp.ViewOffset == 0 && !seat.Comp.RearView && seat.Comp.PilotPanning)
         {
-            var cursor = EnsureComp<EyeCursorOffsetComponent>(pilot);
-            cursor.MaxOffset = GunshipCursorMaxOffset;
-            cursor.OffsetSpeed = GunshipCursorPanSpeed;
-            cursor.PvsIncrease = GunshipCursorPvsIncrease;
-            seat.Comp.AddedCursorOffset = true;
+            if (TryComp(pilot, out EyeCursorOffsetComponent? cursor))
+            {
+                cursor.MaxOffset = GunshipCursorMaxOffset;
+                cursor.OffsetSpeed = GunshipCursorPanSpeed;
+                cursor.PvsIncrease = GunshipCursorPvsIncrease;
+            }
         }
-        else if (seat.Comp.AddedCursorOffset)
+        else if (TryComp(pilot, out EyeCursorOffsetComponent? cursor))
         {
-            RemComp<EyeCursorOffsetComponent>(pilot);
-            seat.Comp.AddedCursorOffset = false;
+            cursor.MaxOffset = 0f;
+            cursor.OffsetSpeed = GunshipCursorPanSpeed;
+            cursor.PvsIncrease = 0f;
         }
     }
 
@@ -1817,8 +1881,14 @@ public sealed partial class DropshipTacticalLandSystem
             _eye.SetPvsScale((pilot, pilotEye), seat.Comp.OriginalPvsScale);
         }
 
-        if (seat.Comp.Pilot is { } cursorPilot && seat.Comp.AddedCursorOffset && !TerminatingOrDeleted(cursorPilot))
-            RemComp<EyeCursorOffsetComponent>(cursorPilot);
+        if (seat.Comp.Pilot is { } cursorPilot &&
+            !TerminatingOrDeleted(cursorPilot) &&
+            TryComp(cursorPilot, out EyeCursorOffsetComponent? cursor))
+        {
+            cursor.MaxOffset = 0f;
+            cursor.OffsetSpeed = GunshipCursorPanSpeed;
+            cursor.PvsIncrease = 0f;
+        }
 
         if (gunshipEye is { } eye && !TerminatingOrDeleted(eye))
         {
@@ -1839,7 +1909,6 @@ public sealed partial class DropshipTacticalLandSystem
         seat.Comp.Eye = null;
         seat.Comp.ViewOffset = 0;
         seat.Comp.RearView = false;
-        seat.Comp.AddedCursorOffset = false;
         seat.Comp.HeldInputs = GunshipControlInput.None;
         seat.Comp.PressedActions = 0;
         Dirty(seat);
@@ -1852,9 +1921,12 @@ public sealed partial class DropshipTacticalLandSystem
             DisablePilotHudActions(pilot, seat);
             _gunshipVirtualItems.DeleteInHandsMatching(pilot, seat.Owner);
             RemCompDeferred<RemoteWeaponOperatorComponent>(pilot);
+            if (seat.Comp.AddedCursorOffset)
+                RemCompDeferred<EyeCursorOffsetComponent>(pilot);
         }
 
         TeardownGunshipPilotEye(seat);
+        seat.Comp.AddedCursorOffset = false;
         if (restorePilot)
             seat.Comp.Pilot = null;
         Dirty(seat);
@@ -1873,7 +1945,8 @@ public sealed partial class DropshipTacticalLandSystem
     {
         UpdateGunshipAlarms();
 
-        var validWearers = new HashSet<EntityUid>();
+        var validWearers = _validGunshipHudWearers;
+        validWearers.Clear();
         var visorQuery = EntityQueryEnumerator<GunshipPilotVisorComponent, TransformComponent>();
         while (visorQuery.MoveNext(out var visor, out _, out var visorXform))
         {
@@ -1902,8 +1975,9 @@ public sealed partial class DropshipTacticalLandSystem
             var hasDirectFireWeapon = false;
             EntityUid? directFireWeapon = null;
             var directFireAmmo = -1;
-            var malfunctions = new List<DropshipMalfunction>();
-            var alarms = new List<DropshipAlarm>();
+            IReadOnlyList<DropshipMalfunction> malfunctions = Array.Empty<DropshipMalfunction>();
+            var proximityAlarm = false;
+            var lowIntegrityAlarm = false;
             var masterAlarmSilenced = false;
             var viewOffset = 0;
             var rearView = false;
@@ -1936,12 +2010,10 @@ public sealed partial class DropshipTacticalLandSystem
                 {
                     integrity = dropshipIntegrity.Integrity;
                     maxIntegrity = dropshipIntegrity.MaxIntegrity;
-                    malfunctions.AddRange(dropshipIntegrity.ActiveMalfunctions);
+                    malfunctions = dropshipIntegrity.ActiveMalfunctions;
                     masterAlarmSilenced = dropshipIntegrity.MasterAlarmSilenced;
-                    if (dropshipIntegrity.ProximityAlarmActive)
-                        alarms.Add(DropshipAlarm.Proximity);
-                    if (dropshipIntegrity.LowIntegrityAlarmActive)
-                        alarms.Add(DropshipAlarm.LowIntegrity);
+                    proximityAlarm = dropshipIntegrity.ProximityAlarmActive;
+                    lowIntegrityAlarm = dropshipIntegrity.LowIntegrityAlarmActive;
                 }
 
                 hasDirectFireWeapon = TryGetDirectFireMount(grid, out _, out var foundWeapon, out _, out _, out var directAmmo);
@@ -1956,6 +2028,8 @@ public sealed partial class DropshipTacticalLandSystem
                 flightControlsAvailable ? dropship : null,
                 flightControlsAvailable ? directFireWeapon : null);
 
+            var malfunctionsChanged = !hud.Malfunctions.SequenceEqual(malfunctions);
+            var alarmsChanged = !AlarmStateMatches(hud.Alarms, proximityAlarm, lowIntegrityAlarm);
             if (visorChanged ||
                 hud.Dropship != dropship ||
                 hud.FlightControlsAvailable != flightControlsAvailable ||
@@ -1966,8 +2040,8 @@ public sealed partial class DropshipTacticalLandSystem
                 !MathHelper.CloseToPercent(hud.ThrustPercent, thrustPercent) ||
                 hud.HasDirectFireWeapon != hasDirectFireWeapon ||
                 hud.DirectFireAmmo != directFireAmmo ||
-                !hud.Malfunctions.SequenceEqual(malfunctions) ||
-                !hud.Alarms.SequenceEqual(alarms) ||
+                malfunctionsChanged ||
+                alarmsChanged ||
                 hud.MasterAlarmSilenced != masterAlarmSilenced ||
                 hud.ViewOffset != viewOffset ||
                 hud.RearView != rearView ||
@@ -1985,8 +2059,16 @@ public sealed partial class DropshipTacticalLandSystem
                 hud.ThrustPercent = thrustPercent;
                 hud.HasDirectFireWeapon = hasDirectFireWeapon;
                 hud.DirectFireAmmo = directFireAmmo;
-                hud.Malfunctions = malfunctions;
-                hud.Alarms = alarms;
+                if (malfunctionsChanged)
+                    hud.Malfunctions = new List<DropshipMalfunction>(malfunctions);
+                if (alarmsChanged)
+                {
+                    hud.Alarms = new List<DropshipAlarm>(2);
+                    if (proximityAlarm)
+                        hud.Alarms.Add(DropshipAlarm.Proximity);
+                    if (lowIntegrityAlarm)
+                        hud.Alarms.Add(DropshipAlarm.LowIntegrity);
+                }
                 hud.MasterAlarmSilenced = masterAlarmSilenced;
                 hud.ViewOffset = viewOffset;
                 hud.RearView = rearView;
@@ -2009,16 +2091,41 @@ public sealed partial class DropshipTacticalLandSystem
 
             CleanupGunshipNightVision((wearer, hud));
             CleanupGunshipStaticZoom((wearer, hud));
-            RemCompDeferred<RemoteWeaponOperatorComponent>(wearer);
+            if (TryGetControlledGunshipSeat(wearer, out _))
+                UpdateRemoteDirectFireWeapon(wearer, null, null);
+            else
+                RemCompDeferred<RemoteWeaponOperatorComponent>(wearer);
             RemCompDeferred<GunshipPilotHudComponent>(wearer);
         }
+    }
+
+    private static bool AlarmStateMatches(
+        IReadOnlyList<DropshipAlarm> alarms,
+        bool proximity,
+        bool lowIntegrity)
+    {
+        var expectedCount = (proximity ? 1 : 0) + (lowIntegrity ? 1 : 0);
+        if (alarms.Count != expectedCount)
+            return false;
+
+        var index = 0;
+        if (proximity && alarms[index++] != DropshipAlarm.Proximity)
+            return false;
+
+        return !lowIntegrity || alarms[index] == DropshipAlarm.LowIntegrity;
     }
 
     private void UpdateRemoteDirectFireWeapon(EntityUid pilot, EntityUid? dropship, EntityUid? weapon)
     {
         if (dropship == null || weapon == null)
         {
-            RemCompDeferred<RemoteWeaponOperatorComponent>(pilot);
+            if (TryComp(pilot, out RemoteWeaponOperatorComponent? inactive) &&
+                (inactive.Platform != null || inactive.SelectedWeapon != null))
+            {
+                inactive.Platform = null;
+                inactive.SelectedWeapon = null;
+                Dirty(pilot, inactive);
+            }
             return;
         }
 
@@ -2070,7 +2177,7 @@ public sealed partial class DropshipTacticalLandSystem
                 integrity.MaxIntegrity > 0f &&
                 integrity.Integrity > 0f &&
                 integrity.Integrity / integrity.MaxIntegrity <= 0.25f;
-            var proximityHazards = integrity.ProximityHazards;
+            IReadOnlyList<Vector2> proximityHazards = integrity.ProximityHazards;
             var proximity = integrity.ProximityAlarmActive;
 
             if (!integrity.Wrecked &&
@@ -2089,8 +2196,9 @@ public sealed partial class DropshipTacticalLandSystem
 
                 if (moving || poseChanged || now >= integrity.NextStationaryProximityScan)
                 {
-                    proximityHazards = new List<Vector2>();
-                    proximity = IsGunshipNearObstruction((dropship, dropshipGrid), proximityHazards);
+                    _proximityHazardsScratch.Clear();
+                    proximity = IsGunshipNearObstruction((dropship, dropshipGrid), _proximityHazardsScratch);
+                    proximityHazards = _proximityHazardsScratch;
                     integrity.HasLastProximityPose = true;
                     integrity.LastProximityMap = xform.MapUid;
                     integrity.LastProximityPosition = position;
@@ -2101,7 +2209,7 @@ public sealed partial class DropshipTacticalLandSystem
             else if (proximity || proximityHazards.Count != 0)
             {
                 proximity = false;
-                proximityHazards = new List<Vector2>();
+                proximityHazards = Array.Empty<Vector2>();
                 integrity.HasLastProximityPose = false;
             }
 
@@ -2111,7 +2219,7 @@ public sealed partial class DropshipTacticalLandSystem
             {
                 integrity.LowIntegrityAlarmActive = lowIntegrity;
                 integrity.ProximityAlarmActive = proximity;
-                integrity.ProximityHazards = proximityHazards;
+                integrity.ProximityHazards = new List<Vector2>(proximityHazards);
                 Dirty(dropship, integrity);
             }
 
@@ -2119,7 +2227,7 @@ public sealed partial class DropshipTacticalLandSystem
         }
     }
 
-    private bool IsGunshipNearObstruction(Entity<MapGridComponent> dropship, List<Vector2> hazards)
+    private bool IsGunshipNearObstruction(Entity<MapGridComponent> dropship, ICollection<Vector2> hazards)
     {
         var xform = Transform(dropship);
         if (xform.MapUid is not { } targetMap ||
@@ -2136,7 +2244,8 @@ public sealed partial class DropshipTacticalLandSystem
 
         var position = _transform.GetWorldPosition(xform);
         var rotation = _transform.GetWorldRotation(xform);
-        var occupied = new HashSet<Vector2i>();
+        var occupied = _proximityOccupiedTiles;
+        occupied.Clear();
         foreach (var localCenter in GetGunshipFootprintCenters(dropship, boundaryOnly: true))
         {
             var sample = position + rotation.RotateVec(localCenter);
@@ -2144,7 +2253,8 @@ public sealed partial class DropshipTacticalLandSystem
                 occupied.Add(targetTile.GridIndices);
         }
 
-        var hazardousTiles = new HashSet<Vector2i>();
+        var hazardousTiles = _proximityHazardTiles;
+        hazardousTiles.Clear();
         foreach (var tile in occupied)
         {
             foreach (var offset in GunshipProximityOffsets)
@@ -2161,7 +2271,7 @@ public sealed partial class DropshipTacticalLandSystem
             }
         }
 
-        foreach (var tile in hazardousTiles.OrderBy(tile => tile.X).ThenBy(tile => tile.Y))
+        foreach (var tile in hazardousTiles)
         {
             var coordinates = _map.GridTileToLocal(targetMap, targetGrid, tile);
             hazards.Add(_transform.ToMapCoordinates(coordinates).Position);

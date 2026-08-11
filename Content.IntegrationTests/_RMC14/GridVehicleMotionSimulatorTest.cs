@@ -1,5 +1,7 @@
+using Content.Shared._RMC14.Vehicle;
 using Content.Shared.Vehicle;
 using System.Numerics;
+using Robust.Shared.GameObjects;
 using Robust.Shared.Maths;
 
 namespace Content.IntegrationTests._RMC14;
@@ -43,14 +45,16 @@ public sealed class GridVehicleMotionSimulatorTest
         Assert.That(actual, Is.EqualTo(expected));
     }
 
-    [TestCase(2f, 0f, 0f, true)]
-    [TestCase(-2f, 0f, 0f, false)]
+    [TestCase(0f, -2f, 0f, true)]
     [TestCase(0f, 2f, 0f, false)]
-    [TestCase(0f, -2f, 0f, false)]
-    [TestCase(0f, 2f, 90f, true)]
-    [TestCase(2f, 0f, 90f, false)]
-    [TestCase(2f, 1f, 0f, true)]
-    [TestCase(1f, 2f, 0f, false)]
+    [TestCase(2f, 0f, 0f, false)]
+    [TestCase(2f, 0f, 90f, true)]
+    [TestCase(-2f, 0f, 90f, false)]
+    [TestCase(0f, 2f, 90f, false)]
+    [TestCase(2f, -2f, 45f, true)]
+    [TestCase(-2f, 2f, 45f, false)]
+    [TestCase(0.75f, -2f, 0f, true)]
+    [TestCase(2f, -1f, 0f, false)]
     public void PlowBonusRequiresFrontImpact(float obstacleX, float obstacleY, float rotationDegrees, bool expected)
     {
         var vehicleBounds = new Box2(-1f, -2f, 1f, 2f);
@@ -60,5 +64,54 @@ public sealed class GridVehicleMotionSimulatorTest
         Assert.That(
             GridVehicleMotionSimulator.IsFrontImpact(Vector2.Zero, rotation, vehicleBounds, obstacleBounds),
             Is.EqualTo(expected));
+    }
+
+    [TestCase(2000f, 0.5f, 1f, 1000f)]
+    [TestCase(2000f, 0.5f, 0.5f, 500f)]
+    [TestCase(2000f, 0.5f, 2f, 1000f)]
+    [TestCase(-1f, 0.5f, 1f, 0f)]
+    [TestCase(2000f, -1f, 1f, 0f)]
+    public void PoweredDemolitionDamageScalesWithIntervalAndPlowCondition(
+        float damagePerSecond,
+        float interval,
+        float performance,
+        float expected)
+    {
+        Assert.That(
+            GridVehicleMotionSimulator.GetPoweredDemolitionDamage(damagePerSecond, interval, performance),
+            Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void PoweredDemolitionChassisProvidesAudibleFeedbackByDefault()
+    {
+        var chassis = new VehiclePlowChassisComponent();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(chassis.PoweredDemolitionSound, Is.Not.Null);
+            Assert.That(chassis.PoweredDemolitionSoundCooldown, Is.GreaterThan(0f));
+        });
+    }
+
+    [Test]
+    public void WallCollisionCooldownsAreScopedPerVehicleAndTarget()
+    {
+        var cooldowns = new VehicleCollisionCooldownTracker();
+        var vehicle = new EntityUid(1);
+        var otherVehicle = new EntityUid(2);
+        var firstWall = new EntityUid(3);
+        var secondWall = new EntityUid(4);
+        var now = TimeSpan.FromSeconds(10);
+
+        cooldowns.Start(vehicle, firstWall, now, TimeSpan.FromSeconds(0.5));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(cooldowns.IsActive(vehicle, firstWall, now), Is.True);
+            Assert.That(cooldowns.IsActive(vehicle, secondWall, now), Is.False);
+            Assert.That(cooldowns.IsActive(otherVehicle, firstWall, now), Is.False);
+            Assert.That(cooldowns.IsActive(vehicle, firstWall, now + TimeSpan.FromSeconds(0.5)), Is.False);
+        });
     }
 }

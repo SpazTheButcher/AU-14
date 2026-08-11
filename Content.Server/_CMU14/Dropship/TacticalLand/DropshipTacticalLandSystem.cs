@@ -52,8 +52,6 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
     [Dependency] private DropshipIntegritySystem _integrity = default!;
 
     private static readonly TimeSpan FootprintTickInterval = TimeSpan.FromMilliseconds(150);
-    private static readonly TimeSpan MaxTacticalHoverDuration = TimeSpan.FromMinutes(3);
-    private static readonly TimeSpan HoverReturnRetryInterval = TimeSpan.FromSeconds(5);
     private static readonly TimeSpan HoverEffectUpdateInterval = TimeSpan.FromMilliseconds(50);
     private static readonly TimeSpan GunshipAltitudeTransitionTime = TimeSpan.FromSeconds(5);
     private TimeSpan _nextFootprintTick;
@@ -196,21 +194,6 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
             return;
         }
 
-        EntityUid? returnDestination = null;
-        if (tacticalHover)
-        {
-            if (Transform(ent).GridUid is not { } dropshipGrid ||
-                !TryComp(dropshipGrid, out DropshipComponent? dropship) ||
-                !TryGetReturnDestination(dropshipGrid, dropship, out var foundReturnDestination))
-            {
-                _popup.PopupEntity("Unable to determine a return destination for tactical hover.", ent, args.Actor, PopupType.MediumCaution);
-                EndSession(ent, session);
-                return;
-            }
-
-            returnDestination = foundReturnDestination;
-        }
-
         var landingCoords = _transform.GetMapCoordinates(eye, eyeXform);
         var faction = GetConsoleFaction(ent) ?? GetPilotFaction(args.Actor) ?? string.Empty;
 
@@ -224,8 +207,6 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         ephemeral.TacticalHover = tacticalHover;
         if (tacticalHover)
         {
-            ephemeral.ReturnDestination = returnDestination;
-            ephemeral.MaxHoverTime = MaxTacticalHoverDuration;
             ephemeral.Footprint = pilotEye.Footprint;
         }
 
@@ -318,17 +299,6 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         PushUiState(ent, args.Actor);
     }
 
-    protected override void OnTacticalHoverCancel(Entity<DropshipNavigationComputerComponent> ent, ref DropshipNavigationTacticalHoverCancelMsg args)
-    {
-        if (Transform(ent).GridUid is not { } dropshipGrid ||
-            !TryComp(dropshipGrid, out DropshipTacticalHoverComponent? hover))
-        {
-            return;
-        }
-
-        RequestTacticalHoverReturn((dropshipGrid, hover), args.Actor);
-    }
-
     private void OnSessionUIClosed(Entity<DropshipTacticalLandSessionComponent> ent, ref BoundUIClosedEvent args)
     {
         if (args.UiKey is not DropshipNavigationUiKey)
@@ -365,7 +335,6 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         base.Update(frameTime);
 
         var now = _timing.CurTime;
-        ProcessTacticalHovers(now);
         ProcessGunshipAltitudeTransitions(now);
         UpdateGunshipPilots(frameTime);
         UpdateHoverEffects();
@@ -631,88 +600,20 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         _popup.PopupEntity(offset > 0 ? "Tactical hover view moved up one level." : "Tactical hover view moved down one level.", ent, pilot);
     }
 
-    private bool TryGetReturnDestination(EntityUid dropshipGrid, DropshipComponent dropship, out EntityUid destination)
-    {
-        if (dropship.Destination is { } current &&
-            !TerminatingOrDeleted(current) &&
-            !HasComp<EphemeralDropshipDestinationComponent>(current))
-        {
-            destination = current;
-            return true;
-        }
-
-        if (dropship.DepartureLocation is { } departure &&
-            !TerminatingOrDeleted(departure) &&
-            !HasComp<EphemeralDropshipDestinationComponent>(departure))
-        {
-            destination = departure;
-            return true;
-        }
-
-        destination = EntityUid.Invalid;
-        EntityUid? closestDestination = null;
-        var closestDistance = float.MaxValue;
-        var dropshipMap = Transform(dropshipGrid).MapUid;
-        var dropshipPosition = _transform.GetWorldPosition(dropshipGrid);
-
-        var query = EntityQueryEnumerator<DropshipDestinationComponent, TransformComponent>();
-        while (query.MoveNext(out var uid, out var dest, out var xform))
-        {
-            if (HasComp<EphemeralDropshipDestinationComponent>(uid))
-                continue;
-
-            if (dest.Ship == dropshipGrid)
-            {
-                destination = uid;
-                return true;
-            }
-
-            if (xform.MapUid != dropshipMap)
-                continue;
-
-            var distance = Vector2.DistanceSquared(dropshipPosition, _transform.GetWorldPosition(uid));
-            if (distance >= closestDistance)
-                continue;
-
-            closestDestination = uid;
-            closestDistance = distance;
-        }
-
-        if (closestDestination is not { } best)
-            return false;
-
-        destination = best;
-        return true;
-    }
-
     private void StartTacticalHover(Entity<EphemeralDropshipDestinationComponent> ent, EntityUid dropshipGrid)
     {
-        if (ent.Comp.ReturnDestination is not { } returnDestination ||
-            TerminatingOrDeleted(returnDestination))
-        {
-            Log.Warning($"Tactical hover destination {ToPrettyString(ent.Owner)} has no valid return destination.");
-            return;
-        }
-
         if (!TryComp(dropshipGrid, out DropshipComponent? dropship) || dropship.Crashed)
             return;
 
         var hover = EnsureComp<DropshipTacticalHoverComponent>(dropshipGrid);
         CleanupHoverEffects((dropshipGrid, hover));
 
-        var duration = ent.Comp.MaxHoverTime;
-        if (duration <= TimeSpan.Zero || duration > MaxTacticalHoverDuration)
-            duration = MaxTacticalHoverDuration;
-
-        hover.ReturnDestination = returnDestination;
         hover.HoverDestination = ent.Owner;
         if (Transform(dropshipGrid).MapUid is { } hoverMap &&
             _zLevels.TryMapOffset(hoverMap, -1, out var groundMap))
         {
             hover.GroundMap = groundMap.Value.Owner;
         }
-        hover.ReturnAt = _timing.CurTime + duration;
-        hover.NextReturnAttempt = hover.ReturnAt;
         hover.Footprint = ent.Comp.Footprint.X > 0 && ent.Comp.Footprint.Y > 0
             ? ent.Comp.Footprint
             : dropship.TacticalLandFootprint;
@@ -720,84 +621,6 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         _zLevels.EnsureZLevelViewer(dropshipGrid);
         SpawnHoverShadow((dropshipGrid, hover));
         SpawnHoverDownwashes((dropshipGrid, hover));
-    }
-
-    private void ProcessTacticalHovers(TimeSpan now)
-    {
-        var query = EntityQueryEnumerator<DropshipTacticalHoverComponent>();
-        while (query.MoveNext(out var uid, out var hover))
-        {
-            if (hover.AltitudeTransitionAt != null)
-                continue;
-
-            if (now < hover.ReturnAt || now < hover.NextReturnAttempt)
-                continue;
-
-            hover.NextReturnAttempt = now + HoverReturnRetryInterval;
-
-            if (!TryGetHoverReturnDestination((uid, hover), out var returnDestination))
-                continue;
-
-            TryReturnTacticalHover((uid, hover), returnDestination, null);
-        }
-    }
-
-    private void RequestTacticalHoverReturn(Entity<DropshipTacticalHoverComponent> hover, EntityUid user)
-    {
-        if (hover.Comp.AltitudeTransitionAt != null)
-        {
-            _popup.PopupEntity("The dropship cannot return while changing flight levels.", hover.Owner, user, PopupType.MediumCaution);
-            return;
-        }
-
-        if (!TryGetHoverReturnDestination(hover, out var returnDestination))
-        {
-            _popup.PopupEntity("Tactical hover return destination is no longer available.", hover.Owner, user, PopupType.MediumCaution);
-            return;
-        }
-
-        var now = _timing.CurTime;
-        hover.Comp.ReturnAt = now;
-        hover.Comp.NextReturnAttempt = now;
-        ShortenTacticalHoverCooldown(hover.Owner);
-
-        if (TryReturnTacticalHover(hover, returnDestination, user))
-            _popup.PopupEntity("Tactical hover returning.", hover.Owner, user, PopupType.Medium);
-        else
-            _popup.PopupEntity("Tactical hover return queued.", hover.Owner, user, PopupType.Medium);
-    }
-
-    private bool TryGetHoverReturnDestination(Entity<DropshipTacticalHoverComponent> hover, out EntityUid returnDestination)
-    {
-        if (hover.Comp.ReturnDestination is { } destination &&
-            !TerminatingOrDeleted(destination))
-        {
-            returnDestination = destination;
-            return true;
-        }
-
-        Log.Warning($"Tactical hover on {ToPrettyString(hover.Owner)} has no valid return destination.");
-        RemCompDeferred<DropshipTacticalHoverComponent>(hover.Owner);
-        returnDestination = EntityUid.Invalid;
-        return false;
-    }
-
-    private bool TryReturnTacticalHover(Entity<DropshipTacticalHoverComponent> hover, EntityUid returnDestination, EntityUid? user)
-    {
-        if (!TryGetNavigationConsole(hover.Owner, out var console))
-            return false;
-
-        if (!_dropship.FlyTo(console, returnDestination, user))
-            return false;
-
-        if (hover.Comp.HoverDestination is { } hoverDestination &&
-            !TerminatingOrDeleted(hoverDestination))
-        {
-            QueueDel(hoverDestination);
-        }
-
-        RemCompDeferred<DropshipTacticalHoverComponent>(hover.Owner);
-        return true;
     }
 
     public void EndTacticalHoverForReroute(EntityUid dropship)
@@ -814,40 +637,6 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
         CleanupHoverEffects((dropship, hover));
         RemComp<DropshipTacticalHoverComponent>(dropship);
-    }
-
-    private void ShortenTacticalHoverCooldown(EntityUid dropshipGrid)
-    {
-        if (!TryComp(dropshipGrid, out FTLComponent? ftl) ||
-            !TryComp(dropshipGrid, out DropshipComponent? dropship) ||
-            ftl.State != FTLState.Cooldown)
-        {
-            return;
-        }
-
-        var returnAt = _timing.CurTime + dropship.CancelFlightTime;
-        if (returnAt >= ftl.StateTime.End)
-            return;
-
-        ftl.StateTime.End = returnAt;
-        Dirty(dropshipGrid, ftl);
-    }
-
-    private bool TryGetNavigationConsole(EntityUid dropshipGrid, out Entity<DropshipNavigationComputerComponent> console)
-    {
-        console = default;
-
-        var query = EntityQueryEnumerator<DropshipNavigationComputerComponent, TransformComponent>();
-        while (query.MoveNext(out var uid, out var comp, out var xform))
-        {
-            if (xform.GridUid != dropshipGrid)
-                continue;
-
-            console = (uid, comp);
-            return true;
-        }
-
-        return false;
     }
 
     private void UpdateHoverEffects()

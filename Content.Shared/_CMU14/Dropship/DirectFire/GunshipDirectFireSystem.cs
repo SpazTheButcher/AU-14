@@ -69,30 +69,58 @@ public sealed partial class GunshipDirectFireSystem : EntitySystem
         var shipRotation = _transform.GetWorldRotation(grid);
         var forward = shipRotation.RotateVec(Vector2.UnitY);
         var mountPosition = pointPosition + forward * point.Comp.ForwardOffset;
-        var desired = target.Position - mountPosition;
-        if (desired.LengthSquared() <= 0.0001f)
+        var aimOrigin = _transform.GetWorldPosition(grid);
+        if (!TryGetClampedAim(
+                shipRotation,
+                aimOrigin,
+                target.Position,
+                ent.Comp.GimbalDegrees,
+                out var direction,
+                out _))
         {
             args.Cancelled = true;
             args.ResetCooldown = true;
             return;
         }
 
-        var distance = desired.Length();
-        desired /= distance;
-        var signedRadians = MathF.Atan2(
-            forward.X * desired.Y - forward.Y * desired.X,
-            Vector2.Dot(forward, desired));
-        var halfGimbal = MathHelper.DegreesToRadians(MathF.Max(0f, ent.Comp.GimbalDegrees) * 0.5f);
-        var clampedRadians = Math.Clamp(signedRadians, -halfGimbal, halfGimbal);
-        var direction = shipRotation.RotateVec(new Angle(clampedRadians).RotateVec(Vector2.UnitY));
-
-        // Start at the actual visible muzzle and preserve the clicked range
-        // while clamping the bearing to the launcher's traverse limits.
+        // Cursor bearing is measured around the dropship center. Measuring it
+        // around the nose-mounted muzzle makes ordinary cursor positions over
+        // the ship fall behind the mount, where atan2 jumps between both ends
+        // of the gimbal arc. The projectile still starts at the real muzzle.
+        var distance = Vector2.Distance(mountPosition, target.Position);
         var muzzleOffset = MathF.Max(0f, ent.Comp.MuzzleOffset);
         var originMap = new MapCoordinates(mountPosition + direction * muzzleOffset, gridXform.MapID);
         var targetMap = new MapCoordinates(mountPosition + direction * distance, gridXform.MapID);
         args.FromCoordinates = _transform.ToCoordinates(originMap);
         args.ToCoordinates = _transform.ToCoordinates(targetMap);
+    }
+
+    public static bool TryGetClampedAim(
+        Angle shipRotation,
+        Vector2 aimOrigin,
+        Vector2 target,
+        float gimbalDegrees,
+        out Vector2 direction,
+        out float aimDegrees)
+    {
+        direction = default;
+        aimDegrees = 0f;
+
+        var desired = target - aimOrigin;
+        if (desired.LengthSquared() <= 0.0001f)
+            return false;
+
+        desired = Vector2.Normalize(desired);
+        var forward = shipRotation.RotateVec(Vector2.UnitY);
+        var signedRadians = MathF.Atan2(
+            forward.X * desired.Y - forward.Y * desired.X,
+            Vector2.Dot(forward, desired));
+        var halfGimbal = MathHelper.DegreesToRadians(MathF.Max(0f, gimbalDegrees) * 0.5f);
+        var clampedRadians = Math.Clamp(signedRadians, -halfGimbal, halfGimbal);
+        var aimOffset = new Angle(clampedRadians);
+        direction = shipRotation.RotateVec(aimOffset.RotateVec(Vector2.UnitY));
+        aimDegrees = (float) aimOffset.Degrees;
+        return true;
     }
 
     private bool CanOperate(
