@@ -94,7 +94,7 @@
     layers:
     - state: mg_system
   - type: DropshipFabricatorPrintable
-    cost: 50
+    cost: 500
   - type: DropshipUtility
   - type: DropshipAttachedSprite
     sprite:
