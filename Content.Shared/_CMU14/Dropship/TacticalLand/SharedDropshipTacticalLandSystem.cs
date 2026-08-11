@@ -1,4 +1,7 @@
 using Content.Shared._RMC14.Dropship;
+using Content.Shared.Buckle.Components;
+using Content.Shared.Weapons.Melee;
+using Content.Shared.Weapons.Melee.Events;
 
 namespace Content.Shared._CMU14.Dropship.TacticalLand;
 
@@ -6,6 +9,8 @@ public abstract class SharedDropshipTacticalLandSystem : EntitySystem
 {
     public override void Initialize()
     {
+        SubscribeLocalEvent<MeleeWeaponComponent, AttemptMeleeEvent>(OnPilotMeleeAttempt);
+
         Subs.BuiEvents<DropshipNavigationComputerComponent>(DropshipNavigationUiKey.Key,
             subs =>
             {
@@ -17,6 +22,20 @@ public abstract class SharedDropshipTacticalLandSystem : EntitySystem
                 subs.Event<DropshipNavigationTacticalLandRotateMsg>(OnTacticalLandRotate);
                 subs.Event<DropshipNavigationTacticalHoverCancelMsg>(OnTacticalHoverCancel);
             });
+    }
+
+    private void OnPilotMeleeAttempt(Entity<MeleeWeaponComponent> weapon, ref AttemptMeleeEvent args)
+    {
+        if (!TryComp(args.User, out BuckleComponent? buckle) ||
+            buckle.BuckledTo is not { } seat ||
+            !HasComp<GunshipPilotSeatComponent>(seat))
+        {
+            return;
+        }
+
+        // Both hands are occupied by the pilot controls. Cancel only melee so
+        // operating the dropship's remote direct-fire weapon remains possible.
+        args.Cancelled = true;
     }
 
     protected virtual void OnTacticalLandStart(Entity<DropshipNavigationComputerComponent> ent, ref DropshipNavigationTacticalLandStartMsg args)

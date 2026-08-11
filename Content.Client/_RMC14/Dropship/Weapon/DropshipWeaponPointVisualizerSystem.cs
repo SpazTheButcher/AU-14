@@ -1,3 +1,4 @@
+using System.Numerics;
 using Content.Shared._CMU14.Dropship.DirectFire;
 using Content.Shared._RMC14.Dropship;
 using Content.Shared._RMC14.Dropship.AttachmentPoint;
@@ -65,6 +66,13 @@ public sealed partial class DropshipWeaponPointVisualizerSystem : VisualizerSyst
                 args.Component))
         {
             _sprite.LayerSetRotation((uid, spriteComp), layer, Angle.FromDegrees(aimOffsetDegrees));
+        }
+
+        if (TryComp(uid, out GunshipDirectFirePointComponent? directFirePoint))
+        {
+            // Preserve the attachment layer's original half-tile lateral
+            // alignment. Only its forward coordinate is being extended.
+            _sprite.LayerSetOffset((uid, spriteComp), layer, new Vector2(0.5f, directFirePoint.ForwardOffset));
         }
 
         _sprite.LayerSetVisible((uid, spriteComp), layer, true);

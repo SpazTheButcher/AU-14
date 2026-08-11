@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Content.Shared._CMU14.Dropship.DirectFire;
+using Content.Shared._CMU14.Dropship.GunshipControls;
 using Content.Shared._CMU14.Dropship.Integrity;
 using Content.Shared._CMU14.Dropship.TacticalLand;
 using Content.Shared._CMU14.ZLevels.Core;
@@ -16,7 +17,6 @@ using Content.Shared.Access.Components;
 using Content.Shared.Access.Systems;
 using Content.Shared.Actions;
 using Content.Shared.Buckle.Components;
-using Content.Shared.CombatMode;
 using Content.Shared.Damage;
 using Content.Shared.Eye;
 using Content.Shared.Inventory;
@@ -26,6 +26,7 @@ using Content.Shared.Interaction.Components;
 using Content.Shared.Maps;
 using Content.Shared.Physics;
 using Content.Shared.Popups;
+using Content.Shared.UserInterface;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Server.Movement.Components;
 using Content.Server.Destructible;
@@ -49,7 +50,6 @@ public sealed partial class DropshipTacticalLandSystem
     [Dependency] private SharedActionsSystem _gunshipActions = default!;
     [Dependency] private SharedHandsSystem _gunshipHands = default!;
     [Dependency] private SharedVirtualItemSystem _gunshipVirtualItems = default!;
-    [Dependency] private SharedCombatModeSystem _gunshipCombatMode = default!;
     [Dependency] private ViewSubscriberSystem _gunshipViewSubscriber = default!;
 
     private static readonly TimeSpan GunshipBlockedPopupCooldown = TimeSpan.FromSeconds(1);
@@ -94,7 +94,45 @@ public sealed partial class DropshipTacticalLandSystem
         SubscribeNetworkEvent<GunshipThrustAdjustEvent>(OnGunshipThrustAdjust);
         SubscribeNetworkEvent<GunshipCycleCameraInputEvent>(OnGunshipCycleCameraInput);
         SubscribeNetworkEvent<GunshipPilotPanningInputEvent>(OnGunshipPilotPanningInput);
+        SubscribeNetworkEvent<GunshipOpenNavigationInputEvent>(OnGunshipOpenNavigationInput);
         SubscribeNetworkEvent<GunshipDirectFireAimEvent>(OnGunshipDirectFireAim);
+    }
+
+    private void OnGunshipOpenNavigationInput(GunshipOpenNavigationInputEvent ev, EntitySessionEventArgs args)
+    {
+        if (args.SenderSession.AttachedEntity is not { } pilot ||
+            !TryGetControlledGunshipSeat(pilot, out var seat) ||
+            Transform(seat).GridUid is not { } dropship)
+        {
+            return;
+        }
+
+        EntityUid? navigationConsole = null;
+        var query = EntityQueryEnumerator<DropshipNavigationComputerComponent, TransformComponent>();
+        while (query.MoveNext(out var uid, out _, out var xform))
+        {
+            if (xform.GridUid != dropship)
+                continue;
+
+            navigationConsole ??= uid;
+            if (HasComp<GunshipControlsComponent>(uid))
+            {
+                navigationConsole = uid;
+                break;
+            }
+        }
+
+        if (navigationConsole is not { } console)
+            return;
+
+        var before = new BeforeActivatableUIOpenEvent(pilot);
+        RaiseLocalEvent(console, before);
+
+        if (!_ui.TryOpenUi(console, DropshipNavigationUiKey.Key, pilot))
+            return;
+
+        var after = new AfterActivatableUIOpenEvent(pilot, pilot);
+        RaiseLocalEvent(console, after);
     }
 
     private void OnGunshipDirectFireAim(GunshipDirectFireAimEvent ev, EntitySessionEventArgs args)
@@ -126,8 +164,7 @@ public sealed partial class DropshipTacticalLandSystem
         ammoUid = null;
         ammo = null;
 
-        if (!_gunshipCombatMode.IsInCombatMode(pilot) ||
-            !TryGetControlledGunshipSeat(pilot, out var seat) ||
+        if (!TryGetControlledGunshipSeat(pilot, out var seat) ||
             seat.Comp.ViewOffset != 0 ||
             seat.Comp.RearView ||
             Transform(seat).GridUid is not { } seatGrid ||
@@ -215,14 +252,14 @@ public sealed partial class DropshipTacticalLandSystem
         if (target.MapId != Transform(grid).MapID)
             return false;
 
-        var origin = _transform.GetWorldPosition(point.Owner);
+        var shipRotation = _transform.GetWorldRotation(grid);
+        var forward = shipRotation.RotateVec(Vector2.UnitY);
+        var origin = _transform.GetWorldPosition(point.Owner) + forward * point.Comp.ForwardOffset;
         var desired = target.Position - origin;
         if (desired.LengthSquared() <= 0.0001f)
             return false;
 
         desired = Vector2.Normalize(desired);
-        var shipRotation = _transform.GetWorldRotation(grid);
-        var forward = shipRotation.RotateVec(Vector2.UnitY);
         var signedRadians = MathF.Atan2(
             forward.X * desired.Y - forward.Y * desired.X,
             Vector2.Dot(forward, desired));

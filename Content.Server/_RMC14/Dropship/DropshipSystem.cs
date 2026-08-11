@@ -1377,6 +1377,13 @@ public sealed partial class DropshipSystem : SharedDropshipSystem
                 continue;
             }
 
+            // The collision-course announcement, incoming audio, and orbital
+            // explosion belong exclusively to the hijack sequence. Crashed is
+            // also used by ordinary hull-integrity wrecks to permanently lock
+            // flight, so it is not sufficient evidence that a hijack is active.
+            if (dropship.HijackLandAt == null)
+                continue;
+
             if (dropship.Destination is not { } destination ||
                 TerminatingOrDeleted(destination) ||
                 !TryComp(destination, out TransformComponent? destinationTransform))

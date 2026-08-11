@@ -6,6 +6,8 @@ namespace Content.Shared.Vehicle;
 
 public static class GridVehicleMotionSimulator
 {
+    private const float MinimumMovingSpeed = 0.01f;
+
     public readonly record struct DriveProfile(
         float MaxSpeed,
         float MaxReverseSpeed,
@@ -33,6 +35,39 @@ public static class GridVehicleMotionSimulator
             return MathF.Min(0f, currentSpeed + deceleration * frameTime);
 
         return 0f;
+    }
+
+    public static float GetEffectiveSteering(float steering, float currentSpeed, float throttle)
+    {
+        // Keep steering tied to the direction the vehicle is actually travelling.
+        // At rest, use reverse throttle so the first reverse-turn frame is also inverted.
+        var reversing = currentSpeed < -MinimumMovingSpeed ||
+                        (MathF.Abs(currentSpeed) <= MinimumMovingSpeed && throttle < 0f);
+        return reversing ? -steering : steering;
+    }
+
+    public static bool CanSteer(bool turnInPlace, float currentSpeed)
+    {
+        return turnInPlace || MathF.Abs(currentSpeed) > MinimumMovingSpeed;
+    }
+
+    /// <summary>
+    /// Returns whether an obstacle lies against the chassis' forward face.
+    /// Normalized local coordinates partition corner contacts consistently for
+    /// rectangular vehicles, including while the chassis is freely rotated.
+    /// </summary>
+    public static bool IsFrontImpact(
+        Vector2 vehicleWorldPosition,
+        Angle vehicleWorldRotation,
+        Box2 vehicleLocalBounds,
+        Box2 obstacleWorldBounds)
+    {
+        var obstacleLocal = (-vehicleWorldRotation).RotateVec(obstacleWorldBounds.Center - vehicleWorldPosition);
+        var offset = obstacleLocal - vehicleLocalBounds.Center;
+        var halfWidth = MathF.Max(vehicleLocalBounds.Width * 0.5f, 0.001f);
+        var halfHeight = MathF.Max(vehicleLocalBounds.Height * 0.5f, 0.001f);
+
+        return offset.X > 0f && offset.X / halfWidth > MathF.Abs(offset.Y) / halfHeight;
     }
 
     public static float StepPushSpeed(
@@ -111,7 +146,7 @@ public static class GridVehicleMotionSimulator
 
         var steppedSpeed = StepTowardsTargetSpeed(currentSpeed, targetSpeed, accel, frameTime);
         var changingDirection =
-            MathF.Abs(steppedSpeed) > 0.01f &&
+            MathF.Abs(steppedSpeed) > MinimumMovingSpeed &&
             ((reversing && steppedSpeed > 0f) ||
              (!reversing && steppedSpeed < 0f));
 

@@ -6,7 +6,6 @@ using Content.Shared._RMC14.Dropship.AttachmentPoint;
 using Content.Shared._RMC14.Dropship.Weapon;
 using Content.Shared._RMC14.PowerLoader;
 using Content.Shared.Buckle.Components;
-using Content.Shared.CombatMode;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
 using Content.Shared.Weapons.Ranged.Systems;
@@ -26,7 +25,6 @@ namespace Content.Shared._CMU14.Dropship.DirectFire;
 public sealed partial class GunshipDirectFireSystem : EntitySystem
 {
     [Dependency] private SharedAppearanceSystem _appearance = default!;
-    [Dependency] private SharedCombatModeSystem _combatMode = default!;
     [Dependency] private SharedContainerSystem _containers = default!;
     [Dependency] private SharedGunSystem _guns = default!;
     [Dependency] private INetManager _net = default!;
@@ -68,7 +66,10 @@ public sealed partial class GunshipDirectFireSystem : EntitySystem
         }
 
         var pointPosition = _transform.GetWorldPosition(point.Owner);
-        var desired = target.Position - pointPosition;
+        var shipRotation = _transform.GetWorldRotation(grid);
+        var forward = shipRotation.RotateVec(Vector2.UnitY);
+        var mountPosition = pointPosition + forward * point.Comp.ForwardOffset;
+        var desired = target.Position - mountPosition;
         if (desired.LengthSquared() <= 0.0001f)
         {
             args.Cancelled = true;
@@ -78,8 +79,6 @@ public sealed partial class GunshipDirectFireSystem : EntitySystem
 
         var distance = desired.Length();
         desired /= distance;
-        var shipRotation = _transform.GetWorldRotation(grid);
-        var forward = shipRotation.RotateVec(Vector2.UnitY);
         var signedRadians = MathF.Atan2(
             forward.X * desired.Y - forward.Y * desired.X,
             Vector2.Dot(forward, desired));
@@ -87,10 +86,11 @@ public sealed partial class GunshipDirectFireSystem : EntitySystem
         var clampedRadians = Math.Clamp(signedRadians, -halfGimbal, halfGimbal);
         var direction = shipRotation.RotateVec(new Angle(clampedRadians).RotateVec(Vector2.UnitY));
 
-        // Start outside the hull and preserve the clicked range while clamping
-        // the bearing to the launcher's traverse limits.
-        var originMap = new MapCoordinates(pointPosition + direction * 1.25f, gridXform.MapID);
-        var targetMap = new MapCoordinates(pointPosition + direction * distance, gridXform.MapID);
+        // Start at the actual visible muzzle and preserve the clicked range
+        // while clamping the bearing to the launcher's traverse limits.
+        var muzzleOffset = MathF.Max(0f, ent.Comp.MuzzleOffset);
+        var originMap = new MapCoordinates(mountPosition + direction * muzzleOffset, gridXform.MapID);
+        var targetMap = new MapCoordinates(mountPosition + direction * distance, gridXform.MapID);
         args.FromCoordinates = _transform.ToCoordinates(originMap);
         args.ToCoordinates = _transform.ToCoordinates(targetMap);
     }
@@ -104,8 +104,7 @@ public sealed partial class GunshipDirectFireSystem : EntitySystem
     {
         message = null;
 
-        if (!_combatMode.IsInCombatMode(user) ||
-            !TryComp(user, out RemoteWeaponOperatorComponent? remote) ||
+        if (!TryComp(user, out RemoteWeaponOperatorComponent? remote) ||
             remote.Platform != grid ||
             remote.SelectedWeapon != weapon ||
             !TryComp(user, out BuckleComponent? buckle) ||

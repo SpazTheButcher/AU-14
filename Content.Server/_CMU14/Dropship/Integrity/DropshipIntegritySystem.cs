@@ -4,12 +4,10 @@ using Content.Server._RMC14.Explosion;
 using Content.Server.Explosion.Components;
 using Content.Server.Explosion.EntitySystems;
 using Content.Server.Destructible;
-using Content.Server.Destructible.Thresholds;
-using Content.Server.Destructible.Thresholds.Behaviors;
-using Content.Server.Destructible.Thresholds.Triggers;
 using Content.Server.Shuttles.Components;
 using Content.Server.Station.Components;
 using Content.Shared._CMU14.Dropship.Integrity;
+using Content.Server._CMU14.Destruction;
 using Content.Shared._CMU14.Dropship.GunshipControls;
 using Content.Shared._CMU14.Dropship.TacticalLand;
 using Content.Shared._CMU14.ZLevels.Core.EntitySystems;
@@ -17,13 +15,13 @@ using Content.Shared._RMC14.Dropship;
 using Content.Shared._RMC14.Repairable;
 using Content.Shared._RMC14.Vehicle;
 using Content.Shared.Damage;
-using Content.Shared.Damage.Prototypes;
 using Content.Shared.DoAfter;
 using Content.Shared.Examine;
 using Content.Shared.FixedPoint;
 using Content.Shared.Interaction;
 using Content.Shared.Maps;
 using Content.Shared.Popups;
+using Content.Shared.Projectiles;
 using Content.Shared.Shuttles.Components;
 using Content.Shared.Shuttles.Systems;
 using Content.Shared.Station.Components;
@@ -62,7 +60,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
     [Dependency] private ProjectileGrenadeSystem _projectileGrenades = default!;
     [Dependency] private TriggerSystem _trigger = default!;
     [Dependency] private CMUSharedZLevelsSystem _zLevels = default!;
-    [Dependency] private IPrototypeManager _prototypes = default!;
+    [Dependency] private DestructionMomentumSystem _destructionMomentum = default!;
 
     private static readonly ProtoId<ToolQualityPrototype> WeldingQuality = "Welding";
     private static readonly ProtoId<TagPrototype> WallTag = "Wall";
@@ -79,6 +77,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
     {
         SubscribeLocalEvent<DropshipComponent, ComponentStartup>(OnDropshipStartup);
         SubscribeLocalEvent<StationMemberComponent, ComponentStartup>(OnStationMemberStartup);
+        SubscribeLocalEvent<DropshipHullComponent, ProjectileHitTargetEvent>(OnProjectileHit);
         SubscribeLocalEvent<DropshipHullComponent, DamageChangedEvent>(OnStructuralDamageChanged);
         SubscribeLocalEvent<DropshipHullComponent, InteractUsingEvent>(OnHullInteractUsing);
         SubscribeLocalEvent<DropshipHullComponent, DropshipIntegrityRepairDoAfterEvent>(OnRepairDoAfter);
@@ -143,6 +142,27 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             return;
 
         var amount = args.DamageDelta.GetTotal().Float();
+        if (amount > 0f)
+            DamageIntegrity(dropship, amount);
+    }
+
+    /// <summary>
+    /// Intact dropship walls deliberately have no Damageable component, so an
+    /// ordinary projectile impact cannot raise DamageChangedEvent for them.
+    /// Forward that impact into the grid's shared integrity pool. Damageable
+    /// hull pieces (doors, wreck walls, and similar structures) remain on the
+    /// normal damage event path to avoid counting the same shot twice.
+    /// </summary>
+    private void OnProjectileHit(Entity<DropshipHullComponent> target, ref ProjectileHitTargetEvent args)
+    {
+        if (HasComp<DamageableComponent>(target) ||
+            !Transform(target).Anchored ||
+            !TryGetDropship(target, out var dropship))
+        {
+            return;
+        }
+
+        var amount = args.Damage.GetTotal().Float();
         if (amount > 0f)
             DamageIntegrity(dropship, amount);
     }
@@ -253,13 +273,17 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
                 break;
             }
 
-            if (TrySmashFlightObstacle(obstruction, dropship, ref remainingSpeed))
+            if (TrySmashFlightObstacle(
+                    obstruction,
+                    dropship,
+                    integrity.ObstacleDamageMultiplier,
+                    ref remainingSpeed))
             {
                 removedAnyObstruction = true;
                 continue;
             }
 
-            if (!TryGetObstacleBreakCost(obstruction,
+            if (!_destructionMomentum.TryGetBreakCost(obstruction,
                     remainingSpeed,
                     integrity.ObstacleDamageMultiplier,
                     out var breakCost))
@@ -296,6 +320,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
     private bool TrySmashFlightObstacle(
         EntityUid obstruction,
         EntityUid dropship,
+        float damageMultiplier,
         ref float remainingSpeed)
     {
         if (!TryComp(obstruction, out VehicleSmashableComponent? smashable) ||
@@ -307,6 +332,14 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
 
         if (smashable.SmashSound != null)
             _audio.PlayPvs(smashable.SmashSound, Transform(obstruction).Coordinates);
+
+        // Snapshot the physical cost before applying the guaranteed smash;
+        // afterward the entity may already be terminating or at its threshold.
+        var hasBreakCost = _destructionMomentum.TryGetBreakCost(
+            obstruction,
+            remainingSpeed,
+            damageMultiplier,
+            out var breakCost);
 
         var damage = new DamageSpecifier
         {
@@ -323,7 +356,21 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         if (!TerminatingOrDeleted(obstruction))
             _destructible.DestroyEntity(obstruction);
 
-        remainingSpeed *= Math.Clamp(smashable.SlowdownMultiplier, 0f, 1f);
+        // Dropships preserve momentum by spending only the speed required to
+        // remove the obstacle. The ordinary vehicle slowdown multiplier is
+        // multiplicative and used to halve speed once per entity; across a row
+        // of railings or platform edges that compounded to effectively zero.
+        if (hasBreakCost)
+        {
+            remainingSpeed = MathF.Max(0f, remainingSpeed - breakCost);
+        }
+        else
+        {
+            // Some explicitly smashable props have no damage/destruction
+            // threshold from which a physical cost can be derived.
+            remainingSpeed *= Math.Clamp(smashable.SlowdownMultiplier, 0f, 1f);
+        }
+
         return true;
     }
 
@@ -401,97 +448,6 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             preservedAnchors,
             _timing.CurTime + TimeSpan.FromMilliseconds(100),
             _timing.CurTime + ImpactAdoptionGuardTime);
-    }
-
-    private bool TryGetObstacleBreakCost(
-        EntityUid obstruction,
-        float availableSpeed,
-        float damageMultiplier,
-        out float requiredSpeed)
-    {
-        requiredSpeed = 0f;
-        if (!TryComp(obstruction, out DamageableComponent? damageable) ||
-            !TryComp(obstruction, out DestructibleComponent? destructible))
-        {
-            return false;
-        }
-
-        var destroyedAt = GetObstacleRemovalThreshold(destructible);
-        if (destroyedAt == FixedPoint2.MaxValue)
-            return false;
-
-        var remainingDamage = destroyedAt.Float() - damageable.TotalDamage.Float();
-        if (remainingDamage <= 0f)
-            return true;
-
-        if (GetEffectiveObstacleDamage(damageable,
-                availableSpeed * availableSpeed * damageMultiplier) < remainingDamage)
-        {
-            return false;
-        }
-
-        // Find the smallest speed whose post-modifier damage reaches the
-        // remaining destruction threshold. Twenty iterations are well beyond
-        // the precision useful to movement or FixedPoint2 damage.
-        var low = 0f;
-        var high = availableSpeed;
-        for (var i = 0; i < 12; i++)
-        {
-            var middle = (low + high) * 0.5f;
-            var rawDamage = middle * middle * damageMultiplier;
-            if (GetEffectiveObstacleDamage(damageable, rawDamage) >= remainingDamage)
-                high = middle;
-            else
-                low = middle;
-        }
-
-        requiredSpeed = high;
-        return true;
-    }
-
-    /// <summary>
-    /// Finds the damage threshold that actually removes an obstruction. The
-    /// generic DestructibleSystem helper intentionally treats Breakage as
-    /// destruction, but RMC walls use Breakage to turn into a still-solid
-    /// girder before their later Destruction threshold.
-    /// </summary>
-    private static FixedPoint2 GetObstacleRemovalThreshold(DestructibleComponent destructible)
-    {
-        var destructionAt = FixedPoint2.MaxValue;
-        var breakageAt = FixedPoint2.MaxValue;
-
-        foreach (var threshold in destructible.Thresholds)
-        {
-            if (threshold.Trigger is not DamageTrigger trigger)
-                continue;
-
-            foreach (var behavior in threshold.Behaviors)
-            {
-                if (behavior is not DoActsBehavior acts)
-                    continue;
-
-                if (acts.HasAct(ThresholdActs.Destruction))
-                    destructionAt = FixedPoint2.Min(destructionAt, FixedPoint2.New(trigger.Damage));
-                else if (acts.HasAct(ThresholdActs.Breakage))
-                    breakageAt = FixedPoint2.Min(breakageAt, FixedPoint2.New(trigger.Damage));
-            }
-        }
-
-        return destructionAt != FixedPoint2.MaxValue ? destructionAt : breakageAt;
-    }
-
-    private float GetEffectiveObstacleDamage(DamageableComponent damageable, float rawDamage)
-    {
-        var damage = new DamageSpecifier();
-        damage.DamageDict["Blunt"] = FixedPoint2.New(rawDamage);
-        if (damageable.DamageModifierSetId != null &&
-            _prototypes.TryIndex<DamageModifierSetPrototype>(damageable.DamageModifierSetId, out var modifierSet))
-        {
-            damage = DamageSpecifier.ApplyModifierSet(damage, modifierSet);
-        }
-
-        damage = _damageable.ApplyUniversalAllModifiers(damage);
-        return MathF.Max(0f, damage.GetTotal().Float());
     }
 
     private void ApplyObstacleDamage(EntityUid obstruction, float rawDamage, EntityUid dropship)
@@ -621,7 +577,6 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
                 (float) integrity.Comp.CrashWarningTime.TotalSeconds);
         }
 
-        _audio.PlayPvs(dropship.CrashWarningSound, integrity.Owner);
         _popup.PopupEntity("CRITICAL HULL FAILURE! IMPACT IN THREE SECONDS!", integrity.Owner, PopupType.LargeCaution);
     }
 

@@ -240,7 +240,7 @@ public sealed partial class GridVehicleMoverComponent : Component
     public bool IsPushMove;
 
     /// <summary>
-    /// whether the vehicle is currently moving
+    /// whether the vehicle is currently moving or turning in place
     /// </summary>
     [AutoNetworkedField]
     public bool IsMoving;
@@ -306,7 +306,11 @@ public sealed partial class GridVehicleMoverComponent : Component
     [DataField]
     public bool CanSmashWalls;
 
-    /// <summary>Damage dealt to the wall per collision tick while ramming.</summary>
+    /// <summary>
+    /// Raw obstacle damage generated per squared unit of impact speed. The
+    /// vehicle spends only the speed required to reach the target's remaining
+    /// destruction threshold.
+    /// </summary>
     [DataField]
     public float WallSmashDamage = 75f;
 

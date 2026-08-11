@@ -275,16 +275,6 @@ public sealed class GunshipPilotHudOverlay : Overlay
         DrawWarnings(handle, bounds, hud);
         DrawDirectFireReticle(handle, local, hud);
 
-        var mode = hud.RearView ? "REAR CAMERA" : hud.ViewOffset switch
-        {
-            > 0 => "UPPER CAMERA",
-            < 0 => "LOWER CAMERA",
-            _ => "PILOT VIEW",
-        };
-        var modeSize = handle.DrawString(_smallFont, Vector2.Zero, mode, Color.Transparent);
-        var modePosition = new Vector2(bounds.Left + (bounds.Width - modeSize.X) * 0.5f, bounds.Top + 14f);
-        handle.DrawString(_smallFont, modePosition + Vector2.One, mode, Color.Black);
-        handle.DrawString(_smallFont, modePosition, mode, HudColor);
     }
 
     private void DrawUnlinkedVisorTint(

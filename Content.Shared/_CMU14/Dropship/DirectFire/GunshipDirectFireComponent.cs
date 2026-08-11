@@ -13,6 +13,13 @@ public sealed partial class GunshipDirectFirePointComponent : Component
 {
     [DataField, AutoNetworkedField]
     public float AimOffsetDegrees;
+
+    /// <summary>
+    /// Distance from the attachment wall to the visible weapon base, along
+    /// ship-forward. The projectile origin uses this same mounting position.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public float ForwardOffset = 1f;
 }
 
 /// <summary>
@@ -31,6 +38,13 @@ public sealed partial class GunshipDirectFireWeaponComponent : Component
 
     [DataField, AutoNetworkedField]
     public float GimbalDegrees = 30f;
+
+    /// <summary>
+    /// Distance from the visible mount base to the muzzle along the clamped
+    /// firing direction.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public float MuzzleOffset = 1.25f;
 }
 
 [Serializable, NetSerializable]

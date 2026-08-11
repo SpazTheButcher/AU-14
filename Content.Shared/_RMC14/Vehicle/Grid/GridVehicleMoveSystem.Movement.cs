@@ -62,7 +62,12 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
                 : UpdateDynamicDriveMovement(uid, mover, grid, gridComp, input.Throttle, input.Steering, frameTime);
 
         UpdateDerivedTileState(grid, gridComp, mover);
-        mover.IsMoving = MathF.Abs(mover.CurrentSpeed) > MinVehicleSpeed;
+        var movingLinearly = MathF.Abs(mover.CurrentSpeed) > MinVehicleSpeed;
+        var turningInPlace = mover.TurnInPlace &&
+            !movingLinearly &&
+            (MathF.Abs(mover.AngularVelocityDegrees) > 0.001f ||
+             mover.InPlaceTurnBlockUntil > _timing.CurTime);
+        mover.IsMoving = movingLinearly || turningInPlace;
 
         if (!mover.IsMoving)
         {
@@ -109,14 +114,26 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         }
 
         var rotation = transform.GetWorldRotation(uid) - transform.GetWorldRotation(grid);
-        var targetAngularVelocity = steering * MathF.Max(0f, mover.MaxRotationSpeedDegrees);
-        var angularAcceleration = steering == 0f
-            ? mover.RotationDecelerationDegrees
-            : mover.RotationAccelerationDegrees;
-        mover.AngularVelocityDegrees = StepTowards(
-            mover.AngularVelocityDegrees,
-            targetAngularVelocity,
-            MathF.Max(0f, angularAcceleration) * frameTime);
+        if (!GridVehicleMotionSimulator.CanSteer(mover.TurnInPlace, mover.CurrentSpeed))
+        {
+            // Wheeled vehicles cannot retain or build yaw while stationary.
+            mover.AngularVelocityDegrees = 0f;
+        }
+        else
+        {
+            var effectiveSteering = GridVehicleMotionSimulator.GetEffectiveSteering(
+                steering,
+                mover.CurrentSpeed,
+                throttle);
+            var targetAngularVelocity = effectiveSteering * MathF.Max(0f, mover.MaxRotationSpeedDegrees);
+            var angularAcceleration = steering == 0f
+                ? mover.RotationDecelerationDegrees
+                : mover.RotationAccelerationDegrees;
+            mover.AngularVelocityDegrees = StepTowards(
+                mover.AngularVelocityDegrees,
+                targetAngularVelocity,
+                MathF.Max(0f, angularAcceleration) * frameTime);
+        }
 
         if (MathF.Abs(mover.AngularVelocityDegrees) > 0.001f)
         {

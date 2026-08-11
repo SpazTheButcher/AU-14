@@ -15,7 +15,6 @@ namespace Content.Client.Movement.Systems;
 public sealed partial class CameraMouseRotationSystem : EntitySystem
 {
     private const float DegreesPerPixel = 0.15f;
-    private static readonly TimeSpan SyncInterval = TimeSpan.FromMilliseconds(33);
     private static readonly TimeSpan ReleaseProtectionTime = TimeSpan.FromMilliseconds(100);
 
     [Dependency] private IInputManager _input = default!;
@@ -32,7 +31,6 @@ public sealed partial class CameraMouseRotationSystem : EntitySystem
     private bool _placementRotateEnabled;
     private Vector2 _lastMousePosition;
     private Angle _targetRotation;
-    private TimeSpan _nextSync;
     private TimeSpan _releaseProtectionUntil;
 
     public override void Initialize()
@@ -94,7 +92,16 @@ public sealed partial class CameraMouseRotationSystem : EntitySystem
             }
         }
 
-        TrySyncRotation(force: false);
+    }
+
+    public override void Update(float frameTime)
+    {
+        base.Update(frameTime);
+
+        // Predictive events are sequenced and replayed with movement input. Coalesce
+        // frame-rate mouse samples into at most one camera update per prediction tick.
+        if (_timing.IsFirstTimePredicted)
+            TrySyncRotation();
     }
 
     private void StartRotating()
@@ -130,7 +137,6 @@ public sealed partial class CameraMouseRotationSystem : EntitySystem
         {
             _awaitingServerRotation = true;
             _pendingSync = true;
-            TrySyncRotation(force: true);
         }
     }
 
@@ -156,7 +162,6 @@ public sealed partial class CameraMouseRotationSystem : EntitySystem
         }
 
         _pendingSync = true;
-        TrySyncRotation(force: false);
     }
 
     private void OnCameraRotationAcknowledged(CameraMouseRotationAckEvent args)
@@ -196,10 +201,9 @@ public sealed partial class CameraMouseRotationSystem : EntitySystem
         _placementRotateEnabled = enabled;
     }
 
-    private void TrySyncRotation(bool force)
+    private void TrySyncRotation()
     {
         if (!_pendingSync ||
-            !force && _timing.CurTime < _nextSync ||
             _player.LocalEntity is not { } local ||
             !HasComp<InputMoverComponent>(local))
         {
@@ -207,7 +211,6 @@ public sealed partial class CameraMouseRotationSystem : EntitySystem
         }
 
         _pendingSync = false;
-        _nextSync = _timing.CurTime + SyncInterval;
-        RaiseNetworkEvent(new CameraMouseRotationEvent(_targetRotation.Theta));
+        RaisePredictiveEvent(new CameraMouseRotationEvent(_targetRotation.Theta));
     }
 }

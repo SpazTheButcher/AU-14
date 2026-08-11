@@ -277,3 +277,6 @@ public sealed class GunshipCycleCameraInputEvent : EntityEventArgs;
 
 [Serializable, NetSerializable]
 public sealed class GunshipPilotPanningInputEvent : EntityEventArgs;
+
+[Serializable, NetSerializable]
+public sealed class GunshipOpenNavigationInputEvent : EntityEventArgs;

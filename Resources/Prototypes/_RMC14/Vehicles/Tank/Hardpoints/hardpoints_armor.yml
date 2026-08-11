@@ -108,10 +108,11 @@
     repairRate: 0.007
   - type: HardpointIntegrity
     maxIntegrity: 150
+  - type: VehiclePlow
+    structureDamageMultiplier: 2
   - type: HardpointVisual
     vehicleState: snowplow_0
     damagedVehicleState: snowplow_1
   - type: Tag
     tags:
     - VehiclePlow
-
