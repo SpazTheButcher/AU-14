@@ -72,7 +72,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
     private static readonly TimeSpan ImpactAdoptionCheckInterval = TimeSpan.FromMilliseconds(250);
     private static readonly TimeSpan HullInitializationScanInterval = TimeSpan.FromMilliseconds(250);
     private const byte HullInitializationFollowupScans = 4;
-    private const float XenoAcidProjectileDamageMultiplier = 3f;
+    private const float XenoAcidProjectileDamageMultiplier = 4f;
     private readonly Dictionary<EntityUid, PendingImpactAdoption> _pendingImpactAdoptions = new();
     private readonly Dictionary<EntityUid, HullExplosionDamageState> _hullExplosionDamage = new();
     private readonly HashSet<EntityUid> _emptyFlightObstructions = new();
