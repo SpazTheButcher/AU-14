@@ -1,4 +1,4 @@
-name: Publish
+name: Fast Publish
 
 concurrency:
   group: publish
@@ -31,7 +31,7 @@ jobs:
     name: Start publish
     needs: changelog
     if: always() && (needs.changelog.result == 'success' || needs.changelog.result == 'skipped')
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-2vcpu-ubuntu-2404
     outputs:
       already-published: ${{ steps.start.outputs.already-published }}
     steps:
@@ -64,7 +64,7 @@ jobs:
       (needs.changelog.result == 'success' || needs.changelog.result == 'skipped') &&
       needs.publish_start.result == 'success' &&
       needs.publish_start.outputs.already-published != 'true'
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
@@ -74,12 +74,15 @@ jobs:
             restore: |
               dotnet restore Content.Packaging/Content.Packaging.csproj
               dotnet restore Content.Client/Content.Client.csproj
+            runner: blacksmith-8vcpu-ubuntu-2404
           - name: server-win-x64
             command: server --platform win-x64
             restore: dotnet restore Content.Server/Content.Server.csproj --runtime win-x64 /p:TargetOs=Windows
+            runner: blacksmith-4vcpu-ubuntu-2404
           - name: server-linux-x64
             command: server --platform linux-x64
             restore: dotnet restore Content.Server/Content.Server.csproj --runtime linux-x64 /p:TargetOs=Linux
+            runner: blacksmith-4vcpu-ubuntu-2404
 
     steps:
       - uses: actions/checkout@v6.0.2
@@ -149,7 +152,7 @@ jobs:
       always() &&
       needs.publish_start.result == 'success' &&
       needs.publish_start.outputs.already-published != 'true'
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-2vcpu-ubuntu-2404
     needs: [publish_start, package]
     steps:
       - uses: actions/checkout@v6.0.2
