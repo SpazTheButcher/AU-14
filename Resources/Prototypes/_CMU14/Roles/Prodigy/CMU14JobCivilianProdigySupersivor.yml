@@ -16,6 +16,9 @@
   roundForce: PSC
   roundRole: CivilianProdigySupervisor
   roundComponents:
+  - type: NpcFactionMember
+    factions:
+    - CMUProdigy
   - type: Skills
     skills:
       RMCSkillFireman: 1

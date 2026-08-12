@@ -5,6 +5,9 @@
   roundForce: PSC
   roundRole: CivilianProdigyGuardLeaderSurv
   roundComponents:
+  - type: NpcFactionMember
+    factions:
+    - CMUProdigy
   - type: EquipEntityPreset
     preset: CMU14ProdigySurvBasePreset
   - type: Skills
