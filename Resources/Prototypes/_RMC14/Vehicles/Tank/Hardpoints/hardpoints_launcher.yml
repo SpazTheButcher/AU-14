@@ -344,7 +344,7 @@
     sprite: _CMU14/Structures/Vehicles/fv150/icons.rsi
     state: mounted_cupola
   - type: HardpointItem
-    hardpointType: Launcher
+    hardpointType: Secondary
     vehicleFamily: Tank
     slotType: Launcher
     damageMultiplier: 0.0
