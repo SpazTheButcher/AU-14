@@ -61,3 +61,16 @@
 - type: playTimeTracker
   id: CMU14JobCivilianProdigySupervisor
   isHumanoid: true
+
+- type: roleLoadout
+  id: JobCMU14JobCivilianProdigySupervisor
+  points: 7
+  groups:
+  - CivSatchelAU14
+  - PaperworkRMC
+  - RecreationalRMC
+  - CannedDrinksAU14
+  - SmokablesRMC
+  - EyewearRMC
+  - MasksRMC
+  - HeadwearCLFAU14

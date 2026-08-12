@@ -36,6 +36,6 @@
 
 - type: rank
   id: CMU14RankProdigySupervisor
-  name: Supervisor
-  prefix: Spvsr.
+  name: Regional Supervisor
+  prefix: Reg. Spvsr.
   paygrade: PRS7
