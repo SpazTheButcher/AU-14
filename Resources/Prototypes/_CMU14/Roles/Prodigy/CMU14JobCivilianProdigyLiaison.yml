@@ -1,14 +1,14 @@
 - type: job
   abstract: true
   parent: CMJobBase
-  id: AU14JobCivilianProdigyLiaisonBase
+  id: CMU14JobCivilianProdigyLiaisonBase
   name: au14-job-name-civiliancorporateliaison
   description: au14-job-description-civiliancorporateliaison
   playTimeTracker: CMU14JobCivilianProdigyLiaison
   basePlaytimeTracker: true
 
 - type: job
-  parent: AU14JobCivilianProdigyLiaisonBase
+  parent: CMU14JobCivilianProdigyLiaisonBase
   id: CMU14JobCivilianProdigyLiaison
   roundSide: Civilian
   roundForce: PSC

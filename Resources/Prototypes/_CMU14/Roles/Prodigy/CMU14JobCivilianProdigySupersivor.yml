@@ -3,14 +3,14 @@
 - type: job
   abstract: true
   parent: CMJobBase
-  id: AU14JobCivilianProdigySupervisorBase
+  id: CMU14JobCivilianProdigySupervisorBase
   name: cmu14-job-name-civilian-supervisor
   description: cmu14-job-description-civilian-supervisor
   playTimeTracker: CMU14JobCivilianProdigySupervisor
   basePlaytimeTracker: true
 
 - type: job
-  parent: AU14JobCivilianProdigySupervisorBase
+  parent: CMU14JobCivilianProdigySupervisorBase
   id: CMU14JobCivilianProdigySupervisor
   roundSide: Civilian
   roundForce: PSC
@@ -43,7 +43,7 @@
   setPreference: true
   ranks:
     CMU14RankProdigySupervisor: []
-  startingGear: CMU14GearCivilianProdigyLiaison
+  startingGear: CMU14GearCivilianProdigySupervisor
   icon: "CMJobIconLiaison"
   requireAdminNotify: false
   joinNotifyCrew: false
@@ -57,6 +57,18 @@
   access:
   - CMU14AccessCorporateProdigyLiaison
   roleWeight: 0.25
+
+- type: startingGear
+  id: CMU14GearCivilianProdigySupervisor
+  equipment:
+    jumpsuit: CMU14ProdigySuitBlack
+    shoes: RMCShoesLaceup
+    id: CMU14IDCardColonyProdigyLiaison
+    ears: CMU14ColonyProdigyHeadset
+    ears2: RMCM5CameraGear
+    pocket1: CMU14StampProdigySupervisor
+  inhand:
+  - CMU14PortableVendorProdigy
 
 - type: playTimeTracker
   id: CMU14JobCivilianProdigySupervisor

@@ -52,6 +52,8 @@
       - id: RMCHollowCane
         name: hollow cane
         points: 10
+      - id: CMU14ProdigyLawyerBeacon
+        points: 5
     - name: Clothing
       entries:
       - id: CMU14ProdigySuitBlackSkirt
