@@ -243,7 +243,7 @@
     whitelist:
       tags:
       - CMCartridgePistol9mmAP
-    proto: CMCartridgePistol9mmAP
+    proto: CMCartridgePistolM77AP
     capacity: 17
   - type: Sprite
     sprite: _RMC14/Objects/Weapons/Guns/Ammunition/Magazines/m1984.rsi
@@ -387,7 +387,7 @@
     whitelist:
       tags:
       - CMCartridgePistol9mmAP
-    proto: CMCartridgePistol9mmAP
+    proto: CMCartridgePistolM77AP
     capacity: 33
   - type: Sprite
     sprite: _RMC14/Objects/Weapons/Guns/Ammunition/Magazines/m1984.rsi
