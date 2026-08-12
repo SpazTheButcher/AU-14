@@ -20,6 +20,8 @@
     - id: CMBackpackSniper
     - id: CMM96SSniperRifle
     - id: AU14KitSpotter
+    - id: AU14ArmorGhillie
+    - id: AU14HelmetGhillie
 #    - id: CMFacepaintSniper
   - type: CMChangeUserOnVend
     addComponents:
