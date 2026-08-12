@@ -274,7 +274,7 @@
 - type: entity
   parent: VehicleTankHardpointBase
   id: VehicleTankRERE700
-  name: RE-RE700 cupola
+  name: RE700 cupola
   description: A dual-barrel cupola-mounted weapon hardpoint. The integrated IFF component seems to be missing.
   components:
   - type: Sprite
@@ -301,7 +301,7 @@
   - type: GunUseGunOrigin
   - type: GunIgnoreContainerOwnerCollision
   - type: Gun
-    fireRate: 7.4
+    fireRate: 6.45
     selectedMode: FullAuto
     availableModes:
     - FullAuto
