@@ -24,6 +24,9 @@
             "name": "mag-0"
         },
         {
+            "name": "mag-1"
+        },
+        {
             "name": "inhand-right",
             "directions": 4
         },
