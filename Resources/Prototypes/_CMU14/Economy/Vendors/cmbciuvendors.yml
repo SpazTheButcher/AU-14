@@ -970,6 +970,8 @@
       choices: { CMHat: 1 }
       entries:
       - id: RMCHeadCapBureau
+      - id: CMMPFlatBeret
+      - id: CMHeadBeretRed
     - name: Outerwear
       choices: { AU14Outerwear: 1 }
       entries:
@@ -1049,6 +1051,8 @@
       entries:
       - id: RMCMagazineRifleM16
         amount: 200
+      - id: CMUMagazineRifleM16Extended
+        amount: 20
       - id: CMMagazineSMGMP5
         amount: 200
       - id: RMCMagazineSMGPDW90
