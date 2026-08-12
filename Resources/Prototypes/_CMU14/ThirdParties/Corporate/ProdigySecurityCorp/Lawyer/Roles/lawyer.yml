@@ -69,7 +69,6 @@
   inhand:
   - CMU14PortableVendorProdigy
 
-
 - type: entity
   parent: AU14BaseMobSpeciesOrganicProdigy
   id: CMU14JobProdigyLawyer
