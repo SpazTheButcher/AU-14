@@ -4,7 +4,7 @@ meta:
   engineVersion: v278.0.0
   forkId: ""
   forkVersion: ""
-  time: 08/03/2026 03:46:27
+  time: 08/13/2026 04:56:33
   entityCount: 59249
 maps:
 - 1
@@ -90983,6 +90983,7 @@ entities:
   - uid: 12390
     components:
     - type: Transform
+      anchored: False
       pos: 286.5,-103.5
       parent: 1
   - uid: 12392
@@ -91000,6 +91001,7 @@ entities:
   - uid: 12395
     components:
     - type: Transform
+      anchored: False
       pos: 285.5,-103.5
       parent: 1
   - uid: 12397
@@ -91011,6 +91013,7 @@ entities:
   - uid: 12399
     components:
     - type: Transform
+      anchored: False
       pos: 284.5,-103.5
       parent: 1
   - uid: 36442
@@ -91022,6 +91025,7 @@ entities:
   - uid: 36456
     components:
     - type: Transform
+      anchored: False
       rot: -1.5707963267948966 rad
       pos: 69.5,-24.5
       parent: 1
@@ -91040,12 +91044,14 @@ entities:
   - uid: 37521
     components:
     - type: Transform
+      anchored: False
       rot: -1.5707963267948966 rad
       pos: 69.5,-23.5
       parent: 1
   - uid: 80250
     components:
     - type: Transform
+      anchored: False
       rot: -1.5707963267948966 rad
       pos: 69.5,-22.5
       parent: 1
@@ -91898,6 +91904,12 @@ entities:
     - type: Transform
       pos: 206.5,-69.5
       parent: 1
+  - uid: 12758
+    components:
+    - type: Transform
+      rot: 3.141592653589793 rad
+      pos: 97.5,-39.5
+      parent: 1
 - proto: CMApcLowCapacity
   entities:
   - uid: 12735
@@ -92008,13 +92020,6 @@ entities:
     - type: Transform
       rot: -1.5707963267948966 rad
       pos: 66.52449,-32.119385
-      parent: 1
-- proto: CMBootsBlack
-  entities:
-  - uid: 63827
-    components:
-    - type: Transform
-      pos: 271.52408,-102.4363
       parent: 1
 - proto: CMBucketMop
   entities:
@@ -97527,11 +97532,6 @@ entities:
     - type: Transform
       pos: 266.5,-102.5
       parent: 1
-  - uid: 63819
-    components:
-    - type: Transform
-      pos: 271.5,-102.5
-      parent: 1
   - uid: 63826
     components:
     - type: Transform
@@ -98187,6 +98187,13 @@ entities:
     components:
     - type: Transform
       pos: 214.5,-115.5
+      parent: 1
+- proto: CMVendorSec
+  entities:
+  - uid: 12757
+    components:
+    - type: Transform
+      pos: 271.5,-102.5
       parent: 1
 - proto: CMVendorSnack
   entities:
@@ -108894,12 +108901,14 @@ entities:
   - uid: 1218
     components:
     - type: Transform
+      anchored: False
       rot: -1.5707963267948966 rad
       pos: 230.5,-127.5
       parent: 1
   - uid: 1231
     components:
     - type: Transform
+      anchored: False
       rot: -1.5707963267948966 rad
       pos: 230.5,-128.5
       parent: 1
@@ -108914,16 +108923,19 @@ entities:
   - uid: 800
     components:
     - type: Transform
+      anchored: False
       pos: 180.5,-111.5
       parent: 1
   - uid: 2721
     components:
     - type: Transform
+      anchored: False
       pos: 181.5,-111.5
       parent: 1
   - uid: 2723
     components:
     - type: Transform
+      anchored: False
       pos: 182.5,-111.5
       parent: 1
   - uid: 13122
@@ -118653,11 +118665,13 @@ entities:
   - uid: 16742
     components:
     - type: Transform
+      anchored: False
       pos: 201.5,-71.5
       parent: 1
   - uid: 16747
     components:
     - type: Transform
+      anchored: False
       pos: 200.5,-71.5
       parent: 1
   - uid: 16800
@@ -118729,12 +118743,14 @@ entities:
   - uid: 16822
     components:
     - type: Transform
+      anchored: False
       rot: 1.5707963267948966 rad
       pos: 167.5,-81.5
       parent: 1
   - uid: 16824
     components:
     - type: Transform
+      anchored: False
       rot: 1.5707963267948966 rad
       pos: 167.5,-80.5
       parent: 1

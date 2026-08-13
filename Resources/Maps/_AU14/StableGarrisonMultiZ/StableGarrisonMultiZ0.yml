@@ -4,8 +4,8 @@ meta:
   engineVersion: v278.0.0
   forkId: ""
   forkVersion: ""
-  time: 08/03/2026 03:45:55
-  entityCount: 61729
+  time: 08/13/2026 04:56:21
+  entityCount: 61725
 maps:
 - 1
 grids:
@@ -449,6 +449,11 @@ entities:
             sprite: /Textures/_RMC14/Interface/map_blips.rsi
             state: supply
           indices: 63,-7
+        19002:
+          image:
+            sprite: /Textures/_RMC14/Interface/map_blips.rsi
+            state: supply
+          indices: 63,-7
       lastUpdateMarineBlips: {}
       xenoBlips:
         31306:
@@ -782,6 +787,26 @@ entities:
             state: supply
           indices: 231,-46
         18881:
+          image:
+            sprite: /Textures/_RMC14/Interface/map_blips.rsi
+            state: supply
+          indices: 116,-87
+        19003:
+          image:
+            sprite: /Textures/_RMC14/Interface/map_blips.rsi
+            state: supply
+          indices: -5,-122
+        19004:
+          image:
+            sprite: /Textures/_RMC14/Interface/map_blips.rsi
+            state: supply
+          indices: 125,-149
+        19005:
+          image:
+            sprite: /Textures/_RMC14/Interface/map_blips.rsi
+            state: supply
+          indices: 231,-46
+        19006:
           image:
             sprite: /Textures/_RMC14/Interface/map_blips.rsi
             state: supply
@@ -22970,12 +22995,12 @@ entities:
         -3,-31: AU14AreaStableGarrisonNorthCaverns
         114,12: AU14AreaGarrisonOutofBounds
         114,11: AU14AreaGarrisonOutofBounds
-        114,-6: AU14AreaGarrisonOutofBounds
-        114,-4: AU14AreaGarrisonOutofBounds
+        114,-6: AU14AreaStableGarrisonReq
+        114,-4: AU14AreaStableGarrisonReq
         114,9: AU14AreaGarrisonOutofBounds
         114,13: AU14AreaGarrisonOutofBounds
         114,8: AU14AreaGarrisonOutofBounds
-        114,-5: AU14AreaGarrisonOutofBounds
+        114,-5: AU14AreaStableGarrisonReq
         114,10: AU14AreaGarrisonOutofBounds
         114,15: AU14AreaGarrisonOutofBounds
         114,17: AU14AreaGarrisonOutofBounds
@@ -23051,7 +23076,7 @@ entities:
         11,-90: AU14AreaGarrisonOutofBounds
         12,-82: AU14AreaGarrisonOutofBounds
         35,12: AU14AreaStableGarrisonBrig
-        114,-23: AU14AreaGarrisonOutofBounds
+        114,-23: AU14AreaStableGarrisonReq
         36,12: AU14AreaStableGarrisonBrig
         36,13: AU14AreaStableGarrisonBrig
         13,-84: AU14AreaGarrisonOutofBounds
@@ -23074,7 +23099,7 @@ entities:
         35,13: AU14AreaStableGarrisonBrig
         34,13: AU14AreaStableGarrisonBrig
         33,12: AU14AreaStableGarrisonBrig
-        114,-24: AU14AreaGarrisonOutofBounds
+        114,-24: AU14AreaStableGarrisonReq
         34,12: AU14AreaStableGarrisonBrig
         10,-82: AU14AreaStableGarrisonSouthCaverns
         10,-83: AU14AreaStableGarrisonSouthCaverns
@@ -23094,7 +23119,7 @@ entities:
         31,12: AU14AreaStableGarrisonBrig
         31,13: AU14AreaStableGarrisonBrig
         32,13: AU14AreaStableGarrisonBrig
-        114,-28: AU14AreaGarrisonOutofBounds
+        114,-28: AU14AreaStableGarrisonReq
         30,13: AU14AreaStableGarrisonBrig
         33,13: AU14AreaStableGarrisonBrig
         8,-84: AU14AreaGarrisonOutofBounds
@@ -23116,7 +23141,7 @@ entities:
         28,12: AU14AreaStableGarrisonBrig
         29,12: AU14AreaStableGarrisonBrig
         28,13: AU14AreaStableGarrisonBrig
-        114,-26: AU14AreaGarrisonOutofBounds
+        114,-26: AU14AreaStableGarrisonReq
         7,-84: AU14AreaStableGarrisonSouthCaverns
         6,-89: AU14AreaStableGarrisonSouthCaverns
         6,-87: AU14AreaStableGarrisonSouthCaverns
@@ -23136,7 +23161,7 @@ entities:
         25,12: AU14AreaStableGarrisonBrig
         26,13: AU14AreaStableGarrisonBrig
         5,-84: AU14AreaStableGarrisonSouthCaverns
-        114,-27: AU14AreaGarrisonOutofBounds
+        114,-27: AU14AreaStableGarrisonReq
         6,-83: AU14AreaStableGarrisonSouthCaverns
         26,12: AU14AreaStableGarrisonBrig
         5,-82: AU14AreaStableGarrisonSouthCaverns
@@ -23179,7 +23204,7 @@ entities:
         2,-82: AU14AreaStableGarrisonSouthCaverns
         21,13: AU14AreaStableGarrisonBrig
         2,-85: AU14AreaStableGarrisonSouthCaverns
-        114,-29: AU14AreaGarrisonOutofBounds
+        114,-29: AU14AreaStableGarrisonReq
         20,12: AU14AreaStableGarrisonBrig
         1,-88: AU14AreaStableGarrisonSouthCaverns
         1,-86: AU14AreaStableGarrisonSouthCaverns
@@ -23462,13 +23487,13 @@ entities:
         95,-20: AU14AreaStableGarrisonLZ
         95,-21: AU14AreaStableGarrisonLZ
         95,-19: AU14AreaStableGarrisonLZ
-        95,-23: AU14AreaStableGarrisonLZ
-        95,-22: AU14AreaStableGarrisonLZ
-        95,-25: AU14AreaStableGarrisonLZ
-        95,-26: AU14AreaStableGarrisonLZ
-        95,-27: AU14AreaStableGarrisonLZ
-        95,-24: AU14AreaStableGarrisonLZ
-        95,-28: AU14AreaStableGarrisonLZ
+        95,-23: AU14AreaStableGarrisonReq
+        95,-22: AU14AreaStableGarrisonReq
+        95,-25: AU14AreaStableGarrisonReq
+        95,-26: AU14AreaStableGarrisonReq
+        95,-27: AU14AreaStableGarrisonReq
+        95,-24: AU14AreaStableGarrisonReq
+        95,-28: AU14AreaStableGarrisonReq
         95,-29: AU14AreaStableGarrisonLZ
         95,-31: AU14AreaStableGarrisonLZ
         95,-33: AU14AreaStableGarrisonLZ
@@ -23516,22 +23541,22 @@ entities:
         96,-17: AU14AreaStableGarrisonReq
         96,-16: AU14AreaStableGarrisonReq
         96,-10: AU14AreaStableGarrisonReq
-        96,-19: AU14AreaStableGarrisonLZ
-        96,-21: AU14AreaStableGarrisonLZ
-        96,-20: AU14AreaStableGarrisonLZ
-        96,-22: AU14AreaStableGarrisonLZ
-        96,-23: AU14AreaStableGarrisonLZ
-        96,-24: AU14AreaStableGarrisonLZ
-        96,-26: AU14AreaStableGarrisonLZ
-        96,-25: AU14AreaStableGarrisonLZ
+        96,-19: AU14AreaStableGarrisonReq
+        96,-21: AU14AreaStableGarrisonReq
+        96,-20: AU14AreaStableGarrisonReq
+        96,-22: AU14AreaStableGarrisonReq
+        96,-23: AU14AreaStableGarrisonReq
+        96,-24: AU14AreaStableGarrisonReq
+        96,-26: AU14AreaStableGarrisonReq
+        96,-25: AU14AreaStableGarrisonReq
         96,-30: AU14AreaStableGarrisonLZ
         96,-29: AU14AreaStableGarrisonLZ
         96,-31: AU14AreaStableGarrisonLZ
         96,-18: AU14AreaStableGarrisonReq
         96,-32: AU14AreaStableGarrisonLZ
-        96,-28: AU14AreaStableGarrisonLZ
+        96,-28: AU14AreaStableGarrisonReq
         96,-33: AU14AreaStableGarrisonLZ
-        96,-27: AU14AreaStableGarrisonLZ
+        96,-27: AU14AreaStableGarrisonReq
         96,-35: AU14AreaStableGarrisonLZ
         96,-36: AU14AreaStableGarrisonLZ
         96,-37: AU14AreaStableGarrisonLZ
@@ -23574,16 +23599,16 @@ entities:
         97,-15: AU14AreaStableGarrisonReq
         97,-9: AU14AreaStableGarrisonReq
         97,-17: AU14AreaStableGarrisonReq
-        97,-19: AU14AreaGarrisonOutofBounds
-        97,-20: AU14AreaGarrisonOutofBounds
-        97,-21: AU14AreaGarrisonOutofBounds
-        97,-22: AU14AreaStableGarrisonLZ
+        97,-19: AU14AreaStableGarrisonReq
+        97,-20: AU14AreaStableGarrisonReq
+        97,-21: AU14AreaStableGarrisonReq
+        97,-22: AU14AreaStableGarrisonReq
         97,-18: AU14AreaStableGarrisonReq
-        97,-25: AU14AreaStableGarrisonLZ
-        97,-26: AU14AreaStableGarrisonLZ
-        97,-27: AU14AreaStableGarrisonLZ
-        97,-28: AU14AreaStableGarrisonLZ
-        97,-24: AU14AreaStableGarrisonLZ
+        97,-25: AU14AreaStableGarrisonReq
+        97,-26: AU14AreaStableGarrisonReq
+        97,-27: AU14AreaStableGarrisonReq
+        97,-28: AU14AreaStableGarrisonReq
+        97,-24: AU14AreaStableGarrisonReq
         97,-29: AU14AreaStableGarrisonLZ
         97,-31: AU14AreaStableGarrisonLZ
         97,-32: AU14AreaStableGarrisonLZ
@@ -23595,7 +23620,7 @@ entities:
         97,-37: AU14AreaStableGarrisonLZ
         97,-38: AU14AreaStableGarrisonLZ
         97,-42: AU14AreaStableGarrisonLZ
-        97,-23: AU14AreaStableGarrisonLZ
+        97,-23: AU14AreaStableGarrisonReq
         97,-39: AU14AreaStableGarrisonLZ
         97,-43: AU14AreaStableGarrisonLZ
         98,13: AU14AreaGarrisonOutofBounds
@@ -23632,20 +23657,20 @@ entities:
         98,-12: AU14AreaStableGarrisonReq
         98,-17: AU14AreaStableGarrisonReq
         98,-18: AU14AreaStableGarrisonReq
-        98,-19: AU14AreaGarrisonOutofBounds
-        98,-20: AU14AreaGarrisonOutofBounds
-        98,-21: AU14AreaGarrisonOutofBounds
-        98,-23: AU14AreaStableGarrisonLZ
-        98,-24: AU14AreaStableGarrisonLZ
+        98,-19: AU14AreaStableGarrisonReq
+        98,-20: AU14AreaStableGarrisonReq
+        98,-21: AU14AreaStableGarrisonReq
+        98,-23: AU14AreaStableGarrisonReq
+        98,-24: AU14AreaStableGarrisonReq
         98,-15: AU14AreaStableGarrisonReq
-        98,-22: AU14AreaStableGarrisonLZ
-        98,-26: AU14AreaStableGarrisonLZ
-        98,-27: AU14AreaStableGarrisonLZ
-        98,-28: AU14AreaStableGarrisonLZ
+        98,-22: AU14AreaStableGarrisonReq
+        98,-26: AU14AreaStableGarrisonReq
+        98,-27: AU14AreaStableGarrisonReq
+        98,-28: AU14AreaStableGarrisonReq
         98,-30: AU14AreaStableGarrisonLZ
         98,-29: AU14AreaStableGarrisonLZ
         98,-31: AU14AreaStableGarrisonLZ
-        98,-25: AU14AreaStableGarrisonLZ
+        98,-25: AU14AreaStableGarrisonReq
         98,-32: AU14AreaStableGarrisonLZ
         98,-33: AU14AreaStableGarrisonLZ
         98,-34: AU14AreaStableGarrisonLZ
@@ -23689,18 +23714,18 @@ entities:
         99,-1: AU14AreaStableGarrisonLZ
         99,-17: AU14AreaStableGarrisonReq
         99,-18: AU14AreaStableGarrisonReq
-        99,-19: AU14AreaGarrisonOutofBounds
-        99,-20: AU14AreaGarrisonOutofBounds
+        99,-19: AU14AreaStableGarrisonReq
+        99,-20: AU14AreaStableGarrisonReq
         99,-15: AU14AreaStableGarrisonReq
-        99,-23: AU14AreaStableGarrisonLZ
-        99,-22: AU14AreaStableGarrisonLZ
-        99,-24: AU14AreaStableGarrisonLZ
-        99,-25: AU14AreaStableGarrisonLZ
-        99,-26: AU14AreaStableGarrisonLZ
-        99,-27: AU14AreaStableGarrisonLZ
-        99,-28: AU14AreaStableGarrisonLZ
+        99,-23: AU14AreaStableGarrisonReq
+        99,-22: AU14AreaStableGarrisonReq
+        99,-24: AU14AreaStableGarrisonReq
+        99,-25: AU14AreaStableGarrisonReq
+        99,-26: AU14AreaStableGarrisonReq
+        99,-27: AU14AreaStableGarrisonReq
+        99,-28: AU14AreaStableGarrisonReq
         99,-14: AU14AreaStableGarrisonReq
-        99,-21: AU14AreaGarrisonOutofBounds
+        99,-21: AU14AreaStableGarrisonReq
         99,-30: AU14AreaStableGarrisonLZ
         99,-32: AU14AreaStableGarrisonLZ
         99,-33: AU14AreaStableGarrisonLZ
@@ -23749,16 +23774,16 @@ entities:
         100,-17: AU14AreaStableGarrisonReq
         100,-18: AU14AreaStableGarrisonReq
         100,-11: AU14AreaStableGarrisonReq
-        100,-20: AU14AreaGarrisonOutofBounds
-        100,-21: AU14AreaGarrisonOutofBounds
-        100,-19: AU14AreaGarrisonOutofBounds
-        100,-23: AU14AreaStableGarrisonLZ
-        100,-24: AU14AreaStableGarrisonLZ
-        100,-25: AU14AreaStableGarrisonLZ
-        100,-26: AU14AreaStableGarrisonLZ
-        100,-22: AU14AreaStableGarrisonLZ
-        100,-27: AU14AreaStableGarrisonLZ
-        100,-28: AU14AreaStableGarrisonLZ
+        100,-20: AU14AreaStableGarrisonReq
+        100,-21: AU14AreaStableGarrisonReq
+        100,-19: AU14AreaStableGarrisonReq
+        100,-23: AU14AreaStableGarrisonReq
+        100,-24: AU14AreaStableGarrisonReq
+        100,-25: AU14AreaStableGarrisonReq
+        100,-26: AU14AreaStableGarrisonReq
+        100,-22: AU14AreaStableGarrisonReq
+        100,-27: AU14AreaStableGarrisonReq
+        100,-28: AU14AreaStableGarrisonReq
         100,-29: AU14AreaStableGarrisonLZ
         100,-30: AU14AreaStableGarrisonLZ
         100,-31: AU14AreaStableGarrisonLZ
@@ -23806,18 +23831,18 @@ entities:
         101,-11: AU14AreaStableGarrisonReq
         101,-16: AU14AreaStableGarrisonReq
         101,-17: AU14AreaStableGarrisonReq
-        101,-19: AU14AreaGarrisonOutofBounds
-        101,-20: AU14AreaGarrisonOutofBounds
-        101,-21: AU14AreaGarrisonOutofBounds
-        101,-22: AU14AreaStableGarrisonLZ
-        101,-23: AU14AreaStableGarrisonLZ
-        101,-24: AU14AreaStableGarrisonLZ
-        101,-25: AU14AreaStableGarrisonLZ
+        101,-19: AU14AreaStableGarrisonReq
+        101,-20: AU14AreaStableGarrisonReq
+        101,-21: AU14AreaStableGarrisonReq
+        101,-22: AU14AreaStableGarrisonReq
+        101,-23: AU14AreaStableGarrisonReq
+        101,-24: AU14AreaStableGarrisonReq
+        101,-25: AU14AreaStableGarrisonReq
         101,-18: AU14AreaStableGarrisonReq
-        101,-27: AU14AreaStableGarrisonLZ
-        101,-28: AU14AreaStableGarrisonLZ
+        101,-27: AU14AreaStableGarrisonReq
+        101,-28: AU14AreaStableGarrisonReq
         101,-29: AU14AreaStableGarrisonLZ
-        101,-26: AU14AreaStableGarrisonLZ
+        101,-26: AU14AreaStableGarrisonReq
         101,-30: AU14AreaStableGarrisonLZ
         101,-31: AU14AreaStableGarrisonLZ
         101,-32: AU14AreaStableGarrisonLZ
@@ -23863,19 +23888,19 @@ entities:
         102,-17: AU14AreaStableGarrisonReq
         102,-18: AU14AreaStableGarrisonReq
         102,-15: AU14AreaStableGarrisonReq
-        102,-19: AU14AreaGarrisonOutofBounds
+        102,-19: AU14AreaStableGarrisonReq
         102,-16: AU14AreaStableGarrisonReq
-        102,-20: AU14AreaGarrisonOutofBounds
+        102,-20: AU14AreaStableGarrisonReq
         102,-12: AU14AreaStableGarrisonReq
-        102,-24: AU14AreaStableGarrisonLZ
-        102,-25: AU14AreaStableGarrisonLZ
-        102,-23: AU14AreaStableGarrisonLZ
-        102,-21: AU14AreaGarrisonOutofBounds
-        102,-27: AU14AreaStableGarrisonLZ
-        102,-22: AU14AreaStableGarrisonLZ
-        102,-26: AU14AreaStableGarrisonLZ
+        102,-24: AU14AreaStableGarrisonReq
+        102,-25: AU14AreaStableGarrisonReq
+        102,-23: AU14AreaStableGarrisonReq
+        102,-21: AU14AreaStableGarrisonReq
+        102,-27: AU14AreaStableGarrisonReq
+        102,-22: AU14AreaStableGarrisonReq
+        102,-26: AU14AreaStableGarrisonReq
         102,-30: AU14AreaStableGarrisonLZ
-        102,-28: AU14AreaStableGarrisonLZ
+        102,-28: AU14AreaStableGarrisonReq
         102,-29: AU14AreaStableGarrisonLZ
         102,-32: AU14AreaStableGarrisonLZ
         102,-33: AU14AreaStableGarrisonLZ
@@ -23898,21 +23923,21 @@ entities:
         103,8: AU14AreaGarrisonOutofBounds
         103,12: AU14AreaGarrisonOutofBounds
         103,7: AU14AreaGarrisonOutofBounds
-        103,5: AU14AreaGarrisonOutofBounds
-        103,4: AU14AreaGarrisonOutofBounds
-        103,2: AU14AreaGarrisonOutofBounds
-        103,3: AU14AreaGarrisonOutofBounds
-        103,1: AU14AreaGarrisonOutofBounds
-        103,0: AU14AreaGarrisonOutofBounds
-        103,-1: AU14AreaGarrisonOutofBounds
-        103,6: AU14AreaGarrisonOutofBounds
-        103,-3: AU14AreaGarrisonOutofBounds
+        103,5: AU14AreaStableGarrisonReq
+        103,4: AU14AreaStableGarrisonReq
+        103,2: AU14AreaStableGarrisonReq
+        103,3: AU14AreaStableGarrisonReq
+        103,1: AU14AreaStableGarrisonReq
+        103,0: AU14AreaStableGarrisonReq
+        103,-1: AU14AreaStableGarrisonReq
+        103,6: AU14AreaStableGarrisonReq
+        103,-3: AU14AreaStableGarrisonReq
         103,-5: AU14AreaStableGarrisonReq
-        103,-2: AU14AreaGarrisonOutofBounds
+        103,-2: AU14AreaStableGarrisonReq
         103,-7: AU14AreaStableGarrisonReq
         103,-8: AU14AreaStableGarrisonReq
         103,-10: AU14AreaStableGarrisonReq
-        103,-4: AU14AreaGarrisonOutofBounds
+        103,-4: AU14AreaStableGarrisonReq
         103,-11: AU14AreaStableGarrisonReq
         103,-12: AU14AreaStableGarrisonReq
         103,-9: AU14AreaStableGarrisonReq
@@ -23921,26 +23946,26 @@ entities:
         103,-13: AU14AreaStableGarrisonReq
         103,-18: AU14AreaStableGarrisonReq
         103,-17: AU14AreaStableGarrisonReq
-        103,-19: AU14AreaGarrisonOutofBounds
+        103,-19: AU14AreaStableGarrisonReq
         103,-16: AU14AreaStableGarrisonReq
-        103,-20: AU14AreaGarrisonOutofBounds
-        103,-21: AU14AreaGarrisonOutofBounds
+        103,-20: AU14AreaStableGarrisonReq
+        103,-21: AU14AreaStableGarrisonReq
         103,-6: AU14AreaStableGarrisonReq
-        103,-24: AU14AreaGarrisonOutofBounds
-        103,-25: AU14AreaGarrisonOutofBounds
-        103,-26: AU14AreaGarrisonOutofBounds
-        103,-23: AU14AreaGarrisonOutofBounds
-        103,-28: AU14AreaGarrisonOutofBounds
-        103,-29: AU14AreaGarrisonOutofBounds
+        103,-24: AU14AreaStableGarrisonReq
+        103,-25: AU14AreaStableGarrisonReq
+        103,-26: AU14AreaStableGarrisonReq
+        103,-23: AU14AreaStableGarrisonReq
+        103,-28: AU14AreaStableGarrisonReq
+        103,-29: AU14AreaStableGarrisonReq
         103,-31: AU14AreaGarrisonOutofBounds
-        103,-27: AU14AreaGarrisonOutofBounds
+        103,-27: AU14AreaStableGarrisonReq
         103,-32: AU14AreaGarrisonOutofBounds
         103,-30: AU14AreaGarrisonOutofBounds
         103,-35: AU14AreaStableGarrisonLZ
         103,-34: AU14AreaGarrisonOutofBounds
         103,-36: AU14AreaStableGarrisonLZ
         103,-37: AU14AreaStableGarrisonLZ
-        103,-22: AU14AreaGarrisonOutofBounds
+        103,-22: AU14AreaStableGarrisonReq
         103,-38: AU14AreaStableGarrisonLZ
         103,-39: AU14AreaStableGarrisonLZ
         103,-33: AU14AreaGarrisonOutofBounds
@@ -23956,19 +23981,19 @@ entities:
         104,8: AU14AreaGarrisonOutofBounds
         104,7: AU14AreaGarrisonOutofBounds
         104,9: AU14AreaGarrisonOutofBounds
-        104,5: AU14AreaGarrisonOutofBounds
-        104,6: AU14AreaGarrisonOutofBounds
-        104,3: AU14AreaGarrisonOutofBounds
-        104,1: AU14AreaGarrisonOutofBounds
-        104,0: AU14AreaGarrisonOutofBounds
-        104,-1: AU14AreaGarrisonOutofBounds
-        104,4: AU14AreaGarrisonOutofBounds
-        104,-4: AU14AreaGarrisonOutofBounds
+        104,5: AU14AreaStableGarrisonReq
+        104,6: AU14AreaStableGarrisonReq
+        104,3: AU14AreaStableGarrisonReq
+        104,1: AU14AreaStableGarrisonReq
+        104,0: AU14AreaStableGarrisonReq
+        104,-1: AU14AreaStableGarrisonReq
+        104,4: AU14AreaStableGarrisonReq
+        104,-4: AU14AreaStableGarrisonReq
         104,-5: AU14AreaStableGarrisonReq
         104,-6: AU14AreaStableGarrisonReq
         104,-7: AU14AreaStableGarrisonReq
-        104,-2: AU14AreaGarrisonOutofBounds
-        104,-3: AU14AreaGarrisonOutofBounds
+        104,-2: AU14AreaStableGarrisonReq
+        104,-3: AU14AreaStableGarrisonReq
         104,-9: AU14AreaStableGarrisonReq
         104,-10: AU14AreaStableGarrisonReq
         104,-11: AU14AreaStableGarrisonReq
@@ -23980,18 +24005,18 @@ entities:
         104,-16: AU14AreaStableGarrisonReq
         104,-17: AU14AreaStableGarrisonReq
         104,-18: AU14AreaStableGarrisonReq
-        104,-19: AU14AreaGarrisonOutofBounds
-        104,-20: AU14AreaGarrisonOutofBounds
-        104,-21: AU14AreaGarrisonOutofBounds
-        104,-22: AU14AreaGarrisonOutofBounds
-        104,-23: AU14AreaGarrisonOutofBounds
-        104,-25: AU14AreaGarrisonOutofBounds
-        104,-26: AU14AreaGarrisonOutofBounds
-        104,-27: AU14AreaGarrisonOutofBounds
-        104,-28: AU14AreaGarrisonOutofBounds
-        104,-29: AU14AreaGarrisonOutofBounds
-        104,2: AU14AreaGarrisonOutofBounds
-        104,-24: AU14AreaGarrisonOutofBounds
+        104,-19: AU14AreaStableGarrisonReq
+        104,-20: AU14AreaStableGarrisonReq
+        104,-21: AU14AreaStableGarrisonReq
+        104,-22: AU14AreaStableGarrisonReq
+        104,-23: AU14AreaStableGarrisonReq
+        104,-25: AU14AreaStableGarrisonReq
+        104,-26: AU14AreaStableGarrisonReq
+        104,-27: AU14AreaStableGarrisonReq
+        104,-28: AU14AreaStableGarrisonReq
+        104,-29: AU14AreaStableGarrisonReq
+        104,2: AU14AreaStableGarrisonReq
+        104,-24: AU14AreaStableGarrisonReq
         104,-31: AU14AreaGarrisonOutofBounds
         104,-30: AU14AreaGarrisonOutofBounds
         104,-34: AU14AreaGarrisonOutofBounds
@@ -24013,22 +24038,22 @@ entities:
         105,9: AU14AreaGarrisonOutofBounds
         105,8: AU14AreaGarrisonOutofBounds
         105,10: AU14AreaGarrisonOutofBounds
-        105,5: AU14AreaGarrisonOutofBounds
-        105,6: AU14AreaGarrisonOutofBounds
+        105,5: AU14AreaStableGarrisonReq
+        105,6: AU14AreaStableGarrisonReq
         94,-41: AU14AreaStableGarrisonLZ
         105,7: AU14AreaGarrisonOutofBounds
-        105,4: AU14AreaGarrisonOutofBounds
-        105,2: AU14AreaGarrisonOutofBounds
-        105,3: AU14AreaGarrisonOutofBounds
-        105,1: AU14AreaGarrisonOutofBounds
-        105,0: AU14AreaGarrisonOutofBounds
-        105,-1: AU14AreaGarrisonOutofBounds
-        105,-2: AU14AreaGarrisonOutofBounds
-        105,-4: AU14AreaGarrisonOutofBounds
+        105,4: AU14AreaStableGarrisonReq
+        105,2: AU14AreaStableGarrisonReq
+        105,3: AU14AreaStableGarrisonReq
+        105,1: AU14AreaStableGarrisonReq
+        105,0: AU14AreaStableGarrisonReq
+        105,-1: AU14AreaStableGarrisonReq
+        105,-2: AU14AreaStableGarrisonReq
+        105,-4: AU14AreaStableGarrisonReq
         105,-5: AU14AreaStableGarrisonReq
         105,-6: AU14AreaStableGarrisonReq
         105,-7: AU14AreaStableGarrisonReq
-        105,-3: AU14AreaGarrisonOutofBounds
+        105,-3: AU14AreaStableGarrisonReq
         105,-10: AU14AreaStableGarrisonReq
         105,-9: AU14AreaStableGarrisonReq
         105,-12: AU14AreaStableGarrisonReq
@@ -24038,17 +24063,17 @@ entities:
         105,-15: AU14AreaStableGarrisonReq
         105,-16: AU14AreaStableGarrisonReq
         105,-8: AU14AreaStableGarrisonReq
-        105,-20: AU14AreaGarrisonOutofBounds
-        105,-19: AU14AreaGarrisonOutofBounds
-        105,-21: AU14AreaGarrisonOutofBounds
-        105,-22: AU14AreaGarrisonOutofBounds
-        105,-23: AU14AreaGarrisonOutofBounds
-        105,-24: AU14AreaGarrisonOutofBounds
-        105,-25: AU14AreaGarrisonOutofBounds
-        105,-27: AU14AreaGarrisonOutofBounds
-        105,-26: AU14AreaGarrisonOutofBounds
-        105,-28: AU14AreaGarrisonOutofBounds
-        105,-29: AU14AreaGarrisonOutofBounds
+        105,-20: AU14AreaStableGarrisonReq
+        105,-19: AU14AreaStableGarrisonReq
+        105,-21: AU14AreaStableGarrisonReq
+        105,-22: AU14AreaStableGarrisonReq
+        105,-23: AU14AreaStableGarrisonReq
+        105,-24: AU14AreaStableGarrisonReq
+        105,-25: AU14AreaStableGarrisonReq
+        105,-27: AU14AreaStableGarrisonReq
+        105,-26: AU14AreaStableGarrisonReq
+        105,-28: AU14AreaStableGarrisonReq
+        105,-29: AU14AreaStableGarrisonReq
         105,-17: AU14AreaStableGarrisonReq
         105,-30: AU14AreaGarrisonOutofBounds
         105,-31: AU14AreaGarrisonOutofBounds
@@ -24071,24 +24096,24 @@ entities:
         106,12: AU14AreaGarrisonOutofBounds
         106,10: AU14AreaGarrisonOutofBounds
         106,7: AU14AreaGarrisonOutofBounds
-        106,6: AU14AreaGarrisonOutofBounds
-        106,5: AU14AreaGarrisonOutofBounds
-        106,4: AU14AreaGarrisonOutofBounds
-        106,3: AU14AreaGarrisonOutofBounds
-        106,1: AU14AreaGarrisonOutofBounds
+        106,6: AU14AreaStableGarrisonReq
+        106,5: AU14AreaStableGarrisonReq
+        106,4: AU14AreaStableGarrisonReq
+        106,3: AU14AreaStableGarrisonReq
+        106,1: AU14AreaStableGarrisonReq
         106,8: AU14AreaGarrisonOutofBounds
-        106,0: AU14AreaGarrisonOutofBounds
-        106,-2: AU14AreaGarrisonOutofBounds
-        106,-1: AU14AreaGarrisonOutofBounds
-        106,-3: AU14AreaGarrisonOutofBounds
-        106,-4: AU14AreaGarrisonOutofBounds
+        106,0: AU14AreaStableGarrisonReq
+        106,-2: AU14AreaStableGarrisonReq
+        106,-1: AU14AreaStableGarrisonReq
+        106,-3: AU14AreaStableGarrisonReq
+        106,-4: AU14AreaStableGarrisonReq
         106,-6: AU14AreaStableGarrisonReq
         106,-7: AU14AreaStableGarrisonReq
         106,-9: AU14AreaStableGarrisonReq
         106,-8: AU14AreaStableGarrisonReq
         106,-5: AU14AreaStableGarrisonReq
         106,-10: AU14AreaStableGarrisonReq
-        106,2: AU14AreaGarrisonOutofBounds
+        106,2: AU14AreaStableGarrisonReq
         106,-13: AU14AreaStableGarrisonReq
         106,-14: AU14AreaStableGarrisonReq
         106,-15: AU14AreaStableGarrisonReq
@@ -24096,18 +24121,18 @@ entities:
         106,-16: AU14AreaStableGarrisonReq
         106,-18: AU14AreaStableGarrisonReq
         106,-17: AU14AreaStableGarrisonReq
-        106,-20: AU14AreaGarrisonOutofBounds
-        106,-19: AU14AreaGarrisonOutofBounds
-        106,-24: AU14AreaGarrisonOutofBounds
-        106,-25: AU14AreaGarrisonOutofBounds
-        106,-22: AU14AreaGarrisonOutofBounds
-        106,-26: AU14AreaGarrisonOutofBounds
-        106,-21: AU14AreaGarrisonOutofBounds
-        106,-27: AU14AreaGarrisonOutofBounds
-        106,-29: AU14AreaGarrisonOutofBounds
+        106,-20: AU14AreaStableGarrisonReq
+        106,-19: AU14AreaStableGarrisonReq
+        106,-24: AU14AreaStableGarrisonReq
+        106,-25: AU14AreaStableGarrisonReq
+        106,-22: AU14AreaStableGarrisonReq
+        106,-26: AU14AreaStableGarrisonReq
+        106,-21: AU14AreaStableGarrisonReq
+        106,-27: AU14AreaStableGarrisonReq
+        106,-29: AU14AreaStableGarrisonReq
         106,-31: AU14AreaGarrisonOutofBounds
         106,-30: AU14AreaGarrisonOutofBounds
-        106,-28: AU14AreaGarrisonOutofBounds
+        106,-28: AU14AreaStableGarrisonReq
         106,-12: AU14AreaStableGarrisonReq
         106,-32: AU14AreaGarrisonOutofBounds
         106,-33: AU14AreaGarrisonOutofBounds
@@ -24129,18 +24154,18 @@ entities:
         107,8: AU14AreaGarrisonOutofBounds
         107,7: AU14AreaGarrisonOutofBounds
         107,9: AU14AreaGarrisonOutofBounds
-        106,-23: AU14AreaGarrisonOutofBounds
-        107,5: AU14AreaGarrisonOutofBounds
-        107,6: AU14AreaGarrisonOutofBounds
-        107,3: AU14AreaGarrisonOutofBounds
-        107,0: AU14AreaGarrisonOutofBounds
-        107,1: AU14AreaGarrisonOutofBounds
-        107,-1: AU14AreaGarrisonOutofBounds
-        107,2: AU14AreaGarrisonOutofBounds
-        107,4: AU14AreaGarrisonOutofBounds
-        107,-3: AU14AreaGarrisonOutofBounds
-        107,-4: AU14AreaGarrisonOutofBounds
-        107,-2: AU14AreaGarrisonOutofBounds
+        106,-23: AU14AreaStableGarrisonReq
+        107,5: AU14AreaStableGarrisonReq
+        107,6: AU14AreaStableGarrisonReq
+        107,3: AU14AreaStableGarrisonReq
+        107,0: AU14AreaStableGarrisonReq
+        107,1: AU14AreaStableGarrisonReq
+        107,-1: AU14AreaStableGarrisonReq
+        107,2: AU14AreaStableGarrisonReq
+        107,4: AU14AreaStableGarrisonReq
+        107,-3: AU14AreaStableGarrisonReq
+        107,-4: AU14AreaStableGarrisonReq
+        107,-2: AU14AreaStableGarrisonReq
         107,-5: AU14AreaStableGarrisonReq
         107,-6: AU14AreaStableGarrisonReq
         107,-7: AU14AreaStableGarrisonReq
@@ -24152,20 +24177,20 @@ entities:
         107,-11: AU14AreaStableGarrisonReq
         107,-15: AU14AreaStableGarrisonReq
         107,-17: AU14AreaStableGarrisonReq
-        107,-19: AU14AreaGarrisonOutofBounds
+        107,-19: AU14AreaStableGarrisonReq
         107,-14: AU14AreaStableGarrisonReq
-        107,-20: AU14AreaGarrisonOutofBounds
-        107,-21: AU14AreaGarrisonOutofBounds
+        107,-20: AU14AreaStableGarrisonReq
+        107,-21: AU14AreaStableGarrisonReq
         107,-18: AU14AreaStableGarrisonReq
         107,-16: AU14AreaStableGarrisonReq
-        107,-23: AU14AreaGarrisonOutofBounds
-        107,-22: AU14AreaGarrisonOutofBounds
-        107,-26: AU14AreaGarrisonOutofBounds
-        107,-25: AU14AreaGarrisonOutofBounds
-        107,-27: AU14AreaGarrisonOutofBounds
-        107,-24: AU14AreaGarrisonOutofBounds
-        107,-28: AU14AreaGarrisonOutofBounds
-        107,-29: AU14AreaGarrisonOutofBounds
+        107,-23: AU14AreaStableGarrisonReq
+        107,-22: AU14AreaStableGarrisonReq
+        107,-26: AU14AreaStableGarrisonReq
+        107,-25: AU14AreaStableGarrisonReq
+        107,-27: AU14AreaStableGarrisonReq
+        107,-24: AU14AreaStableGarrisonReq
+        107,-28: AU14AreaStableGarrisonReq
+        107,-29: AU14AreaStableGarrisonReq
         107,-31: AU14AreaGarrisonOutofBounds
         107,-33: AU14AreaGarrisonOutofBounds
         107,-30: AU14AreaGarrisonOutofBounds
@@ -24187,22 +24212,22 @@ entities:
         108,8: AU14AreaGarrisonOutofBounds
         108,10: AU14AreaGarrisonOutofBounds
         108,7: AU14AreaGarrisonOutofBounds
-        108,5: AU14AreaGarrisonOutofBounds
-        108,4: AU14AreaGarrisonOutofBounds
-        108,2: AU14AreaGarrisonOutofBounds
-        108,1: AU14AreaGarrisonOutofBounds
-        108,0: AU14AreaGarrisonOutofBounds
-        108,-1: AU14AreaGarrisonOutofBounds
+        108,5: AU14AreaStableGarrisonReq
+        108,4: AU14AreaStableGarrisonReq
+        108,2: AU14AreaStableGarrisonReq
+        108,1: AU14AreaStableGarrisonReq
+        108,0: AU14AreaStableGarrisonReq
+        108,-1: AU14AreaStableGarrisonReq
         108,11: AU14AreaGarrisonOutofBounds
-        108,-2: AU14AreaGarrisonOutofBounds
-        108,-4: AU14AreaGarrisonOutofBounds
+        108,-2: AU14AreaStableGarrisonReq
+        108,-4: AU14AreaStableGarrisonReq
         108,-5: AU14AreaStableGarrisonReq
         108,-6: AU14AreaStableGarrisonReq
-        108,3: AU14AreaGarrisonOutofBounds
+        108,3: AU14AreaStableGarrisonReq
         108,-8: AU14AreaStableGarrisonReq
         108,-9: AU14AreaStableGarrisonReq
         108,-10: AU14AreaStableGarrisonReq
-        108,-3: AU14AreaGarrisonOutofBounds
+        108,-3: AU14AreaStableGarrisonReq
         108,-7: AU14AreaStableGarrisonReq
         108,-12: AU14AreaStableGarrisonReq
         108,-13: AU14AreaStableGarrisonReq
@@ -24211,21 +24236,21 @@ entities:
         108,-15: AU14AreaStableGarrisonReq
         108,-16: AU14AreaStableGarrisonReq
         108,-17: AU14AreaStableGarrisonReq
-        108,6: AU14AreaGarrisonOutofBounds
+        108,6: AU14AreaStableGarrisonReq
         108,-18: AU14AreaStableGarrisonReq
-        108,-20: AU14AreaGarrisonOutofBounds
-        108,-19: AU14AreaGarrisonOutofBounds
-        108,-21: AU14AreaGarrisonOutofBounds
-        108,-22: AU14AreaGarrisonOutofBounds
-        108,-23: AU14AreaGarrisonOutofBounds
-        108,-26: AU14AreaGarrisonOutofBounds
-        108,-25: AU14AreaGarrisonOutofBounds
-        108,-24: AU14AreaGarrisonOutofBounds
-        108,-29: AU14AreaGarrisonOutofBounds
+        108,-20: AU14AreaStableGarrisonReq
+        108,-19: AU14AreaStableGarrisonReq
+        108,-21: AU14AreaStableGarrisonReq
+        108,-22: AU14AreaStableGarrisonReq
+        108,-23: AU14AreaStableGarrisonReq
+        108,-26: AU14AreaStableGarrisonReq
+        108,-25: AU14AreaStableGarrisonReq
+        108,-24: AU14AreaStableGarrisonReq
+        108,-29: AU14AreaStableGarrisonReq
         108,-30: AU14AreaGarrisonOutofBounds
-        108,-27: AU14AreaGarrisonOutofBounds
+        108,-27: AU14AreaStableGarrisonReq
         108,-32: AU14AreaGarrisonOutofBounds
-        108,-28: AU14AreaGarrisonOutofBounds
+        108,-28: AU14AreaStableGarrisonReq
         108,-34: AU14AreaGarrisonOutofBounds
         108,-33: AU14AreaGarrisonOutofBounds
         108,-35: AU14AreaGarrisonOutofBounds
@@ -24245,19 +24270,19 @@ entities:
         109,8: AU14AreaGarrisonOutofBounds
         109,7: AU14AreaGarrisonOutofBounds
         109,9: AU14AreaGarrisonOutofBounds
-        109,6: AU14AreaGarrisonOutofBounds
-        109,5: AU14AreaGarrisonOutofBounds
+        109,6: AU14AreaStableGarrisonReq
+        109,5: AU14AreaStableGarrisonReq
         109,11: AU14AreaGarrisonOutofBounds
-        109,3: AU14AreaGarrisonOutofBounds
-        109,4: AU14AreaGarrisonOutofBounds
-        109,0: AU14AreaGarrisonOutofBounds
-        109,-1: AU14AreaGarrisonOutofBounds
-        109,-3: AU14AreaGarrisonOutofBounds
-        109,2: AU14AreaGarrisonOutofBounds
-        109,-2: AU14AreaGarrisonOutofBounds
+        109,3: AU14AreaStableGarrisonReq
+        109,4: AU14AreaStableGarrisonReq
+        109,0: AU14AreaStableGarrisonReq
+        109,-1: AU14AreaStableGarrisonReq
+        109,-3: AU14AreaStableGarrisonReq
+        109,2: AU14AreaStableGarrisonReq
+        109,-2: AU14AreaStableGarrisonReq
         109,-5: AU14AreaStableGarrisonReq
         109,-6: AU14AreaStableGarrisonReq
-        109,-4: AU14AreaGarrisonOutofBounds
+        109,-4: AU14AreaStableGarrisonReq
         109,-8: AU14AreaStableGarrisonReq
         109,-7: AU14AreaStableGarrisonReq
         109,-10: AU14AreaStableGarrisonReq
@@ -24266,22 +24291,22 @@ entities:
         109,-14: AU14AreaStableGarrisonReq
         109,-11: AU14AreaStableGarrisonReq
         109,-15: AU14AreaStableGarrisonReq
-        109,1: AU14AreaGarrisonOutofBounds
+        109,1: AU14AreaStableGarrisonReq
         109,-16: AU14AreaStableGarrisonReq
         109,-9: AU14AreaStableGarrisonReq
         109,-17: AU14AreaStableGarrisonReq
-        109,-18: AU14AreaGarrisonOutofBounds
-        109,-19: AU14AreaGarrisonOutofBounds
-        109,-21: AU14AreaGarrisonOutofBounds
-        109,-20: AU14AreaGarrisonOutofBounds
-        109,-22: AU14AreaGarrisonOutofBounds
-        109,-23: AU14AreaGarrisonOutofBounds
-        109,-24: AU14AreaGarrisonOutofBounds
-        109,-26: AU14AreaGarrisonOutofBounds
-        109,-28: AU14AreaGarrisonOutofBounds
-        109,-27: AU14AreaGarrisonOutofBounds
-        109,-25: AU14AreaGarrisonOutofBounds
-        109,-29: AU14AreaGarrisonOutofBounds
+        109,-18: AU14AreaStableGarrisonReq
+        109,-19: AU14AreaStableGarrisonReq
+        109,-21: AU14AreaStableGarrisonReq
+        109,-20: AU14AreaStableGarrisonReq
+        109,-22: AU14AreaStableGarrisonReq
+        109,-23: AU14AreaStableGarrisonReq
+        109,-24: AU14AreaStableGarrisonReq
+        109,-26: AU14AreaStableGarrisonReq
+        109,-28: AU14AreaStableGarrisonReq
+        109,-27: AU14AreaStableGarrisonReq
+        109,-25: AU14AreaStableGarrisonReq
+        109,-29: AU14AreaStableGarrisonReq
         109,-30: AU14AreaGarrisonOutofBounds
         109,-31: AU14AreaGarrisonOutofBounds
         109,-34: AU14AreaGarrisonOutofBounds
@@ -24304,19 +24329,19 @@ entities:
         110,9: AU14AreaGarrisonOutofBounds
         110,8: AU14AreaGarrisonOutofBounds
         110,7: AU14AreaGarrisonOutofBounds
-        110,6: AU14AreaGarrisonOutofBounds
-        110,4: AU14AreaGarrisonOutofBounds
-        110,2: AU14AreaGarrisonOutofBounds
-        110,1: AU14AreaGarrisonOutofBounds
-        110,5: AU14AreaGarrisonOutofBounds
-        110,3: AU14AreaGarrisonOutofBounds
-        110,-1: AU14AreaGarrisonOutofBounds
-        110,-2: AU14AreaGarrisonOutofBounds
-        110,0: AU14AreaGarrisonOutofBounds
-        110,-3: AU14AreaGarrisonOutofBounds
+        110,6: AU14AreaStableGarrisonReq
+        110,4: AU14AreaStableGarrisonReq
+        110,2: AU14AreaStableGarrisonReq
+        110,1: AU14AreaStableGarrisonReq
+        110,5: AU14AreaStableGarrisonReq
+        110,3: AU14AreaStableGarrisonReq
+        110,-1: AU14AreaStableGarrisonReq
+        110,-2: AU14AreaStableGarrisonReq
+        110,0: AU14AreaStableGarrisonReq
+        110,-3: AU14AreaStableGarrisonReq
         110,-5: AU14AreaStableGarrisonReq
         110,-7: AU14AreaStableGarrisonReq
-        110,-4: AU14AreaGarrisonOutofBounds
+        110,-4: AU14AreaStableGarrisonReq
         110,-10: AU14AreaStableGarrisonReq
         110,-11: AU14AreaStableGarrisonReq
         110,-12: AU14AreaStableGarrisonReq
@@ -24325,23 +24350,23 @@ entities:
         110,-14: AU14AreaStableGarrisonReq
         110,-8: AU14AreaStableGarrisonReq
         110,-6: AU14AreaStableGarrisonReq
-        110,-17: AU14AreaGarrisonOutofBounds
-        110,-18: AU14AreaGarrisonOutofBounds
-        110,-19: AU14AreaGarrisonOutofBounds
+        110,-17: AU14AreaStableGarrisonReq
+        110,-18: AU14AreaStableGarrisonReq
+        110,-19: AU14AreaStableGarrisonReq
         110,-16: AU14AreaStableGarrisonReq
-        110,-20: AU14AreaGarrisonOutofBounds
+        110,-20: AU14AreaStableGarrisonReq
         105,-18: AU14AreaStableGarrisonReq
-        110,-22: AU14AreaGarrisonOutofBounds
-        110,-24: AU14AreaGarrisonOutofBounds
-        110,-25: AU14AreaGarrisonOutofBounds
-        110,-27: AU14AreaGarrisonOutofBounds
-        110,-26: AU14AreaGarrisonOutofBounds
+        110,-22: AU14AreaStableGarrisonReq
+        110,-24: AU14AreaStableGarrisonReq
+        110,-25: AU14AreaStableGarrisonReq
+        110,-27: AU14AreaStableGarrisonReq
+        110,-26: AU14AreaStableGarrisonReq
         110,-15: AU14AreaStableGarrisonReq
-        110,-21: AU14AreaGarrisonOutofBounds
-        110,-29: AU14AreaGarrisonOutofBounds
+        110,-21: AU14AreaStableGarrisonReq
+        110,-29: AU14AreaStableGarrisonReq
         110,-30: AU14AreaGarrisonOutofBounds
-        110,-28: AU14AreaGarrisonOutofBounds
-        110,-23: AU14AreaGarrisonOutofBounds
+        110,-28: AU14AreaStableGarrisonReq
+        110,-23: AU14AreaStableGarrisonReq
         110,-33: AU14AreaGarrisonOutofBounds
         110,-34: AU14AreaGarrisonOutofBounds
         110,-35: AU14AreaGarrisonOutofBounds
@@ -24360,45 +24385,45 @@ entities:
         111,8: AU14AreaGarrisonOutofBounds
         111,11: AU14AreaGarrisonOutofBounds
         111,7: AU14AreaGarrisonOutofBounds
-        111,5: AU14AreaGarrisonOutofBounds
+        111,5: AU14AreaStableGarrisonReq
         110,-36: AU14AreaGarrisonOutofBounds
-        111,3: AU14AreaGarrisonOutofBounds
-        111,4: AU14AreaGarrisonOutofBounds
-        111,2: AU14AreaGarrisonOutofBounds
+        111,3: AU14AreaStableGarrisonReq
+        111,4: AU14AreaStableGarrisonReq
+        111,2: AU14AreaStableGarrisonReq
         111,9: AU14AreaGarrisonOutofBounds
-        111,-1: AU14AreaGarrisonOutofBounds
-        111,-2: AU14AreaGarrisonOutofBounds
-        111,0: AU14AreaGarrisonOutofBounds
-        111,-4: AU14AreaGarrisonOutofBounds
-        111,6: AU14AreaGarrisonOutofBounds
-        111,-3: AU14AreaGarrisonOutofBounds
-        111,-6: AU14AreaGarrisonOutofBounds
-        111,1: AU14AreaGarrisonOutofBounds
-        111,-7: AU14AreaGarrisonOutofBounds
-        111,-9: AU14AreaGarrisonOutofBounds
-        111,-10: AU14AreaGarrisonOutofBounds
-        111,-11: AU14AreaGarrisonOutofBounds
-        111,-8: AU14AreaGarrisonOutofBounds
-        111,-5: AU14AreaGarrisonOutofBounds
-        111,-14: AU14AreaGarrisonOutofBounds
-        111,-13: AU14AreaGarrisonOutofBounds
-        111,-15: AU14AreaGarrisonOutofBounds
-        111,-16: AU14AreaGarrisonOutofBounds
-        111,-12: AU14AreaGarrisonOutofBounds
-        111,-17: AU14AreaGarrisonOutofBounds
-        111,-18: AU14AreaGarrisonOutofBounds
-        111,-19: AU14AreaGarrisonOutofBounds
-        111,-21: AU14AreaGarrisonOutofBounds
-        111,-22: AU14AreaGarrisonOutofBounds
-        111,-24: AU14AreaGarrisonOutofBounds
-        111,-25: AU14AreaGarrisonOutofBounds
-        111,-26: AU14AreaGarrisonOutofBounds
-        111,-28: AU14AreaGarrisonOutofBounds
-        111,-27: AU14AreaGarrisonOutofBounds
-        111,-23: AU14AreaGarrisonOutofBounds
-        111,-29: AU14AreaGarrisonOutofBounds
+        111,-1: AU14AreaStableGarrisonReq
+        111,-2: AU14AreaStableGarrisonReq
+        111,0: AU14AreaStableGarrisonReq
+        111,-4: AU14AreaStableGarrisonReq
+        111,6: AU14AreaStableGarrisonReq
+        111,-3: AU14AreaStableGarrisonReq
+        111,-6: AU14AreaStableGarrisonReq
+        111,1: AU14AreaStableGarrisonReq
+        111,-7: AU14AreaStableGarrisonReq
+        111,-9: AU14AreaStableGarrisonReq
+        111,-10: AU14AreaStableGarrisonReq
+        111,-11: AU14AreaStableGarrisonReq
+        111,-8: AU14AreaStableGarrisonReq
+        111,-5: AU14AreaStableGarrisonReq
+        111,-14: AU14AreaStableGarrisonReq
+        111,-13: AU14AreaStableGarrisonReq
+        111,-15: AU14AreaStableGarrisonReq
+        111,-16: AU14AreaStableGarrisonReq
+        111,-12: AU14AreaStableGarrisonReq
+        111,-17: AU14AreaStableGarrisonReq
+        111,-18: AU14AreaStableGarrisonReq
+        111,-19: AU14AreaStableGarrisonReq
+        111,-21: AU14AreaStableGarrisonReq
+        111,-22: AU14AreaStableGarrisonReq
+        111,-24: AU14AreaStableGarrisonReq
+        111,-25: AU14AreaStableGarrisonReq
+        111,-26: AU14AreaStableGarrisonReq
+        111,-28: AU14AreaStableGarrisonReq
+        111,-27: AU14AreaStableGarrisonReq
+        111,-23: AU14AreaStableGarrisonReq
+        111,-29: AU14AreaStableGarrisonReq
         111,-30: AU14AreaGarrisonOutofBounds
-        111,-20: AU14AreaGarrisonOutofBounds
+        111,-20: AU14AreaStableGarrisonReq
         111,-32: AU14AreaGarrisonOutofBounds
         111,-31: AU14AreaGarrisonOutofBounds
         111,-34: AU14AreaGarrisonOutofBounds
@@ -24429,35 +24454,35 @@ entities:
         112,-3: AU14AreaGarrisonOutofBounds
         112,1: AU14AreaGarrisonOutofBounds
         112,6: AU14AreaGarrisonOutofBounds
-        112,-5: AU14AreaGarrisonOutofBounds
-        112,-7: AU14AreaGarrisonOutofBounds
+        112,-5: AU14AreaStableGarrisonReq
+        112,-7: AU14AreaStableGarrisonReq
         112,4: AU14AreaGarrisonOutofBounds
-        112,-8: AU14AreaGarrisonOutofBounds
-        112,-10: AU14AreaGarrisonOutofBounds
-        112,-11: AU14AreaGarrisonOutofBounds
-        112,-9: AU14AreaGarrisonOutofBounds
-        112,-6: AU14AreaGarrisonOutofBounds
-        112,-14: AU14AreaGarrisonOutofBounds
-        112,-15: AU14AreaGarrisonOutofBounds
-        112,-16: AU14AreaGarrisonOutofBounds
-        112,-4: AU14AreaGarrisonOutofBounds
-        112,-12: AU14AreaGarrisonOutofBounds
-        112,-17: AU14AreaGarrisonOutofBounds
-        112,-19: AU14AreaGarrisonOutofBounds
-        112,-20: AU14AreaGarrisonOutofBounds
-        112,-21: AU14AreaGarrisonOutofBounds
-        112,-18: AU14AreaGarrisonOutofBounds
-        112,-22: AU14AreaGarrisonOutofBounds
-        112,-23: AU14AreaGarrisonOutofBounds
-        112,-24: AU14AreaGarrisonOutofBounds
-        112,-13: AU14AreaGarrisonOutofBounds
-        112,-27: AU14AreaGarrisonOutofBounds
-        112,-26: AU14AreaGarrisonOutofBounds
-        112,-28: AU14AreaGarrisonOutofBounds
-        112,-25: AU14AreaGarrisonOutofBounds
+        112,-8: AU14AreaStableGarrisonReq
+        112,-10: AU14AreaStableGarrisonReq
+        112,-11: AU14AreaStableGarrisonReq
+        112,-9: AU14AreaStableGarrisonReq
+        112,-6: AU14AreaStableGarrisonReq
+        112,-14: AU14AreaStableGarrisonReq
+        112,-15: AU14AreaStableGarrisonReq
+        112,-16: AU14AreaStableGarrisonReq
+        112,-4: AU14AreaStableGarrisonReq
+        112,-12: AU14AreaStableGarrisonReq
+        112,-17: AU14AreaStableGarrisonReq
+        112,-19: AU14AreaStableGarrisonReq
+        112,-20: AU14AreaStableGarrisonReq
+        112,-21: AU14AreaStableGarrisonReq
+        112,-18: AU14AreaStableGarrisonReq
+        112,-22: AU14AreaStableGarrisonReq
+        112,-23: AU14AreaStableGarrisonReq
+        112,-24: AU14AreaStableGarrisonReq
+        112,-13: AU14AreaStableGarrisonReq
+        112,-27: AU14AreaStableGarrisonReq
+        112,-26: AU14AreaStableGarrisonReq
+        112,-28: AU14AreaStableGarrisonReq
+        112,-25: AU14AreaStableGarrisonReq
         112,-31: AU14AreaGarrisonOutofBounds
         112,-30: AU14AreaGarrisonOutofBounds
-        112,-29: AU14AreaGarrisonOutofBounds
+        112,-29: AU14AreaStableGarrisonReq
         112,-32: AU14AreaGarrisonOutofBounds
         112,-33: AU14AreaGarrisonOutofBounds
         112,-34: AU14AreaGarrisonOutofBounds
@@ -24487,34 +24512,34 @@ entities:
         113,-1: AU14AreaGarrisonOutofBounds
         113,-2: AU14AreaGarrisonOutofBounds
         113,6: AU14AreaGarrisonOutofBounds
-        113,-5: AU14AreaGarrisonOutofBounds
-        113,-6: AU14AreaGarrisonOutofBounds
+        113,-5: AU14AreaStableGarrisonReq
+        113,-6: AU14AreaStableGarrisonReq
         113,-3: AU14AreaGarrisonOutofBounds
-        113,-7: AU14AreaGarrisonOutofBounds
-        113,-4: AU14AreaGarrisonOutofBounds
-        113,-10: AU14AreaGarrisonOutofBounds
-        113,-11: AU14AreaGarrisonOutofBounds
-        113,-8: AU14AreaGarrisonOutofBounds
-        113,-12: AU14AreaGarrisonOutofBounds
-        113,-9: AU14AreaGarrisonOutofBounds
-        113,-13: AU14AreaGarrisonOutofBounds
-        113,-16: AU14AreaGarrisonOutofBounds
-        113,-17: AU14AreaGarrisonOutofBounds
-        113,-18: AU14AreaGarrisonOutofBounds
-        113,-14: AU14AreaGarrisonOutofBounds
-        113,-15: AU14AreaGarrisonOutofBounds
-        113,-19: AU14AreaGarrisonOutofBounds
-        113,-21: AU14AreaGarrisonOutofBounds
-        113,-22: AU14AreaGarrisonOutofBounds
-        113,-23: AU14AreaGarrisonOutofBounds
-        113,-24: AU14AreaGarrisonOutofBounds
-        113,-25: AU14AreaGarrisonOutofBounds
-        113,-27: AU14AreaGarrisonOutofBounds
-        113,-20: AU14AreaGarrisonOutofBounds
-        113,-29: AU14AreaGarrisonOutofBounds
-        113,-26: AU14AreaGarrisonOutofBounds
+        113,-7: AU14AreaStableGarrisonReq
+        113,-4: AU14AreaStableGarrisonReq
+        113,-10: AU14AreaStableGarrisonReq
+        113,-11: AU14AreaStableGarrisonReq
+        113,-8: AU14AreaStableGarrisonReq
+        113,-12: AU14AreaStableGarrisonReq
+        113,-9: AU14AreaStableGarrisonReq
+        113,-13: AU14AreaStableGarrisonReq
+        113,-16: AU14AreaStableGarrisonReq
+        113,-17: AU14AreaStableGarrisonReq
+        113,-18: AU14AreaStableGarrisonReq
+        113,-14: AU14AreaStableGarrisonReq
+        113,-15: AU14AreaStableGarrisonReq
+        113,-19: AU14AreaStableGarrisonReq
+        113,-21: AU14AreaStableGarrisonReq
+        113,-22: AU14AreaStableGarrisonReq
+        113,-23: AU14AreaStableGarrisonReq
+        113,-24: AU14AreaStableGarrisonReq
+        113,-25: AU14AreaStableGarrisonReq
+        113,-27: AU14AreaStableGarrisonReq
+        113,-20: AU14AreaStableGarrisonReq
+        113,-29: AU14AreaStableGarrisonReq
+        113,-26: AU14AreaStableGarrisonReq
         113,-30: AU14AreaGarrisonOutofBounds
-        113,-28: AU14AreaGarrisonOutofBounds
+        113,-28: AU14AreaStableGarrisonReq
         113,-31: AU14AreaGarrisonOutofBounds
         113,-33: AU14AreaGarrisonOutofBounds
         113,-32: AU14AreaGarrisonOutofBounds
@@ -48452,11 +48477,11 @@ entities:
         101,-46: AU14AreaStableGarrisonLZ
         101,-47: AU14AreaStableGarrisonLZ
         98,-58: AU14AreaGarrisonOutofBounds
-        114,-22: AU14AreaGarrisonOutofBounds
-        114,-25: AU14AreaGarrisonOutofBounds
-        114,-20: AU14AreaGarrisonOutofBounds
-        114,-19: AU14AreaGarrisonOutofBounds
-        114,-21: AU14AreaGarrisonOutofBounds
+        114,-22: AU14AreaStableGarrisonReq
+        114,-25: AU14AreaStableGarrisonReq
+        114,-20: AU14AreaStableGarrisonReq
+        114,-19: AU14AreaStableGarrisonReq
+        114,-21: AU14AreaStableGarrisonReq
         97,15: AU14AreaGarrisonOutofBounds
         98,15: AU14AreaGarrisonOutofBounds
         99,15: AU14AreaGarrisonOutofBounds
@@ -49594,18 +49619,18 @@ entities:
         -1,11: AU14AreaStableGarrisonNorthCaverns
         -1,12: AU14AreaStableGarrisonNorthCaverns
         -1,13: AU14AreaStableGarrisonNorthCaverns
-        114,-7: AU14AreaGarrisonOutofBounds
-        114,-10: AU14AreaGarrisonOutofBounds
-        114,-9: AU14AreaGarrisonOutofBounds
-        114,-11: AU14AreaGarrisonOutofBounds
-        114,-12: AU14AreaGarrisonOutofBounds
-        114,-13: AU14AreaGarrisonOutofBounds
-        114,-14: AU14AreaGarrisonOutofBounds
-        114,-15: AU14AreaGarrisonOutofBounds
-        114,-16: AU14AreaGarrisonOutofBounds
-        114,-17: AU14AreaGarrisonOutofBounds
-        114,-18: AU14AreaGarrisonOutofBounds
-        114,-8: AU14AreaGarrisonOutofBounds
+        114,-7: AU14AreaStableGarrisonReq
+        114,-10: AU14AreaStableGarrisonReq
+        114,-9: AU14AreaStableGarrisonReq
+        114,-11: AU14AreaStableGarrisonReq
+        114,-12: AU14AreaStableGarrisonReq
+        114,-13: AU14AreaStableGarrisonReq
+        114,-14: AU14AreaStableGarrisonReq
+        114,-15: AU14AreaStableGarrisonReq
+        114,-16: AU14AreaStableGarrisonReq
+        114,-17: AU14AreaStableGarrisonReq
+        114,-18: AU14AreaStableGarrisonReq
+        114,-8: AU14AreaStableGarrisonReq
         114,-35: AU14AreaGarrisonOutofBounds
         114,-36: AU14AreaGarrisonOutofBounds
         114,-37: AU14AreaGarrisonOutofBounds
@@ -49653,32 +49678,32 @@ entities:
         115,-1: AU14AreaGarrisonOutofBounds
         115,-2: AU14AreaGarrisonOutofBounds
         115,-3: AU14AreaGarrisonOutofBounds
-        115,-4: AU14AreaGarrisonOutofBounds
-        115,-5: AU14AreaGarrisonOutofBounds
-        115,-6: AU14AreaGarrisonOutofBounds
-        115,-7: AU14AreaGarrisonOutofBounds
-        115,-8: AU14AreaGarrisonOutofBounds
-        115,-9: AU14AreaGarrisonOutofBounds
-        115,-10: AU14AreaGarrisonOutofBounds
-        115,-11: AU14AreaGarrisonOutofBounds
-        115,-12: AU14AreaGarrisonOutofBounds
-        115,-13: AU14AreaGarrisonOutofBounds
-        115,-14: AU14AreaGarrisonOutofBounds
-        115,-15: AU14AreaGarrisonOutofBounds
-        115,-16: AU14AreaGarrisonOutofBounds
-        115,-17: AU14AreaGarrisonOutofBounds
-        115,-18: AU14AreaGarrisonOutofBounds
-        115,-19: AU14AreaGarrisonOutofBounds
-        115,-20: AU14AreaGarrisonOutofBounds
-        115,-21: AU14AreaGarrisonOutofBounds
-        115,-22: AU14AreaGarrisonOutofBounds
-        115,-23: AU14AreaGarrisonOutofBounds
-        115,-24: AU14AreaGarrisonOutofBounds
-        115,-25: AU14AreaGarrisonOutofBounds
-        115,-26: AU14AreaGarrisonOutofBounds
-        115,-27: AU14AreaGarrisonOutofBounds
-        115,-28: AU14AreaGarrisonOutofBounds
-        115,-29: AU14AreaGarrisonOutofBounds
+        115,-4: AU14AreaStableGarrisonReq
+        115,-5: AU14AreaStableGarrisonReq
+        115,-6: AU14AreaStableGarrisonReq
+        115,-7: AU14AreaStableGarrisonReq
+        115,-8: AU14AreaStableGarrisonReq
+        115,-9: AU14AreaStableGarrisonReq
+        115,-10: AU14AreaStableGarrisonReq
+        115,-11: AU14AreaStableGarrisonReq
+        115,-12: AU14AreaStableGarrisonReq
+        115,-13: AU14AreaStableGarrisonReq
+        115,-14: AU14AreaStableGarrisonReq
+        115,-15: AU14AreaStableGarrisonReq
+        115,-16: AU14AreaStableGarrisonReq
+        115,-17: AU14AreaStableGarrisonReq
+        115,-18: AU14AreaStableGarrisonReq
+        115,-19: AU14AreaStableGarrisonReq
+        115,-20: AU14AreaStableGarrisonReq
+        115,-21: AU14AreaStableGarrisonReq
+        115,-22: AU14AreaStableGarrisonReq
+        115,-23: AU14AreaStableGarrisonReq
+        115,-24: AU14AreaStableGarrisonReq
+        115,-25: AU14AreaStableGarrisonReq
+        115,-26: AU14AreaStableGarrisonReq
+        115,-27: AU14AreaStableGarrisonReq
+        115,-28: AU14AreaStableGarrisonReq
+        115,-29: AU14AreaStableGarrisonReq
         115,-30: AU14AreaGarrisonOutofBounds
         115,-31: AU14AreaGarrisonOutofBounds
         115,-32: AU14AreaGarrisonOutofBounds
@@ -49733,32 +49758,32 @@ entities:
         116,-2: AU14AreaGarrisonOutofBounds
         116,-3: AU14AreaGarrisonOutofBounds
         116,6: AU14AreaGarrisonOutofBounds
-        116,-4: AU14AreaGarrisonOutofBounds
-        116,-6: AU14AreaGarrisonOutofBounds
-        116,-5: AU14AreaGarrisonOutofBounds
-        116,-7: AU14AreaGarrisonOutofBounds
-        116,-8: AU14AreaGarrisonOutofBounds
-        116,-10: AU14AreaGarrisonOutofBounds
-        116,-9: AU14AreaGarrisonOutofBounds
-        116,-11: AU14AreaGarrisonOutofBounds
-        116,-12: AU14AreaGarrisonOutofBounds
-        116,-13: AU14AreaGarrisonOutofBounds
-        116,-14: AU14AreaGarrisonOutofBounds
-        116,-15: AU14AreaGarrisonOutofBounds
-        116,-16: AU14AreaGarrisonOutofBounds
-        116,-17: AU14AreaGarrisonOutofBounds
-        116,-18: AU14AreaGarrisonOutofBounds
-        116,-19: AU14AreaGarrisonOutofBounds
-        116,-20: AU14AreaGarrisonOutofBounds
-        116,-21: AU14AreaGarrisonOutofBounds
-        116,-22: AU14AreaGarrisonOutofBounds
-        116,-23: AU14AreaGarrisonOutofBounds
-        116,-24: AU14AreaGarrisonOutofBounds
-        116,-25: AU14AreaGarrisonOutofBounds
-        116,-26: AU14AreaGarrisonOutofBounds
-        116,-27: AU14AreaGarrisonOutofBounds
-        116,-28: AU14AreaGarrisonOutofBounds
-        116,-29: AU14AreaGarrisonOutofBounds
+        116,-4: AU14AreaStableGarrisonReq
+        116,-6: AU14AreaStableGarrisonReq
+        116,-5: AU14AreaStableGarrisonReq
+        116,-7: AU14AreaStableGarrisonReq
+        116,-8: AU14AreaStableGarrisonReq
+        116,-10: AU14AreaStableGarrisonReq
+        116,-9: AU14AreaStableGarrisonReq
+        116,-11: AU14AreaStableGarrisonReq
+        116,-12: AU14AreaStableGarrisonReq
+        116,-13: AU14AreaStableGarrisonReq
+        116,-14: AU14AreaStableGarrisonReq
+        116,-15: AU14AreaStableGarrisonReq
+        116,-16: AU14AreaStableGarrisonReq
+        116,-17: AU14AreaStableGarrisonReq
+        116,-18: AU14AreaStableGarrisonReq
+        116,-19: AU14AreaStableGarrisonReq
+        116,-20: AU14AreaStableGarrisonReq
+        116,-21: AU14AreaStableGarrisonReq
+        116,-22: AU14AreaStableGarrisonReq
+        116,-23: AU14AreaStableGarrisonReq
+        116,-24: AU14AreaStableGarrisonReq
+        116,-25: AU14AreaStableGarrisonReq
+        116,-26: AU14AreaStableGarrisonReq
+        116,-27: AU14AreaStableGarrisonReq
+        116,-28: AU14AreaStableGarrisonReq
+        116,-29: AU14AreaStableGarrisonReq
         116,-30: AU14AreaGarrisonOutofBounds
         116,-31: AU14AreaGarrisonOutofBounds
         116,-32: AU14AreaGarrisonOutofBounds
@@ -49811,32 +49836,32 @@ entities:
         117,-1: AU14AreaGarrisonOutofBounds
         117,-2: AU14AreaGarrisonOutofBounds
         117,-3: AU14AreaGarrisonOutofBounds
-        117,-4: AU14AreaGarrisonOutofBounds
-        117,-5: AU14AreaGarrisonOutofBounds
-        117,-6: AU14AreaGarrisonOutofBounds
-        117,-7: AU14AreaGarrisonOutofBounds
-        117,-8: AU14AreaGarrisonOutofBounds
-        117,-9: AU14AreaGarrisonOutofBounds
-        117,-10: AU14AreaGarrisonOutofBounds
-        117,-11: AU14AreaGarrisonOutofBounds
-        117,-12: AU14AreaGarrisonOutofBounds
-        117,-13: AU14AreaGarrisonOutofBounds
-        117,-14: AU14AreaGarrisonOutofBounds
-        117,-15: AU14AreaGarrisonOutofBounds
-        117,-16: AU14AreaGarrisonOutofBounds
-        117,-17: AU14AreaGarrisonOutofBounds
-        117,-18: AU14AreaGarrisonOutofBounds
-        117,-19: AU14AreaGarrisonOutofBounds
-        117,-20: AU14AreaGarrisonOutofBounds
-        117,-21: AU14AreaGarrisonOutofBounds
-        117,-22: AU14AreaGarrisonOutofBounds
-        117,-23: AU14AreaGarrisonOutofBounds
-        117,-24: AU14AreaGarrisonOutofBounds
-        117,-25: AU14AreaGarrisonOutofBounds
-        117,-26: AU14AreaGarrisonOutofBounds
-        117,-27: AU14AreaGarrisonOutofBounds
-        117,-28: AU14AreaGarrisonOutofBounds
-        117,-29: AU14AreaGarrisonOutofBounds
+        117,-4: AU14AreaStableGarrisonReq
+        117,-5: AU14AreaStableGarrisonReq
+        117,-6: AU14AreaStableGarrisonReq
+        117,-7: AU14AreaStableGarrisonReq
+        117,-8: AU14AreaStableGarrisonReq
+        117,-9: AU14AreaStableGarrisonReq
+        117,-10: AU14AreaStableGarrisonReq
+        117,-11: AU14AreaStableGarrisonReq
+        117,-12: AU14AreaStableGarrisonReq
+        117,-13: AU14AreaStableGarrisonReq
+        117,-14: AU14AreaStableGarrisonReq
+        117,-15: AU14AreaStableGarrisonReq
+        117,-16: AU14AreaStableGarrisonReq
+        117,-17: AU14AreaStableGarrisonReq
+        117,-18: AU14AreaStableGarrisonReq
+        117,-19: AU14AreaStableGarrisonReq
+        117,-20: AU14AreaStableGarrisonReq
+        117,-21: AU14AreaStableGarrisonReq
+        117,-22: AU14AreaStableGarrisonReq
+        117,-23: AU14AreaStableGarrisonReq
+        117,-24: AU14AreaStableGarrisonReq
+        117,-25: AU14AreaStableGarrisonReq
+        117,-26: AU14AreaStableGarrisonReq
+        117,-27: AU14AreaStableGarrisonReq
+        117,-28: AU14AreaStableGarrisonReq
+        117,-29: AU14AreaStableGarrisonReq
         117,-30: AU14AreaGarrisonOutofBounds
         117,-31: AU14AreaGarrisonOutofBounds
         117,-32: AU14AreaGarrisonOutofBounds
@@ -49891,32 +49916,32 @@ entities:
         118,-1: AU14AreaGarrisonOutofBounds
         118,-2: AU14AreaGarrisonOutofBounds
         118,-3: AU14AreaGarrisonOutofBounds
-        118,-4: AU14AreaGarrisonOutofBounds
-        118,-5: AU14AreaGarrisonOutofBounds
-        118,-6: AU14AreaGarrisonOutofBounds
-        118,-7: AU14AreaGarrisonOutofBounds
-        118,-8: AU14AreaGarrisonOutofBounds
-        118,-9: AU14AreaGarrisonOutofBounds
-        118,-10: AU14AreaGarrisonOutofBounds
-        118,-11: AU14AreaGarrisonOutofBounds
-        118,-12: AU14AreaGarrisonOutofBounds
-        118,-13: AU14AreaGarrisonOutofBounds
-        118,-16: AU14AreaGarrisonOutofBounds
-        118,-14: AU14AreaGarrisonOutofBounds
-        118,-17: AU14AreaGarrisonOutofBounds
-        118,-18: AU14AreaGarrisonOutofBounds
-        118,-15: AU14AreaGarrisonOutofBounds
-        118,-19: AU14AreaGarrisonOutofBounds
-        118,-20: AU14AreaGarrisonOutofBounds
-        118,-21: AU14AreaGarrisonOutofBounds
-        118,-22: AU14AreaGarrisonOutofBounds
-        118,-23: AU14AreaGarrisonOutofBounds
-        118,-24: AU14AreaGarrisonOutofBounds
-        118,-25: AU14AreaGarrisonOutofBounds
-        118,-26: AU14AreaGarrisonOutofBounds
-        118,-27: AU14AreaGarrisonOutofBounds
-        118,-28: AU14AreaGarrisonOutofBounds
-        118,-29: AU14AreaGarrisonOutofBounds
+        118,-4: AU14AreaStableGarrisonReq
+        118,-5: AU14AreaStableGarrisonReq
+        118,-6: AU14AreaStableGarrisonReq
+        118,-7: AU14AreaStableGarrisonReq
+        118,-8: AU14AreaStableGarrisonReq
+        118,-9: AU14AreaStableGarrisonReq
+        118,-10: AU14AreaStableGarrisonReq
+        118,-11: AU14AreaStableGarrisonReq
+        118,-12: AU14AreaStableGarrisonReq
+        118,-13: AU14AreaStableGarrisonReq
+        118,-16: AU14AreaStableGarrisonReq
+        118,-14: AU14AreaStableGarrisonReq
+        118,-17: AU14AreaStableGarrisonReq
+        118,-18: AU14AreaStableGarrisonReq
+        118,-15: AU14AreaStableGarrisonReq
+        118,-19: AU14AreaStableGarrisonReq
+        118,-20: AU14AreaStableGarrisonReq
+        118,-21: AU14AreaStableGarrisonReq
+        118,-22: AU14AreaStableGarrisonReq
+        118,-23: AU14AreaStableGarrisonReq
+        118,-24: AU14AreaStableGarrisonReq
+        118,-25: AU14AreaStableGarrisonReq
+        118,-26: AU14AreaStableGarrisonReq
+        118,-27: AU14AreaStableGarrisonReq
+        118,-28: AU14AreaStableGarrisonReq
+        118,-29: AU14AreaStableGarrisonReq
         118,-30: AU14AreaGarrisonOutofBounds
         118,-31: AU14AreaGarrisonOutofBounds
         118,-32: AU14AreaGarrisonOutofBounds
@@ -49970,32 +49995,32 @@ entities:
         119,-1: AU14AreaGarrisonOutofBounds
         119,-2: AU14AreaGarrisonOutofBounds
         119,-3: AU14AreaGarrisonOutofBounds
-        119,-4: AU14AreaGarrisonOutofBounds
-        119,-5: AU14AreaGarrisonOutofBounds
-        119,-6: AU14AreaGarrisonOutofBounds
-        119,-7: AU14AreaGarrisonOutofBounds
-        119,-8: AU14AreaGarrisonOutofBounds
-        119,-9: AU14AreaGarrisonOutofBounds
-        119,-10: AU14AreaGarrisonOutofBounds
-        119,-11: AU14AreaGarrisonOutofBounds
-        119,-12: AU14AreaGarrisonOutofBounds
-        119,-13: AU14AreaGarrisonOutofBounds
-        119,-14: AU14AreaGarrisonOutofBounds
-        119,-15: AU14AreaGarrisonOutofBounds
-        119,-16: AU14AreaGarrisonOutofBounds
-        119,-17: AU14AreaGarrisonOutofBounds
-        119,-18: AU14AreaGarrisonOutofBounds
-        119,-19: AU14AreaGarrisonOutofBounds
-        119,-20: AU14AreaGarrisonOutofBounds
-        119,-21: AU14AreaGarrisonOutofBounds
-        119,-22: AU14AreaGarrisonOutofBounds
-        119,-23: AU14AreaGarrisonOutofBounds
-        119,-24: AU14AreaGarrisonOutofBounds
-        119,-25: AU14AreaGarrisonOutofBounds
-        119,-26: AU14AreaGarrisonOutofBounds
-        119,-27: AU14AreaGarrisonOutofBounds
-        119,-28: AU14AreaGarrisonOutofBounds
-        119,-29: AU14AreaGarrisonOutofBounds
+        119,-4: AU14AreaStableGarrisonReq
+        119,-5: AU14AreaStableGarrisonReq
+        119,-6: AU14AreaStableGarrisonReq
+        119,-7: AU14AreaStableGarrisonReq
+        119,-8: AU14AreaStableGarrisonReq
+        119,-9: AU14AreaStableGarrisonReq
+        119,-10: AU14AreaStableGarrisonReq
+        119,-11: AU14AreaStableGarrisonReq
+        119,-12: AU14AreaStableGarrisonReq
+        119,-13: AU14AreaStableGarrisonReq
+        119,-14: AU14AreaStableGarrisonReq
+        119,-15: AU14AreaStableGarrisonReq
+        119,-16: AU14AreaStableGarrisonReq
+        119,-17: AU14AreaStableGarrisonReq
+        119,-18: AU14AreaStableGarrisonReq
+        119,-19: AU14AreaStableGarrisonReq
+        119,-20: AU14AreaStableGarrisonReq
+        119,-21: AU14AreaStableGarrisonReq
+        119,-22: AU14AreaStableGarrisonReq
+        119,-23: AU14AreaStableGarrisonReq
+        119,-24: AU14AreaStableGarrisonReq
+        119,-25: AU14AreaStableGarrisonReq
+        119,-26: AU14AreaStableGarrisonReq
+        119,-27: AU14AreaStableGarrisonReq
+        119,-28: AU14AreaStableGarrisonReq
+        119,-29: AU14AreaStableGarrisonReq
         119,-30: AU14AreaGarrisonOutofBounds
         119,-31: AU14AreaGarrisonOutofBounds
         119,-32: AU14AreaGarrisonOutofBounds
@@ -50048,31 +50073,31 @@ entities:
         120,-1: AU14AreaGarrisonOutofBounds
         120,-2: AU14AreaGarrisonOutofBounds
         120,-3: AU14AreaGarrisonOutofBounds
-        120,-4: AU14AreaGarrisonOutofBounds
-        120,-5: AU14AreaGarrisonOutofBounds
-        120,-6: AU14AreaGarrisonOutofBounds
-        120,-7: AU14AreaGarrisonOutofBounds
-        120,-8: AU14AreaGarrisonOutofBounds
-        120,-9: AU14AreaGarrisonOutofBounds
-        120,-10: AU14AreaGarrisonOutofBounds
-        120,-11: AU14AreaGarrisonOutofBounds
-        120,-12: AU14AreaGarrisonOutofBounds
-        120,-14: AU14AreaGarrisonOutofBounds
-        120,-15: AU14AreaGarrisonOutofBounds
-        120,-16: AU14AreaGarrisonOutofBounds
-        120,-17: AU14AreaGarrisonOutofBounds
-        120,-18: AU14AreaGarrisonOutofBounds
-        120,-19: AU14AreaGarrisonOutofBounds
-        120,-20: AU14AreaGarrisonOutofBounds
-        120,-21: AU14AreaGarrisonOutofBounds
-        120,-22: AU14AreaGarrisonOutofBounds
-        120,-23: AU14AreaGarrisonOutofBounds
-        120,-24: AU14AreaGarrisonOutofBounds
-        120,-25: AU14AreaGarrisonOutofBounds
-        120,-26: AU14AreaGarrisonOutofBounds
-        120,-27: AU14AreaGarrisonOutofBounds
-        120,-28: AU14AreaGarrisonOutofBounds
-        120,-29: AU14AreaGarrisonOutofBounds
+        120,-4: AU14AreaStableGarrisonReq
+        120,-5: AU14AreaStableGarrisonReq
+        120,-6: AU14AreaStableGarrisonReq
+        120,-7: AU14AreaStableGarrisonReq
+        120,-8: AU14AreaStableGarrisonReq
+        120,-9: AU14AreaStableGarrisonReq
+        120,-10: AU14AreaStableGarrisonReq
+        120,-11: AU14AreaStableGarrisonReq
+        120,-12: AU14AreaStableGarrisonReq
+        120,-14: AU14AreaStableGarrisonReq
+        120,-15: AU14AreaStableGarrisonReq
+        120,-16: AU14AreaStableGarrisonReq
+        120,-17: AU14AreaStableGarrisonReq
+        120,-18: AU14AreaStableGarrisonReq
+        120,-19: AU14AreaStableGarrisonReq
+        120,-20: AU14AreaStableGarrisonReq
+        120,-21: AU14AreaStableGarrisonReq
+        120,-22: AU14AreaStableGarrisonReq
+        120,-23: AU14AreaStableGarrisonReq
+        120,-24: AU14AreaStableGarrisonReq
+        120,-25: AU14AreaStableGarrisonReq
+        120,-26: AU14AreaStableGarrisonReq
+        120,-27: AU14AreaStableGarrisonReq
+        120,-28: AU14AreaStableGarrisonReq
+        120,-29: AU14AreaStableGarrisonReq
         120,-30: AU14AreaGarrisonOutofBounds
         120,-31: AU14AreaGarrisonOutofBounds
         120,-32: AU14AreaGarrisonOutofBounds
@@ -50092,7 +50117,7 @@ entities:
         120,-46: AU14AreaGarrisonOutofBounds
         120,-47: AU14AreaGarrisonOutofBounds
         120,-48: AU14AreaGarrisonOutofBounds
-        120,-13: AU14AreaGarrisonOutofBounds
+        120,-13: AU14AreaStableGarrisonReq
         119,-51: AU14AreaGarrisonOutofBounds
         120,-50: AU14AreaGarrisonOutofBounds
         120,-49: AU14AreaGarrisonOutofBounds
@@ -105480,6 +105505,761 @@ entities:
         -2,-172: AU14AreaStableGarrisonSouthCaverns
         -1,-172: AU14AreaStableGarrisonSouthCaverns
         -12,-138: AU14AreaGarrisonMiningCamp
+        295,-129: AU14AreaGarrisonCMBMotorpool
+        295,-128: AU14AreaGarrisonCMBMotorpool
+        295,-127: AU14AreaGarrisonCMBMotorpool
+        295,-126: AU14AreaGarrisonCMBMotorpool
+        295,-125: AU14AreaGarrisonCMBMotorpool
+        295,-124: AU14AreaGarrisonCMBMotorpool
+        295,-123: AU14AreaGarrisonCMBMotorpool
+        295,-122: AU14AreaGarrisonCMBMotorpool
+        295,-121: AU14AreaGarrisonCMBMotorpool
+        295,-120: AU14AreaGarrisonCMBMotorpool
+        295,-119: AU14AreaGarrisonCMBMotorpool
+        295,-118: AU14AreaGarrisonCMBMotorpool
+        295,-117: AU14AreaGarrisonCMBMotorpool
+        295,-116: AU14AreaGarrisonCMBMotorpool
+        295,-115: AU14AreaGarrisonCMBMotorpool
+        295,-114: AU14AreaGarrisonCMBMotorpool
+        295,-113: AU14AreaGarrisonCMBMotorpool
+        295,-112: AU14AreaGarrisonCMBMotorpool
+        295,-111: AU14AreaGarrisonCMBMotorpool
+        295,-110: AU14AreaGarrisonCMBMotorpool
+        296,-110: AU14AreaGarrisonCMBMotorpool
+        296,-111: AU14AreaGarrisonCMBMotorpool
+        296,-112: AU14AreaGarrisonCMBMotorpool
+        296,-113: AU14AreaGarrisonCMBMotorpool
+        296,-114: AU14AreaGarrisonCMBMotorpool
+        296,-116: AU14AreaGarrisonCMBMotorpool
+        296,-115: AU14AreaGarrisonCMBMotorpool
+        297,-116: AU14AreaGarrisonCMBMotorpool
+        297,-114: AU14AreaGarrisonCMBMotorpool
+        297,-113: AU14AreaGarrisonCMBMotorpool
+        297,-115: AU14AreaGarrisonCMBMotorpool
+        297,-112: AU14AreaGarrisonCMBMotorpool
+        297,-111: AU14AreaGarrisonCMBMotorpool
+        298,-116: AU14AreaGarrisonCMBMotorpool
+        298,-115: AU14AreaGarrisonCMBMotorpool
+        298,-114: AU14AreaGarrisonCMBMotorpool
+        298,-113: AU14AreaGarrisonCMBMotorpool
+        298,-112: AU14AreaGarrisonCMBMotorpool
+        298,-111: AU14AreaGarrisonCMBMotorpool
+        299,-116: AU14AreaGarrisonCMBMotorpool
+        299,-114: AU14AreaGarrisonCMBMotorpool
+        299,-115: AU14AreaGarrisonCMBMotorpool
+        299,-113: AU14AreaGarrisonCMBMotorpool
+        299,-112: AU14AreaGarrisonCMBMotorpool
+        299,-111: AU14AreaGarrisonCMBMotorpool
+        300,-115: AU14AreaGarrisonCMBMotorpool
+        300,-116: AU14AreaGarrisonCMBMotorpool
+        300,-114: AU14AreaGarrisonCMBMotorpool
+        300,-113: AU14AreaGarrisonCMBMotorpool
+        300,-112: AU14AreaGarrisonCMBMotorpool
+        300,-111: AU14AreaGarrisonCMBMotorpool
+        301,-116: AU14AreaGarrisonCMBMotorpool
+        301,-114: AU14AreaGarrisonCMBMotorpool
+        301,-115: AU14AreaGarrisonCMBMotorpool
+        301,-113: AU14AreaGarrisonCMBMotorpool
+        301,-112: AU14AreaGarrisonCMBMotorpool
+        301,-111: AU14AreaGarrisonCMBMotorpool
+        302,-116: AU14AreaGarrisonCMBMotorpool
+        302,-115: AU14AreaGarrisonCMBMotorpool
+        302,-114: AU14AreaGarrisonCMBMotorpool
+        302,-113: AU14AreaGarrisonCMBMotorpool
+        302,-112: AU14AreaGarrisonCMBMotorpool
+        302,-111: AU14AreaGarrisonCMBMotorpool
+        298,-110: AU14AreaGarrisonCMBMotorpool
+        296,-125: AU14AreaGarrisonCMBMotorpool
+        296,-126: AU14AreaGarrisonCMBMotorpool
+        296,-127: AU14AreaGarrisonCMBMotorpool
+        296,-128: AU14AreaGarrisonCMBMotorpool
+        297,-125: AU14AreaGarrisonCMBMotorpool
+        297,-126: AU14AreaGarrisonCMBMotorpool
+        297,-127: AU14AreaGarrisonCMBMotorpool
+        297,-128: AU14AreaGarrisonCMBMotorpool
+        298,-126: AU14AreaGarrisonCMBMotorpool
+        298,-127: AU14AreaGarrisonCMBMotorpool
+        298,-128: AU14AreaGarrisonCMBMotorpool
+        299,-125: AU14AreaGarrisonCMBMotorpool
+        299,-126: AU14AreaGarrisonCMBMotorpool
+        299,-127: AU14AreaGarrisonCMBMotorpool
+        299,-128: AU14AreaGarrisonCMBMotorpool
+        300,-125: AU14AreaGarrisonCMBMotorpool
+        300,-126: AU14AreaGarrisonCMBMotorpool
+        300,-127: AU14AreaGarrisonCMBMotorpool
+        300,-128: AU14AreaGarrisonCMBMotorpool
+        301,-125: AU14AreaGarrisonCMBMotorpool
+        301,-126: AU14AreaGarrisonCMBMotorpool
+        301,-127: AU14AreaGarrisonCMBMotorpool
+        301,-128: AU14AreaGarrisonCMBMotorpool
+        298,-125: AU14AreaGarrisonCMBMotorpool
+        298,-124: AU14AreaGarrisonCMBPrecinct
+        298,-122: AU14AreaGarrisonCMBPrecinct
+        298,-121: AU14AreaGarrisonCMBPrecinct
+        298,-120: AU14AreaGarrisonCMBPrecinct
+        298,-119: AU14AreaGarrisonCMBPrecinct
+        298,-118: AU14AreaGarrisonCMBPrecinct
+        296,-122: AU14AreaGarrisonCMBPrecinct
+        296,-124: AU14AreaGarrisonCMBPrecinct
+        296,-120: AU14AreaGarrisonCMBPrecinct
+        296,-121: AU14AreaGarrisonCMBPrecinct
+        296,-119: AU14AreaGarrisonCMBPrecinct
+        296,-118: AU14AreaGarrisonCMBPrecinct
+        297,-129: AU14AreaGarrisonCMBMotorpool
+        298,-129: AU14AreaGarrisonCMBMotorpool
+        299,-129: AU14AreaGarrisonCMBMotorpool
+        300,-129: AU14AreaGarrisonCMBMotorpool
+        301,-129: AU14AreaGarrisonCMBMotorpool
+        302,-129: AU14AreaGarrisonCMBMotorpool
+        302,-128: AU14AreaGarrisonCMBMotorpool
+        302,-127: AU14AreaGarrisonCMBMotorpool
+        302,-126: AU14AreaGarrisonCMBMotorpool
+        302,-125: AU14AreaGarrisonCMBMotorpool
+        303,-125: AU14AreaGarrisonCMBMotorpool
+        303,-126: AU14AreaGarrisonCMBMotorpool
+        304,-125: AU14AreaGarrisonCMBMotorpool
+        304,-126: AU14AreaGarrisonCMBMotorpool
+        304,-127: AU14AreaGarrisonCMBMotorpool
+        305,-125: AU14AreaGarrisonCMBMotorpool
+        305,-126: AU14AreaGarrisonCMBMotorpool
+        305,-127: AU14AreaGarrisonCMBMotorpool
+        303,-127: AU14AreaGarrisonCMBMotorpool
+        306,-134: AU14AreaGarrisonStreetMainStreet
+        306,-133: AU14AreaGarrisonStreetMainStreet
+        306,-132: AU14AreaGarrisonStreetMainStreet
+        306,-131: AU14AreaGarrisonStreetMainStreet
+        306,-130: AU14AreaGarrisonStreetMainStreet
+        306,-129: AU14AreaGarrisonStreetMainStreet
+        306,-128: AU14AreaGarrisonStreetMainStreet
+        306,-127: AU14AreaGarrisonStreetMainStreet
+        306,-126: AU14AreaGarrisonStreetMainStreet
+        306,-125: AU14AreaGarrisonStreetMainStreet
+        306,-124: AU14AreaGarrisonStreetMainStreet
+        307,-134: AU14AreaGarrisonStreetMainStreet
+        307,-133: AU14AreaGarrisonStreetMainStreet
+        307,-132: AU14AreaGarrisonStreetMainStreet
+        307,-131: AU14AreaGarrisonStreetMainStreet
+        307,-130: AU14AreaGarrisonStreetMainStreet
+        307,-129: AU14AreaGarrisonStreetMainStreet
+        307,-128: AU14AreaGarrisonStreetMainStreet
+        307,-127: AU14AreaGarrisonStreetMainStreet
+        307,-126: AU14AreaGarrisonStreetMainStreet
+        307,-125: AU14AreaGarrisonStreetMainStreet
+        307,-124: AU14AreaGarrisonStreetMainStreet
+        308,-134: AU14AreaGarrisonStreetMainStreet
+        308,-133: AU14AreaGarrisonStreetMainStreet
+        308,-132: AU14AreaGarrisonStreetMainStreet
+        308,-131: AU14AreaGarrisonStreetMainStreet
+        308,-130: AU14AreaGarrisonStreetMainStreet
+        308,-129: AU14AreaGarrisonStreetMainStreet
+        308,-128: AU14AreaGarrisonStreetMainStreet
+        308,-127: AU14AreaGarrisonStreetMainStreet
+        308,-126: AU14AreaGarrisonStreetMainStreet
+        308,-125: AU14AreaGarrisonStreetMainStreet
+        308,-124: AU14AreaGarrisonStreetMainStreet
+        309,-134: AU14AreaGarrisonStreetMainStreet
+        309,-133: AU14AreaGarrisonStreetMainStreet
+        309,-132: AU14AreaGarrisonStreetMainStreet
+        309,-131: AU14AreaGarrisonStreetMainStreet
+        309,-130: AU14AreaGarrisonStreetMainStreet
+        309,-128: AU14AreaGarrisonStreetMainStreet
+        309,-129: AU14AreaGarrisonStreetMainStreet
+        309,-125: AU14AreaGarrisonStreetMainStreet
+        309,-127: AU14AreaGarrisonStreetMainStreet
+        309,-124: AU14AreaGarrisonStreetMainStreet
+        309,-126: AU14AreaGarrisonStreetMainStreet
+        310,-134: AU14AreaGarrisonStreetMainStreet
+        310,-133: AU14AreaGarrisonStreetMainStreet
+        310,-132: AU14AreaGarrisonStreetMainStreet
+        310,-131: AU14AreaGarrisonStreetMainStreet
+        310,-130: AU14AreaGarrisonStreetMainStreet
+        310,-129: AU14AreaGarrisonStreetMainStreet
+        310,-128: AU14AreaGarrisonStreetMainStreet
+        310,-127: AU14AreaGarrisonStreetMainStreet
+        310,-126: AU14AreaGarrisonStreetMainStreet
+        310,-124: AU14AreaGarrisonStreetMainStreet
+        310,-125: AU14AreaGarrisonStreetMainStreet
+        311,-127: AU14AreaGarrisonCMBMotorpool
+        311,-126: AU14AreaGarrisonCMBMotorpool
+        311,-125: AU14AreaGarrisonCMBMotorpool
+        311,-124: AU14AreaGarrisonCMBMotorpool
+        312,-127: AU14AreaGarrisonCMBMotorpool
+        312,-126: AU14AreaGarrisonCMBMotorpool
+        312,-125: AU14AreaGarrisonCMBMotorpool
+        312,-124: AU14AreaGarrisonCMBMotorpool
+        313,-127: AU14AreaGarrisonCMBMotorpool
+        313,-126: AU14AreaGarrisonCMBMotorpool
+        313,-125: AU14AreaGarrisonCMBMotorpool
+        313,-124: AU14AreaGarrisonCMBMotorpool
+        314,-127: AU14AreaGarrisonCMBMotorpool
+        314,-126: AU14AreaGarrisonCMBMotorpool
+        314,-124: AU14AreaGarrisonCMBMotorpool
+        315,-126: AU14AreaGarrisonCMBMotorpool
+        315,-125: AU14AreaGarrisonCMBMotorpool
+        315,-124: AU14AreaGarrisonCMBMotorpool
+        315,-127: AU14AreaGarrisonCMBMotorpool
+        314,-125: AU14AreaGarrisonCMBMotorpool
+        317,-124: AU14AreaGarrisonCMBMotorpool
+        317,-125: AU14AreaGarrisonCMBMotorpool
+        317,-126: AU14AreaGarrisonCMBMotorpool
+        316,-124: AU14AreaGarrisonCMBMotorpool
+        316,-125: AU14AreaGarrisonCMBMotorpool
+        316,-126: AU14AreaGarrisonCMBMotorpool
+        314,-128: AU14AreaGarrisonCMBMotorpool
+        315,-128: AU14AreaGarrisonOutofBounds
+        299,-124: AU14AreaGarrisonCMBMotorpool
+        300,-124: AU14AreaGarrisonCMBMotorpool
+        301,-124: AU14AreaGarrisonCMBMotorpool
+        302,-124: AU14AreaGarrisonCMBMotorpool
+        303,-124: AU14AreaGarrisonCMBMotorpool
+        304,-124: AU14AreaGarrisonCMBMotorpool
+        305,-124: AU14AreaGarrisonCMBMotorpool
+        299,-123: AU14AreaGarrisonCMBMotorpool
+        299,-122: AU14AreaGarrisonCMBMotorpool
+        299,-121: AU14AreaGarrisonCMBMotorpool
+        299,-120: AU14AreaGarrisonCMBMotorpool
+        299,-119: AU14AreaGarrisonCMBMotorpool
+        299,-118: AU14AreaGarrisonCMBMotorpool
+        299,-117: AU14AreaGarrisonCMBMotorpool
+        299,-110: AU14AreaGarrisonCMBMotorpool
+        300,-123: AU14AreaGarrisonCMBMotorpool
+        300,-122: AU14AreaGarrisonCMBMotorpool
+        300,-121: AU14AreaGarrisonCMBMotorpool
+        300,-120: AU14AreaGarrisonCMBMotorpool
+        300,-119: AU14AreaGarrisonCMBMotorpool
+        300,-118: AU14AreaGarrisonCMBMotorpool
+        300,-117: AU14AreaGarrisonCMBMotorpool
+        301,-123: AU14AreaGarrisonCMBMotorpool
+        300,-110: AU14AreaGarrisonCMBMotorpool
+        301,-121: AU14AreaGarrisonCMBMotorpool
+        301,-120: AU14AreaGarrisonCMBMotorpool
+        301,-122: AU14AreaGarrisonCMBMotorpool
+        301,-119: AU14AreaGarrisonCMBMotorpool
+        301,-118: AU14AreaGarrisonCMBMotorpool
+        301,-117: AU14AreaGarrisonCMBMotorpool
+        301,-110: AU14AreaGarrisonCMBMotorpool
+        302,-123: AU14AreaGarrisonCMBMotorpool
+        302,-122: AU14AreaGarrisonCMBMotorpool
+        302,-121: AU14AreaGarrisonCMBMotorpool
+        302,-120: AU14AreaGarrisonCMBMotorpool
+        302,-119: AU14AreaGarrisonCMBMotorpool
+        302,-118: AU14AreaGarrisonCMBMotorpool
+        302,-117: AU14AreaGarrisonCMBMotorpool
+        302,-110: AU14AreaGarrisonCMBMotorpool
+        303,-123: AU14AreaGarrisonCMBMotorpool
+        303,-122: AU14AreaGarrisonCMBMotorpool
+        303,-121: AU14AreaGarrisonCMBMotorpool
+        303,-120: AU14AreaGarrisonCMBMotorpool
+        303,-119: AU14AreaGarrisonCMBMotorpool
+        303,-118: AU14AreaGarrisonCMBMotorpool
+        303,-117: AU14AreaGarrisonCMBMotorpool
+        303,-116: AU14AreaGarrisonCMBMotorpool
+        303,-115: AU14AreaGarrisonCMBMotorpool
+        303,-114: AU14AreaGarrisonCMBMotorpool
+        303,-113: AU14AreaGarrisonCMBMotorpool
+        303,-112: AU14AreaGarrisonCMBMotorpool
+        303,-111: AU14AreaGarrisonCMBMotorpool
+        303,-110: AU14AreaGarrisonCMBMotorpool
+        304,-123: AU14AreaGarrisonCMBMotorpool
+        304,-122: AU14AreaGarrisonCMBMotorpool
+        304,-121: AU14AreaGarrisonCMBMotorpool
+        304,-120: AU14AreaGarrisonCMBMotorpool
+        304,-119: AU14AreaGarrisonCMBMotorpool
+        304,-118: AU14AreaGarrisonCMBMotorpool
+        304,-117: AU14AreaGarrisonCMBMotorpool
+        304,-116: AU14AreaGarrisonCMBMotorpool
+        304,-115: AU14AreaGarrisonCMBMotorpool
+        304,-114: AU14AreaGarrisonCMBMotorpool
+        304,-113: AU14AreaGarrisonCMBMotorpool
+        304,-112: AU14AreaGarrisonCMBMotorpool
+        304,-111: AU14AreaGarrisonCMBMotorpool
+        304,-110: AU14AreaGarrisonCMBMotorpool
+        305,-123: AU14AreaGarrisonCMBMotorpool
+        305,-122: AU14AreaGarrisonCMBMotorpool
+        305,-121: AU14AreaGarrisonCMBMotorpool
+        305,-120: AU14AreaGarrisonCMBMotorpool
+        305,-119: AU14AreaGarrisonCMBMotorpool
+        305,-118: AU14AreaGarrisonCMBMotorpool
+        305,-117: AU14AreaGarrisonCMBMotorpool
+        305,-116: AU14AreaGarrisonCMBMotorpool
+        305,-115: AU14AreaGarrisonCMBMotorpool
+        305,-114: AU14AreaGarrisonCMBMotorpool
+        305,-113: AU14AreaGarrisonCMBMotorpool
+        305,-112: AU14AreaGarrisonCMBMotorpool
+        305,-111: AU14AreaGarrisonCMBMotorpool
+        305,-110: AU14AreaGarrisonCMBMotorpool
+        306,-123: AU14AreaGarrisonCMBMotorpool
+        306,-122: AU14AreaGarrisonCMBMotorpool
+        306,-121: AU14AreaGarrisonCMBMotorpool
+        306,-120: AU14AreaGarrisonCMBMotorpool
+        306,-119: AU14AreaGarrisonCMBMotorpool
+        306,-118: AU14AreaGarrisonCMBMotorpool
+        306,-117: AU14AreaGarrisonCMBMotorpool
+        306,-116: AU14AreaGarrisonCMBMotorpool
+        306,-115: AU14AreaGarrisonCMBMotorpool
+        306,-114: AU14AreaGarrisonCMBMotorpool
+        306,-113: AU14AreaGarrisonCMBMotorpool
+        306,-112: AU14AreaGarrisonCMBMotorpool
+        306,-111: AU14AreaGarrisonCMBMotorpool
+        306,-110: AU14AreaGarrisonCMBMotorpool
+        307,-123: AU14AreaGarrisonCMBMotorpool
+        307,-122: AU14AreaGarrisonCMBMotorpool
+        307,-121: AU14AreaGarrisonCMBMotorpool
+        307,-120: AU14AreaGarrisonCMBMotorpool
+        307,-119: AU14AreaGarrisonCMBMotorpool
+        307,-118: AU14AreaGarrisonCMBMotorpool
+        307,-117: AU14AreaGarrisonCMBMotorpool
+        307,-116: AU14AreaGarrisonCMBMotorpool
+        307,-115: AU14AreaGarrisonCMBMotorpool
+        307,-114: AU14AreaGarrisonCMBMotorpool
+        307,-113: AU14AreaGarrisonCMBMotorpool
+        307,-112: AU14AreaGarrisonCMBMotorpool
+        307,-111: AU14AreaGarrisonCMBMotorpool
+        307,-110: AU14AreaGarrisonCMBMotorpool
+        308,-123: AU14AreaGarrisonCMBMotorpool
+        308,-122: AU14AreaGarrisonCMBMotorpool
+        308,-121: AU14AreaGarrisonCMBMotorpool
+        308,-115: AU14AreaGarrisonCMBMotorpool
+        308,-114: AU14AreaGarrisonCMBMotorpool
+        308,-113: AU14AreaGarrisonCMBMotorpool
+        308,-112: AU14AreaGarrisonCMBMotorpool
+        308,-111: AU14AreaGarrisonCMBMotorpool
+        308,-120: AU14AreaGarrisonCMBMotorpool
+        308,-118: AU14AreaGarrisonCMBMotorpool
+        309,-122: AU14AreaGarrisonCMBMotorpool
+        309,-121: AU14AreaGarrisonCMBMotorpool
+        308,-119: AU14AreaGarrisonCMBMotorpool
+        309,-123: AU14AreaGarrisonCMBMotorpool
+        308,-116: AU14AreaGarrisonCMBMotorpool
+        309,-120: AU14AreaGarrisonCMBMotorpool
+        309,-116: AU14AreaGarrisonCMBMotorpool
+        309,-119: AU14AreaGarrisonCMBMotorpool
+        309,-114: AU14AreaGarrisonCMBMotorpool
+        309,-113: AU14AreaGarrisonCMBMotorpool
+        309,-112: AU14AreaGarrisonCMBMotorpool
+        309,-115: AU14AreaGarrisonCMBMotorpool
+        309,-118: AU14AreaGarrisonCMBMotorpool
+        308,-117: AU14AreaGarrisonCMBMotorpool
+        308,-110: AU14AreaGarrisonCMBMotorpool
+        309,-117: AU14AreaGarrisonCMBMotorpool
+        309,-110: AU14AreaGarrisonCMBMotorpool
+        309,-111: AU14AreaGarrisonCMBMotorpool
+        310,-123: AU14AreaGarrisonCMBMotorpool
+        310,-122: AU14AreaGarrisonCMBMotorpool
+        310,-121: AU14AreaGarrisonCMBMotorpool
+        310,-120: AU14AreaGarrisonCMBMotorpool
+        310,-119: AU14AreaGarrisonCMBMotorpool
+        310,-118: AU14AreaGarrisonCMBMotorpool
+        310,-117: AU14AreaGarrisonCMBMotorpool
+        310,-116: AU14AreaGarrisonCMBMotorpool
+        310,-115: AU14AreaGarrisonCMBMotorpool
+        310,-114: AU14AreaGarrisonCMBMotorpool
+        310,-113: AU14AreaGarrisonCMBMotorpool
+        310,-112: AU14AreaGarrisonCMBMotorpool
+        310,-111: AU14AreaGarrisonCMBMotorpool
+        310,-110: AU14AreaGarrisonCMBMotorpool
+        311,-123: AU14AreaGarrisonCMBMotorpool
+        311,-122: AU14AreaGarrisonCMBMotorpool
+        311,-121: AU14AreaGarrisonCMBMotorpool
+        311,-120: AU14AreaGarrisonCMBMotorpool
+        311,-119: AU14AreaGarrisonCMBMotorpool
+        311,-118: AU14AreaGarrisonCMBMotorpool
+        311,-117: AU14AreaGarrisonCMBMotorpool
+        311,-116: AU14AreaGarrisonCMBMotorpool
+        311,-115: AU14AreaGarrisonCMBMotorpool
+        311,-114: AU14AreaGarrisonCMBMotorpool
+        311,-113: AU14AreaGarrisonCMBMotorpool
+        311,-112: AU14AreaGarrisonCMBMotorpool
+        311,-111: AU14AreaGarrisonCMBMotorpool
+        311,-110: AU14AreaGarrisonCMBMotorpool
+        312,-123: AU14AreaGarrisonCMBMotorpool
+        312,-122: AU14AreaGarrisonCMBMotorpool
+        312,-121: AU14AreaGarrisonCMBMotorpool
+        312,-120: AU14AreaGarrisonCMBMotorpool
+        312,-119: AU14AreaGarrisonCMBMotorpool
+        312,-118: AU14AreaGarrisonCMBMotorpool
+        312,-117: AU14AreaGarrisonCMBMotorpool
+        312,-116: AU14AreaGarrisonCMBMotorpool
+        312,-115: AU14AreaGarrisonCMBMotorpool
+        312,-114: AU14AreaGarrisonCMBMotorpool
+        312,-113: AU14AreaGarrisonCMBMotorpool
+        312,-112: AU14AreaGarrisonCMBMotorpool
+        312,-111: AU14AreaGarrisonCMBMotorpool
+        312,-110: AU14AreaGarrisonCMBMotorpool
+        313,-123: AU14AreaGarrisonCMBMotorpool
+        313,-122: AU14AreaGarrisonCMBMotorpool
+        313,-121: AU14AreaGarrisonCMBMotorpool
+        313,-120: AU14AreaGarrisonCMBMotorpool
+        313,-119: AU14AreaGarrisonCMBMotorpool
+        313,-118: AU14AreaGarrisonCMBMotorpool
+        313,-117: AU14AreaGarrisonCMBMotorpool
+        313,-116: AU14AreaGarrisonCMBMotorpool
+        313,-115: AU14AreaGarrisonCMBMotorpool
+        313,-114: AU14AreaGarrisonCMBMotorpool
+        313,-113: AU14AreaGarrisonCMBMotorpool
+        313,-112: AU14AreaGarrisonCMBMotorpool
+        313,-111: AU14AreaGarrisonCMBMotorpool
+        313,-110: AU14AreaGarrisonCMBMotorpool
+        314,-123: AU14AreaGarrisonCMBMotorpool
+        314,-122: AU14AreaGarrisonCMBMotorpool
+        314,-121: AU14AreaGarrisonCMBMotorpool
+        314,-120: AU14AreaGarrisonCMBMotorpool
+        314,-119: AU14AreaGarrisonCMBMotorpool
+        314,-118: AU14AreaGarrisonCMBMotorpool
+        314,-117: AU14AreaGarrisonCMBMotorpool
+        314,-116: AU14AreaGarrisonCMBMotorpool
+        314,-115: AU14AreaGarrisonCMBMotorpool
+        314,-114: AU14AreaGarrisonCMBMotorpool
+        314,-113: AU14AreaGarrisonCMBMotorpool
+        314,-112: AU14AreaGarrisonCMBMotorpool
+        314,-111: AU14AreaGarrisonCMBMotorpool
+        314,-110: AU14AreaGarrisonCMBMotorpool
+        315,-123: AU14AreaGarrisonCMBMotorpool
+        315,-122: AU14AreaGarrisonCMBMotorpool
+        315,-121: AU14AreaGarrisonCMBMotorpool
+        315,-120: AU14AreaGarrisonCMBMotorpool
+        315,-119: AU14AreaGarrisonCMBMotorpool
+        315,-118: AU14AreaGarrisonCMBMotorpool
+        315,-117: AU14AreaGarrisonCMBMotorpool
+        315,-116: AU14AreaGarrisonCMBMotorpool
+        315,-115: AU14AreaGarrisonCMBMotorpool
+        315,-114: AU14AreaGarrisonCMBMotorpool
+        315,-113: AU14AreaGarrisonCMBMotorpool
+        315,-112: AU14AreaGarrisonCMBMotorpool
+        315,-111: AU14AreaGarrisonCMBMotorpool
+        315,-110: AU14AreaGarrisonCMBMotorpool
+        316,-123: AU14AreaGarrisonCMBMotorpool
+        316,-122: AU14AreaGarrisonCMBMotorpool
+        316,-121: AU14AreaGarrisonCMBMotorpool
+        316,-120: AU14AreaGarrisonCMBMotorpool
+        316,-119: AU14AreaGarrisonCMBMotorpool
+        316,-118: AU14AreaGarrisonCMBMotorpool
+        316,-117: AU14AreaGarrisonCMBMotorpool
+        316,-116: AU14AreaGarrisonCMBMotorpool
+        316,-115: AU14AreaGarrisonCMBMotorpool
+        316,-114: AU14AreaGarrisonCMBMotorpool
+        316,-113: AU14AreaGarrisonCMBMotorpool
+        316,-112: AU14AreaGarrisonCMBMotorpool
+        316,-111: AU14AreaGarrisonCMBMotorpool
+        316,-110: AU14AreaGarrisonCMBMotorpool
+        317,-123: AU14AreaGarrisonCMBMotorpool
+        317,-122: AU14AreaGarrisonCMBMotorpool
+        317,-121: AU14AreaGarrisonCMBMotorpool
+        317,-120: AU14AreaGarrisonCMBMotorpool
+        317,-119: AU14AreaGarrisonCMBMotorpool
+        317,-116: AU14AreaGarrisonCMBMotorpool
+        317,-117: AU14AreaGarrisonCMBMotorpool
+        317,-118: AU14AreaGarrisonCMBMotorpool
+        317,-115: AU14AreaGarrisonCMBMotorpool
+        317,-114: AU14AreaGarrisonCMBMotorpool
+        317,-113: AU14AreaGarrisonCMBMotorpool
+        317,-112: AU14AreaGarrisonCMBMotorpool
+        317,-111: AU14AreaGarrisonCMBMotorpool
+        317,-110: AU14AreaGarrisonCMBMotorpool
+        318,-114: AU14AreaGarrisonCMBMotorpool
+        318,-115: AU14AreaGarrisonCMBMotorpool
+        318,-117: AU14AreaGarrisonCMBMotorpool
+        318,-118: AU14AreaGarrisonCMBMotorpool
+        318,-119: AU14AreaGarrisonCMBMotorpool
+        318,-116: AU14AreaGarrisonCMBMotorpool
+        316,-109: AU14AreaGarrisonCMBMotorpool
+        316,-108: AU14AreaGarrisonCMBMotorpool
+        316,-107: AU14AreaGarrisonCMBMotorpool
+        316,-106: AU14AreaGarrisonCMBMotorpool
+        316,-105: AU14AreaGarrisonCMBMotorpool
+        316,-104: AU14AreaGarrisonCMBMotorpool
+        316,-103: AU14AreaGarrisonCMBMotorpool
+        316,-102: AU14AreaGarrisonCMBMotorpool
+        316,-101: AU14AreaGarrisonCMBMotorpool
+        316,-100: AU14AreaGarrisonCMBMotorpool
+        316,-99: AU14AreaGarrisonCMBMotorpool
+        316,-98: AU14AreaGarrisonCMBMotorpool
+        316,-97: AU14AreaGarrisonCMBMotorpool
+        316,-96: AU14AreaGarrisonCMBMotorpool
+        315,-109: AU14AreaGarrisonCMBMotorpool
+        315,-107: AU14AreaGarrisonCMBMotorpool
+        315,-108: AU14AreaGarrisonCMBMotorpool
+        315,-106: AU14AreaGarrisonCMBMotorpool
+        315,-105: AU14AreaGarrisonCMBMotorpool
+        315,-104: AU14AreaGarrisonCMBMotorpool
+        315,-103: AU14AreaGarrisonCMBMotorpool
+        315,-101: AU14AreaGarrisonCMBMotorpool
+        315,-100: AU14AreaGarrisonCMBMotorpool
+        315,-102: AU14AreaGarrisonCMBMotorpool
+        315,-99: AU14AreaGarrisonCMBMotorpool
+        315,-97: AU14AreaGarrisonCMBMotorpool
+        315,-98: AU14AreaGarrisonCMBMotorpool
+        315,-96: AU14AreaGarrisonCMBMotorpool
+        314,-108: AU14AreaGarrisonCMBMotorpool
+        314,-107: AU14AreaGarrisonCMBMotorpool
+        314,-109: AU14AreaGarrisonCMBMotorpool
+        314,-106: AU14AreaGarrisonCMBMotorpool
+        314,-105: AU14AreaGarrisonCMBMotorpool
+        314,-104: AU14AreaGarrisonCMBMotorpool
+        314,-103: AU14AreaGarrisonCMBMotorpool
+        314,-102: AU14AreaGarrisonCMBMotorpool
+        314,-101: AU14AreaGarrisonCMBMotorpool
+        314,-100: AU14AreaGarrisonCMBMotorpool
+        314,-99: AU14AreaGarrisonCMBMotorpool
+        314,-98: AU14AreaGarrisonCMBMotorpool
+        314,-97: AU14AreaGarrisonCMBMotorpool
+        314,-96: AU14AreaGarrisonCMBMotorpool
+        313,-109: AU14AreaGarrisonCMBMotorpool
+        313,-108: AU14AreaGarrisonCMBMotorpool
+        313,-107: AU14AreaGarrisonCMBMotorpool
+        313,-106: AU14AreaGarrisonCMBMotorpool
+        313,-105: AU14AreaGarrisonCMBMotorpool
+        313,-104: AU14AreaGarrisonCMBMotorpool
+        313,-103: AU14AreaGarrisonCMBMotorpool
+        313,-102: AU14AreaGarrisonCMBMotorpool
+        313,-101: AU14AreaGarrisonCMBMotorpool
+        313,-100: AU14AreaGarrisonCMBMotorpool
+        313,-99: AU14AreaGarrisonCMBMotorpool
+        313,-98: AU14AreaGarrisonCMBMotorpool
+        313,-97: AU14AreaGarrisonCMBMotorpool
+        313,-96: AU14AreaGarrisonCMBMotorpool
+        312,-109: AU14AreaGarrisonCMBMotorpool
+        312,-108: AU14AreaGarrisonCMBMotorpool
+        312,-107: AU14AreaGarrisonCMBMotorpool
+        312,-106: AU14AreaGarrisonCMBMotorpool
+        312,-105: AU14AreaGarrisonCMBMotorpool
+        312,-104: AU14AreaGarrisonCMBMotorpool
+        312,-103: AU14AreaGarrisonCMBMotorpool
+        312,-102: AU14AreaGarrisonCMBMotorpool
+        312,-101: AU14AreaGarrisonCMBMotorpool
+        312,-100: AU14AreaGarrisonCMBMotorpool
+        312,-99: AU14AreaGarrisonCMBMotorpool
+        312,-98: AU14AreaGarrisonCMBMotorpool
+        312,-97: AU14AreaGarrisonCMBMotorpool
+        312,-96: AU14AreaGarrisonCMBMotorpool
+        311,-109: AU14AreaGarrisonCMBMotorpool
+        311,-108: AU14AreaGarrisonCMBMotorpool
+        311,-107: AU14AreaGarrisonCMBMotorpool
+        311,-106: AU14AreaGarrisonCMBMotorpool
+        311,-105: AU14AreaGarrisonCMBMotorpool
+        311,-104: AU14AreaGarrisonCMBMotorpool
+        311,-103: AU14AreaGarrisonCMBMotorpool
+        311,-102: AU14AreaGarrisonCMBMotorpool
+        311,-101: AU14AreaGarrisonCMBMotorpool
+        311,-100: AU14AreaGarrisonCMBMotorpool
+        311,-99: AU14AreaGarrisonCMBMotorpool
+        311,-98: AU14AreaGarrisonCMBMotorpool
+        311,-97: AU14AreaGarrisonCMBMotorpool
+        311,-96: AU14AreaGarrisonCMBMotorpool
+        310,-109: AU14AreaGarrisonCMBMotorpool
+        310,-108: AU14AreaGarrisonCMBMotorpool
+        310,-107: AU14AreaGarrisonCMBMotorpool
+        310,-106: AU14AreaGarrisonCMBMotorpool
+        310,-105: AU14AreaGarrisonCMBMotorpool
+        310,-104: AU14AreaGarrisonCMBMotorpool
+        310,-103: AU14AreaGarrisonCMBMotorpool
+        310,-102: AU14AreaGarrisonCMBMotorpool
+        310,-101: AU14AreaGarrisonCMBMotorpool
+        310,-100: AU14AreaGarrisonCMBMotorpool
+        310,-99: AU14AreaGarrisonCMBMotorpool
+        310,-98: AU14AreaGarrisonCMBMotorpool
+        310,-97: AU14AreaGarrisonCMBMotorpool
+        310,-96: AU14AreaGarrisonCMBMotorpool
+        309,-109: AU14AreaGarrisonCMBMotorpool
+        309,-108: AU14AreaGarrisonCMBMotorpool
+        309,-107: AU14AreaGarrisonCMBMotorpool
+        309,-106: AU14AreaGarrisonCMBMotorpool
+        309,-105: AU14AreaGarrisonCMBMotorpool
+        309,-104: AU14AreaGarrisonCMBMotorpool
+        309,-103: AU14AreaGarrisonCMBMotorpool
+        309,-102: AU14AreaGarrisonCMBMotorpool
+        309,-101: AU14AreaGarrisonCMBMotorpool
+        309,-100: AU14AreaGarrisonCMBMotorpool
+        309,-99: AU14AreaGarrisonCMBMotorpool
+        309,-98: AU14AreaGarrisonCMBMotorpool
+        309,-97: AU14AreaGarrisonCMBMotorpool
+        309,-96: AU14AreaGarrisonCMBMotorpool
+        308,-109: AU14AreaGarrisonCMBMotorpool
+        308,-108: AU14AreaGarrisonCMBMotorpool
+        308,-107: AU14AreaGarrisonCMBMotorpool
+        308,-106: AU14AreaGarrisonCMBMotorpool
+        308,-105: AU14AreaGarrisonCMBMotorpool
+        308,-104: AU14AreaGarrisonCMBMotorpool
+        308,-103: AU14AreaGarrisonCMBMotorpool
+        308,-102: AU14AreaGarrisonCMBMotorpool
+        308,-101: AU14AreaGarrisonCMBMotorpool
+        308,-100: AU14AreaGarrisonCMBMotorpool
+        308,-99: AU14AreaGarrisonCMBMotorpool
+        308,-98: AU14AreaGarrisonCMBMotorpool
+        308,-97: AU14AreaGarrisonCMBMotorpool
+        308,-96: AU14AreaGarrisonCMBMotorpool
+        307,-109: AU14AreaGarrisonCMBMotorpool
+        307,-108: AU14AreaGarrisonCMBMotorpool
+        307,-107: AU14AreaGarrisonCMBMotorpool
+        307,-106: AU14AreaGarrisonCMBMotorpool
+        307,-105: AU14AreaGarrisonCMBMotorpool
+        307,-104: AU14AreaGarrisonCMBMotorpool
+        307,-103: AU14AreaGarrisonCMBMotorpool
+        307,-102: AU14AreaGarrisonCMBMotorpool
+        307,-101: AU14AreaGarrisonCMBMotorpool
+        307,-100: AU14AreaGarrisonCMBMotorpool
+        307,-99: AU14AreaGarrisonCMBMotorpool
+        307,-98: AU14AreaGarrisonCMBMotorpool
+        307,-97: AU14AreaGarrisonCMBMotorpool
+        307,-96: AU14AreaGarrisonCMBMotorpool
+        306,-109: AU14AreaGarrisonCMBMotorpool
+        306,-108: AU14AreaGarrisonCMBMotorpool
+        306,-107: AU14AreaGarrisonCMBMotorpool
+        306,-106: AU14AreaGarrisonCMBMotorpool
+        306,-105: AU14AreaGarrisonCMBMotorpool
+        306,-104: AU14AreaGarrisonCMBMotorpool
+        306,-103: AU14AreaGarrisonCMBMotorpool
+        306,-102: AU14AreaGarrisonCMBMotorpool
+        306,-101: AU14AreaGarrisonCMBMotorpool
+        306,-100: AU14AreaGarrisonCMBMotorpool
+        306,-99: AU14AreaGarrisonCMBMotorpool
+        306,-98: AU14AreaGarrisonCMBMotorpool
+        306,-97: AU14AreaGarrisonCMBMotorpool
+        306,-96: AU14AreaGarrisonCMBMotorpool
+        305,-109: AU14AreaGarrisonCMBMotorpool
+        305,-108: AU14AreaGarrisonCMBMotorpool
+        305,-107: AU14AreaGarrisonCMBMotorpool
+        305,-106: AU14AreaGarrisonCMBMotorpool
+        305,-105: AU14AreaGarrisonCMBMotorpool
+        305,-104: AU14AreaGarrisonCMBMotorpool
+        305,-103: AU14AreaGarrisonCMBMotorpool
+        305,-102: AU14AreaGarrisonCMBMotorpool
+        305,-101: AU14AreaGarrisonCMBMotorpool
+        305,-100: AU14AreaGarrisonCMBMotorpool
+        305,-99: AU14AreaGarrisonCMBMotorpool
+        305,-98: AU14AreaGarrisonCMBMotorpool
+        305,-97: AU14AreaGarrisonCMBMotorpool
+        305,-96: AU14AreaGarrisonCMBMotorpool
+        304,-109: AU14AreaGarrisonCMBMotorpool
+        304,-108: AU14AreaGarrisonCMBMotorpool
+        304,-107: AU14AreaGarrisonCMBMotorpool
+        304,-106: AU14AreaGarrisonCMBMotorpool
+        304,-105: AU14AreaGarrisonCMBMotorpool
+        304,-104: AU14AreaGarrisonCMBMotorpool
+        304,-103: AU14AreaGarrisonCMBMotorpool
+        304,-102: AU14AreaGarrisonCMBMotorpool
+        304,-101: AU14AreaGarrisonCMBMotorpool
+        304,-100: AU14AreaGarrisonCMBMotorpool
+        304,-99: AU14AreaGarrisonCMBMotorpool
+        304,-98: AU14AreaGarrisonCMBMotorpool
+        304,-97: AU14AreaGarrisonCMBMotorpool
+        304,-96: AU14AreaGarrisonCMBMotorpool
+        303,-109: AU14AreaGarrisonCMBMotorpool
+        303,-108: AU14AreaGarrisonCMBMotorpool
+        303,-107: AU14AreaGarrisonCMBMotorpool
+        303,-106: AU14AreaGarrisonCMBMotorpool
+        303,-105: AU14AreaGarrisonCMBMotorpool
+        303,-104: AU14AreaGarrisonCMBMotorpool
+        303,-103: AU14AreaGarrisonCMBMotorpool
+        303,-102: AU14AreaGarrisonCMBMotorpool
+        303,-101: AU14AreaGarrisonCMBMotorpool
+        303,-100: AU14AreaGarrisonCMBMotorpool
+        303,-99: AU14AreaGarrisonCMBMotorpool
+        303,-98: AU14AreaGarrisonCMBMotorpool
+        303,-97: AU14AreaGarrisonCMBMotorpool
+        303,-96: AU14AreaGarrisonCMBMotorpool
+        302,-109: AU14AreaGarrisonCMBMotorpool
+        302,-108: AU14AreaGarrisonCMBMotorpool
+        302,-107: AU14AreaGarrisonCMBMotorpool
+        302,-106: AU14AreaGarrisonCMBMotorpool
+        302,-105: AU14AreaGarrisonCMBMotorpool
+        302,-104: AU14AreaGarrisonCMBMotorpool
+        302,-103: AU14AreaGarrisonCMBMotorpool
+        302,-102: AU14AreaGarrisonCMBMotorpool
+        302,-101: AU14AreaGarrisonCMBMotorpool
+        302,-100: AU14AreaGarrisonCMBMotorpool
+        302,-99: AU14AreaGarrisonCMBMotorpool
+        302,-98: AU14AreaGarrisonCMBMotorpool
+        302,-97: AU14AreaGarrisonCMBMotorpool
+        302,-96: AU14AreaGarrisonCMBMotorpool
+        301,-109: AU14AreaGarrisonCMBMotorpool
+        301,-108: AU14AreaGarrisonCMBMotorpool
+        301,-107: AU14AreaGarrisonCMBMotorpool
+        301,-106: AU14AreaGarrisonCMBMotorpool
+        301,-105: AU14AreaGarrisonCMBMotorpool
+        301,-104: AU14AreaGarrisonCMBMotorpool
+        301,-103: AU14AreaGarrisonCMBMotorpool
+        301,-102: AU14AreaGarrisonCMBMotorpool
+        301,-101: AU14AreaGarrisonCMBMotorpool
+        301,-100: AU14AreaGarrisonCMBMotorpool
+        301,-99: AU14AreaGarrisonCMBMotorpool
+        301,-98: AU14AreaGarrisonCMBMotorpool
+        301,-97: AU14AreaGarrisonCMBMotorpool
+        301,-96: AU14AreaGarrisonCMBMotorpool
+        300,-109: AU14AreaGarrisonCMBMotorpool
+        300,-108: AU14AreaGarrisonCMBMotorpool
+        300,-107: AU14AreaGarrisonCMBMotorpool
+        300,-106: AU14AreaGarrisonCMBMotorpool
+        300,-105: AU14AreaGarrisonCMBMotorpool
+        300,-104: AU14AreaGarrisonCMBMotorpool
+        300,-103: AU14AreaGarrisonCMBMotorpool
+        300,-102: AU14AreaGarrisonCMBMotorpool
+        300,-101: AU14AreaGarrisonCMBMotorpool
+        300,-100: AU14AreaGarrisonCMBMotorpool
+        300,-99: AU14AreaGarrisonCMBMotorpool
+        300,-98: AU14AreaGarrisonCMBMotorpool
+        300,-97: AU14AreaGarrisonCMBMotorpool
+        300,-96: AU14AreaGarrisonCMBMotorpool
+        299,-98: AU14AreaGarrisonCMBMotorpool
+        299,-99: AU14AreaGarrisonCMBMotorpool
+        299,-100: AU14AreaGarrisonCMBMotorpool
+        299,-101: AU14AreaGarrisonCMBMotorpool
+        299,-102: AU14AreaGarrisonCMBMotorpool
+        299,-103: AU14AreaGarrisonCMBMotorpool
+        299,-104: AU14AreaGarrisonCMBMotorpool
+        299,-105: AU14AreaGarrisonCMBMotorpool
+        299,-106: AU14AreaGarrisonCMBMotorpool
+        299,-107: AU14AreaGarrisonCMBMotorpool
+        299,-108: AU14AreaGarrisonCMBMotorpool
+        299,-109: AU14AreaGarrisonCMBMotorpool
+        298,-101: AU14AreaGarrisonCMBMotorpool
+        298,-99: AU14AreaGarrisonCMBMotorpool
+        298,-100: AU14AreaGarrisonCMBMotorpool
+        317,-99: AU14AreaGarrisonCMBMotorpool
+        317,-100: AU14AreaGarrisonCMBMotorpool
+        317,-101: AU14AreaGarrisonCMBMotorpool
+        318,-99: AU14AreaGarrisonCMBMotorpool
+        318,-100: AU14AreaGarrisonCMBMotorpool
+        318,-101: AU14AreaGarrisonCMBMotorpool
+        317,-102: AU14AreaGarrisonCMBMotorpool
+        317,-103: AU14AreaGarrisonCMBMotorpool
+        317,-104: AU14AreaGarrisonCMBMotorpool
+        317,-105: AU14AreaGarrisonCMBMotorpool
+        318,-98: AU14AreaGarrisonCMBMotorpool
+        318,-97: AU14AreaGarrisonCMBMotorpool
+        317,-98: AU14AreaGarrisonCMBMotorpool
+        317,-97: AU14AreaGarrisonCMBMotorpool
+        317,-96: AU14AreaGarrisonCMBMotorpool
+        315,-95: AU14AreaGarrisonCMBMotorpool
+        314,-95: AU14AreaGarrisonCMBMotorpool
+        314,-94: AU14AreaGarrisonCMBMotorpool
+        304,-95: AU14AreaGarrisonCMBMotorpool
+        304,-94: AU14AreaGarrisonCMBMotorpool
+        305,-95: AU14AreaGarrisonCMBMotorpool
+        305,-94: AU14AreaGarrisonCMBMotorpool
+        306,-95: AU14AreaGarrisonCMBMotorpool
+        306,-94: AU14AreaGarrisonCMBMotorpool
+        307,-95: AU14AreaGarrisonCMBMotorpool
+        307,-94: AU14AreaGarrisonCMBMotorpool
+        308,-95: AU14AreaGarrisonCMBMotorpool
+        308,-94: AU14AreaGarrisonCMBMotorpool
+        309,-95: AU14AreaGarrisonCMBMotorpool
+        309,-94: AU14AreaGarrisonCMBMotorpool
+        310,-95: AU14AreaGarrisonCMBMotorpool
+        310,-94: AU14AreaGarrisonCMBMotorpool
+        311,-95: AU14AreaGarrisonCMBMotorpool
+        312,-95: AU14AreaGarrisonCMBMotorpool
+        311,-94: AU14AreaGarrisonCMBMotorpool
+        312,-94: AU14AreaGarrisonCMBMotorpool
+        313,-94: AU14AreaGarrisonCMBMotorpool
+        313,-95: AU14AreaGarrisonCMBMotorpool
+        311,-93: AU14AreaGarrisonCMBMotorpool
+        310,-93: AU14AreaGarrisonCMBMotorpool
+        309,-93: AU14AreaGarrisonCMBMotorpool
+        308,-93: AU14AreaGarrisonCMBMotorpool
+        307,-93: AU14AreaGarrisonCMBMotorpool
+        303,-95: AU14AreaGarrisonCMBMotorpool
+        302,-95: AU14AreaGarrisonCMBMotorpool
     - type: BecomesStation
       id: StableGarrisonRedux
     - type: SpreaderGrid
@@ -109774,18 +110554,21 @@ entities:
   - uid: 84870
     components:
     - type: Transform
+      anchored: False
       rot: -1.5707963267948966 rad
       pos: 271.5,-61.5
       parent: 1
   - uid: 84871
     components:
     - type: Transform
+      anchored: False
       rot: -1.5707963267948966 rad
       pos: 271.5,-62.5
       parent: 1
   - uid: 84872
     components:
     - type: Transform
+      anchored: False
       rot: -1.5707963267948966 rad
       pos: 271.5,-63.5
       parent: 1
@@ -123980,13 +124763,6 @@ entities:
       parent: 1
 - proto: CMDropshipDestination
   entities:
-  - uid: 2915
-    components:
-    - type: MetaData
-      name: LZ2 - Corporate Car Park
-    - type: Transform
-      pos: 284.5,-149.5
-      parent: 1
   - uid: 2916
     components:
     - type: MetaData
@@ -133924,26 +134700,26 @@ entities:
     - type: Transform
       pos: 285.5,-103.5
       parent: 1
-- proto: CMUMultiZStairsNoPreview
-  entities:
-  - uid: 6642
-    components:
-    - type: Transform
-      rot: 1.5707963267948966 rad
-      pos: 176.5,-159.5
-      parent: 1
   - uid: 6643
     components:
     - type: Transform
-      rot: 1.5707963267948966 rad
-      pos: 176.5,-157.5
+      rot: -1.5707963267948966 rad
+      pos: 176.5,-159.5
       parent: 1
-  - uid: 6644
+  - uid: 12310
     components:
     - type: Transform
-      rot: 1.5707963267948966 rad
+      rot: -1.5707963267948966 rad
+      pos: 176.5,-157.5
+      parent: 1
+  - uid: 12391
+    components:
+    - type: Transform
+      rot: -1.5707963267948966 rad
       pos: 176.5,-158.5
       parent: 1
+- proto: CMUMultiZStairsNoPreview
+  entities:
   - uid: 6645
     components:
     - type: Transform
@@ -144265,6 +145041,8 @@ entities:
     - type: Transform
       pos: 186.5,-70.5
       parent: 1
+    missingComponents:
+    - AccessReader
 - proto: CMVendorCigs
   entities:
   - uid: 8681
@@ -145266,6 +146044,8 @@ entities:
     - type: Transform
       pos: 45.5,19.5
       parent: 1
+    missingComponents:
+    - AccessReader
 - proto: CMVendorSeeds
   entities:
   - uid: 8760
@@ -165460,7 +166240,7 @@ entities:
       lastSignals:
         DoorStatus: True
     - type: Door
-      secondsUntilStateChange: -617805.3
+      secondsUntilStateChange: -619106.2
       state: Opening
   - uid: 13075
     components:
@@ -174220,7 +175000,7 @@ entities:
       pos: 179.5,-120.5
       parent: 1
     - type: Door
-      secondsUntilStateChange: -463987.6
+      secondsUntilStateChange: -465288.5
       state: Closing
   - uid: 15264
     components:
@@ -181367,6 +182147,12 @@ entities:
       rot: -1.5707963267948966 rad
       pos: 283.5,-106.5
       parent: 1
+  - uid: 2915
+    components:
+    - type: Transform
+      rot: -1.5707963267948966 rad
+      pos: 175.5,-159.5
+      parent: 1
   - uid: 4141
     components:
     - type: Transform
@@ -181379,59 +182165,35 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 282.5,-101.5
       parent: 1
-  - uid: 16707
-    components:
-    - type: Transform
-      rot: -1.5707963267948966 rad
-      pos: 176.5,-159.5
-      parent: 1
-  - uid: 16708
-    components:
-    - type: Transform
-      rot: -1.5707963267948966 rad
-      pos: 177.5,-157.5
-      parent: 1
-  - uid: 16709
-    components:
-    - type: Transform
-      rot: -1.5707963267948966 rad
-      pos: 177.5,-159.5
-      parent: 1
-  - uid: 16710
-    components:
-    - type: Transform
-      rot: -1.5707963267948966 rad
-      pos: 176.5,-158.5
-      parent: 1
-  - uid: 16711
-    components:
-    - type: Transform
-      rot: -1.5707963267948966 rad
-      pos: 175.5,-159.5
-      parent: 1
-  - uid: 16712
+  - uid: 6642
     components:
     - type: Transform
       rot: -1.5707963267948966 rad
       pos: 174.5,-157.5
       parent: 1
-  - uid: 16713
+  - uid: 6644
     components:
     - type: Transform
       rot: -1.5707963267948966 rad
       pos: 175.5,-157.5
       parent: 1
-  - uid: 16714
+  - uid: 12390
     components:
     - type: Transform
       rot: -1.5707963267948966 rad
-      pos: 176.5,-157.5
+      pos: 174.5,-158.5
       parent: 1
-  - uid: 16715
+  - uid: 12399
     components:
     - type: Transform
       rot: -1.5707963267948966 rad
       pos: 175.5,-158.5
+      parent: 1
+  - uid: 12400
+    components:
+    - type: Transform
+      rot: -1.5707963267948966 rad
+      pos: 174.5,-159.5
       parent: 1
   - uid: 16716
     components:
@@ -181959,24 +182721,6 @@ entities:
     components:
     - type: Transform
       pos: 279.5,-146.5
-      parent: 1
-  - uid: 16830
-    components:
-    - type: Transform
-      rot: -1.5707963267948966 rad
-      pos: 174.5,-159.5
-      parent: 1
-  - uid: 16831
-    components:
-    - type: Transform
-      rot: -1.5707963267948966 rad
-      pos: 177.5,-158.5
-      parent: 1
-  - uid: 16832
-    components:
-    - type: Transform
-      rot: -1.5707963267948966 rad
-      pos: 174.5,-158.5
       parent: 1
 - proto: RMCHybrisaStairsPerspective
   entities:
@@ -212812,6 +213556,21 @@ entities:
     components:
     - type: Transform
       pos: 231.5,-126.5
+      parent: 1
+  - uid: 12380
+    components:
+    - type: Transform
+      pos: 177.5,-157.5
+      parent: 1
+  - uid: 12382
+    components:
+    - type: Transform
+      pos: 177.5,-158.5
+      parent: 1
+  - uid: 12385
+    components:
+    - type: Transform
+      pos: 177.5,-159.5
       parent: 1
   - uid: 12456
     components:
