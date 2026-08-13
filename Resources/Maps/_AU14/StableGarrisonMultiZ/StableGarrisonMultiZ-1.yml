@@ -4,7 +4,7 @@ meta:
   engineVersion: v278.0.0
   forkId: ""
   forkVersion: ""
-  time: 08/03/2026 03:46:01
+  time: 08/13/2026 04:56:25
   entityCount: 24564
 maps:
 - 1
@@ -434,56 +434,6 @@ entities:
     - type: MetaData
       name: Mapping Stable Garrison [-1]
     - type: Transform
-    - type: TacticalMap
-      mapDirty: True
-      nextUpdatePerFaction:
-        MARINES: 1
-        XENONIDS: 1
-        OPFOR: 1
-        GOVFOR: 1
-        CLF: 1
-      marineBlips: {}
-      lastUpdateMarineBlips: {}
-      xenoBlips:
-        31306:
-          image:
-            sprite: /Textures/_RMC14/Interface/map_blips.rsi
-            state: supply
-          indices: -5,-122
-        31307:
-          image:
-            sprite: /Textures/_RMC14/Interface/map_blips.rsi
-            state: supply
-          indices: 125,-149
-        31308:
-          image:
-            sprite: /Textures/_RMC14/Interface/map_blips.rsi
-            state: supply
-          indices: 231,-46
-        31309:
-          image:
-            sprite: /Textures/_RMC14/Interface/map_blips.rsi
-            state: supply
-          indices: 116,-87
-      xenoStructureBlips: {}
-      lastUpdateXenoBlips: {}
-      lastUpdateXenoStructureBlips: {}
-      opforBlips: {}
-      lastUpdateOpforBlips: {}
-      govforBlips: {}
-      lastUpdateGovforBlips: {}
-      clfBlips: {}
-      lastUpdateClfBlips: {}
-      marineLines: []
-      xenoLines: []
-      opforLines: []
-      govforLines: []
-      clfLines: []
-      marineLabels: {}
-      xenoLabels: {}
-      opforLabels: {}
-      govforLabels: {}
-      clfLabels: {}
     - type: Map
       mapPaused: True
     - type: GridTree
@@ -91315,16 +91265,19 @@ entities:
   - uid: 24561
     components:
     - type: Transform
+      anchored: False
       pos: 273.5,-60.5
       parent: 1
   - uid: 24562
     components:
     - type: Transform
+      anchored: False
       pos: 274.5,-60.5
       parent: 1
   - uid: 24563
     components:
     - type: Transform
+      anchored: False
       pos: 275.5,-60.5
       parent: 1
 - proto: AU14SpawnPointCLFCellLeader
