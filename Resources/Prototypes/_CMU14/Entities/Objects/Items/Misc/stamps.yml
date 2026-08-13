@@ -176,6 +176,44 @@
   - type: Stamp
     stampedName: stamp-component-stamped-name-au14-cs
 
+# Prodigy
+
+- type: entity
+  parent: AU14StampBase
+  id: CMU14StampProdigyLiaison
+  name: prodigy liaison's rubber stamp
+  components:
+  - type: Sprite
+    state: stamp-rd
+  - type: Stamp
+    stampedName: stamp-component-stamped-name-cmu14-prodigy-liaison
+    stampedColor: "#92969A"
+    stampState: "paper_stamp-wizard"
+
+- type: entity
+  parent: AU14StampBase
+  id: CMU14StampProdigySupervisor
+  name: prodigy supervisor's rubber stamp
+  components:
+  - type: Sprite
+    state: stamp-rd
+  - type: Stamp
+    stampedName: stamp-component-stamped-name-cmu14-prodigy-supervisor
+    stampedColor: "#92969A"
+    stampState: "paper_stamp-wizard"
+
+- type: entity
+  parent: AU14StampBase
+  id: CMU14StampProdigyLawyer
+  name: prodigy lawyer's rubber stamp
+  components:
+  - type: Sprite
+    state: stamp-rd
+  - type: Stamp
+    stampedName: stamp-component-stamped-name-cmu14-prodigy-lawyer
+    stampedColor: "#92969A"
+    stampState: "paper_stamp-wizard"
+
 # Laselle Liaison and Ambassadors
 
 - type: entity
