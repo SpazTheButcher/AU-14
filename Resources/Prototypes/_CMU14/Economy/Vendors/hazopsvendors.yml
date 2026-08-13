@@ -599,6 +599,8 @@
       entries:
       - id: AU14MagazineXMP5A6
         amount: 200
+      - id: AU14MagazineRifleXM20A2
+        amount: 100
       - id: CMMagazineRifleM54C
         amount: 100
       - id: CMMagazineRifleM54CAP
