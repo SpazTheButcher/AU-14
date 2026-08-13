@@ -287,9 +287,9 @@
         crate: RMCCrateMagazineML66DDrum
       - cost: 500
         crate: RMCCrateMagazineM2C
-      - cost: 300
+      - cost: 700
         crate: CMUCrateMk86MagazineHornet
-      - cost: 600
+      - cost: 400
         crate: CMUCrateMk86MagazineFrag
       - cost: 200
         crate: CMUCrateMk86MagazineSmoke
