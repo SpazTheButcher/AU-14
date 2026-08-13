@@ -569,10 +569,7 @@ public sealed partial class PlatoonSpawnRuleSystem : GameRuleSystem<PlatoonSpawn
             var mapId = dropships[index];
             dropships.RemoveAt(index);
 
-            // Platoon dropships may be authored as either full maps or standalone grids.
-            // Generic loading preserves the existing map-based shuttles while allowing
-            // proper grid gunships to be loaded aswell.
-            if (!_mapLoader.TryLoadGeneric(mapId, out _, out var grids) || grids.Count == 0)
+            if (!_mapLoader.TryLoadMap(mapId, out _, out var grids))
                 continue;
 
             foreach (var grid in grids)

@@ -20,22 +20,23 @@ public sealed class DynamicGunshipMapTest
             var loader = server.System<MapLoaderSystem>();
             var maps = server.System<SharedMapSystem>();
             var options = DeserializationOptions.Default with { InitializeMaps = false };
-            maps.CreateMap(out var mapId);
 
-            Assert.That(loader.TryLoadGrid(
-                mapId,
+            Assert.That(loader.TryLoadMap(
                 new ResPath("/Maps/_RMC14/Shuttles/dynamic_gunship.yml"),
-                out var grid,
+                out var map,
+                out var grids,
                 options), Is.True);
 
-            Assert.That(grid, Is.Not.Null);
-            Assert.That(maps.GetAllTiles(grid!.Value.Owner, grid.Value.Comp).Count(), Is.EqualTo(77));
+            Assert.That(map, Is.Not.Null);
+            Assert.That(grids, Has.Count.EqualTo(1));
+            var grid = grids!.Single();
+            Assert.That(maps.GetAllTiles(grid.Owner, grid.Comp).Count(), Is.EqualTo(55));
 
             var descendants = 0;
-            CountDescendants(grid.Value.Owner, ref descendants);
-            Assert.That(descendants, Is.EqualTo(77));
+            CountDescendants(grid.Owner, ref descendants);
+            Assert.That(descendants, Is.EqualTo(70));
 
-            maps.DeleteMap(mapId);
+            maps.DeleteMap(map!.Value.Comp.MapId);
         });
 
         await pair.CleanReturnAsync();

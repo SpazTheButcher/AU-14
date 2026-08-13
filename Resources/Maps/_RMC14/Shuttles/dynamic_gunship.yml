@@ -1,16 +1,16 @@
 meta:
   format: 7
-  category: Grid
+  category: Map
   engineVersion: v278.0.0
   forkId: ""
   forkVersion: ""
   time: 08/11/2026 21:32:38
-  entityCount: 71
-maps: []
+  entityCount: 72
+maps:
+- 72
 grids:
 - 1
-orphans:
-- 1
+orphans: []
 nullspace: []
 tilemap:
   0: Space
@@ -29,6 +29,16 @@ tilemap:
 entities:
 - proto: ""
   entities:
+  - uid: 72
+    components:
+    - type: MetaData
+      name: Dynamic Gunship Map
+    - type: Transform
+    - type: Map
+      mapPaused: True
+    - type: GridTree
+    - type: Broadphase
+    - type: OccluderTree
   - uid: 1
     mapInit: true
     paused: true
@@ -36,7 +46,7 @@ entities:
     - type: MetaData
       name: Normandy Dropship (RMC)
     - type: Transform
-      parent: invalid
+      parent: 72
     - type: MapGrid
       chunks:
         0,0:
