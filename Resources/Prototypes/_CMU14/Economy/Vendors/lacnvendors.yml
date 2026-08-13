@@ -1000,6 +1000,7 @@
       entries:
       - id: CMHeadCapMP
       - id: CMHeadBeretRed
+      - id: CMMPFlatBeret
     - name: Vest
       choices: { AU14vest: 1 }
       entries:
