@@ -721,7 +721,7 @@
       entries:
       - id: RMCAttachmentM54CStockCollapsible
         amount: 30
-      - id: RMCAttachmentM42A2CollapsibleStock
+      - id: RMCAttachmentM42A1WoodenStock
         amount: 3
       - id: RMCAttachmentM44MagnumSharpshooterStock
         amount: 2
