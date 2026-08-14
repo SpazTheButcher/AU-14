@@ -4,11 +4,13 @@
 using System;
 using Content.Shared._AU14.ZLevelBuilding;
 using Content.Shared._CMU14.ZLevels.Core.Components;
+using Content.Shared.Tag;
 using Robust.Client.Graphics;
 using Robust.Client.Player;
 using Robust.Shared.Enums;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Maths;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
 namespace Content.Client._AU14.ZLevelBuilding;
@@ -27,6 +29,9 @@ public sealed class StructuralWarningOverlay : Overlay
     private readonly IGameTiming _timing;
     private readonly SharedMapSystem _map;
     private readonly SharedTransformSystem _transform;
+    private readonly TagSystem _tags;
+
+    private static readonly ProtoId<TagPrototype> WallTag = "Wall";
 
     public StructuralWarningOverlay()
     {
@@ -36,6 +41,7 @@ public sealed class StructuralWarningOverlay : Overlay
         _timing = IoCManager.Resolve<IGameTiming>();
         _map = _entMan.System<SharedMapSystem>();
         _transform = _entMan.System<SharedTransformSystem>();
+        _tags = _entMan.System<TagSystem>();
     }
 
     protected override bool BeforeDraw(in OverlayDrawArgs args)
@@ -115,6 +121,28 @@ public sealed class StructuralWarningOverlay : Overlay
 
         if (!builtHere)
             return false;
+
+        // A wall on the level below supports the floor above it and the same short cantilever radius shown by
+        // the structural scanner.
+        if (_entMan.TryGetComponent<MapGridComponent>(below, out var belowGrid))
+        {
+            var belowTile = _map.WorldToTile(below, belowGrid, _transform.GetWorldPosition(player));
+            var span = StructuralSupportComponent.WallCantileverSpan;
+            for (var dx = -span; dx <= span; dx++)
+            {
+                for (var dy = -span; dy <= span; dy++)
+                {
+                    if (Math.Abs(dx) + Math.Abs(dy) > span)
+                        continue;
+
+                    foreach (var anchored in _map.GetAnchoredEntities(below, belowGrid, belowTile + new Vector2i(dx, dy)))
+                    {
+                        if (_tags.HasTag(anchored, WallTag))
+                            return false;
+                    }
+                }
+            }
+        }
 
         var query = _entMan.EntityQueryEnumerator<StructuralSupportComponent, TransformComponent>();
         while (query.MoveNext(out var beamUid, out var support, out var beamXform))

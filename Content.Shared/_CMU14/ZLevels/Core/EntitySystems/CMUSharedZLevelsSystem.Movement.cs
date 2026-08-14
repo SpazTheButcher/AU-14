@@ -1032,6 +1032,19 @@ public abstract partial class CMUSharedZLevelsSystem
                 return highGroundDistance;
             }
 
+            // A wall fills the full height of its own level, so its top is a walkable surface on the level above.
+            // Without this check an entity crossing an upper-level opening over a wall falls down into that wall,
+            // because z-physics previously recognized only floor tiles and explicit high-ground components.
+            if (floor > 0 && HasWallAt(checkingMap, checkingGrid, checkingTile))
+            {
+                var wallTopDistance = target.Comp.LocalPosition + floor - 1;
+                DebugLogFalling(
+                    target.Owner,
+                    "distance-wall-top-hit",
+                    $"floor={floor} checkingMap={checkingMap.Owner} tile={checkingTile} sampleWorld={worldPos} distance={wallTopDistance:F3}");
+                return wallTopDistance;
+            }
+
             //No ZEntities found, check floor tiles
             var tileFound = _map.TryGetTileRef(checkingMap, checkingGrid, checkingTile, out var tileRef);
             var tileEmpty = !tileFound || tileRef.Tile.IsEmpty;
@@ -1060,6 +1073,18 @@ public abstract partial class CMUSharedZLevelsSystem
 
         DebugLogFalling(target.Owner, "distance-miss", $"sampleWorld={worldPos} maxFloors={maxFloors}");
         return maxFloors;
+    }
+
+    private bool HasWallAt(Entity<CMUZLevelMapComponent> map, MapGridComponent grid, Vector2i tile)
+    {
+        var query = _map.GetAnchoredEntitiesEnumerator(map, grid, tile);
+        while (query.MoveNext(out var anchored))
+        {
+            if (_tags.HasTag(anchored.Value, WallTag))
+                return true;
+        }
+
+        return false;
     }
 
     private bool TryGetHighGroundDistance(

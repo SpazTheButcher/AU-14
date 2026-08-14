@@ -19,6 +19,7 @@ using Robust.Shared.Map.Components;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Player;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 
@@ -74,6 +75,8 @@ public sealed class ZLevelSupportSystem : EntitySystem
         new(1, 0), new(-1, 0), new(0, 1), new(0, -1),
     };
 
+    private static readonly ProtoId<TagPrototype> WallTag = "Wall";
+
     private EntityQuery<MapGridComponent> _gridQuery;
     private EntityQuery<CMUZLevelMapComponent> _zMapQuery;
 
@@ -102,6 +105,9 @@ public sealed class ZLevelSupportSystem : EntitySystem
         SubscribeLocalEvent<StructuralSupportComponent, ComponentShutdown>(OnSupportShutdown);
         SubscribeLocalEvent<StructuralSupportComponent, AnchorStateChangedEvent>(OnSupportAnchorChanged);
         SubscribeLocalEvent<StructuralSupportComponent, DamageChangedEvent>(OnSupportDamaged);
+        SubscribeLocalEvent<TagComponent, MapInitEvent>(OnTaggedMapInit);
+        SubscribeLocalEvent<TagComponent, EntityTerminatingEvent>(OnTaggedTerminating);
+        SubscribeLocalEvent<TagComponent, AnchorStateChangedEvent>(OnTaggedAnchorChanged);
 
         // All of these are keyed by round-scoped uids; drop them with the round so stale entries never accumulate.
         SubscribeLocalEvent<Content.Shared.GameTicking.RoundRestartCleanupEvent>(_ =>
@@ -131,6 +137,24 @@ public sealed class ZLevelSupportSystem : EntitySystem
 
     private void OnSupportAnchorChanged(Entity<StructuralSupportComponent> ent, ref AnchorStateChangedEvent args)
         => MarkGridDirty(ent);
+
+    private void OnTaggedMapInit(Entity<TagComponent> ent, ref MapInitEvent args)
+        => MarkAboveDirtyIfWall(ent);
+
+    private void OnTaggedTerminating(Entity<TagComponent> ent, ref EntityTerminatingEvent args)
+        => MarkAboveDirtyIfWall(ent);
+
+    private void OnTaggedAnchorChanged(Entity<TagComponent> ent, ref AnchorStateChangedEvent args)
+        => MarkAboveDirtyIfWall(ent);
+
+    /// <summary>A wall being built, moved, or destroyed changes the support available to the level above.</summary>
+    private void MarkAboveDirtyIfWall(Entity<TagComponent> ent)
+    {
+        if (!_tag.HasTag(ent.Owner, WallTag) || Transform(ent).GridUid is not { } grid)
+            return;
+
+        MarkAboveDirty(grid);
+    }
 
     /// <summary>Queues the grid the entity currently sits on for a recompute next update.</summary>
     public void MarkGridDirty(EntityUid uid)
@@ -185,8 +209,8 @@ public sealed class ZLevelSupportSystem : EntitySystem
 
     /// <summary>
     /// Multi-source cantilever BFS from every anchor on the grid. Each tile carries a remaining "budget";
-    /// stepping onto a plain floor costs 1, stepping onto a vertical support / anchor refreshes the budget to
-    /// that support's span. Any support entity the flood never reaches is unsupported.
+    /// stepping onto another support costs 1. Vertical girders participate in the graph so they can themselves
+    /// be supported, but never refresh or extend support on their own level; their span projects upward only.
     /// </summary>
     public void RecomputeGrid(Entity<MapGridComponent> grid)
     {
@@ -258,12 +282,13 @@ public sealed class ZLevelSupportSystem : EntitySystem
                 if (!byTile.TryGetValue(next, out var nextSupports))
                     continue;
 
-                // Every colocated support participates. The strongest vertical support refreshes the relay;
-                // otherwise crossing the tile consumes one unit of cantilever budget.
+                // Every colocated support participates, but crossing the tile always consumes one unit.
+                // Girders project their span to the level above in TryGetSupportSpanBelow; they deliberately
+                // do not relay support horizontally on this level.
                 var nextBudget = node.Budget - 1;
                 foreach (var nextSupport in nextSupports)
                 {
-                    if (nextSupport.Comp.IsAnchor || nextSupport.Comp.IsVerticalSupport)
+                    if (nextSupport.Comp.IsAnchor && !nextSupport.Comp.IsVerticalSupport)
                         nextBudget = Math.Max(nextBudget, nextSupport.Comp.CantileverSpan);
                 }
 
@@ -560,11 +585,10 @@ public sealed class ZLevelSupportSystem : EntitySystem
     ///    everything under it sit on real ground, so they are stable on a solid tile (this also keeps the
     ///    underground itself from collapsing through the support graph; cave-ins are handled separately). Seed =
     ///    own span;
-    ///  - the UPPER-Z rule: any support that has a vertical support beam directly beneath it on the level below
-    ///    is held up by that beam, and the seed budget is the BEAM's span (its quality). This is the whole
-    ///    "build a beam below to hold up the floor above" mechanic - and because a beam on an upper level is
-    ///    itself only a root if there is another beam below IT, removing a lower beam unroots everything above
-    ///    and the collapse cascades upward (propagated each tick via <see cref="MarkAboveDirty"/>).
+    ///  - the UPPER-Z rule: any other support that has a vertical support beam or wall directly beneath it on
+    ///    the level below is held up by that structure, and the seed budget is that structure's span.
+    /// Vertical girders receive a zero budget when rooted: this keeps the girder itself stable without allowing
+    /// it to support adjacent tiles on its own level. Its full span is consumed only by the level above.
     /// Lower/underground levels never collapse from "missing" support because they root on solid ground.
     /// </summary>
     private bool TryGetSeedBudget(Entity<StructuralSupportComponent> ent, Entity<MapGridComponent> grid, Vector2i tile, out int budget)
@@ -574,14 +598,14 @@ public sealed class ZLevelSupportSystem : EntitySystem
 
         if (ent.Comp.IsAnchor)
         {
-            budget = ent.Comp.CantileverSpan;
+            budget = OwnLevelSeedBudget(ent, ent.Comp.CantileverSpan);
             return true;
         }
 
         var onSolid = _map.TryGetTileRef(grid.Owner, grid.Comp, tile, out var tileRef) && !tileRef.Tile.IsEmpty;
         if (onSolid && IsGroundOrBelow(mapUid))
         {
-            budget = ent.Comp.CantileverSpan;
+            budget = OwnLevelSeedBudget(ent, ent.Comp.CantileverSpan);
             return true;
         }
 
@@ -591,7 +615,7 @@ public sealed class ZLevelSupportSystem : EntitySystem
         // TileFloorSupport marker) need a beam below.
         if (onSolid && !IsGroundOrBelow(mapUid) && !HasPlayerFloorMarker(grid, tile))
         {
-            budget = ent.Comp.CantileverSpan;
+            budget = OwnLevelSeedBudget(ent, ent.Comp.CantileverSpan);
             return true;
         }
 
@@ -601,12 +625,15 @@ public sealed class ZLevelSupportSystem : EntitySystem
             zMap.MapBelow is { } below &&
             TryGetSupportSpanBelow(below, _transform.GetWorldPosition(ent.Owner), out var belowSpan))
         {
-            budget = belowSpan;
+            budget = OwnLevelSeedBudget(ent, belowSpan);
             return true;
         }
 
         return false;
     }
+
+    private static int OwnLevelSeedBudget(Entity<StructuralSupportComponent> ent, int sourceBudget)
+        => ent.Comp.IsVerticalSupport ? 0 : sourceBudget;
 
     /// <summary>
     /// True if the level is the ground/surface (depth 0) or underground (depth &lt; 0), i.e. NOT an upper z-level.
@@ -665,8 +692,8 @@ public sealed class ZLevelSupportSystem : EntitySystem
     }
 
     /// <summary>
-    /// Returns the largest cantilever span of any vertical support / anchor at the same world position on the
-    /// level below, or false if there is none. That span becomes the seed budget for the tile above.
+    /// Returns the largest cantilever span of any vertical support, anchor, or wall at the same world position
+    /// on the level below, or false if there is none. That span becomes the seed budget for the tile above.
     /// </summary>
     private bool TryGetSupportSpanBelow(EntityUid belowMap, Vector2 worldPos, out int span)
     {
@@ -684,6 +711,8 @@ public sealed class ZLevelSupportSystem : EntitySystem
         {
             if (TryComp<StructuralSupportComponent>(anchored, out var sup) && (sup.IsVerticalSupport || sup.IsAnchor))
                 best = Math.Max(best, sup.CantileverSpan);
+            else if (_tag.HasTag(anchored, WallTag))
+                best = Math.Max(best, StructuralSupportComponent.WallCantileverSpan);
         }
 
         if (best < 0)

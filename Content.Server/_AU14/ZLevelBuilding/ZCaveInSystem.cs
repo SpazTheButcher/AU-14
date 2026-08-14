@@ -251,13 +251,13 @@ public sealed class ZCaveInSystem : EntitySystem
         var pending = stoneMap.Comp.PendingCollapse;
 
         // Solid (or not-yet-dug) tiles can't cave in; clear any stale pending state.
-        if (IsSolid(grid, tile, stoneMap.Comp.GeneratedChunks, chunkSize))
+        if (IsSolid(grid, tile, stoneMap.Comp, chunkSize))
         {
             pending.Remove(tile);
             return false;
         }
 
-        var stable = HasSupportWithin(grid, tile, span, stoneMap.Comp.GeneratedChunks, chunkSize);
+        var stable = HasSupportWithin(grid, tile, span, stoneMap.Comp, chunkSize);
 
         if (stable)
         {
@@ -304,7 +304,7 @@ public sealed class ZCaveInSystem : EntitySystem
 
         while (frontier.TryDequeue(out var t) && region.Count < CollapseTileCap)
         {
-            if (IsSolid(grid, t, stoneMap.Comp.GeneratedChunks, chunkSize))
+            if (IsSolid(grid, t, stoneMap.Comp, chunkSize))
                 continue;
 
             // Built support beams shut off a spreading collapse like a valve: every open tile within a beam's
@@ -590,11 +590,16 @@ public sealed class ZCaveInSystem : EntitySystem
     }
 
     /// <summary>A tile holds up the roof if it is untouched rock, mined rock, or a built vertical pillar/anchor.</summary>
-    private bool IsSolid(Entity<MapGridComponent> grid, Vector2i tile, HashSet<Vector2i> generatedChunks, int chunkSize)
+    private bool IsSolid(Entity<MapGridComponent> grid, Vector2i tile, ZGeneratedStoneComponent stone, int chunkSize)
     {
+        // Localized caves share a grid with authored colony terrain. Only tiles explicitly created as cave
+        // terrain may participate in cave-ins; mapped tiles and untouched void remain hard boundaries.
+        if (stone.LocalizedToAuthoredLevel && !stone.GeneratedTiles.Contains(tile))
+            return true;
+
         // Tiles in chunks we haven't generated yet are still solid bedrock.
         var chunk = new Vector2i(FloorDiv(tile.X, chunkSize), FloorDiv(tile.Y, chunkSize));
-        if (!generatedChunks.Contains(chunk))
+        if (!stone.GeneratedChunks.Contains(chunk))
             return true;
 
         // Mapper-authored load-bearing terrain (see ZLoadBearingTerrainComponent). Checked from the position
@@ -716,7 +721,7 @@ public sealed class ZCaveInSystem : EntitySystem
     }
 
     /// <summary>True if a solid support tile exists within <paramref name="span"/> tiles (BFS, Chebyshev-ish).</summary>
-    private bool HasSupportWithin(Entity<MapGridComponent> grid, Vector2i tile, int span, HashSet<Vector2i> generatedChunks, int chunkSize)
+    private bool HasSupportWithin(Entity<MapGridComponent> grid, Vector2i tile, int span, ZGeneratedStoneComponent stone, int chunkSize)
     {
         for (var dx = -span; dx <= span; dx++)
         {
@@ -728,7 +733,7 @@ public sealed class ZCaveInSystem : EntitySystem
                 if (Math.Abs(dx) + Math.Abs(dy) > span)
                     continue;
 
-                if (IsSolid(grid, tile + new Vector2i(dx, dy), generatedChunks, chunkSize))
+                if (IsSolid(grid, tile + new Vector2i(dx, dy), stone, chunkSize))
                     return true;
             }
         }
