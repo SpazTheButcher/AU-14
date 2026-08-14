@@ -267,6 +267,8 @@
         crate: RMCCrateML66D
       - cost: 1000
         crate: RMCCrateM2C
+      - cost: 1700
+        crate: CMUCrateMk86
     - name: Ammo
       entries:
       - cost: 400
@@ -301,6 +303,12 @@
         crate: RMCCrateMagazineML66DDrum
       - cost: 500
         crate: RMCCrateMagazineM2C
+      - cost: 700
+        crate: CMUCrateMk86MagazineHornet
+      - cost: 400
+        crate: CMUCrateMk86MagazineFrag
+      - cost: 200
+        crate: CMUCrateMk86MagazineSmoke
       - cost: 200
         crate: RMCCrateMagazineNapthalUT
       - cost: 350
