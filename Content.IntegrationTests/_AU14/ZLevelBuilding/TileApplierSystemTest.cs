@@ -10,6 +10,9 @@ using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Maths;
+using Robust.Shared.Physics;
+using Robust.Shared.Physics.Components;
+using Robust.Shared.Physics.Systems;
 
 namespace Content.IntegrationTests._AU14.ZLevelBuilding;
 
@@ -47,6 +50,8 @@ public sealed class TileApplierSystemTest
   id: AU14TestZPhysicsEntity
   components:
   - type: Transform
+  - type: Physics
+    bodyType: Dynamic
   - type: CMUZPhysics
 ";
 
@@ -261,12 +266,19 @@ public sealed class TileApplierSystemTest
 
             var upperMapComp = entities.GetComponent<MapComponent>(upperMap);
             var entity = entities.SpawnEntity("AU14TestZPhysicsEntity", new MapCoordinates(world, upperMapComp.MapId));
-            var distance = entities.System<CMUZLevelsSystem>().DistanceToGround((entity, null), out var stickyGround);
+            var physics = entities.GetComponent<PhysicsComponent>(entity);
+            entities.System<SharedPhysicsSystem>().SetBodyStatus(entity, physics, BodyStatus.InAir);
+            entities.EnsureComponent<CMUZFallingComponent>(entity);
+
+            var zLevels = entities.System<CMUZLevelsSystem>();
+            var distance = zLevels.DistanceToGround((entity, null), out var stickyGround);
+            zLevels.WakeZPhysics((entity, null));
 
             Assert.Multiple(() =>
             {
                 Assert.That(distance, Is.Zero.Within(0.001f));
                 Assert.That(stickyGround, Is.True);
+                Assert.That(physics.BodyStatus, Is.EqualTo(BodyStatus.OnGround));
             });
         });
 
