@@ -1037,6 +1037,10 @@ public abstract partial class CMUSharedZLevelsSystem
             // because z-physics previously recognized only floor tiles and explicit high-ground components.
             if (floor > 0 && HasWallAt(checkingMap, checkingGrid, checkingTile))
             {
+                // The wall's top is a flat walkable surface, not an airborne contact. Mark it sticky just like
+                // flat high-ground so horizontal movement cannot leave the entity in the frictionless/sliding
+                // state while it is standing over an opening.
+                stickyGround = target.Comp.Velocity <= 0.01f && target.Comp.Velocity > -4f;
                 var wallTopDistance = target.Comp.LocalPosition + floor - 1;
                 DebugLogFalling(
                     target.Owner,

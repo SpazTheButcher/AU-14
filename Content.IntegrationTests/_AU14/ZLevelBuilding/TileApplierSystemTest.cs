@@ -266,7 +266,7 @@ public sealed class TileApplierSystemTest
             Assert.Multiple(() =>
             {
                 Assert.That(distance, Is.Zero.Within(0.001f));
-                Assert.That(stickyGround, Is.False);
+                Assert.That(stickyGround, Is.True);
             });
         });
 
