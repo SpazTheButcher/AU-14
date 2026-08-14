@@ -280,6 +280,7 @@ public sealed class TileApplierSystemTest
             {
                 Assert.That(distance, Is.Zero.Within(0.001f));
                 Assert.That(stickyGround, Is.True);
+                Assert.That(entities.GetComponent<CMUZPhysicsComponent>(entity).VirtualGrounded, Is.True);
                 Assert.That(physics.BodyStatus, Is.EqualTo(BodyStatus.OnGround));
                 Assert.That(weightless, Is.False);
             });

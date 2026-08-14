@@ -77,6 +77,7 @@ public sealed partial class CMUZLevelsSystem
 
         Entity<CMUZPhysicsComponent?> distanceEnt = (ent.Owner, ent.Comp);
         var distance = DistanceToGround(distanceEnt, out var stickyGround);
+        SetVirtualGrounded(resolved, IsVirtualGroundContact(distance, stickyGround));
         if (ShouldSleepZPhysics(
                 distance,
                 stickyGround,

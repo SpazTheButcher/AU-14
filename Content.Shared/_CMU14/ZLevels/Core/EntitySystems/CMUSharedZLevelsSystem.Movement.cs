@@ -100,9 +100,12 @@ public abstract partial class CMUSharedZLevelsSystem
         // on this level. The normal gravity query therefore calls the entity weightless even after z-physics
         // grounds it, making mob movement use space acceleration and friction. Answer the gravity query from
         // the same virtual-ground calculation used by falling so prediction and authoritative movement agree.
-        var distance = DistanceToGround((ent.Owner, ent.Comp), out var stickyGround);
-        if (!stickyGround || MathF.Abs(distance) > ZPhysicsSleepDistance)
-            return;
+        if (!ent.Comp.VirtualGrounded)
+        {
+            var distance = DistanceToGround((ent.Owner, ent.Comp), out var stickyGround);
+            if (!IsVirtualGroundContact(distance, stickyGround))
+                return;
+        }
 
         args.IsWeightless = false;
         args.Handled = true;
@@ -145,6 +148,11 @@ public abstract partial class CMUSharedZLevelsSystem
             distanceToGround = sweptDistance;
             stickyGround = true;
         }
+
+        // The lower wall may be outside the predicting client's PVS. Have the server replicate the virtual-ground
+        // result instead of requiring the client to rediscover the wall every movement tick.
+        if (_net.IsServer)
+            SetVirtualGrounded(ent, IsVirtualGroundContact(distanceToGround, stickyGround));
 
         var groundSnapDistance = GetMoveGroundSnapDistance(distanceToGround, stickyGround);
 
@@ -539,6 +547,20 @@ public abstract partial class CMUSharedZLevelsSystem
         return isVehicle ||
                stickyGround ||
                MathF.Abs(localPosition) <= ZPhysicsSleepDistance;
+    }
+
+    protected static bool IsVirtualGroundContact(float distanceToGround, bool stickyGround)
+    {
+        return stickyGround && MathF.Abs(distanceToGround) <= ZPhysicsSleepDistance;
+    }
+
+    protected void SetVirtualGrounded(Entity<CMUZPhysicsComponent> ent, bool value)
+    {
+        if (ent.Comp.VirtualGrounded == value)
+            return;
+
+        ent.Comp.VirtualGrounded = value;
+        DirtyField(ent.Owner, ent.Comp, nameof(CMUZPhysicsComponent.VirtualGrounded));
     }
 
     private static float GetGroundSnapDistance(float distanceToGround, bool stickyGround)
