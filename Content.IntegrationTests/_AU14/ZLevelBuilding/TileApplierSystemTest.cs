@@ -1,5 +1,6 @@
 using Content.Server._AU14.ZLevelBuilding;
 using Content.Server._CMU14.ZLevels.Core;
+using Content.Server.Gravity;
 using Content.Server.Shuttles.Components;
 using Content.Server.Shuttles.Systems;
 using Content.Server.Station.Components;
@@ -273,12 +274,14 @@ public sealed class TileApplierSystemTest
             var zLevels = entities.System<CMUZLevelsSystem>();
             var distance = zLevels.DistanceToGround((entity, null), out var stickyGround);
             zLevels.WakeZPhysics((entity, null));
+            var weightless = entities.System<GravitySystem>().IsWeightless(entity, physics);
 
             Assert.Multiple(() =>
             {
                 Assert.That(distance, Is.Zero.Within(0.001f));
                 Assert.That(stickyGround, Is.True);
                 Assert.That(physics.BodyStatus, Is.EqualTo(BodyStatus.OnGround));
+                Assert.That(weightless, Is.False);
             });
         });
 

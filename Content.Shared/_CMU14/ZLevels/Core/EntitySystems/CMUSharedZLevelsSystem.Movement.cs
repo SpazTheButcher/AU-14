@@ -7,6 +7,7 @@ using Content.Shared.Chasm;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Prototypes;
+using Content.Shared.Gravity;
 using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Movement.Pulling.Systems;
 using Content.Shared.Throwing;
@@ -87,6 +88,24 @@ public abstract partial class CMUSharedZLevelsSystem
 
         SubscribeLocalEvent<DamageableComponent, CMUZLevelHitEvent>(OnFallDamage);
         SubscribeLocalEvent<PhysicsComponent, CMUZLevelHitEvent>(OnFallAreaImpact);
+        SubscribeLocalEvent<CMUZPhysicsComponent, IsWeightlessEvent>(OnIsWeightless);
+    }
+
+    private void OnIsWeightless(Entity<CMUZPhysicsComponent> ent, ref IsWeightlessEvent args)
+    {
+        if (args.Handled)
+            return;
+
+        // A wall top on the level below is a virtual floor: there is intentionally no tile or physics fixture
+        // on this level. The normal gravity query therefore calls the entity weightless even after z-physics
+        // grounds it, making mob movement use space acceleration and friction. Answer the gravity query from
+        // the same virtual-ground calculation used by falling so prediction and authoritative movement agree.
+        var distance = DistanceToGround((ent.Owner, ent.Comp), out var stickyGround);
+        if (!stickyGround || MathF.Abs(distance) > ZPhysicsSleepDistance)
+            return;
+
+        args.IsWeightless = false;
+        args.Handled = true;
     }
 
     public override void Update(float frameTime)
