@@ -12,7 +12,6 @@
     - id: CMPamphletPowerloader
       amount: 1
 
-# Auth Key - Pinpointer
 - type: entity
   parent: RMCPinpointerBase
   id: CMUPinpointerAegisID
@@ -21,45 +20,6 @@
   - type: Pinpointer
     component: AegisTrackable
     targetName: AEGIS ID card
-
-# Authorization Keys
-- type: entity
-  id: CMUIDCardAegis
-  name: AEGIS Access Badge
-  suffix: CMU
-  description: High-Level AEGIS Access Badge, granting access to many of their restricted areas and equipment. Required to unlock AEGIS crates.
-  components:
-  - type: WarpPoint
-  - type: Sprite
-    sprite: _RMC14/Objects/CMIDs/aegis.rsi
-    state: keycard
-    drawdepth: SmallObjects
-  - type: Item
-    size: Tiny
-  - type: Clothing
-    slots:
-      - idcard
-  - type: Clickable
-  - type: InteractionOutline
-  - type: Access
-    groups:
-      - CMAccessAegis
-  - type: AegisTrackable
-  - type: Corrodible
-    isCorrodible: false
-
-- type: entity
-  parent: CMUIDCardAegis
-  id: CMUIDCardAegisIntel
-  name: AEGIS Access Badge
-  suffix: Intel-giving
-  description: High-Level AEGIS Access Badge, granting access to many of their restricted areas and equipment. Required to unlock AEGIS crates. It has some blood on it.
-  components:
-  - type: IntelRescueSurvivorObjective # unused
-    value: 2
-  - type: Sprite
-    sprite: _RMC14/Objects/CMIDs/aegis.rsi
-    state: bloody
 
 # Spawners
 - type: entity
@@ -89,6 +49,7 @@
     thirdWarningRange: 45
     intelPointsAwarded: 5
 
+# Warhead Explosion
 - type: entity
   parent: MarkerBase
   id: CMUOrbitalCannonExplosionAegis
