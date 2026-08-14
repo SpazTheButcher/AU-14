@@ -9340,5 +9340,66 @@
   id: 606
   time: '2026-08-12T01:57:00.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1815
+- author: Vencallium
+  changes:
+  - message: Fixed various mapping issues on Stable Garrison and the USS George W.
+      Bush, including disposals, stairs, utilities, vendors, and misplaced entities.
+    type: Map
+  - message: Chasms can no longer be covered by xenonid weeds.
+    type: Fix
+  - message: Chemistry vendors now provide consistent stock without random shortages.
+    type: Tweak
+  id: 607
+  time: '2026-08-13T21:48:19.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1823
+- author: potatoed6
+  changes:
+  - message: Prodigy liaison, goon, lawyer, PPO for colonies and as a lawyer third
+      party.
+    type: Add
+  - message: Added prodigy survs
+    type: Add
+  - message: Glock 75, Glock 77 and underbarrel taser for prodigy.
+    type: Add
+  - message: new clothes for prodigy.
+    type: Add
+  id: 608
+  time: '2026-08-13T21:54:24.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1821
+- author: deepdarkdepths
+  changes:
+  - message: Evolving into a Corrupted Hive Queen now requires a minimum of 30 hours
+      of xeno playtime.
+    type: Add
+  id: 609
+  time: '2026-08-13T21:59:53.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1820
+- author: P-MCT
+  changes:
+  - message: New patriotism directive straight from HICOM, we've been issued brand
+      new mountable UA Flags as a support module for the longstreet. Oh, and it always
+      emits an active target for CAS as well. Salute to old glory when you see her!
+    type: Add
+  - message: We've just got back our patent rights for the RE700 cupola for the Longstreet,
+      it fires almost twice as fast! But we can't find the IFF module for it. You'll
+      have to do without.
+    type: Add
+  - message: By jove finally! The FV150 adapter mounts for the snowplow & artillery
+      module were just found, and can now be called up via the vehicle support lift.
+    type: Add
+  - message: Good news and bad news lads, the good news. We've just got the hull mounted
+      L98 GPMG up and running. It can lay down a constant field of fire on a 140 degree
+      angle, but you can't hit your rear or flanks.
+    type: Add
+  - message: The bad news, our Longstreet's secondaries we had on loan from the USCM
+      for the FV150 are now being sent back. That includes the Tow, Flamer, M56, &
+      grenade launcher.
+    type: Tweak
+  - message: Snowplow moved to support module section, sacrificing a support module,
+      which will allow armor to be placed on the longstreet.
+    type: Tweak
+  id: 610
+  time: '2026-08-13T22:02:21.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1817
 Name: CMU
 Order: -1
