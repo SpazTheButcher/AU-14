@@ -7,9 +7,9 @@ using Content.Shared.Chasm;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Prototypes;
-using Content.Shared.Gravity;
 using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Movement.Pulling.Systems;
+using Content.Shared.Movement.Events;
 using Content.Shared.Throwing;
 using JetBrains.Annotations;
 using Robust.Shared.Audio;
@@ -88,27 +88,16 @@ public abstract partial class CMUSharedZLevelsSystem
 
         SubscribeLocalEvent<DamageableComponent, CMUZLevelHitEvent>(OnFallDamage);
         SubscribeLocalEvent<PhysicsComponent, CMUZLevelHitEvent>(OnFallAreaImpact);
-        SubscribeLocalEvent<CMUZPhysicsComponent, IsWeightlessEvent>(OnIsWeightless);
+        SubscribeLocalEvent<CMUZPhysicsComponent, IsVirtualGroundForMovementEvent>(OnIsVirtualGroundForMovement);
     }
 
-    private void OnIsWeightless(Entity<CMUZPhysicsComponent> ent, ref IsWeightlessEvent args)
+    private void OnIsVirtualGroundForMovement(Entity<CMUZPhysicsComponent> ent, ref IsVirtualGroundForMovementEvent args)
     {
-        if (args.Handled)
+        if (args.Grounded)
             return;
 
-        // A wall top on the level below is a virtual floor: there is intentionally no tile or physics fixture
-        // on this level. The normal gravity query therefore calls the entity weightless even after z-physics
-        // grounds it, making mob movement use space acceleration and friction. Answer the gravity query from
-        // the same virtual-ground calculation used by falling so prediction and authoritative movement agree.
-        if (!ent.Comp.VirtualGrounded)
-        {
-            var distance = DistanceToGround((ent.Owner, ent.Comp), out var stickyGround);
-            if (!IsVirtualGroundContact(distance, stickyGround))
-                return;
-        }
-
-        args.IsWeightless = false;
-        args.Handled = true;
+        var distance = DistanceToGround((ent.Owner, ent.Comp), out var stickyGround);
+        args.Grounded = stickyGround && MathF.Abs(distance) <= ZPhysicsSleepDistance;
     }
 
     public override void Update(float frameTime)
@@ -148,11 +137,6 @@ public abstract partial class CMUSharedZLevelsSystem
             distanceToGround = sweptDistance;
             stickyGround = true;
         }
-
-        // The lower wall may be outside the predicting client's PVS. Have the server replicate the virtual-ground
-        // result instead of requiring the client to rediscover the wall every movement tick.
-        if (_net.IsServer)
-            SetVirtualGrounded(ent, IsVirtualGroundContact(distanceToGround, stickyGround));
 
         var groundSnapDistance = GetMoveGroundSnapDistance(distanceToGround, stickyGround);
 
@@ -547,20 +531,6 @@ public abstract partial class CMUSharedZLevelsSystem
         return isVehicle ||
                stickyGround ||
                MathF.Abs(localPosition) <= ZPhysicsSleepDistance;
-    }
-
-    protected static bool IsVirtualGroundContact(float distanceToGround, bool stickyGround)
-    {
-        return stickyGround && MathF.Abs(distanceToGround) <= ZPhysicsSleepDistance;
-    }
-
-    protected void SetVirtualGrounded(Entity<CMUZPhysicsComponent> ent, bool value)
-    {
-        if (ent.Comp.VirtualGrounded == value)
-            return;
-
-        ent.Comp.VirtualGrounded = value;
-        DirtyField(ent.Owner, ent.Comp, nameof(CMUZPhysicsComponent.VirtualGrounded));
     }
 
     private static float GetGroundSnapDistance(float distanceToGround, bool stickyGround)
