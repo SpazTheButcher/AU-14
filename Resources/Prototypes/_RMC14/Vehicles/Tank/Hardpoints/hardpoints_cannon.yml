@@ -273,10 +273,10 @@
     applyToMuzzleFlash: true
     useDirectionalOffsets: true
     rotateDirectionalOffsets: true
-    offsetEast: "0.45,-0.7"
-    offsetWest: "-0.45, -0.7"
-    offsetSouth: "0, -0.55"
-    offsetNorth: "0, -1.1"
+    offsetEast: "0.45,-1.2"
+    offsetWest: "-0.5,-1.2"
+    offsetSouth: "0,-1.0"
+    offsetNorth: "0, -1.4"
     useAimDirection: true
     useContainerOwner: false
   - type: HardpointVisual
@@ -339,10 +339,10 @@
     applyToMuzzleFlash: true
     useDirectionalOffsets: true
     rotateDirectionalOffsets: true
-    offsetEast: "0.45,-0.7"
-    offsetWest: "-0.45, -0.7"
-    offsetSouth: "0, -0.55"
-    offsetNorth: "0, -1.1"
+    offsetEast: "0.45,-1.35"
+    offsetWest: "-0.5,-1.35"
+    offsetSouth: "0,-1.1"
+    offsetNorth: "0, -1.4"
     useAimDirection: true
     useContainerOwner: false
   - type: HardpointVisual

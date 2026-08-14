@@ -44,7 +44,7 @@
       path: /Audio/_RMC14/Vehicle/box_van_driving.ogg
       params:
         volume: -4
-    runningSoundCooldown: 2.25
+    runningSoundCooldown: 2.3
     hornSound: /Audio/_RMC14/Vehicle/honk_4_light.ogg
     hornCooldown: 1
     collisionSound:
@@ -264,7 +264,7 @@
       params:
         volume: -5
         pitch: 0.92
-    runningSoundCooldown: 2.25
+    runningSoundCooldown: 2.3
     hornSound: /Audio/_RMC14/Vehicle/box_van_horn.ogg
     hornCooldown: 1
     collisionSound:

@@ -63,7 +63,10 @@
     offset: "0,0"
     useDirectionalOffsets: true
     offsetEast: "0,0.2"
-    muzzleOffset: "0,-1"
+    offsetSouth: "-0.45,0.3"
+    offsetWest: "0.1,0.9"
+    offsetNorth: "0.45,0.2"
+    muzzleOffset: "0,-0.5"
     useAimDirection: true
     useContainerOwner: false
   - type: HardpointVisual
@@ -133,7 +136,10 @@
     offset: "0,0"
     useDirectionalOffsets: true
     offsetEast: "0,0.2"
-    muzzleOffset: "0,-1"
+    offsetSouth: "-0.45,0.3"
+    offsetWest: "0.1,0.9"
+    offsetNorth: "0.45,0.2"
+    muzzleOffset: "0,-0.5"
     useAimDirection: true
     useContainerOwner: false
   - type: HardpointVisual
@@ -160,10 +166,10 @@
   - type: VehicleTurret
     offsetRotatesWithTurret: true
     useDirectionalOffsets: true
-    pixelOffsetNorth: "0,-10"
-    pixelOffsetEast: "-10,0"
-    pixelOffsetSouth: "0,10"
-    pixelOffsetWest: "10,0"
+    pixelOffsetNorth: "0"
+    pixelOffsetEast: "0"
+    pixelOffsetSouth: "0"
+    pixelOffsetWest: "0"
     showOverlay: true
     overlayRsi: _RMC14/Structures/Vehicles/tank.rsi
     overlayState: towlauncher_0
@@ -199,7 +205,10 @@
     offset: "0,0"
     useDirectionalOffsets: true
     offsetEast: "0,0.2"
-    muzzleOffset: "0,-1"
+    offsetSouth: "-0.45,0.3"
+    offsetWest: "0.1,0.9"
+    offsetNorth: "0.45,0.2"
+    muzzleOffset: "0,-0.5"
     useAimDirection: true
     useContainerOwner: false
   - type: HardpointVisual
@@ -264,7 +273,10 @@
     offset: "0,0"
     useDirectionalOffsets: true
     offsetEast: "0,0.2"
-    muzzleOffset: "0,-1"
+    offsetSouth: "-0.45,0.3"
+    offsetWest: "0.1,0.9"
+    offsetNorth: "0.45,0.2"
+    muzzleOffset: "0,-0.5"
     useAimDirection: true
     useContainerOwner: false
   - type: HardpointVisual
@@ -327,7 +339,10 @@
     offset: "0,0"
     useDirectionalOffsets: true
     offsetEast: "0,0.2"
-    muzzleOffset: "0,-1"
+    offsetSouth: "-0.45,0.3"
+    offsetWest: "0.1,0.9"
+    offsetNorth: "0.45,0.2"
+    muzzleOffset: "0,-0.5"
     useAimDirection: true
     useContainerOwner: false
   - type: HardpointVisual
@@ -366,8 +381,8 @@
   - type: GunIgnoreContainerOwnerCollision
   - type: Gun
     fireRate: 3.5
-    minAngle: 3
-    maxAngle: 3
+    minAngle: 2.3
+    maxAngle: 2.3
     selectedMode: FullAuto
     availableModes:
     - FullAuto
