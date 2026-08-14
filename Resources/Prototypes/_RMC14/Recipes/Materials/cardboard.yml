@@ -288,6 +288,7 @@
   - CMUBoxMagazineRifleKramerEmptyBuild
   - RMCDividerConstruction
   - CMUBoxMagazineSMGXMP5A6EmptyBuild
+  - CMUBoxMagazineRifleXM20A2EmptyBuild
   - RMCBoxMagazineSMGM63EmptyBuild
   - RMCBoxMagazineSMGM63APEmptyBuild
   - RMCBoxMagazineSMGM63ExtEmptyBuild
@@ -477,6 +478,12 @@
   id: CMUBoxMagazineSMGXMP5A6EmptyBuild
   name: XMP5A6 magazine box
   prototype: CMUBoxMagazineSMGXMP5A6Empty
+
+- type: rmcConstruction
+  parent: RMCCardboardBuildBase
+  id: CMUBoxMagazineRifleXM20A2EmptyBuild
+  name: XM20A2 magazine box
+  prototype: CMUBoxMagazineRifleXM20A2Empty
 
 - type: rmcConstruction
   parent: RMCCardboardBuildBase

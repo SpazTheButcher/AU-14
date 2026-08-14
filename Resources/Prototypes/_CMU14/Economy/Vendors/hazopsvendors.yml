@@ -641,6 +641,8 @@
       entries:
       - id: CMUBoxMagazineSMGXMP5A6
         amount: 2
+      - id: CMUBoxMagazineRifleXM20A2
+        amount: 2
       - id: RMCBoxMagazinePistolM1984
         amount: 2
     - name: Ammo Boxes
