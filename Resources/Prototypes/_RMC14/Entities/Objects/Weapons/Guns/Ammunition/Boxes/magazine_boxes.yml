@@ -3583,7 +3583,7 @@
   suffix: Full
   components:
   - type: CMItemSlots
-    startingItem: AU14MagazineXMP5A6
+    startingItem: AU14MagazineRifleXM20A2
     count: 8
     slot:
       whitelist:

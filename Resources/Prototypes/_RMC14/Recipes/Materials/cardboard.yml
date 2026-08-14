@@ -280,6 +280,7 @@
   - RMCBoxMagazineRifleM54CEmptyBuild
   - RMCBoxMagazineRifleM54CAPEmptyBuild
   - RMCBoxMagazineRifleM54CExtEmptyBuild
+  - CMUBoxMagazineRifleXM20A2EmptyBuild
   - RMCDividerConstruction
   - RMCBoxMagazineRifleM4SPREmptyBuild
   - RMCBoxMagazineRifleM4SPRAPEmptyBuild
@@ -288,7 +289,6 @@
   - CMUBoxMagazineRifleKramerEmptyBuild
   - RMCDividerConstruction
   - CMUBoxMagazineSMGXMP5A6EmptyBuild
-  - CMUBoxMagazineRifleXM20A2EmptyBuild
   - RMCBoxMagazineSMGM63EmptyBuild
   - RMCBoxMagazineSMGM63APEmptyBuild
   - RMCBoxMagazineSMGM63ExtEmptyBuild
