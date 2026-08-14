@@ -480,6 +480,8 @@
   components:
   - type: WallMount
     arc: 360
+  - type: ApcPowerReceiver
+    needsPower: true
   - type: Sprite
     sprite: _RMC14/Structures/Wallmounts/camera.rsi
     drawdepth: Overdoors
@@ -569,5 +571,4 @@
     sprite: _RMC14/Markers/landmarks.rsi
     state: invisible_wall
     drawdepth: Overdoors
-
 

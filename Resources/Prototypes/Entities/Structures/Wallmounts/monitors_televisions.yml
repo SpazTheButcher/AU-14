@@ -1,5 +1,6 @@
 - type: entity
   parent: ComputerSurveillanceWirelessCameraMonitor
+  abstract: true
   id: ComputerTelevision
   name: wooden television
   description: Finally, some decent reception around here...
@@ -86,6 +87,7 @@
 
 - type: entity
   parent: WallmountTelescreenFrame
+  abstract: true
   id: WallmountTelescreen
   suffix: camera monitor
   name: telescreen
@@ -98,12 +100,9 @@
     radius: 1.5
     energy: 1.6
     color: "#b89f25"
-  - type: DeviceNetwork
-    deviceNetId: Wired
-    receiveFrequencyId: SurveillanceCamera
-    transmitFrequencyId: SurveillanceCamera
-  - type: WiredNetworkConnection
-  - type: DeviceNetworkRequiresPower
+  - type: CameraNetworkReceiver
+    networks: [SurveillanceCameraEngineering, SurveillanceCameraSecurity, SurveillanceCameraScience, SurveillanceCameraSupply, SurveillanceCameraCommand, SurveillanceCameraService, SurveillanceCameraMedical, SurveillanceCameraGeneral]
+    supportedSources: Standard
   - type: SurveillanceCameraMonitor
   - type: ActivatableUI
     key: enum.SurveillanceCameraMonitorUiKey.Key
@@ -147,6 +146,7 @@
 
 - type: entity
   parent: WallmountTelevisionFrame
+  abstract: true
   id: WallmountTelevision
   suffix: entertainment
   name: television
@@ -155,13 +155,11 @@
   - type: Construction
     graph: WallmountTelevision
     node: Television
-  - type: DeviceNetwork
-    deviceNetId: Wireless
-    receiveFrequencyId: SurveillanceCamera
-    transmitFrequencyId: SurveillanceCamera
   - type: WirelessNetworkConnection
     range: 200
-  - type: DeviceNetworkRequiresPower
+  - type: CameraNetworkReceiver
+    networks: [SurveillanceCameraEngineering, SurveillanceCameraSecurity, SurveillanceCameraScience, SurveillanceCameraSupply, SurveillanceCameraCommand, SurveillanceCameraService, SurveillanceCameraMedical, SurveillanceCameraGeneral]
+    supportedSources: Standard
   - type: Speech
   - type: SurveillanceCameraSpeaker
   - type: SurveillanceCameraMonitor

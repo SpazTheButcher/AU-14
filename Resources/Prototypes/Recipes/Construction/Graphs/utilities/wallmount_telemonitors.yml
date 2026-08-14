@@ -78,7 +78,7 @@
 
 
     - node: Telescreen
-      entity: WallmountTelescreen
+      entity: CMUMonitorCameraColonyCMB
       edges:
         - to: Screen
           steps:
@@ -167,10 +167,9 @@
 
 
     - node: Television
-      entity: WallmountTelevision
+      entity: CMUMonitorCameraColonyCMB
       edges:
         - to: Screen
           steps:
             - tool: Screwing
               doAfter: 3
-

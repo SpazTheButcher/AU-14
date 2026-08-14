@@ -39,6 +39,7 @@ public partial class NavMapControl : MapGridControl
 
     // Actions
     public event Action<NetEntity?>? TrackedEntitySelectedAction;
+    public event Action<NetEntity?>? TrackedEntityRightClickedAction;
     public event Action<DrawingHandleScreen>? PostWallDrawingAction;
 
     // Tracked data
@@ -213,33 +214,7 @@ public partial class NavMapControl : MapGridControl
             if ((StartDragPosition - args.PointerLocation.Position).Length() > MinDragDistance)
                 return;
 
-            // Get the clicked position
-            var offset = Offset + _physics.LocalCenter;
-            var localPosition = args.PointerLocation.Position - GlobalPixelPosition;
-
-            // Convert to a world position
-            var unscaledPosition = (localPosition - MidPointVector) / MinimapScale;
-            var worldPosition = Vector2.Transform(new Vector2(unscaledPosition.X, -unscaledPosition.Y) + offset, _transformSystem.GetWorldMatrix(_xform));
-
-            // Find closest tracked entity in range
-            var closestEntity = NetEntity.Invalid;
-            var closestDistance = float.PositiveInfinity;
-
-            foreach ((var currentEntity, var blip) in TrackedEntities)
-            {
-                if (!blip.Selectable)
-                    continue;
-
-                var currentDistance = (_transformSystem.ToMapCoordinates(blip.Coordinates).Position - worldPosition).Length();
-
-                if (closestDistance < currentDistance || currentDistance * MinimapScale > MaxSelectableDistance)
-                    continue;
-
-                closestEntity = currentEntity;
-                closestDistance = currentDistance;
-            }
-
-            if (closestDistance > MaxSelectableDistance || !closestEntity.IsValid())
+            if (!TryFindClosestTrackedEntity(args.PointerLocation.Position, out var closestEntity))
                 return;
 
             TrackedEntitySelectedAction.Invoke(closestEntity);
@@ -247,8 +222,26 @@ public partial class NavMapControl : MapGridControl
 
         else if (args.Function == EngineKeyFunctions.UIRightClick)
         {
-            // Clear current selection with right click
-            TrackedEntitySelectedAction?.Invoke(null);
+            if (TrackedEntityRightClickedAction == null)
+            {
+                // Preserve the generic nav-map behavior for controls that do not
+                // opt into camera marker right-clicks.
+                TrackedEntitySelectedAction?.Invoke(null);
+                return;
+            }
+
+            if (TryFindClosestTrackedEntity(args.PointerLocation.Position, out var closestEntity))
+            {
+                TrackedEntityRightClickedAction.Invoke(closestEntity);
+                // Camera marker right-clicks are actions, not a request for the
+                // generic context menu. Consume the input after dispatching the
+                // selection so the monitor stays on the chosen camera.
+                args.Handle();
+            }
+            else
+            {
+                TrackedEntityRightClickedAction.Invoke(null);
+            }
         }
 
         else if (args.Function == ContentKeyFunctions.ExamineEntity)
@@ -256,6 +249,39 @@ public partial class NavMapControl : MapGridControl
             // Toggle beacon labels
             _beacons.Pressed = !_beacons.Pressed;
         }
+    }
+
+    private bool TryFindClosestTrackedEntity(Vector2 pointerPosition, out NetEntity closestEntity)
+    {
+        closestEntity = NetEntity.Invalid;
+
+        if (_xform == null || _physics == null || TrackedEntities.Count == 0)
+            return false;
+
+        var offset = Offset + _physics.LocalCenter;
+        var localPosition = pointerPosition - GlobalPixelPosition;
+        var unscaledPosition = (localPosition - MidPointVector) / MinimapScale;
+        var worldPosition = Vector2.Transform(
+            new Vector2(unscaledPosition.X, -unscaledPosition.Y) + offset,
+            _transformSystem.GetWorldMatrix(_xform));
+
+        var closestDistance = float.PositiveInfinity;
+        foreach ((var currentEntity, var blip) in TrackedEntities)
+        {
+            if (!blip.Selectable)
+                continue;
+
+            var currentDistance =
+                (_transformSystem.ToMapCoordinates(blip.Coordinates).Position - worldPosition).Length();
+
+            if (closestDistance < currentDistance || currentDistance * MinimapScale > MaxSelectableDistance)
+                continue;
+
+            closestEntity = currentEntity;
+            closestDistance = currentDistance;
+        }
+
+        return closestDistance <= MaxSelectableDistance && closestEntity.IsValid();
     }
 
     protected override void MouseMove(GUIMouseMoveEventArgs args)

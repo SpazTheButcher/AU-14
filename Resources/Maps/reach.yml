@@ -6964,7 +6964,7 @@ entities:
     - type: Transform
       pos: 2.5,11.5
       parent: 2
-- proto: ComputerSurveillanceCameraMonitor
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 955
     components:
@@ -14772,7 +14772,7 @@ entities:
     - type: Transform
       pos: 14.5,-2.5
       parent: 2
-- proto: SurveillanceCameraSecurity
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 2022
     components:
@@ -14782,7 +14782,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bridge
   - uid: 2024
@@ -14793,7 +14793,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Radiation Engine
   - uid: 2025
@@ -14804,7 +14804,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Engineering
   - uid: 2026
@@ -14815,7 +14815,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bar
   - uid: 2027
@@ -14826,7 +14826,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Atmosia
   - uid: 2028
@@ -14837,7 +14837,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Disposals
   - uid: 2029
@@ -14848,7 +14848,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Medbay
   - uid: 2030
@@ -14859,7 +14859,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Arrivals
   - uid: 2031
@@ -14870,7 +14870,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Cargo Bay
   - uid: 2032
@@ -14881,7 +14881,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Science
   - uid: 2033
@@ -14892,7 +14892,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Abeam to Starboard
   - uid: 2034
@@ -14902,7 +14902,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Off the Port Quarter
   - uid: 2624
@@ -14912,7 +14912,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Genpop
 - proto: SyringeInaprovaline

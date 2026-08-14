@@ -1,4 +1,5 @@
 - type: entity
+  abstract: true
   id: CameraBug
   parent: [ BaseItem, BaseSyndicateContraband ]
   name: camera bug
@@ -18,11 +19,9 @@
     interfaces:
       enum.SurveillanceCameraMonitorUiKey.Key:
         type: SurveillanceCameraMonitorBoundUserInterface
-  - type: DeviceNetwork
-    deviceNetId: Wired
-    receiveFrequencyId: SurveillanceCamera
-    transmitFrequencyId: SurveillanceCamera
-  - type: WiredNetworkConnection
+  - type: CameraNetworkReceiver
+    networks: [SurveillanceCameraEngineering, SurveillanceCameraSecurity, SurveillanceCameraScience, SurveillanceCameraSupply, SurveillanceCameraCommand, SurveillanceCameraService, SurveillanceCameraMedical, SurveillanceCameraGeneral]
+    supportedSources: Standard
   - type: SurveillanceCameraMonitor
   - type: StaticPrice
     price: 2000

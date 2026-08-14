@@ -213199,7 +213199,7 @@ entities:
     - type: Transform
       pos: -176.5,-11.5
       parent: 1
-- proto: WallmountTelevisionFrame
+- proto: CMUMonitorCameraColonyCMBFrame
   entities:
   - uid: 24468
     components:

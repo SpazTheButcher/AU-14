@@ -6875,7 +6875,7 @@ entities:
     - type: Transform
       pos: 10.5,27.5
       parent: 1
-- proto: ComputerSurveillanceCameraMonitor
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 2193
     components:

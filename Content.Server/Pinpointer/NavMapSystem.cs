@@ -239,6 +239,15 @@ public sealed partial class NavMapSystem : SharedNavMapSystem
 
     #region: Grid functions
 
+    /// <summary>
+    /// Ensures that a grid has current nav-map geometry even when it was loaded outside station setup.
+    /// </summary>
+    public void EnsureNavMap(Entity<MapGridComponent> grid)
+    {
+        var component = EnsureComp<NavMapComponent>(grid);
+        RefreshGrid(grid, component, grid.Comp);
+    }
+
     private void RefreshGrid(EntityUid uid, NavMapComponent component, MapGridComponent mapGrid)
     {
         // Clear stale data

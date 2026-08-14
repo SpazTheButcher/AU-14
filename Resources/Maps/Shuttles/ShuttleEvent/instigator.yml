@@ -1727,7 +1727,7 @@ entities:
     - type: Transform
       pos: -0.5,4.5
       parent: 1
-- proto: ComputerSurveillanceCameraMonitor
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 149
     components:
@@ -3050,7 +3050,7 @@ entities:
     - type: Transform
       pos: 9.5,11.5
       parent: 1
-- proto: SurveillanceCameraSecurity
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 333
     components:
@@ -3059,7 +3059,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Fore-Port
   - uid: 334
@@ -3069,7 +3069,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Fore-Starboard
   - uid: 337
@@ -3080,7 +3080,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Aft-Port
   - uid: 339
@@ -3091,7 +3091,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Aft-Starboard
 - proto: SyndicateComputerComms
