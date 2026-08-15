@@ -10,6 +10,7 @@ using Content.Shared.Damage.Prototypes;
 using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Movement.Pulling.Systems;
 using Content.Shared.Movement.Events;
+using Content.Shared.Tag;
 using Content.Shared.Throwing;
 using JetBrains.Annotations;
 using Robust.Shared.Audio;
@@ -51,6 +52,7 @@ public abstract partial class CMUSharedZLevelsSystem
     private const float ImpactVelocityLimit = 4.0f;
     private const string FallDebugTag = "[DEBUG-CMUZ-FALL]";
     private static readonly ProtoId<DamageTypePrototype> BluntDamageType = "Blunt";
+    private static readonly ProtoId<TagPrototype> WallTag = "Wall";
 
     private EntityQuery<FixturesComponent> _fixturesQuery;
     private EntityQuery<CMUZLevelHighGroundComponent> _highgroundQuery;
@@ -77,6 +79,7 @@ public abstract partial class CMUSharedZLevelsSystem
     private int _profileZMoveSnapSweepSamples;
     private int _profileZMoveSnapSweepHighGroundChecks;
     private bool _debugFalling;
+    [Dependency] private TagSystem _tags = default!;
     [Dependency] private PullingSystem _pulling = default!;
 
     private void InitMovement()

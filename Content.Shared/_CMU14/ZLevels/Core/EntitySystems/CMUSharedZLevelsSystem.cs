@@ -5,7 +5,6 @@ using Content.Shared.ActionBlocker;
 using Content.Shared.Damage;
 using Content.Shared.Popups;
 using Content.Shared.Stunnable;
-using Content.Shared.Tag;
 using JetBrains.Annotations;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Map;
@@ -38,15 +37,12 @@ public abstract partial class CMUSharedZLevelsSystem : EntitySystem
     [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private IPrototypeManager _proto = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
-    [Dependency] private TagSystem _tags = default!;
     [Dependency] protected ProfManager Prof = default!;
 
     private EntityQuery<MapComponent> _mapQuery;
     private EntityQuery<CMUZLevelMapComponent> _zMapQuery;
     private EntityQuery<MapGridComponent> _gridQuery;
     private EntityQuery<TransformComponent> _xformQuery;
-
-    private static readonly ProtoId<TagPrototype> WallTag = "Wall";
 
     public override void Initialize()
     {
