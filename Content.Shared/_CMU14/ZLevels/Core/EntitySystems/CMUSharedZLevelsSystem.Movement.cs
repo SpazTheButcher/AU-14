@@ -9,6 +9,8 @@ using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Prototypes;
 using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Movement.Pulling.Systems;
+using Content.Shared.Movement.Events;
+using Content.Shared.Tag;
 using Content.Shared.Throwing;
 using JetBrains.Annotations;
 using Robust.Shared.Audio;
@@ -50,6 +52,7 @@ public abstract partial class CMUSharedZLevelsSystem
     private const float ImpactVelocityLimit = 4.0f;
     private const string FallDebugTag = "[DEBUG-CMUZ-FALL]";
     private static readonly ProtoId<DamageTypePrototype> BluntDamageType = "Blunt";
+    private static readonly ProtoId<TagPrototype> WallTag = "Wall";
 
     private EntityQuery<FixturesComponent> _fixturesQuery;
     private EntityQuery<CMUZLevelHighGroundComponent> _highgroundQuery;
@@ -76,6 +79,7 @@ public abstract partial class CMUSharedZLevelsSystem
     private int _profileZMoveSnapSweepSamples;
     private int _profileZMoveSnapSweepHighGroundChecks;
     private bool _debugFalling;
+    [Dependency] private TagSystem _tags = default!;
     [Dependency] private PullingSystem _pulling = default!;
 
     private void InitMovement()
@@ -87,6 +91,16 @@ public abstract partial class CMUSharedZLevelsSystem
 
         SubscribeLocalEvent<DamageableComponent, CMUZLevelHitEvent>(OnFallDamage);
         SubscribeLocalEvent<PhysicsComponent, CMUZLevelHitEvent>(OnFallAreaImpact);
+        SubscribeLocalEvent<CMUZPhysicsComponent, IsVirtualGroundForMovementEvent>(OnIsVirtualGroundForMovement);
+    }
+
+    private void OnIsVirtualGroundForMovement(Entity<CMUZPhysicsComponent> ent, ref IsVirtualGroundForMovementEvent args)
+    {
+        if (args.Grounded)
+            return;
+
+        var distance = DistanceToGround((ent.Owner, ent.Comp), out var stickyGround);
+        args.Grounded = stickyGround && MathF.Abs(distance) <= ZPhysicsSleepDistance;
     }
 
     public override void Update(float frameTime)
@@ -1032,6 +1046,23 @@ public abstract partial class CMUSharedZLevelsSystem
                 return highGroundDistance;
             }
 
+            // A wall fills the full height of its own level, so its top is a walkable surface on the level above.
+            // Without this check an entity crossing an upper-level opening over a wall falls down into that wall,
+            // because z-physics previously recognized only floor tiles and explicit high-ground components.
+            if (floor > 0 && HasWallAt(checkingMap, checkingGrid, checkingTile))
+            {
+                // The wall's top is a flat walkable surface, not an airborne contact. Mark it sticky just like
+                // flat high-ground so horizontal movement cannot leave the entity in the frictionless/sliding
+                // state while it is standing over an opening.
+                stickyGround = target.Comp.Velocity <= 0.01f && target.Comp.Velocity > -4f;
+                var wallTopDistance = target.Comp.LocalPosition + floor - 1;
+                DebugLogFalling(
+                    target.Owner,
+                    "distance-wall-top-hit",
+                    $"floor={floor} checkingMap={checkingMap.Owner} tile={checkingTile} sampleWorld={worldPos} distance={wallTopDistance:F3}");
+                return wallTopDistance;
+            }
+
             //No ZEntities found, check floor tiles
             var tileFound = _map.TryGetTileRef(checkingMap, checkingGrid, checkingTile, out var tileRef);
             var tileEmpty = !tileFound || tileRef.Tile.IsEmpty;
@@ -1060,6 +1091,21 @@ public abstract partial class CMUSharedZLevelsSystem
 
         DebugLogFalling(target.Owner, "distance-miss", $"sampleWorld={worldPos} maxFloors={maxFloors}");
         return maxFloors;
+    }
+
+    private bool HasWallAt(Entity<CMUZLevelMapComponent> map, MapGridComponent grid, Vector2i tile)
+        => HasWallAt(map.Owner, grid, tile);
+
+    private bool HasWallAt(EntityUid gridUid, MapGridComponent grid, Vector2i tile)
+    {
+        var query = _map.GetAnchoredEntitiesEnumerator(gridUid, grid, tile);
+        while (query.MoveNext(out var anchored))
+        {
+            if (_tags.HasTag(anchored.Value, WallTag))
+                return true;
+        }
+
+        return false;
     }
 
     private bool TryGetHighGroundDistance(
