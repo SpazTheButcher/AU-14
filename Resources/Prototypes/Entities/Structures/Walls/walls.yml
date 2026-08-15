@@ -21,6 +21,9 @@
   - type: Tag
     tags:
     - Wall
+  - type: StructuralSupport
+    isVerticalSupport: true
+    cantileverSpan: 3
   - type: IsRoof
   - type: Sprite
     drawdepth: Walls

@@ -22,12 +22,6 @@ namespace Content.Shared._AU14.ZLevelBuilding;
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class StructuralSupportComponent : Component
 {
-    /// <summary>
-    /// How far an ordinary wall cantilevers support onto the level above. Walls are not added to the support
-    /// graph themselves; the server and structural scanner use this span when projecting their load upward.
-    /// </summary>
-    public const int WallCantileverSpan = 3;
-
     /// <summary>How many tiles a floor/structure may cantilever out from this support before it is unstable.</summary>
     [DataField, AutoNetworkedField]
     public int CantileverSpan = 2;

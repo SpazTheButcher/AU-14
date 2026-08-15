@@ -5,12 +5,10 @@ using System.Collections.Generic;
 using System.Numerics;
 using Content.Shared._AU14.ZLevelBuilding;
 using Content.Shared._CMU14.ZLevels.Core.Components;
-using Content.Shared.Tag;
 using Robust.Client.Graphics;
 using Robust.Client.Player;
 using Robust.Shared.Enums;
 using Robust.Shared.Map.Components;
-using Robust.Shared.Prototypes;
 
 namespace Content.Client._AU14.ZLevelBuilding;
 
@@ -40,9 +38,6 @@ public sealed class StructuralScannerOverlay : Overlay
     private readonly IPlayerManager _player;
     private readonly SharedMapSystem _map;
     private readonly SharedTransformSystem _transform;
-    private readonly TagSystem _tags;
-
-    private static readonly ProtoId<TagPrototype> WallTag = "Wall";
 
     private static readonly Color UnstableColor = new(0.85f, 0.1f, 0.1f, 0.35f);
     private static readonly Color MarginalColor = new(0.9f, 0.75f, 0.1f, 0.3f);
@@ -55,7 +50,6 @@ public sealed class StructuralScannerOverlay : Overlay
         _player = IoCManager.Resolve<IPlayerManager>();
         _map = _entMan.System<SharedMapSystem>();
         _transform = _entMan.System<SharedTransformSystem>();
-        _tags = _entMan.System<TagSystem>();
     }
 
     protected override bool BeforeDraw(in OverlayDrawArgs args)
@@ -157,31 +151,6 @@ public sealed class StructuralScannerOverlay : Overlay
 
             var beamTile = _map.WorldToTile(gridUid, grid, _transform.GetWorldPosition(beamUid));
             beams.Add((beamTile, support.CantileverSpan));
-        }
-
-        // Ordinary walls are vertical load-bearing structures too. Collect only the bounded area under the
-        // scanner view instead of querying every wall on the map each frame.
-        if (_entMan.TryGetComponent<MapGridComponent>(below, out var belowGrid))
-        {
-            var centerWorld = _transform.ToMapCoordinates(_map.GridTileToLocal(gridUid, grid, center)).Position;
-            var belowCenter = _map.WorldToTile(below, belowGrid, centerWorld);
-            var searchRadius = DrawRadius + StructuralSupportComponent.WallCantileverSpan;
-            for (var dx = -searchRadius; dx <= searchRadius; dx++)
-            {
-                for (var dy = -searchRadius; dy <= searchRadius; dy++)
-                {
-                    var belowTile = belowCenter + new Vector2i(dx, dy);
-                    foreach (var anchored in _map.GetAnchoredEntities(below, belowGrid, belowTile))
-                    {
-                        if (!_tags.HasTag(anchored, WallTag))
-                            continue;
-
-                        var wallTile = _map.WorldToTile(gridUid, grid, _transform.GetWorldPosition(anchored));
-                        beams.Add((wallTile, StructuralSupportComponent.WallCantileverSpan));
-                        break;
-                    }
-                }
-            }
         }
 
         if (beams.Count == 0)

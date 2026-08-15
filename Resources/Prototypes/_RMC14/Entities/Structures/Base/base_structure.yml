@@ -121,6 +121,9 @@
   - type: Tag
     tags:
     - Wall
+  - type: StructuralSupport
+    isVerticalSupport: true
+    cantileverSpan: 3
   - type: Clickable
 
 - type: entity

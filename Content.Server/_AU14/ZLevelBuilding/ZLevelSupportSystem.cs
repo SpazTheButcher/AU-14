@@ -19,7 +19,6 @@ using Robust.Shared.Map.Components;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Player;
-using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 
@@ -75,16 +74,11 @@ public sealed class ZLevelSupportSystem : EntitySystem
         new(1, 0), new(-1, 0), new(0, 1), new(0, -1),
     };
 
-    private static readonly ProtoId<TagPrototype> WallTag = "Wall";
-
     private EntityQuery<MapGridComponent> _gridQuery;
     private EntityQuery<CMUZLevelMapComponent> _zMapQuery;
 
     // Grids whose support graph needs recomputing next tick (debounce so a multi-entity build only solves once).
     private readonly HashSet<EntityUid> _dirtyGrids = new();
-    // Grids where one or more walls changed this tick. Wall lifecycle events are component-filtered but can fire
-    // many times while loading or deleting a map, so defer the upper-level lookup and perform it once per grid.
-    private readonly HashSet<EntityUid> _wallChangedGrids = new();
     private readonly List<EntityUid> _processing = new();
 
     // Structural entities that have lost support: maps entity uid -> time at which it will collapse.
@@ -108,9 +102,6 @@ public sealed class ZLevelSupportSystem : EntitySystem
         SubscribeLocalEvent<StructuralSupportComponent, ComponentShutdown>(OnSupportShutdown);
         SubscribeLocalEvent<StructuralSupportComponent, AnchorStateChangedEvent>(OnSupportAnchorChanged);
         SubscribeLocalEvent<StructuralSupportComponent, DamageChangedEvent>(OnSupportDamaged);
-        SubscribeLocalEvent<TagComponent, MapInitEvent>(OnTaggedMapInit);
-        SubscribeLocalEvent<TagComponent, EntityTerminatingEvent>(OnTaggedTerminating);
-        SubscribeLocalEvent<TagComponent, AnchorStateChangedEvent>(OnTaggedAnchorChanged);
 
         // All of these are keyed by round-scoped uids; drop them with the round so stale entries never accumulate.
         SubscribeLocalEvent<Content.Shared.GameTicking.RoundRestartCleanupEvent>(_ =>
@@ -119,7 +110,6 @@ public sealed class ZLevelSupportSystem : EntitySystem
             _nextCollapseAlert.Clear();
             _pendingUnsupported.Clear();
             _dirtyGrids.Clear();
-            _wallChangedGrids.Clear();
         });
     }
 
@@ -142,24 +132,6 @@ public sealed class ZLevelSupportSystem : EntitySystem
     private void OnSupportAnchorChanged(Entity<StructuralSupportComponent> ent, ref AnchorStateChangedEvent args)
         => MarkGridDirty(ent);
 
-    private void OnTaggedMapInit(Entity<TagComponent> ent, ref MapInitEvent args)
-        => MarkAboveDirtyIfWall(ent);
-
-    private void OnTaggedTerminating(Entity<TagComponent> ent, ref EntityTerminatingEvent args)
-        => MarkAboveDirtyIfWall(ent);
-
-    private void OnTaggedAnchorChanged(Entity<TagComponent> ent, ref AnchorStateChangedEvent args)
-        => MarkAboveDirtyIfWall(ent);
-
-    /// <summary>A wall being built, moved, or destroyed changes the support available to the level above.</summary>
-    private void MarkAboveDirtyIfWall(Entity<TagComponent> ent)
-    {
-        if (!_tag.HasTag(ent.Comp, WallTag) || Transform(ent).GridUid is not { } grid)
-            return;
-
-        _wallChangedGrids.Add(grid);
-    }
-
     /// <summary>Queues the grid the entity currently sits on for a recompute next update.</summary>
     public void MarkGridDirty(EntityUid uid)
     {
@@ -170,16 +142,6 @@ public sealed class ZLevelSupportSystem : EntitySystem
 
     public override void Update(float frameTime)
     {
-        if (_wallChangedGrids.Count > 0)
-        {
-            _processing.Clear();
-            _processing.AddRange(_wallChangedGrids);
-            _wallChangedGrids.Clear();
-
-            foreach (var grid in _processing)
-                MarkAboveDirty(grid);
-        }
-
         // Recompute support graphs for grids that changed this tick.
         if (_dirtyGrids.Count > 0)
         {
@@ -725,8 +687,6 @@ public sealed class ZLevelSupportSystem : EntitySystem
         {
             if (TryComp<StructuralSupportComponent>(anchored, out var sup) && (sup.IsVerticalSupport || sup.IsAnchor))
                 best = Math.Max(best, sup.CantileverSpan);
-            else if (_tag.HasTag(anchored, WallTag))
-                best = Math.Max(best, StructuralSupportComponent.WallCantileverSpan);
         }
 
         if (best < 0)
