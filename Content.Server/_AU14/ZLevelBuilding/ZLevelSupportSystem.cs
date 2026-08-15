@@ -140,6 +140,15 @@ public sealed class ZLevelSupportSystem : EntitySystem
 
         if (Transform(ent).MapUid is { } mapUid)
             _lastSupportDamager[mapUid] = (origin, _timing.CurTime);
+
+        // Cave-in attribution shares this component event. Robust permits only one directed subscription for a
+        // component/event pair, so relay structural-only supports rather than making ZCaveInSystem subscribe too.
+        // Walls carry their own marker and are handled by the cave system's wall-scoped damage subscription.
+        if (!HasComp<ZLevelWallSupportComponent>(ent))
+        {
+            var caveEvent = new ZCaveSupportDamagedEvent(ent.Owner, origin);
+            RaiseLocalEvent(ref caveEvent);
+        }
     }
 
     private void OnSupportStartup(Entity<StructuralSupportComponent> ent, ref ComponentStartup args)
@@ -168,6 +177,13 @@ public sealed class ZLevelSupportSystem : EntitySystem
     {
         ReindexSupport(ent);
         MarkGridDirty(ent);
+
+        // Player-built walls carry both markers; the wall handler below relays them once.
+        if (!args.Anchored && !HasComp<ZLevelWallSupportComponent>(ent))
+        {
+            var caveEvent = new ZCaveSupportRemovedEvent(ent.Owner);
+            RaiseLocalEvent(ref caveEvent);
+        }
     }
 
     private void OnSupportParentChanged(Entity<StructuralSupportComponent> ent, ref EntParentChangedMessage args)
@@ -185,7 +201,14 @@ public sealed class ZLevelSupportSystem : EntitySystem
         => MarkGridDirty(ent);
 
     private void OnWallSupportAnchorChanged(Entity<ZLevelWallSupportComponent> ent, ref AnchorStateChangedEvent args)
-        => MarkGridDirty(ent);
+    {
+        MarkGridDirty(ent);
+        if (!args.Anchored)
+        {
+            var caveEvent = new ZCaveSupportRemovedEvent(ent.Owner);
+            RaiseLocalEvent(ref caveEvent);
+        }
+    }
 
     /// <summary>
     /// Mapper walls carry only the lightweight upward-support marker. Once a wall is actually constructed by a
@@ -876,3 +899,14 @@ public sealed class ZLevelSupportSystem : EntitySystem
         return true;
     }
 }
+
+/// <summary>
+/// Relays a load-bearing support's removal to the cave-in system. Robust only permits one directed subscription
+/// for each component/event pair, which is owned by <see cref="ZLevelSupportSystem"/>.
+/// </summary>
+[ByRefEvent]
+public readonly record struct ZCaveSupportRemovedEvent(EntityUid Support);
+
+/// <summary>Relays player damage to a structural-only cave support for cave-in attribution.</summary>
+[ByRefEvent]
+public readonly record struct ZCaveSupportDamagedEvent(EntityUid Support, EntityUid Origin);

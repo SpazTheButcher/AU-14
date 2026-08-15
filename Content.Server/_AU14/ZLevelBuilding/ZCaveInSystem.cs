@@ -98,12 +98,11 @@ public sealed class ZCaveInSystem : EntitySystem
         // or structural support disappearing. Scope both high-frequency events to those two marker components;
         // subscribing through Transform/Damageable would invoke this system for nearly every anchored entity and
         // every damaged entity in the game just to reject them by map afterwards.
-        SubscribeLocalEvent<ZLevelWallSupportComponent, AnchorStateChangedEvent>(OnWallAnchorChanged);
-        SubscribeLocalEvent<StructuralSupportComponent, AnchorStateChangedEvent>(OnStructuralAnchorChanged);
         SubscribeLocalEvent<ZLevelWallSupportComponent, EntityTerminatingEvent>(OnWallTerminating);
         SubscribeLocalEvent<StructuralSupportComponent, EntityTerminatingEvent>(OnStructuralTerminating);
         SubscribeLocalEvent<ZLevelWallSupportComponent, DamageChangedEvent>(OnWallDamaged);
-        SubscribeLocalEvent<StructuralSupportComponent, DamageChangedEvent>(OnStructuralDamaged);
+        SubscribeLocalEvent<ZCaveSupportRemovedEvent>(OnSupportRemoved);
+        SubscribeLocalEvent<ZCaveSupportDamagedEvent>(OnSupportDamaged);
         SubscribeLocalEvent<ShuttleFTLSafetyEvent>(OnShuttleFTLSafety);
 
         // Load-bearing TERRAIN is indexed by position rather than read from the anchored lookup, because the
@@ -135,11 +134,9 @@ public sealed class ZCaveInSystem : EntitySystem
         RecordDigger(ent.Owner, ref args);
     }
 
-    private void OnStructuralDamaged(Entity<StructuralSupportComponent> ent, ref DamageChangedEvent args)
+    private void OnSupportDamaged(ref ZCaveSupportDamagedEvent args)
     {
-        // Player-built walls carry both markers and already passed through the wall-scoped subscription.
-        if (!HasComp<ZLevelWallSupportComponent>(ent))
-            RecordDigger(ent.Owner, ref args);
+        RecordDigger(args.Support, args.Origin);
     }
 
     private void RecordDigger(EntityUid uid, ref DamageChangedEvent args)
@@ -147,6 +144,11 @@ public sealed class ZCaveInSystem : EntitySystem
         if (!args.DamageIncreased || args.Origin is not { } origin || !HasComp<ActorComponent>(origin))
             return;
 
+        RecordDigger(uid, origin);
+    }
+
+    private void RecordDigger(EntityUid uid, EntityUid origin)
+    {
         if (Transform(uid).MapUid is { } mapUid && _stoneQuery.HasComponent(mapUid))
             _lastDigger[mapUid] = (origin, _timing.CurTime);
     }
@@ -156,17 +158,10 @@ public sealed class ZCaveInSystem : EntitySystem
     /// destroyed). Removing a solid can unstable nearby open tiles; adding one can stabilise them. Flag the tiles
     /// within a roof span of it dirty so the next evaluation pass re-checks just those, not the whole level.
     /// </summary>
-    private void OnWallAnchorChanged(Entity<ZLevelWallSupportComponent> ent, ref AnchorStateChangedEvent args)
+    private void OnSupportRemoved(ref ZCaveSupportRemovedEvent args)
     {
-        if (!args.Anchored)
-            DirtyAroundRemovedSupport(Transform(ent));
-    }
-
-    private void OnStructuralAnchorChanged(Entity<StructuralSupportComponent> ent, ref AnchorStateChangedEvent args)
-    {
-        // Player-built walls carry both markers and already passed through the wall-scoped subscription.
-        if (!args.Anchored && !HasComp<ZLevelWallSupportComponent>(ent))
-            DirtyAroundRemovedSupport(Transform(ent));
+        if (!TerminatingOrDeleted(args.Support))
+            DirtyAroundRemovedSupport(Transform(args.Support));
     }
 
     private void OnWallTerminating(Entity<ZLevelWallSupportComponent> ent, ref EntityTerminatingEvent args)
