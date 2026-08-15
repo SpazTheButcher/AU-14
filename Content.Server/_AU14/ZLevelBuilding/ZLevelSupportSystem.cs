@@ -82,6 +82,9 @@ public sealed class ZLevelSupportSystem : EntitySystem
 
     // Grids whose support graph needs recomputing next tick (debounce so a multi-entity build only solves once).
     private readonly HashSet<EntityUid> _dirtyGrids = new();
+    // Grids where one or more walls changed this tick. Wall lifecycle events are component-filtered but can fire
+    // many times while loading or deleting a map, so defer the upper-level lookup and perform it once per grid.
+    private readonly HashSet<EntityUid> _wallChangedGrids = new();
     private readonly List<EntityUid> _processing = new();
 
     // Structural entities that have lost support: maps entity uid -> time at which it will collapse.
@@ -116,6 +119,7 @@ public sealed class ZLevelSupportSystem : EntitySystem
             _nextCollapseAlert.Clear();
             _pendingUnsupported.Clear();
             _dirtyGrids.Clear();
+            _wallChangedGrids.Clear();
         });
     }
 
@@ -150,10 +154,10 @@ public sealed class ZLevelSupportSystem : EntitySystem
     /// <summary>A wall being built, moved, or destroyed changes the support available to the level above.</summary>
     private void MarkAboveDirtyIfWall(Entity<TagComponent> ent)
     {
-        if (!_tag.HasTag(ent.Owner, WallTag) || Transform(ent).GridUid is not { } grid)
+        if (!_tag.HasTag(ent.Comp, WallTag) || Transform(ent).GridUid is not { } grid)
             return;
 
-        MarkAboveDirty(grid);
+        _wallChangedGrids.Add(grid);
     }
 
     /// <summary>Queues the grid the entity currently sits on for a recompute next update.</summary>
@@ -166,6 +170,16 @@ public sealed class ZLevelSupportSystem : EntitySystem
 
     public override void Update(float frameTime)
     {
+        if (_wallChangedGrids.Count > 0)
+        {
+            _processing.Clear();
+            _processing.AddRange(_wallChangedGrids);
+            _wallChangedGrids.Clear();
+
+            foreach (var grid in _processing)
+                MarkAboveDirty(grid);
+        }
+
         // Recompute support graphs for grids that changed this tick.
         if (_dirtyGrids.Count > 0)
         {
@@ -598,14 +612,14 @@ public sealed class ZLevelSupportSystem : EntitySystem
 
         if (ent.Comp.IsAnchor)
         {
-            budget = OwnLevelSeedBudget(ent, ent.Comp.CantileverSpan);
+            budget = OwnLevelSeedBudget(ent.Comp.IsVerticalSupport, ent.Comp.CantileverSpan);
             return true;
         }
 
         var onSolid = _map.TryGetTileRef(grid.Owner, grid.Comp, tile, out var tileRef) && !tileRef.Tile.IsEmpty;
         if (onSolid && IsGroundOrBelow(mapUid))
         {
-            budget = OwnLevelSeedBudget(ent, ent.Comp.CantileverSpan);
+            budget = OwnLevelSeedBudget(ent.Comp.IsVerticalSupport, ent.Comp.CantileverSpan);
             return true;
         }
 
@@ -615,7 +629,7 @@ public sealed class ZLevelSupportSystem : EntitySystem
         // TileFloorSupport marker) need a beam below.
         if (onSolid && !IsGroundOrBelow(mapUid) && !HasPlayerFloorMarker(grid, tile))
         {
-            budget = OwnLevelSeedBudget(ent, ent.Comp.CantileverSpan);
+            budget = OwnLevelSeedBudget(ent.Comp.IsVerticalSupport, ent.Comp.CantileverSpan);
             return true;
         }
 
@@ -625,15 +639,15 @@ public sealed class ZLevelSupportSystem : EntitySystem
             zMap.MapBelow is { } below &&
             TryGetSupportSpanBelow(below, _transform.GetWorldPosition(ent.Owner), out var belowSpan))
         {
-            budget = OwnLevelSeedBudget(ent, belowSpan);
+            budget = OwnLevelSeedBudget(ent.Comp.IsVerticalSupport, belowSpan);
             return true;
         }
 
         return false;
     }
 
-    private static int OwnLevelSeedBudget(Entity<StructuralSupportComponent> ent, int sourceBudget)
-        => ent.Comp.IsVerticalSupport ? 0 : sourceBudget;
+    private static int OwnLevelSeedBudget(bool isVerticalSupport, int sourceBudget)
+        => isVerticalSupport ? 0 : sourceBudget;
 
     /// <summary>
     /// True if the level is the ground/surface (depth 0) or underground (depth &lt; 0), i.e. NOT an upper z-level.

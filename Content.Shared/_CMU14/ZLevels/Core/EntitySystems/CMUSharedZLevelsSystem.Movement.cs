@@ -1091,8 +1091,11 @@ public abstract partial class CMUSharedZLevelsSystem
     }
 
     private bool HasWallAt(Entity<CMUZLevelMapComponent> map, MapGridComponent grid, Vector2i tile)
+        => HasWallAt(map.Owner, grid, tile);
+
+    private bool HasWallAt(EntityUid gridUid, MapGridComponent grid, Vector2i tile)
     {
-        var query = _map.GetAnchoredEntitiesEnumerator(map, grid, tile);
+        var query = _map.GetAnchoredEntitiesEnumerator(gridUid, grid, tile);
         while (query.MoveNext(out var anchored))
         {
             if (_tags.HasTag(anchored.Value, WallTag))
