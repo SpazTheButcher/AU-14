@@ -23,13 +23,16 @@
     back: CMSatchel
     ears: AU14HeadsetGovforAuxiliary
     id: CMUIDCardAegisObserver
+  storage:
+    back:
+    - CMUStampAegis
 
 # ├──[ Spawnpoint ]──────────────────────────────────────────────────┤
 - type: entity
   parent: CMSpawnPointJobBase
   id: CMUSpawnPointAegisObserver
   name: AEGIS observer spawn point
-  suffix: RMC, Job Spawn
+  suffix: CMU, Job
   components:
   - type: SpawnPoint
     job_id: CMUJobAegisObserver
@@ -40,7 +43,7 @@
 - type: entity
   id: CMURandomHumanoidAegisObserver
   name: AEGIS observer
-  suffix: Ghost
+  suffix: CMU, Ghost
   components:
   - type: Sprite
     sprite: _RMC14/Objects/CMIDs/aegis.rsi
@@ -61,3 +64,9 @@
     raffle:
       settings: short
   - type: GhostRoleApplySpecial
+
+- type: roleLoadout
+  id: JobCMUJobAegisObserver
+  points: 7
+  groups:
+  - AegisStampGroupCMU

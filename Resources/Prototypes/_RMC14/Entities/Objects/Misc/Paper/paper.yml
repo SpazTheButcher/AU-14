@@ -149,6 +149,7 @@
   parent: CMPaper
   id: RMCPaperAegisInfoFax
   name: High Command Transmission
+  suffix: RMC
   components:
     - type: Paper
       stampState: paper_stamp-marine

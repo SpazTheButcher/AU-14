@@ -596,6 +596,20 @@
     footerImagePath: "/Textures/_CMU14/Interface/Paper/SEEGSONFooter.png"
     footerMargin: 0, 0, 0, 40
 
+#AEGIS
+- type: entity
+  parent: CMPaper
+  id: CMUPaperAEGIS
+  name: AEGIS paper
+  description: A sheet of paper bearing the AEGIS Armaments letterhead.
+  components:
+  - type: PaperVisuals
+    headerImagePath: "/Textures/_CMU14/Interface/Paper/AEGISHeader.png"
+    backgroundImagePath: "/Textures/_CMU14/Interface/Paper/paper_bkg.png"
+    backgroundPatchMargin: 16.0, 16.0, 16.0, 16.0
+    footerImagePath: "/Textures/_CMU14/Interface/Paper/AEGISFooter.png"
+    footerMargin: 0, 0, 0, 40
+
 #LASELLE BIONATIONAL
 - type: entity
   parent: CMPaper

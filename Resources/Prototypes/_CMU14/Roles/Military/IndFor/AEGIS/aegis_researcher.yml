@@ -28,13 +28,16 @@
     back: CMSatchelMedical
     ears: AU14HeadsetGovforAuxiliary
     id: CMUIDCardAegisResearcher
+  storage:
+    back:
+    - CMUStampAegis
 
 # ├──[ Spawnpoint ]──────────────────────────────────────────────────┤
 - type: entity
   parent: CMSpawnPointJobBase
   id: CMUSpawnPointAegisResearcher
   name: AEGIS researcher spawn point
-  suffix: RMC, Job Spawn
+  suffix: CMU, Job
   components:
   - type: SpawnPoint
     job_id: CMUJobAegisResearcher
@@ -45,7 +48,7 @@
 - type: entity
   id: CMURandomHumanoidAegisResearcher
   name: AEGIS researcher
-  suffix: Ghost
+  suffix: CMU, Ghost
   components:
   - type: Sprite
     sprite: _RMC14/Objects/CMIDs/aegis.rsi
@@ -66,3 +69,9 @@
     raffle:
       settings: short
   - type: GhostRoleApplySpecial
+
+- type: roleLoadout
+  id: JobCMUJobAegisResearcher
+  points: 7
+  groups:
+  - AegisStampGroupCMU
