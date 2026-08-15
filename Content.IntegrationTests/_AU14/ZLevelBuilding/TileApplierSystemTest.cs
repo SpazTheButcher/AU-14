@@ -4,6 +4,7 @@ using Content.Server.Shuttles.Components;
 using Content.Server.Shuttles.Systems;
 using Content.Server.Station.Components;
 using Content.Shared._AU14.ZLevelBuilding;
+using Content.Shared._AU14.SavedBuilds;
 using Content.Shared._CMU14.ZLevels.Core.Components;
 using Content.Shared.Movement.Events;
 using Content.Shared.Shuttles.Components;
@@ -43,9 +44,7 @@ public sealed class TileApplierSystemTest
   components:
   - type: Transform
     anchored: true
-  - type: Tag
-    tags:
-    - Wall
+  - type: ZLevelWallSupport
 
 - type: entity
   id: AU14TestZPhysicsEntity
@@ -189,6 +188,8 @@ public sealed class TileApplierSystemTest
             var world = transforms.ToMapCoordinates(map.GridCoords).Position;
 
             var wall = entities.SpawnEntity("AU14TestStructuralWall", map.GridCoords);
+            Assert.That(entities.HasComponent<StructuralSupportComponent>(wall), Is.False);
+            Assert.That(entities.HasComponent<ZLevelWallSupportComponent>(wall), Is.True);
             Assert.That(building.EnsureNeighborLevel(sourceMap, 1, map.Grid.Owner, world, out var upperMap, out var upperGrid), Is.True);
 
             var upperMapComp = entities.GetComponent<MapComponent>(upperMap);
@@ -204,6 +205,46 @@ public sealed class TileApplierSystemTest
             entities.DeleteEntity(wall);
             supportSystem.RecomputeGrid((upperGrid, upperGridComp));
             Assert.That(entities.GetComponent<StructuralSupportComponent>(marker).Supported, Is.False);
+        });
+
+        await pair.CleanReturnAsync();
+    }
+
+    [Test]
+    public async Task PlayerBuiltWallJoinsCollapsibleSupportGraph()
+    {
+        await using var pair = await PoolManager.GetServerClient();
+        var server = pair.Server;
+        var map = await pair.CreateTestMap();
+
+        await server.WaitAssertion(() =>
+        {
+            var entities = server.EntMan;
+            var mappedWall = entities.SpawnEntity("CMWallMetal", map.GridCoords);
+            Assert.Multiple(() =>
+            {
+                Assert.That(entities.HasComponent<ZLevelWallSupportComponent>(mappedWall), Is.True);
+                Assert.That(entities.HasComponent<StructuralSupportComponent>(mappedWall), Is.False);
+            });
+
+            var menuWall = entities.SpawnEntity("AU14BuildWallMetal", map.GridCoords);
+            Assert.Multiple(() =>
+            {
+                Assert.That(entities.HasComponent<ZLevelWallSupportComponent>(menuWall), Is.True);
+                Assert.That(entities.HasComponent<StructuralSupportComponent>(menuWall), Is.True);
+            });
+
+            var wall = entities.SpawnEntity("AU14TestStructuralWall", map.GridCoords);
+            Assert.That(entities.HasComponent<StructuralSupportComponent>(wall), Is.False);
+
+            entities.EnsureComponent<PlayerBuiltComponent>(wall);
+
+            Assert.That(entities.TryGetComponent<StructuralSupportComponent>(wall, out var support), Is.True);
+            Assert.Multiple(() =>
+            {
+                Assert.That(support!.IsVerticalSupport, Is.True);
+                Assert.That(support.CantileverSpan, Is.EqualTo(ZLevelWallSupportComponent.CantileverSpan));
+            });
         });
 
         await pair.CleanReturnAsync();

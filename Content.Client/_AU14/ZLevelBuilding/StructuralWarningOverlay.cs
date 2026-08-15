@@ -7,6 +7,7 @@ using Content.Shared._CMU14.ZLevels.Core.Components;
 using Robust.Client.Graphics;
 using Robust.Client.Player;
 using Robust.Shared.Enums;
+using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Maths;
 using Robust.Shared.Timing;
@@ -125,6 +126,36 @@ public sealed class StructuralWarningOverlay : Overlay
             var beamTile = _map.WorldToTile(gridUid, grid, _transform.GetWorldPosition(beamUid));
             if (Math.Abs(playerTile.X - beamTile.X) + Math.Abs(playerTile.Y - beamTile.Y) <= support.CantileverSpan)
                 return false; // within a beam's coverage - supported
+        }
+
+        // Ordinary mapped walls deliberately do not carry StructuralSupport: they support the level above but
+        // must not join (and collapse through) the player-construction graph. Check only the small wall diamond
+        // that could cover this tile instead of globally enumerating every mapped wall on the client.
+        if (_entMan.TryGetComponent<MapComponent>(below, out var belowMap))
+        {
+            var belowCoords = new MapCoordinates(_transform.GetWorldPosition(player), belowMap.MapId);
+            if (_map.TryFindGridAt(belowCoords, out var belowGridUid, out var belowGrid))
+            {
+                var belowTile = _map.TileIndicesFor(belowGridUid, belowGrid, belowCoords);
+                var span = ZLevelWallSupportComponent.CantileverSpan;
+                for (var dx = -span; dx <= span; dx++)
+                {
+                    for (var dy = -span; dy <= span; dy++)
+                    {
+                        if (Math.Abs(dx) + Math.Abs(dy) > span)
+                            continue;
+
+                        foreach (var anchored in _map.GetAnchoredEntities(
+                                     belowGridUid,
+                                     belowGrid,
+                                     belowTile + new Vector2i(dx, dy)))
+                        {
+                            if (_entMan.HasComponent<ZLevelWallSupportComponent>(anchored))
+                                return false;
+                        }
+                    }
+                }
+            }
         }
 
         return true;

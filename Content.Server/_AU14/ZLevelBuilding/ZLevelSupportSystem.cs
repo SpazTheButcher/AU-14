@@ -4,6 +4,7 @@
 using System.Numerics;
 using Content.Server.Chat.Managers;
 using Content.Shared._AU14.ZLevelBuilding;
+using Content.Shared._AU14.SavedBuilds;
 using Content.Shared._CMU14.ZLevels.Core.Components;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Damage;
@@ -102,6 +103,10 @@ public sealed class ZLevelSupportSystem : EntitySystem
         SubscribeLocalEvent<StructuralSupportComponent, ComponentShutdown>(OnSupportShutdown);
         SubscribeLocalEvent<StructuralSupportComponent, AnchorStateChangedEvent>(OnSupportAnchorChanged);
         SubscribeLocalEvent<StructuralSupportComponent, DamageChangedEvent>(OnSupportDamaged);
+        SubscribeLocalEvent<ZLevelWallSupportComponent, MapInitEvent>(OnWallSupportMapInit);
+        SubscribeLocalEvent<ZLevelWallSupportComponent, ComponentShutdown>(OnWallSupportShutdown);
+        SubscribeLocalEvent<ZLevelWallSupportComponent, AnchorStateChangedEvent>(OnWallSupportAnchorChanged);
+        SubscribeLocalEvent<PlayerBuiltComponent, ComponentStartup>(OnPlayerBuiltStartup);
 
         // All of these are keyed by round-scoped uids; drop them with the round so stale entries never accumulate.
         SubscribeLocalEvent<Content.Shared.GameTicking.RoundRestartCleanupEvent>(_ =>
@@ -131,6 +136,32 @@ public sealed class ZLevelSupportSystem : EntitySystem
 
     private void OnSupportAnchorChanged(Entity<StructuralSupportComponent> ent, ref AnchorStateChangedEvent args)
         => MarkGridDirty(ent);
+
+    // Walls only project support upward. Queueing their own grid is intentional: the debounced recompute then
+    // calls MarkAboveDirty once, even when a mapped level initializes tens of thousands of walls in one tick.
+    private void OnWallSupportMapInit(Entity<ZLevelWallSupportComponent> ent, ref MapInitEvent args)
+        => MarkGridDirty(ent);
+
+    private void OnWallSupportShutdown(Entity<ZLevelWallSupportComponent> ent, ref ComponentShutdown args)
+        => MarkGridDirty(ent);
+
+    private void OnWallSupportAnchorChanged(Entity<ZLevelWallSupportComponent> ent, ref AnchorStateChangedEvent args)
+        => MarkGridDirty(ent);
+
+    /// <summary>
+    /// Mapper walls carry only the lightweight upward-support marker. Once a wall is actually constructed by a
+    /// player (including saved-build placement), enroll that particular instance in the collapsible graph.
+    /// </summary>
+    private void OnPlayerBuiltStartup(Entity<PlayerBuiltComponent> ent, ref ComponentStartup args)
+    {
+        if (!HasComp<ZLevelWallSupportComponent>(ent))
+            return;
+
+        var support = EnsureComp<StructuralSupportComponent>(ent);
+        support.IsVerticalSupport = true;
+        support.CantileverSpan = ZLevelWallSupportComponent.CantileverSpan;
+        MarkGridDirty(ent);
+    }
 
     /// <summary>Queues the grid the entity currently sits on for a recompute next update.</summary>
     public void MarkGridDirty(EntityUid uid)
@@ -687,6 +718,9 @@ public sealed class ZLevelSupportSystem : EntitySystem
         {
             if (TryComp<StructuralSupportComponent>(anchored, out var sup) && (sup.IsVerticalSupport || sup.IsAnchor))
                 best = Math.Max(best, sup.CantileverSpan);
+
+            if (HasComp<ZLevelWallSupportComponent>(anchored))
+                best = Math.Max(best, ZLevelWallSupportComponent.CantileverSpan);
         }
 
         if (best < 0)

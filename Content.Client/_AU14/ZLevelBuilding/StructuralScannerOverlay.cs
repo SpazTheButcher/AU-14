@@ -8,6 +8,7 @@ using Content.Shared._CMU14.ZLevels.Core.Components;
 using Robust.Client.Graphics;
 using Robust.Client.Player;
 using Robust.Shared.Enums;
+using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 
 namespace Content.Client._AU14.ZLevelBuilding;
@@ -153,7 +154,47 @@ public sealed class StructuralScannerOverlay : Overlay
             beams.Add((beamTile, support.CantileverSpan));
         }
 
-        if (beams.Count == 0)
+        // Walls use a lightweight marker instead of StructuralSupport so authored maps do not put tens of
+        // thousands of walls into the collapsible graph. Spatially inspect only the below-level tiles that can
+        // influence this overlay, then expand each wall's fixed three-tile diamond into a lookup set.
+        var wallSupported = new HashSet<Vector2i>();
+        if (_entMan.TryGetComponent<MapComponent>(below, out var belowMap))
+        {
+            var centerWorld = _transform.ToMapCoordinates(_map.GridTileToLocal(gridUid, grid, center)).Position;
+            var belowCoords = new MapCoordinates(centerWorld, belowMap.MapId);
+            if (_map.TryFindGridAt(belowCoords, out var belowGridUid, out var belowGrid))
+            {
+                var belowCenter = _map.TileIndicesFor(belowGridUid, belowGrid, belowCoords);
+                var wallSpan = ZLevelWallSupportComponent.CantileverSpan;
+                var searchRadius = DrawRadius + wallSpan;
+                for (var dx = -searchRadius; dx <= searchRadius; dx++)
+                {
+                    for (var dy = -searchRadius; dy <= searchRadius; dy++)
+                    {
+                        foreach (var anchored in _map.GetAnchoredEntities(
+                                     belowGridUid,
+                                     belowGrid,
+                                     belowCenter + new Vector2i(dx, dy)))
+                        {
+                            if (!_entMan.HasComponent<ZLevelWallSupportComponent>(anchored))
+                                continue;
+
+                            var wallTile = _map.WorldToTile(gridUid, grid, _transform.GetWorldPosition(anchored));
+                            for (var sx = -wallSpan; sx <= wallSpan; sx++)
+                            {
+                                for (var sy = -wallSpan; sy <= wallSpan; sy++)
+                                {
+                                    if (Math.Abs(sx) + Math.Abs(sy) <= wallSpan)
+                                        wallSupported.Add(wallTile + new Vector2i(sx, sy));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (beams.Count == 0 && wallSupported.Count == 0)
             return;
 
         for (var dx = -DrawRadius; dx <= DrawRadius; dx++)
@@ -162,7 +203,7 @@ public sealed class StructuralScannerOverlay : Overlay
             {
                 var tile = center + new Vector2i(dx, dy);
 
-                var stable = false;
+                var stable = wallSupported.Contains(tile);
                 foreach (var beam in beams)
                 {
                     if (Math.Abs(tile.X - beam.Tile.X) + Math.Abs(tile.Y - beam.Tile.Y) <= beam.Span)

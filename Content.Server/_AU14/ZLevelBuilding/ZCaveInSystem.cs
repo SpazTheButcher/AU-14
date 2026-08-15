@@ -22,7 +22,6 @@ using Robust.Shared.Map.Components;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Player;
-using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 
@@ -56,7 +55,6 @@ public sealed class ZCaveInSystem : EntitySystem
     [Dependency] private readonly IChatManager _chat = default!;
     [Dependency] private readonly TagSystem _tag = default!;
     [Dependency] private readonly SharedPhysicsSystem _physics = default!;
-    [Dependency] private readonly IPrototypeManager _protoManager = default!;
 
     private static readonly TimeSpan WarningTime = TimeSpan.FromSeconds(8);
 
@@ -661,41 +659,10 @@ public sealed class ZCaveInSystem : EntitySystem
             _loadBearingTerrain.Remove(at.Grid);
     }
 
-    /// <summary>True if an anchored entity genuinely holds up a cave roof: a built structural support/pillar, or
-    /// an actual WALL - anything whose prototype inherits the vanilla BaseWall (covers mined rock, which loses
-    /// the Wall tag by overriding its Tag list) or the RMC invincible-wall root (covers every CM wall family).</summary>
+    /// <summary>True if an anchored entity genuinely holds up a cave roof: a built support/pillar or a wall.</summary>
     private bool IsLoadBearing(EntityUid uid)
     {
-        if (HasComp<StructuralSupportComponent>(uid))
-            return true;
-
-        return MetaData(uid).EntityPrototype is { } proto && IsWallPrototype(proto.ID);
-    }
-
-    // Prototype id -> "inherits a wall base" verdict, cached because the parent walk runs for every anchored
-    // entity a stability check touches.
-    private readonly Dictionary<string, bool> _wallProtoCache = new();
-
-    private bool IsWallPrototype(string id)
-    {
-        if (_wallProtoCache.TryGetValue(id, out var cached))
-            return cached;
-
-        // EnumerateALLParents, not EnumerateParents: the wall roots (BaseWall, RMCBaseWallInvincibleNoIcon) are
-        // ABSTRACT prototypes, and the plain variant silently skips abstract ancestors - which made mined rock
-        // (mineablesolarisrock -> BaseWall) read as "not a wall" and let whole caves collapse on generation.
-        var isWall = false;
-        foreach (var (parentId, _) in _protoManager.EnumerateAllParents<EntityPrototype>(id, includeSelf: true))
-        {
-            if (parentId is "BaseWall" or "RMCBaseWallInvincibleNoIcon")
-            {
-                isWall = true;
-                break;
-            }
-        }
-
-        _wallProtoCache[id] = isWall;
-        return isWall;
+        return HasComp<StructuralSupportComponent>(uid) || HasComp<ZLevelWallSupportComponent>(uid);
     }
 
     /// <summary>True if a built vertical support / anchor stands within <paramref name="span"/> tiles (Manhattan)
