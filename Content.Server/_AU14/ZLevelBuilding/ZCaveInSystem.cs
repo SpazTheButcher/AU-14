@@ -94,11 +94,16 @@ public sealed class ZCaveInSystem : EntitySystem
         _gridQuery = GetEntityQuery<MapGridComponent>();
         _stoneQuery = GetEntityQuery<ZGeneratedStoneComponent>();
 
-        // Event-driven instead of polling: the ONLY thing that changes a cavern roof's stability is an anchored
-        // solid (mined rock / built or destroyed pillar) appearing or disappearing. Hook that and flag a small
-        // region dirty, rather than re-scanning every dug tile every second forever (the old TPS sink).
-        SubscribeLocalEvent<TransformComponent, AnchorStateChangedEvent>(OnAnchorChanged);
-        SubscribeLocalEvent<DamageableComponent, DamageChangedEvent>(OnDamaged);
+        // Event-driven instead of polling: the ONLY thing that changes a cavern roof's stability is a wall/rock
+        // or structural support disappearing. Scope both high-frequency events to those two marker components;
+        // subscribing through Transform/Damageable would invoke this system for nearly every anchored entity and
+        // every damaged entity in the game just to reject them by map afterwards.
+        SubscribeLocalEvent<ZLevelWallSupportComponent, AnchorStateChangedEvent>(OnWallAnchorChanged);
+        SubscribeLocalEvent<StructuralSupportComponent, AnchorStateChangedEvent>(OnStructuralAnchorChanged);
+        SubscribeLocalEvent<ZLevelWallSupportComponent, EntityTerminatingEvent>(OnWallTerminating);
+        SubscribeLocalEvent<StructuralSupportComponent, EntityTerminatingEvent>(OnStructuralTerminating);
+        SubscribeLocalEvent<ZLevelWallSupportComponent, DamageChangedEvent>(OnWallDamaged);
+        SubscribeLocalEvent<StructuralSupportComponent, DamageChangedEvent>(OnStructuralDamaged);
         SubscribeLocalEvent<ShuttleFTLSafetyEvent>(OnShuttleFTLSafety);
 
         // Load-bearing TERRAIN is indexed by position rather than read from the anchored lookup, because the
@@ -125,12 +130,24 @@ public sealed class ZCaveInSystem : EntitySystem
     }
 
     /// <summary>Records the last player to deal damage on an underground level (the likely over-miner), for attribution.</summary>
-    private void OnDamaged(Entity<DamageableComponent> ent, ref DamageChangedEvent args)
+    private void OnWallDamaged(Entity<ZLevelWallSupportComponent> ent, ref DamageChangedEvent args)
+    {
+        RecordDigger(ent.Owner, ref args);
+    }
+
+    private void OnStructuralDamaged(Entity<StructuralSupportComponent> ent, ref DamageChangedEvent args)
+    {
+        // Player-built walls carry both markers and already passed through the wall-scoped subscription.
+        if (!HasComp<ZLevelWallSupportComponent>(ent))
+            RecordDigger(ent.Owner, ref args);
+    }
+
+    private void RecordDigger(EntityUid uid, ref DamageChangedEvent args)
     {
         if (!args.DamageIncreased || args.Origin is not { } origin || !HasComp<ActorComponent>(origin))
             return;
 
-        if (Transform(ent).MapUid is { } mapUid && _stoneQuery.HasComponent(mapUid))
+        if (Transform(uid).MapUid is { } mapUid && _stoneQuery.HasComponent(mapUid))
             _lastDigger[mapUid] = (origin, _timing.CurTime);
     }
 
@@ -139,18 +156,45 @@ public sealed class ZCaveInSystem : EntitySystem
     /// destroyed). Removing a solid can unstable nearby open tiles; adding one can stabilise them. Flag the tiles
     /// within a roof span of it dirty so the next evaluation pass re-checks just those, not the whole level.
     /// </summary>
-    private void OnAnchorChanged(EntityUid uid, TransformComponent xform, ref AnchorStateChangedEvent args)
+    private void OnWallAnchorChanged(Entity<ZLevelWallSupportComponent> ent, ref AnchorStateChangedEvent args)
     {
-        // Only a solid being REMOVED (rock mined, pillar destroyed) can destabilise a roof. A solid being ADDED
-        // (a pillar built, rocks spawned by generation or during a burial) only ever stabilises, and that case is
-        // already handled by the periodic re-check of pending tiles - so ignore anchor-adds and avoid the churn.
-        if (args.Anchored)
+        if (!args.Anchored)
+            DirtyAroundRemovedSupport(Transform(ent));
+    }
+
+    private void OnStructuralAnchorChanged(Entity<StructuralSupportComponent> ent, ref AnchorStateChangedEvent args)
+    {
+        // Player-built walls carry both markers and already passed through the wall-scoped subscription.
+        if (!args.Anchored && !HasComp<ZLevelWallSupportComponent>(ent))
+            DirtyAroundRemovedSupport(Transform(ent));
+    }
+
+    private void OnWallTerminating(Entity<ZLevelWallSupportComponent> ent, ref EntityTerminatingEvent args)
+    {
+        var xform = Transform(ent);
+        if (xform.Anchored)
+            DirtyAroundRemovedSupport(xform);
+    }
+
+    private void OnStructuralTerminating(Entity<StructuralSupportComponent> ent, ref EntityTerminatingEvent args)
+    {
+        // Player-built walls carry both markers and already passed through the wall-scoped subscription.
+        var xform = Transform(ent);
+        if (xform.Anchored && !HasComp<ZLevelWallSupportComponent>(ent))
+            DirtyAroundRemovedSupport(xform);
+    }
+
+    private void DirtyAroundRemovedSupport(TransformComponent xform)
+    {
+        if (xform.MapUid is not { } mapUid ||
+            TerminatingOrDeleted(mapUid) ||
+            !_stoneQuery.TryComp(mapUid, out var stone))
             return;
 
-        if (xform.MapUid is not { } mapUid || !_stoneQuery.TryComp(mapUid, out var stone))
-            return;
-
-        if (xform.GridUid is not { } gridUid || gridUid != stone.StoneGrid || !_gridQuery.TryComp(gridUid, out var grid))
+        if (xform.GridUid is not { } gridUid ||
+            TerminatingOrDeleted(gridUid) ||
+            gridUid != stone.StoneGrid ||
+            !_gridQuery.TryComp(gridUid, out var grid))
             return;
 
         // Don't accumulate dirty tiles while the level is mid-collapse; that region is already being handled.

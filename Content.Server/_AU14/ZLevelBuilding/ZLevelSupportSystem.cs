@@ -82,6 +82,14 @@ public sealed class ZLevelSupportSystem : EntitySystem
     private readonly HashSet<EntityUid> _dirtyGrids = new();
     private readonly List<EntityUid> _processing = new();
 
+    // Event-maintained support index. Recomputing one grid must never enumerate every support entity in the
+    // world, and propagating upward only needs the grids that actually contain supports on the map above.
+    private readonly Dictionary<EntityUid, HashSet<EntityUid>> _supportsByGrid = new();
+    private readonly Dictionary<EntityUid, EntityUid> _supportGrid = new();
+    private readonly Dictionary<EntityUid, HashSet<EntityUid>> _supportGridsByMap = new();
+    private readonly Dictionary<EntityUid, EntityUid> _indexedGridMap = new();
+    private readonly List<EntityUid> _staleIndexedSupports = new();
+
     // Structural entities that have lost support: maps entity uid -> time at which it will collapse.
     // Cleared if the entity regains support before the deadline (counterplay via building more pillars/anchors).
     private readonly Dictionary<EntityUid, TimeSpan> _pendingUnsupported = new();
@@ -99,9 +107,11 @@ public sealed class ZLevelSupportSystem : EntitySystem
         _gridQuery = GetEntityQuery<MapGridComponent>();
         _zMapQuery = GetEntityQuery<CMUZLevelMapComponent>();
 
+        SubscribeLocalEvent<StructuralSupportComponent, ComponentStartup>(OnSupportStartup);
         SubscribeLocalEvent<StructuralSupportComponent, MapInitEvent>(OnSupportMapInit);
         SubscribeLocalEvent<StructuralSupportComponent, ComponentShutdown>(OnSupportShutdown);
         SubscribeLocalEvent<StructuralSupportComponent, AnchorStateChangedEvent>(OnSupportAnchorChanged);
+        SubscribeLocalEvent<StructuralSupportComponent, EntParentChangedMessage>(OnSupportParentChanged);
         SubscribeLocalEvent<StructuralSupportComponent, DamageChangedEvent>(OnSupportDamaged);
         SubscribeLocalEvent<ZLevelWallSupportComponent, MapInitEvent>(OnWallSupportMapInit);
         SubscribeLocalEvent<ZLevelWallSupportComponent, ComponentShutdown>(OnWallSupportShutdown);
@@ -115,6 +125,10 @@ public sealed class ZLevelSupportSystem : EntitySystem
             _nextCollapseAlert.Clear();
             _pendingUnsupported.Clear();
             _dirtyGrids.Clear();
+            _supportsByGrid.Clear();
+            _supportGrid.Clear();
+            _supportGridsByMap.Clear();
+            _indexedGridMap.Clear();
         });
     }
 
@@ -128,14 +142,39 @@ public sealed class ZLevelSupportSystem : EntitySystem
             _lastSupportDamager[mapUid] = (origin, _timing.CurTime);
     }
 
+    private void OnSupportStartup(Entity<StructuralSupportComponent> ent, ref ComponentStartup args)
+    {
+        ReindexSupport(ent);
+        MarkGridDirty(ent);
+    }
+
     private void OnSupportMapInit(Entity<StructuralSupportComponent> ent, ref MapInitEvent args)
-        => MarkGridDirty(ent);
+    {
+        // Startup can precede final map/grid parenting during map load. Reindex at MapInit to capture the final
+        // grid; HashSet membership keeps the common already-correct case idempotent.
+        ReindexSupport(ent);
+        MarkGridDirty(ent);
+    }
 
     private void OnSupportShutdown(Entity<StructuralSupportComponent> ent, ref ComponentShutdown args)
-        => MarkGridDirty(ent);
+    {
+        if (RemoveIndexedSupport(ent, out var oldGrid))
+            _dirtyGrids.Add(oldGrid);
+        else
+            MarkGridDirty(ent);
+    }
 
     private void OnSupportAnchorChanged(Entity<StructuralSupportComponent> ent, ref AnchorStateChangedEvent args)
-        => MarkGridDirty(ent);
+    {
+        ReindexSupport(ent);
+        MarkGridDirty(ent);
+    }
+
+    private void OnSupportParentChanged(Entity<StructuralSupportComponent> ent, ref EntParentChangedMessage args)
+    {
+        ReindexSupport(ent);
+        MarkGridDirty(ent);
+    }
 
     // Walls only project support upward. Queueing their own grid is intentional: the debounced recompute then
     // calls MarkAboveDirty once, even when a mapped level initializes tens of thousands of walls in one tick.
@@ -160,7 +199,98 @@ public sealed class ZLevelSupportSystem : EntitySystem
         var support = EnsureComp<StructuralSupportComponent>(ent);
         support.IsVerticalSupport = true;
         support.CantileverSpan = ZLevelWallSupportComponent.CantileverSpan;
+        ReindexSupport(ent);
         MarkGridDirty(ent);
+    }
+
+    /// <summary>Moves a support's index entry to its current grid and dirties both sides of a grid change.</summary>
+    private void ReindexSupport(EntityUid uid)
+    {
+        var newGrid = !Deleted(uid) && TryComp(uid, out TransformComponent? xform) ? xform.GridUid : null;
+        _supportGrid.TryGetValue(uid, out var oldGrid);
+        var hadOldGrid = _supportGrid.ContainsKey(uid);
+
+        if (hadOldGrid && newGrid == oldGrid)
+        {
+            EnsureGridMapIndexed(oldGrid);
+            return;
+        }
+
+        if (hadOldGrid)
+        {
+            RemoveIndexedSupport(uid, out _);
+            _dirtyGrids.Add(oldGrid);
+        }
+
+        if (newGrid is not { } grid)
+            return;
+
+        if (!_supportsByGrid.TryGetValue(grid, out var supports))
+        {
+            supports = new HashSet<EntityUid>();
+            _supportsByGrid.Add(grid, supports);
+        }
+
+        supports.Add(uid);
+        _supportGrid[uid] = grid;
+        EnsureGridMapIndexed(grid);
+        _dirtyGrids.Add(grid);
+    }
+
+    private bool RemoveIndexedSupport(EntityUid uid, out EntityUid oldGrid)
+    {
+        if (!_supportGrid.Remove(uid, out oldGrid))
+            return false;
+
+        if (!_supportsByGrid.TryGetValue(oldGrid, out var supports))
+            return true;
+
+        supports.Remove(uid);
+        if (supports.Count > 0)
+            return true;
+
+        _supportsByGrid.Remove(oldGrid);
+        if (_indexedGridMap.Remove(oldGrid, out var mapUid) &&
+            _supportGridsByMap.TryGetValue(mapUid, out var grids))
+        {
+            grids.Remove(oldGrid);
+            if (grids.Count == 0)
+                _supportGridsByMap.Remove(mapUid);
+        }
+
+        return true;
+    }
+
+    private void EnsureGridMapIndexed(EntityUid grid)
+    {
+        var mapUid = !Deleted(grid) && TryComp(grid, out TransformComponent? gridXform)
+            ? gridXform.MapUid
+            : null;
+
+        if (mapUid is not { } currentMap)
+            return;
+
+        if (_indexedGridMap.TryGetValue(grid, out var indexedMap))
+        {
+            if (indexedMap == currentMap)
+                return;
+
+            if (_supportGridsByMap.TryGetValue(indexedMap, out var oldGrids))
+            {
+                oldGrids.Remove(grid);
+                if (oldGrids.Count == 0)
+                    _supportGridsByMap.Remove(indexedMap);
+            }
+        }
+
+        _indexedGridMap[grid] = currentMap;
+        if (!_supportGridsByMap.TryGetValue(currentMap, out var currentGrids))
+        {
+            currentGrids = new HashSet<EntityUid>();
+            _supportGridsByMap.Add(currentMap, currentGrids);
+        }
+
+        currentGrids.Add(grid);
     }
 
     /// <summary>Queues the grid the entity currently sits on for a recompute next update.</summary>
@@ -225,22 +355,39 @@ public sealed class ZLevelSupportSystem : EntitySystem
         var byTile = new Dictionary<Vector2i, List<Entity<StructuralSupportComponent>>>();
         var previous = new Dictionary<EntityUid, bool>();
 
-        var query = EntityQueryEnumerator<StructuralSupportComponent, TransformComponent>();
-        while (query.MoveNext(out var uid, out var comp, out var xform))
+        _staleIndexedSupports.Clear();
+        if (_supportsByGrid.TryGetValue(grid.Owner, out var indexedSupports))
         {
-            if (xform.GridUid != grid.Owner)
-                continue;
-
-            var tile = _map.TileIndicesFor(grid.Owner, grid.Comp, xform.Coordinates);
-            if (!byTile.TryGetValue(tile, out var supports))
+            foreach (var uid in indexedSupports)
             {
-                supports = new List<Entity<StructuralSupportComponent>>();
-                byTile.Add(tile, supports);
-            }
+                if (!TryComp<StructuralSupportComponent>(uid, out var comp) ||
+                    !TryComp(uid, out TransformComponent? xform) ||
+                    xform.GridUid != grid.Owner)
+                {
+                    _staleIndexedSupports.Add(uid);
+                    continue;
+                }
 
-            supports.Add((uid, comp));
-            previous[uid] = comp.Supported;
-            comp.Supported = false;
+                var tile = _map.TileIndicesFor(grid.Owner, grid.Comp, xform.Coordinates);
+                if (!byTile.TryGetValue(tile, out var supports))
+                {
+                    supports = new List<Entity<StructuralSupportComponent>>();
+                    byTile.Add(tile, supports);
+                }
+
+                supports.Add((uid, comp));
+                previous[uid] = comp.Supported;
+                comp.Supported = false;
+            }
+        }
+
+        // Lifecycle/parent events normally keep the index exact. Repair any stale entries discovered here so an
+        // unusual deletion/reparent sequence cannot leave permanent garbage or omit the destination grid.
+        foreach (var uid in _staleIndexedSupports)
+        {
+            RemoveIndexedSupport(uid, out _);
+            if (!Deleted(uid) && HasComp<StructuralSupportComponent>(uid))
+                ReindexSupport(uid);
         }
 
         if (byTile.Count == 0)
@@ -365,12 +512,11 @@ public sealed class ZLevelSupportSystem : EntitySystem
         if (mapUid == null || !_zMapQuery.TryComp(mapUid.Value, out var z) || z.MapAbove is not { } above)
             return;
 
-        var query = EntityQueryEnumerator<StructuralSupportComponent, TransformComponent>();
-        while (query.MoveNext(out _, out _, out var xform))
-        {
-            if (xform.MapUid == above && xform.GridUid is { } g)
-                _dirtyGrids.Add(g);
-        }
+        if (!_supportGridsByMap.TryGetValue(above, out var grids))
+            return;
+
+        foreach (var supportGrid in grids)
+            _dirtyGrids.Add(supportGrid);
     }
 
     /// <summary>
