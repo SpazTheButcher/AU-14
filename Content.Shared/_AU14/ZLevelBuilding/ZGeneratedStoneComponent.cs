@@ -63,6 +63,13 @@ public sealed partial class ZGeneratedStoneComponent : Component
     [ViewVariables]
     public readonly List<Vector2i> CollapseQueue = new();
 
+    /// <summary>
+    /// Index of the next tile to bury in <see cref="CollapseQueue"/>. Advancing a cursor avoids shifting every
+    /// remaining tile toward index zero after each collapse batch.
+    /// </summary>
+    [ViewVariables]
+    public int CollapseQueueIndex;
+
     /// <summary>When the next batch of <see cref="CollapseQueue"/> tiles should be buried.</summary>
     [ViewVariables]
     public TimeSpan CollapseNextStep;
@@ -77,4 +84,11 @@ public sealed partial class ZGeneratedStoneComponent : Component
     /// </summary>
     [ViewVariables]
     public readonly List<Vector2i> LastCollapseRegion = new();
+
+    /// <summary>
+    /// Exact Chebyshev distance from the active collapse region to nearby tiles. Built once when a collapse
+    /// starts and used for constant-time player feedback range checks throughout the collapse.
+    /// </summary>
+    [ViewVariables]
+    public readonly Dictionary<Vector2i, int> CollapseFeedbackDistances = new();
 }

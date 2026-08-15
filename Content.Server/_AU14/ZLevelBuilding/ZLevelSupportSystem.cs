@@ -93,9 +93,7 @@ public sealed class ZLevelSupportSystem : EntitySystem
     // Structural entities that have lost support: maps entity uid -> time at which it will collapse.
     // Cleared if the entity regains support before the deadline (counterplay via building more pillars/anchors).
     private readonly Dictionary<EntityUid, TimeSpan> _pendingUnsupported = new();
-
-    // Support entities whose collapse should be executed this tick (populated transiently during Update).
-    private readonly List<EntityUid> _toCollapse = new();
+    private readonly PriorityQueue<EntityUid, TimeSpan> _unsupportedDeadlines = new();
 
     /// <summary>Seconds a structure remains standing after losing its last support before collapsing.</summary>
     private const float CollapseWarningSeconds = 5f;
@@ -124,6 +122,7 @@ public sealed class ZLevelSupportSystem : EntitySystem
             _lastSupportDamager.Clear();
             _nextCollapseAlert.Clear();
             _pendingUnsupported.Clear();
+            _unsupportedDeadlines.Clear();
             _dirtyGrids.Clear();
             _supportsByGrid.Clear();
             _supportGrid.Clear();
@@ -167,6 +166,8 @@ public sealed class ZLevelSupportSystem : EntitySystem
 
     private void OnSupportShutdown(Entity<StructuralSupportComponent> ent, ref ComponentShutdown args)
     {
+        _pendingUnsupported.Remove(ent.Owner);
+
         if (RemoveIndexedSupport(ent, out var oldGrid))
             _dirtyGrids.Add(oldGrid);
         else
@@ -340,21 +341,20 @@ public sealed class ZLevelSupportSystem : EntitySystem
             }
         }
 
-        // Collapse structures that have been unsupported long enough.
-        if (_pendingUnsupported.Count > 0)
+        // Collapse only expired structures. The dictionary is authoritative (support recovery removes from it);
+        // stale priority-queue entries are discarded when their old deadline reaches the head.
+        if (_unsupportedDeadlines.Count > 0)
         {
             var now = _timing.CurTime;
-            _toCollapse.Clear();
-
-            foreach (var (uid, collapseAt) in _pendingUnsupported)
+            while (_unsupportedDeadlines.TryPeek(out var uid, out var collapseAt) && now >= collapseAt)
             {
-                if (now >= collapseAt)
-                    _toCollapse.Add(uid);
-            }
+                _unsupportedDeadlines.Dequeue();
 
-            foreach (var uid in _toCollapse)
-            {
+                if (!_pendingUnsupported.TryGetValue(uid, out var currentDeadline) || currentDeadline != collapseAt)
+                    continue;
+
                 _pendingUnsupported.Remove(uid);
+
                 if (Deleted(uid))
                     continue;
                 // Skip if it lost its support component (already collapsed as part of another tile's drop), or if
@@ -503,7 +503,9 @@ public sealed class ZLevelSupportSystem : EntitySystem
                 // Upper-z and currently unsupported: schedule a collapse if not already counting down.
                 if (!_pendingUnsupported.ContainsKey(ent.Owner))
                 {
-                    _pendingUnsupported[ent.Owner] = now + TimeSpan.FromSeconds(CollapseWarningSeconds);
+                    var collapseAt = now + TimeSpan.FromSeconds(CollapseWarningSeconds);
+                    _pendingUnsupported[ent.Owner] = collapseAt;
+                    _unsupportedDeadlines.Enqueue(ent.Owner, collapseAt);
 
                     // Popup only on the supported -> unsupported transition, to avoid spamming every recompute.
                     if (previous[ent.Owner])

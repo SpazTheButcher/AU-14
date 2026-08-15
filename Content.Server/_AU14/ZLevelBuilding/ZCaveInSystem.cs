@@ -381,6 +381,7 @@ public sealed class ZCaveInSystem : EntitySystem
             stoneMap.Comp.PendingCollapse.Remove(t);
 
         // BFS order buries from the centre outward for a nice spreading cave-in.
+        stoneMap.Comp.CollapseQueueIndex = 0;
         stoneMap.Comp.CollapseQueue.AddRange(region);
         stoneMap.Comp.CollapseNextStep = _timing.CurTime;
         stoneMap.Comp.CollapseNextRumble = TimeSpan.Zero;
@@ -388,6 +389,7 @@ public sealed class ZCaveInSystem : EntitySystem
         // Save the region so we can trigger surface effects when this collapse finishes.
         stoneMap.Comp.LastCollapseRegion.Clear();
         stoneMap.Comp.LastCollapseRegion.AddRange(region);
+        BuildCollapseFeedbackDistances(stoneMap.Comp, region);
     }
 
     /// <summary>Spawns a handful of loose rocks across the doomed cavern and flings them 1-2 tiles in random directions.</summary>
@@ -421,17 +423,21 @@ public sealed class ZCaveInSystem : EntitySystem
         if (!_gridQuery.TryComp(stoneMap.Comp.StoneGrid, out var grid))
         {
             stoneMap.Comp.CollapseQueue.Clear();
+            stoneMap.Comp.CollapseQueueIndex = 0;
+            stoneMap.Comp.LastCollapseRegion.Clear();
+            stoneMap.Comp.CollapseFeedbackDistances.Clear();
             return;
         }
 
         var settings = GetSettings(stoneMap.Owner);
         var queue = stoneMap.Comp.CollapseQueue;
-        var count = Math.Min(TilesPerStep, queue.Count);
+        var start = stoneMap.Comp.CollapseQueueIndex;
+        var count = Math.Min(TilesPerStep, queue.Count - start);
 
         for (var i = 0; i < count; i++)
-            BuryTile(stoneMap, (stoneMap.Comp.StoneGrid, grid), queue[i], settings);
+            BuryTile(stoneMap, (stoneMap.Comp.StoneGrid, grid), queue[start + i], settings);
 
-        queue.RemoveRange(0, count);
+        stoneMap.Comp.CollapseQueueIndex += count;
 
         RumbleAndVignette(stoneMap, now, settings);
 
@@ -440,8 +446,14 @@ public sealed class ZCaveInSystem : EntitySystem
         // When the collapse finishes, propagate surface effects to the level above.
         // This only triggers at the END of a cave-in, not continuously, so the ground level scan does not
         // instantly destabilise all maps that happen to have no underground generated yet.
-        if (queue.Count == 0 && count > 0)
+        if (stoneMap.Comp.CollapseQueueIndex >= queue.Count && count > 0)
+        {
+            queue.Clear();
+            stoneMap.Comp.CollapseQueueIndex = 0;
             TriggerSurfaceEffects(stoneMap, settings);
+            stoneMap.Comp.LastCollapseRegion.Clear();
+            stoneMap.Comp.CollapseFeedbackDistances.Clear();
+        }
     }
 
     private void BuryTile(Entity<ZGeneratedStoneComponent> stoneMap, Entity<MapGridComponent> grid, Vector2i tile, ZBuildableMapComponent settings)
@@ -569,21 +581,42 @@ public sealed class ZCaveInSystem : EntitySystem
     // Players further away feel nothing.
     private const int CollapseEffectRange = 33;
 
-    /// <summary>Minimum Chebyshev tile distance from <paramref name="tile"/> to any tile in the region
-    /// (0 = standing in it). Returns int.MaxValue for an empty region.</summary>
-    private static int DistanceToRegion(Vector2i tile, HashSet<Vector2i> region)
+    /// <summary>
+    /// Builds the exact feedback range once per collapse. Expanding all region tiles together through eight-way
+    /// neighbours produces Chebyshev distance, matching the old per-player linear distance calculation.
+    /// </summary>
+    private static void BuildCollapseFeedbackDistances(ZGeneratedStoneComponent stone, List<Vector2i> region)
     {
-        if (region.Contains(tile))
-            return 0;
+        var distances = stone.CollapseFeedbackDistances;
+        distances.Clear();
+        var frontier = new Queue<Vector2i>();
 
-        var best = int.MaxValue;
-        foreach (var t in region)
+        foreach (var tile in region)
         {
-            var d = Math.Max(Math.Abs(t.X - tile.X), Math.Abs(t.Y - tile.Y));
-            if (d < best)
-                best = d;
+            if (!distances.TryAdd(tile, 0))
+                continue;
+
+            frontier.Enqueue(tile);
         }
-        return best;
+
+        while (frontier.TryDequeue(out var tile))
+        {
+            var nextDistance = distances[tile] + 1;
+            if (nextDistance > CollapseEffectRange)
+                continue;
+
+            for (var dx = -1; dx <= 1; dx++)
+            {
+                for (var dy = -1; dy <= 1; dy++)
+                {
+                    var next = tile + new Vector2i(dx, dy);
+                    if ((dx == 0 && dy == 0) || !distances.TryAdd(next, nextDistance))
+                        continue;
+
+                    frontier.Enqueue(next);
+                }
+            }
+        }
     }
 
     /// <summary>World-space AABB of the collapsed region's tiles (used to range-limit surface effects).</summary>
@@ -752,33 +785,33 @@ public sealed class ZCaveInSystem : EntitySystem
     /// </summary>
     private void RumbleAndVignette(Entity<ZGeneratedStoneComponent> stoneMap, TimeSpan now, ZBuildableMapComponent settings)
     {
-        var playRumble = now >= stoneMap.Comp.CollapseNextRumble;
-        if (playRumble)
-            stoneMap.Comp.CollapseNextRumble = now + RumbleInterval;
+        // Every effect below is rumble-paced. Skip the actor query entirely on intervening collapse steps.
+        if (now < stoneMap.Comp.CollapseNextRumble)
+            return;
+
+        stoneMap.Comp.CollapseNextRumble = now + RumbleInterval;
 
         // Effects are local: only players near the collapsing region get feedback. Engulfed players (their own
         // tile is in the doomed region) additionally get the rapid black vignette, re-sent each rumble so it
         // lasts the collapse.
-        _gridQuery.TryComp(stoneMap.Comp.StoneGrid, out var stoneGridComp);
-        var regionTiles = new HashSet<Vector2i>(stoneMap.Comp.LastCollapseRegion);
+        if (!_gridQuery.TryComp(stoneMap.Comp.StoneGrid, out var stoneGridComp))
+            return;
 
         var query = EntityQueryEnumerator<ActorComponent, TransformComponent>();
         var played = false;
         while (query.MoveNext(out var uid, out var actor, out var xform))
         {
-            if (xform.MapUid != stoneMap.Owner || stoneGridComp == null)
+            if (xform.MapUid != stoneMap.Owner)
                 continue;
 
             var actorCoords = _transform.GetMapCoordinates(uid, xform);
             var actorTile = _map.TileIndicesFor(stoneMap.Comp.StoneGrid, stoneGridComp, actorCoords);
-            var dist = DistanceToRegion(actorTile, regionTiles);
-            if (dist > CollapseEffectRange)
+            if (!stoneMap.Comp.CollapseFeedbackDistances.TryGetValue(actorTile, out var dist))
                 continue;
 
-            if (playRumble)
-                RaiseNetworkEvent(new ZCollapseVignetteEvent { Engulfed = dist <= 1 }, actor.PlayerSession);
+            RaiseNetworkEvent(new ZCollapseVignetteEvent { Engulfed = dist <= 1 }, actor.PlayerSession);
 
-            if (playRumble && !played)
+            if (!played)
             {
                 // Guarded: a missing/misconfigured RumbleSound path must never crash the tick (GetAudioLength throws).
                 try
@@ -869,8 +902,6 @@ public sealed class ZCaveInSystem : EntitySystem
 
             RaiseNetworkEvent(new ZCollapseVignetteEvent(), actor.PlayerSession);
         }
-
-        stoneMap.Comp.LastCollapseRegion.Clear();
     }
 
     /// <summary>
