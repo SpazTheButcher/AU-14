@@ -124,7 +124,7 @@ public sealed partial class ScriptedSoundOverlaySystem : EntitySystem
             return true;
 
         return _zLevels.TryGetZNetwork(anchorMap, out var network) &&
-               network.Value.Comp.ZLevelByEntity.ContainsKey(playerMap);
+               _zLevels.IsMapInNetwork(network.Value, playerMap);
     }
 
     private void Cleanup()

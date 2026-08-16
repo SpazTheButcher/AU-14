@@ -41,6 +41,8 @@ namespace Content.Shared._RMC14.Evacuation;
 
 public abstract partial class SharedEvacuationSystem : EntitySystem
 {
+    protected override string SawmillName => "evacuation";
+
     [Dependency] private SharedAmbientSoundSystem _ambientSound = default!;
     [Dependency] private SharedAppearanceSystem _appearance = default!;
     [Dependency] private AreaSystem _area = default!;
@@ -213,9 +215,15 @@ public abstract partial class SharedEvacuationSystem : EntitySystem
         var offset = new Vector2(_index * 50, _index * 50);
         _index++;
 
-        if (!_mapSystem.MapExists(_map) ||
-            !_mapLoader.TryLoadGrid(_map.Value, spawn, out var result, offset: offset))
+        if (!_mapSystem.MapExists(_map))
         {
+            Log.Warning($"Grid spawner {ToPrettyString(ent)} skipped: holding map {_map.Value} no longer exists. Spawn: {spawn}");
+            return;
+        }
+
+        if (!_mapLoader.TryLoadGrid(_map.Value, spawn, out var result, offset: offset))
+        {
+            Log.Warning($"Grid spawner {ToPrettyString(ent)} failed to load grid '{spawn}'");
             return;
         }
 

@@ -36,7 +36,7 @@ public sealed class ZLevelBuildingSystem : EntitySystem
 {
     [Dependency] private readonly CMUZLevelsSystem _zLevels = default!;
     [Dependency] private readonly MapSystem _map = default!;
-    [Dependency] private readonly IMapManager _mapManager = default!;
+    [Dependency] private readonly SharedMapSystem _mapManager = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly ITileDefinitionManager _tileDef = default!;
     [Dependency] private readonly DamageableSystem _damage = default!;

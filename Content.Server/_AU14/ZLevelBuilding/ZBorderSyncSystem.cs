@@ -36,7 +36,6 @@ public sealed class ZBorderSyncSystem : EntitySystem
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly ISharedAdminLogManager _adminLog = default!;
     [Dependency] private readonly AuRoundSystem _auRound = default!;
-    [Dependency] private readonly RMCPlanetSystem _planets = default!;
 
     private static readonly ResPath SaveFile = new("/au14_zborder_sync.txt");
 
