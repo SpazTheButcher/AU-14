@@ -9588,5 +9588,28 @@
   id: 626
   time: '2026-08-15T10:11:41.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1832
+- author: CatoChristopherMrow
+  changes:
+  - message: Added most experimental tools to the col synth loadout, along with a
+      proper point amount and cost
+    type: Add
+  - message: Removed govfor synths free extra synth equipment via loadout piece (sorrrrry)
+    type: Remove
+  - message: Expanded a few webbings and pouch options for synths
+    type: Tweak
+  id: 627
+  time: '2026-08-15T21:51:31.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1833
+- author: Vencallium
+  changes:
+  - message: Hotfixed Stable Garrison and the USS George W. Bush, including communications,
+      medical, research, disposal, access, and equipment layout fixes.
+    type: Map
+  - message: Added a deployable Weyland-Yutani UA-635C sentry system with locked corporate
+      IFF recognition.
+    type: Add
+  id: 628
+  time: '2026-08-16T01:52:20.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1835
 Name: CMU
 Order: -1
