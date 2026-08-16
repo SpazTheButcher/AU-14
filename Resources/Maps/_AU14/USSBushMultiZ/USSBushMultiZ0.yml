@@ -4,8 +4,8 @@ meta:
   engineVersion: v278.0.0
   forkId: ""
   forkVersion: ""
-  time: 08/13/2026 03:24:47
-  entityCount: 6192
+  time: 08/15/2026 22:51:35
+  entityCount: 6197
 maps:
 - 1
 grids:
@@ -105,6 +105,7 @@ tilemap:
   42: CMFloorStrataWhiteCyan43
   10: CMFloorTest0
   74: CMPlanetMattedGrass3
+  147: FloorTechMaintDark
   4: RMCFloorAlmayerEdgeSmooth1
   6: RMCFloorAlmayerEdgeSmooth2
   13: RMCFloorAlmayerEdgeSmooth3
@@ -252,7 +253,7 @@ entities:
           version: 7
         0,2:
           ind: 0,2
-          tiles: kgAAAAAAAJIAAAAAAACSAAAAAAAAAQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAAQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAAIAAAAAAAACAAAAAAAAkgAAAAAAAAEAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAAQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAAEAAAAAAACSAAAAAAAAkgAAAAAAAAIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAAkgAAAAAAAAIAAAAAAAACAAAAAAAAkgAAAAAAAAEAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAAkgAAAAAAAAIAAAAAAAACAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAAQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAAQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAAAQAAAAAAAAEAAAAAAAABAAAAAAAAAQAAAAAAAAEAAAAAAAABAAAAAAAAAQAAAAAAAAEAAAAAAAABAAAAAAAAAQAAAAAAAAEAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAQgAAAAAAAEIAAAAAAAABAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAEAAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAAEAAAAAAABCAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAEIAAAAAAABCAAAAAAAAAQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAAQgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAABCAAAAAAAAQgAAAAAAAAEAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAAQAAAAAAAEIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAQgAAAAAAAEIAAAAAAAABAAAAAAAARQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAARgAAAAAAAAEAAAAAAABCAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAEIAAAAAAABCAAAAAAAAAQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAAQgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAABCAAAAAAAAQgAAAAAAAAEAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAAQAAAAAAAEIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAQgAAAAAAAEIAAAAAAAABAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAQQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAAEAAAAAAABCAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAACwAAAAAAAAQAAAAAAAAEAAAAAAAABAAAAAAAAAQAAAAAAAAFAAAAAAAABQAAAAAAAEcAAAAAAABHAAAAAAAAAQAAAAAAAEcAAAAAAABHAAAAAAAARwAAAAAAAEcAAAAAAACSAAAAAAAAAQAAAAAAAAwAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAADQAAAAAAAA0AAAAAAABHAAAAAAAARwAAAAAAAAEAAAAAAABHAAAAAAAARwAAAAAAAEcAAAAAAABHAAAAAAAAkgAAAAAAAAEAAAAAAAAMAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAA0AAAAAAAANAAAAAAAAGQAAAAAAABkAAAAAAACSAAAAAAAARwAAAAAAAEcAAAAAAABHAAAAAAAARwAAAAAAAA==
+          tiles: kgAAAAAAAJIAAAAAAACSAAAAAAAAAQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAAQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAAIAAAAAAAACAAAAAAAAkgAAAAAAAAEAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAAQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAAEAAAAAAACSAAAAAAAAkgAAAAAAAAIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAAkgAAAAAAAAIAAAAAAAACAAAAAAAAkgAAAAAAAAEAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAAkgAAAAAAAAIAAAAAAAACAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAAQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAAQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAAAQAAAAAAAAEAAAAAAAABAAAAAAAAAQAAAAAAAAEAAAAAAAABAAAAAAAAAQAAAAAAAAEAAAAAAAABAAAAAAAAAQAAAAAAAAEAAAAAAACSAAAAAAAAAQAAAAAAAJIAAAAAAACSAAAAAAAAQgAAAAAAAEIAAAAAAAABAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAEAAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAAEAAAAAAABCAAAAAAAAkwAAAAAAAJMAAAAAAACTAAAAAAAAkgAAAAAAAEIAAAAAAABCAAAAAAAAAQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAAQgAAAAAAAJMAAAAAAACTAAAAAAAAkwAAAAAAAJIAAAAAAABCAAAAAAAAQgAAAAAAAAEAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAAQAAAAAAAEIAAAAAAACTAAAAAAAAkwAAAAAAAJMAAAAAAACSAAAAAAAAQgAAAAAAAEIAAAAAAAABAAAAAAAARQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAARgAAAAAAAAEAAAAAAABCAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAEIAAAAAAABCAAAAAAAAAQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAAQgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAABCAAAAAAAAQgAAAAAAAAEAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAAQAAAAAAAEIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAQgAAAAAAAEIAAAAAAAABAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAQQAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAAEAAAAAAABCAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAAABAAAAAAAACwAAAAAAAAQAAAAAAAAEAAAAAAAABAAAAAAAAAQAAAAAAAAFAAAAAAAABQAAAAAAAEcAAAAAAABHAAAAAAAAAQAAAAAAAEcAAAAAAABHAAAAAAAARwAAAAAAAEcAAAAAAACSAAAAAAAAAQAAAAAAAAwAAAAAAACSAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAADQAAAAAAAA0AAAAAAABHAAAAAAAARwAAAAAAAAEAAAAAAABHAAAAAAAARwAAAAAAAEcAAAAAAABHAAAAAAAAkgAAAAAAAAEAAAAAAAAMAAAAAAAAkgAAAAAAAJIAAAAAAACSAAAAAAAAkgAAAAAAAA0AAAAAAAANAAAAAAAAGQAAAAAAABkAAAAAAACSAAAAAAAARwAAAAAAAEcAAAAAAABHAAAAAAAARwAAAAAAAA==
           version: 7
         1,0:
           ind: 1,0
@@ -7459,6 +7460,27 @@ entities:
     - type: Action
       originalIconColor: '#FFFFFFFF'
       container: 12
+- proto: ANPRC117GRadio
+  entities:
+  - uid: 2367
+    components:
+    - type: Transform
+      pos: 0.27507234,38.814167
+      parent: 1
+- proto: ANPRCMastAntenna
+  entities:
+  - uid: 2380
+    components:
+    - type: Transform
+      pos: 0.49382234,38.611042
+      parent: 1
+- proto: AU14CommsMastGovfor
+  entities:
+  - uid: 858
+    components:
+    - type: Transform
+      pos: 1.5,39.5
+      parent: 1
 - proto: AU14ContainerTartarusLeftMedicalEmpty
   entities:
   - uid: 14
@@ -7619,6 +7641,13 @@ entities:
       rot: -1.5707963267948966 rad
       pos: 1.5,-32.5
       parent: 1
+- proto: CMAirlockMaint
+  entities:
+  - uid: 3302
+    components:
+    - type: Transform
+      pos: 1.5,37.5
+      parent: 1
 - proto: CMApcConstructed
   entities:
   - uid: 44
@@ -7765,6 +7794,24 @@ entities:
     - type: Transform
       rot: 3.141592653589793 rad
       pos: -4.5,69.5
+      parent: 1
+  - uid: 2378
+    components:
+    - type: Transform
+      rot: -1.5707963267948966 rad
+      pos: 4.5,37.5
+      parent: 1
+  - uid: 2379
+    components:
+    - type: Transform
+      rot: 3.141592653589793 rad
+      pos: 7.5,43.5
+      parent: 1
+  - uid: 3304
+    components:
+    - type: Transform
+      rot: 1.5707963267948966 rad
+      pos: 2.5,38.5
       parent: 1
 - proto: CMApcHighCapacity
   entities:
@@ -13796,6 +13843,11 @@ entities:
       parent: 1
 - proto: CMTelecomServer
   entities:
+  - uid: 886
+    components:
+    - type: Transform
+      pos: 1.5,40.5
+      parent: 1
   - uid: 1198
     components:
     - type: Transform
@@ -17669,6 +17721,11 @@ entities:
       parent: 1
 - proto: CMWallReinforcedHeavyAlmayer
   entities:
+  - uid: 884
+    components:
+    - type: Transform
+      pos: 1.5,41.5
+      parent: 1
   - uid: 1952
     components:
     - type: Transform
@@ -18147,7 +18204,7 @@ entities:
   - uid: 2047
     components:
     - type: Transform
-      pos: 1.5,37.5
+      pos: 2.5,41.5
       parent: 1
   - uid: 2048
     components:
@@ -26106,6 +26163,13 @@ entities:
     - type: Transform
       pos: 4.509619,42.51394
       parent: 1
+- proto: PortableGeneratorSuperPacman
+  entities:
+  - uid: 857
+    components:
+    - type: Transform
+      pos: 0.5,39.5
+      parent: 1
 - proto: ReagentContainerFlour
   entities:
   - uid: 3580
@@ -26154,7 +26218,7 @@ entities:
       lastSignals:
         DoorStatus: True
     - type: Door
-      secondsUntilStateChange: -163066.02
+      secondsUntilStateChange: -163999.2
       state: Opening
   - uid: 3587
     components:
@@ -27444,6 +27508,16 @@ entities:
       parent: 1
 - proto: RMCCableHeavy
   entities:
+  - uid: 856
+    components:
+    - type: Transform
+      pos: 0.5,39.5
+      parent: 1
+  - uid: 880
+    components:
+    - type: Transform
+      pos: 1.5,39.5
+      parent: 1
   - uid: 3807
     components:
     - type: Transform
@@ -29247,7 +29321,7 @@ entities:
       pos: -5.5,-11.5
       parent: 1
     - type: Door
-      secondsUntilStateChange: -180626.2
+      secondsUntilStateChange: -181559.39
       state: Closing
   - uid: 4142
     components:
@@ -29524,25 +29598,10 @@ entities:
       parent: 1
 - proto: RMCFoamedAluminiumMetal
   entities:
-  - uid: 856
-    components:
-    - type: Transform
-      pos: 2.5,39.5
-      parent: 1
-  - uid: 857
-    components:
-    - type: Transform
-      pos: 2.5,41.5
-      parent: 1
-  - uid: 858
-    components:
-    - type: Transform
-      pos: 1.5,41.5
-      parent: 1
   - uid: 859
     components:
     - type: Transform
-      pos: 1.5,40.5
+      pos: 2.5,43.5
       parent: 1
   - uid: 860
     components:
@@ -29557,47 +29616,17 @@ entities:
   - uid: 879
     components:
     - type: Transform
-      pos: 0.5,39.5
-      parent: 1
-  - uid: 880
-    components:
-    - type: Transform
-      pos: 2.5,40.5
+      pos: 2.5,42.5
       parent: 1
   - uid: 881
     components:
     - type: Transform
-      pos: 1.5,39.5
-      parent: 1
-  - uid: 882
-    components:
-    - type: Transform
-      pos: 1.5,38.5
+      pos: 1.5,42.5
       parent: 1
   - uid: 883
     components:
     - type: Transform
-      pos: 2.5,42.5
-      parent: 1
-  - uid: 884
-    components:
-    - type: Transform
-      pos: 2.5,38.5
-      parent: 1
-  - uid: 885
-    components:
-    - type: Transform
-      pos: 0.5,39.5
-      parent: 1
-  - uid: 886
-    components:
-    - type: Transform
-      pos: 1.5,42.5
-      parent: 1
-  - uid: 2367
-    components:
-    - type: Transform
-      pos: 0.5,38.5
+      pos: 1.5,43.5
       parent: 1
   - uid: 4188
     components:
@@ -32164,56 +32193,56 @@ entities:
       parent: 1
     - type: IdModificationConsole
       hiddenAccessList:
-      - CMAccessCO
-      - CMAccessPress
-      - CMAccessCrewman
-      - CMAccessASO
-      - CMAccessPilot
       - RMCAccessSynth
-      - CMAccessSEA
+      - CMAccessPress
       - CMAccessCorp
+      - CMAccessPilot
+      - CMAccessCrewman
+      - CMAccessCO
+      - CMAccessASO
+      - CMAccessSEA
       accessList:
-      - CMAccessCMO
-      - CMAccessAlpha
-      - CMAccessMarineRifleman
-      - CMAccessCombatTechPrep
-      - CMAccessQM
-      - RMCAccessVehicleCrew
-      - CMAccessDropship
       - CMAccessRequisitions
-      - CMAccessBravo
+      - CMAccessDropship
+      - RMCAccessCommand
+      - CMAccessAlpha
       - RMCAccessLogs
-      - RMCAccessSeniorCommand
-      - CMAccessMedical
-      - CMAccessResearch
-      - CMAccessBrig
-      - RMCAccessDatabase
-      - RMCAccessMorgue
-      - CMAccessMarinePrep
-      - CMAccessCE
-      - CMAccessSquadLeaderPrep
-      - CMAccessFTLPrep
+      - CMAccessCMO
+      - CMAccessKitchen
       - CMAccessCMP
-      - CMAccessSmartPrep
+      - CMAccessDelta
+      - CMAccessMarineRifleman
+      - CMAccessMaint
+      - CMAccessMedical
+      - RMCAccessVehicleCrew
       - CMAccessEngineering
-      - CMAccessChemistry
+      - CMAccessSquadLeaderPrep
+      - RMCAccessSeniorCommand
+      - CMAccessMedPrep
+      - CMAccessBravo
       - CMAccessOT
       - CMAccessSpecPrep
-      - CMAccessArmory
-      - CMAccessMedPrep
-      - RMCAccessCommand
-      - CMAccessMaint
-      - CMAccessDelta
+      - CMAccessFTLPrep
       - CMAccessCharlie
-      - CMAccessKitchen
+      - CMAccessChemistry
+      - CMAccessSmartPrep
+      - CMAccessBrig
+      - CMAccessResearch
+      - RMCAccessMorgue
+      - CMAccessCE
+      - CMAccessMarinePrep
+      - CMAccessQM
+      - CMAccessCombatTechPrep
+      - CMAccessArmory
+      - RMCAccessDatabase
       accessGroups:
       - RMCBaseEngineeringAccess
-      - RMCBaseARESAccess
-      - RMCBaseCommandAccess
-      - RMCBaseMedicalAccess
       - RMCBaseMPAccess
+      - RMCBaseMedicalAccess
       - RMCBaseMarineAccess
+      - RMCBaseCommandAccess
       - RMCBaseSquadAccess
+      - RMCBaseARESAccess
 - proto: RMCIdentificationComputer
   entities:
   - uid: 4630
@@ -33945,6 +33974,12 @@ entities:
       parent: 1
 - proto: RMCLightFixtureSmall
   entities:
+  - uid: 882
+    components:
+    - type: Transform
+      rot: 1.5707963267948966 rad
+      pos: 2.5,39.5
+      parent: 1
   - uid: 4917
     components:
     - type: Transform
@@ -39898,6 +39933,13 @@ entities:
     components:
     - type: Transform
       pos: 29.5,7.5
+      parent: 1
+- proto: RMCTelecomHub
+  entities:
+  - uid: 885
+    components:
+    - type: Transform
+      pos: 2.5,40.5
       parent: 1
 - proto: RMCTelevision
   entities:
