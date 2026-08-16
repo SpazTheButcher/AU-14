@@ -1,0 +1,89 @@
+- type: entity
+  parent: CMUPaperAegisInfoFax
+  id: CMUPaperAegisLobbyInfoFax
+  components:
+    - type: Paper
+      content: |
+        [head=3][color=#383838]AEGIS ARMAMENTS[/color][/head]
+        [head=2][color=goldenrod]Priority Recovery Directive[/color][/head]
+
+        [color=#134975]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color]
+
+        [bold]TO:[/bold] Authorized Command Personnel
+        [bold]FROM:[/bold] AEGIS Armaments Strategic Operations Division
+
+        [color=#134975]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color]
+
+        Command Personnel,
+
+        A classified AEGIS Armaments strategic weapons platform was covertly loaded aboard your vessel prior to departure. Its presence was intentionally withheld from all crew except those with direct operational need.
+
+        The container remains secured somewhere within the ship. Tracking telemetry confirms its location. You are now being informed of its presence because High Command has authorized the asset's deployment in response to the current tactical situation.
+
+        Your objectives are:
+
+        [bullet] Locate the AEGIS weapons platform container.
+        [bullet] Recover the security authorization key required to access the asset.
+        [bullet] Prevent unauthorized access, capture, or destruction of the platform.
+        The container is designed to withstand extreme conditions. Its transponder signature has been linked to your tactical network for retrieval.
+        Specialized recovery equipment and operational documentation have been dispatched through your logistics network.
+
+        The authorization key is believed to remain with transport personnel. Tracking assistance has been configured through your command systems to aid recovery.
+
+        [color=#E41B1B][bold]WARNING:[/bold][/color]
+
+        The platform represents a significant advancement in strategic weapons technology. Loss or destruction of this asset is unacceptable.
+
+        Deployment authorization is granted following successful recovery. All operational telemetry will be collected and transmitted to AEGIS Armaments for evaluation.
+
+        Exercise extreme caution.
+
+        AEGIS Armaments appreciates your cooperation.
+
+        [color=#dfc189][bolditalic]AEGIS Strategic Operations Division[/bolditalic][/color]
+
+- type: entity
+  parent: CMPaper
+  id: CMUPaperAegisInfoFax
+  name: High Command Transmission
+  components:
+    - type: Paper
+      stampState: paper_stamp-marine
+      stampedBy:
+        - stampedColor: '#4E806AFF'
+          stampedName: stamp-component-stamped-name-cm-marine
+      content: |
+        [head=3][color=#383838]AEGIS ARMAMENTS[/color][/head]
+        [head=2][color=goldenrod]Strategic Asset Authorization[/color][/head]
+
+        [color=#134975]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color]
+
+        [bold]TO:[/bold] Authorized Command Personnel
+        [bold]FROM:[/bold] AEGIS Armaments Strategic Operations Division
+
+        [color=#134975]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/color]
+
+        Command Personnel,
+
+        Recovery of the AEGIS strategic weapons platform aboard your vessel has been confirmed.
+
+        The recovered asset remains the property of AEGIS Armaments and is classified under strategic weapons development protocols. Unauthorized transfer, replication, or examination of the platform is strictly prohibited.
+
+        High Command has authorized a field evaluation. You are cleared to deploy the asset as tactical circumstances dictate.
+
+        Authorized personnel are reminded:
+
+        [bullet] The platform must remain secured when not deployed.
+        [bullet] Security authorization credentials (the key) must not be transferred or misplaced.
+        [bullet] Weapon telemetry systems must remain active during operation.
+        [bullet] All deployment data must be preserved for post-operation analysis.
+
+        AEGIS Armaments has remotely enabled compatibility protocols with approved orbital delivery systems within your operational network.
+
+        Due to the platform's capabilities, improper deployment may result in catastrophic consequences.
+
+        AEGIS Armaments recognizes your assistance in recovery of this asset. Compensation and further instructions will be provided following operational review.
+
+        Proceed with discretion.
+
+        [color=#dfc189][bolditalic]AEGIS Strategic Operations Division[/bolditalic][/color]
