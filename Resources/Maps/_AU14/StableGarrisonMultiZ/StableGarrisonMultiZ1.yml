@@ -5,7 +5,7 @@ meta:
   forkId: ""
   forkVersion: ""
   time: 08/16/2026 00:11:37
-  entityCount: 9271
+  entityCount: 9272
 maps:
 - 1
 grids:
@@ -17854,6 +17854,13 @@ entities:
     components:
     - type: Transform
       pos: 288.5,-90.5
+      parent: 1
+- proto: AU14SpawnPointCivilianCMBMarshal
+  entities:
+  - uid: 9272
+    components:
+    - type: Transform
+      pos: 273.5,-106.5
       parent: 1
 - proto: AU14SpawnPointCivilianScientist
   entities:
