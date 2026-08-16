@@ -9620,5 +9620,34 @@
   id: 629
   time: '2026-08-16T08:09:11.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1836
+- author: TheMaiji
+  changes:
+  - message: Prevent powerloaders and chairs from flying across z-levels.
+    type: Fix
+  - message: Prevent falling vehicles from damaging their buckled occupants.
+    type: Fix
+  id: 630
+  time: '2026-08-16T13:46:30.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1837
+- author: CatoChristopherMrow
+  changes:
+  - message: Fixed govfor pointbuy amount
+    type: Fix
+  id: 631
+  time: '2026-08-16T16:55:24.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1838
+- author: troytroy400
+  changes:
+  - message: Added destroyable multiz roof tiles for mapping.
+    type: Add
+  - message: Added a round-start free crate system for ASRS gated by gamemode and
+      faction. Currently at round start on FoF and DS, GOVFOR/OPFOR will get a free
+      mortar kit and a FOB Tent Crate.
+    type: Add
+  - message: Filled HESCO barricades can now be barbwired when they are below wall-size.
+    type: Tweak
+  id: 632
+  time: '2026-08-16T17:35:48.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1839
 Name: CMU
 Order: -1
