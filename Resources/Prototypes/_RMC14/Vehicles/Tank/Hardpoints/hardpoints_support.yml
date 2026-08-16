@@ -257,7 +257,7 @@
   - type: HardpointItem
     hardpointType: Support
     vehicleFamily: Tank
-    slotType: RoofAttachment
+    slotType: SupportAttachment
     damageMultiplier: 0.5
     repairRate: 0.007
   - type: HardpointIntegrity
@@ -329,8 +329,8 @@
     overlayRsi: _CMU14/Structures/Vehicles/fv150/exterior.rsi
     overlayState: tweartillerymod_0
   - type: VehicleGunnerViewAttachment
-    pvsScale: 0.35
-    cursorMaxOffset: 5
+    pvsScale: 0.5
+    cursorMaxOffset: 2.8
     cursorPvsIncrease: 0.5
   - type: HardpointVisual
     vehicleState: tweartillerymod_0
@@ -352,6 +352,8 @@
     repairRate: 0.007
   - type: HardpointIntegrity
     maxIntegrity: 250
+  - type: VehicleSpeedModifierAttachment
+    speedMultiplier: 0.7
   - type: VehicleTurret
     useDirectionalOffsets: false
     pixelOffsetNorth: "0,0"

@@ -270,6 +270,7 @@
   id: RMCIDCardAegis
   name: AEGIS Access Badge
   description: High-Level AEGIS Access Badge, granting access to many of their restricted areas and equipment. Required to unlock AEGIS crates.
+  suffix: RMC
   components:
   - type: WarpPoint
   - type: Sprite

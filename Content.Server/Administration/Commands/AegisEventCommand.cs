@@ -24,10 +24,10 @@ public sealed class AegisEventCommand : IConsoleCommand
         // Announce to both marines and xenos
         AegisSharedAnnouncement.AnnounceToBoth(systemManager, message);
         // Send fax to CIC
-        aegisSystem.SendCICFax(systemManager, entityManager, message, "RMCPaperAegisInfoFax", "UNS Oberon");
+        aegisSystem.SendCommandFax(entityManager, "CMUPaperAegisInfoFax", AegisLobbyEventSystem.AegisFaxGroups, "High Command", message);
 
         // Spawn and send the Aegis ID card
-        reqSystem.CreateSpecialDelivery("RMCIDCardAegis");
+        reqSystem.CreateSpecialDelivery("CMUIDCardAegis");
 
         // Spawn and send the Powerloader pamphlet
         reqSystem.CreateSpecialDelivery("CMPamphletPowerloader");
