@@ -9611,5 +9611,14 @@
   id: 628
   time: '2026-08-16T01:52:20.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1835
+- author: Vencallium
+  changes:
+  - message: AEGIS OB spawner to requisitions
+    type: Add
+  - message: Alpha, Bravo & Charlie supply drops to requisitions
+    type: Add
+  id: 629
+  time: '2026-08-16T08:09:11.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1836
 Name: CMU
 Order: -1
