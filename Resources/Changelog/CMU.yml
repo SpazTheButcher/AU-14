@@ -9649,5 +9649,48 @@
   id: 632
   time: '2026-08-16T17:35:48.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1839
+- author: Vencallium
+  changes:
+  - message: Restored the CMB Marshal spawn point to the intended upper level of Stable
+      Garrison.
+    type: Fix
+  id: 633
+  time: '2026-08-16T20:50:28.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1841
+- author: Vencallium
+  changes:
+  - message: Echo & Delta supply drop pads to requisitions
+    type: Add
+  - message: Duplicate zlevels on Stable Garrison
+    type: Fix
+  id: 634
+  time: '2026-08-16T23:11:26.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1843
+- author: maertayn
+  changes:
+  - message: AEGIS + Provost paperworks added to Universal Paper Tool
+    type: Add
+  - message: SFX Engine - create yaml sequences of audio + announcements to play for
+      scripted (PvE) events (e.g. distant battlefields) - can be run manually (scriptedsound
+      command) or initiated via code
+    type: Add
+  - message: Warships will scuttle when evacuation is started by Command, cannot abort
+      engine criticality with 5min left on the clock. Mirrors the Alien movie self-destruct
+      using the SFX engine (WIP)
+    type: Add
+  - message: Warship scuttle is disabled behind cvar `cmu.game.enable_evac_sfx` until
+      it's tested properly
+    type: Tweak
+  - message: Orbital Bombardments explosions can opt-in for the `MultiZ` boolean field
+      to explode across Z-levels instead of being local to one layer
+    type: Tweak
+  - message: Lighting was changed, some maps may lack proper light fixtures (like
+      around corners)
+    type: Map
+  - message: Engine updated from v278 to v288.1
+    type: Code
+  id: 635
+  time: '2026-08-17T01:24:39.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1842
 Name: CMU
 Order: -1
