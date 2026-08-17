@@ -88,7 +88,6 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
     [Dependency] private EntityLookupSystem _entityLookup = default!;
     [Dependency] private SharedEyeSystem _eye = default!;
     [Dependency] private FireMissionSystem _fireMission = default!;
-    [Dependency] private IMapManager _mapManager = default!;
     [Dependency] private NameModifierSystem _name = default!;
     [Dependency] private INetManager _net = default!;
     [Dependency] private SharedOnCollideSystem _onCollide = default!;
@@ -709,7 +708,7 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
         }
 
         var offset = ClampOffset(ent);
-        var coordinates = _transform.GetMoverCoordinates(target).SnapToGrid(EntityManager, _mapManager).Offset(offset);
+        var coordinates = _transform.GetMoverCoordinates(target).SnapToGrid(EntityManager).Offset(offset);
         if (!CasDebug && !_area.CanCAS(coordinates))
         {
             var msg = Loc.GetString("rmc-laser-designator-not-cas");
@@ -742,7 +741,7 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
 
         var time = _timing.CurTime;
 
-        var spawnTarget = _transform.GetMoverCoordinates(active).SnapToGrid(EntityManager, _mapManager);
+        var spawnTarget = _transform.GetMoverCoordinates(active).SnapToGrid(EntityManager);
         if (ammo.Explosion != null && HasNonDeletableWallOnTile(spawnTarget))
             spawnTarget = FindAlternateLandingTile(spawnTarget, 3);
 
@@ -1816,7 +1815,7 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
 
                 var landing = flight.Target.Offset(spread);
 
-                var targetMap = _transform.ToMapCoordinates(landing.SnapToGrid(EntityManager, _mapManager));
+                var targetMap = _transform.ToMapCoordinates(landing.SnapToGrid(EntityManager));
 
                 foreach (var effect in flight.ImpactEffects)
                 {
@@ -1992,7 +1991,7 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
 
     private EntityCoordinates FindAlternateLandingTile(EntityCoordinates desired, int maxRadius = 3)
     {
-        var origin = desired.SnapToGrid(EntityManager, _mapManager);
+        var origin = desired.SnapToGrid(EntityManager);
 
         for (var r = 1; r <= maxRadius; r++)
         {
@@ -2278,7 +2277,7 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
             return false;
         }
 
-        var targetCoordinates = _transform.GetMoverCoordinates(target).SnapToGrid(EntityManager, _mapManager).Offset(offset);
+        var targetCoordinates = _transform.GetMoverCoordinates(target).SnapToGrid(EntityManager).Offset(offset);
         if (!CanStartFireMission(dropship, targetCoordinates, user))
             return false;
 

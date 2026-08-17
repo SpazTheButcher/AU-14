@@ -43,7 +43,6 @@ public sealed class ZCaveInSystem : EntitySystem
 {
     [Dependency] private readonly SharedMapSystem _map = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly IMapManager _mapManager = default!;
     [Dependency] private readonly EntityLookupSystem _lookup = default!;
     [Dependency] private readonly DamageableSystem _damage = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
@@ -521,7 +520,7 @@ public sealed class ZCaveInSystem : EntitySystem
         if (MarkDropshipsOverCollapse(surfaceCoords))
             return;
 
-        if (!_mapManager.TryFindGridAt(surfaceCoords, out var surfaceGridUid, out var surfaceGridComp))
+        if (!_map.TryFindGridAt(surfaceCoords, out var surfaceGridUid, out var surfaceGridComp))
             return;
 
         var surfaceTile = _map.TileIndicesFor(surfaceGridUid, surfaceGridComp, surfaceCoords);
@@ -869,7 +868,7 @@ public sealed class ZCaveInSystem : EntitySystem
             if (MarkDropshipsOverCollapse(surfaceCoords))
                 continue;
 
-            if (!_mapManager.TryFindGridAt(surfaceCoords, out var surfaceGridUid, out var surfaceGridComp))
+            if (!_map.TryFindGridAt(surfaceCoords, out var surfaceGridUid, out var surfaceGridComp))
                 continue;
 
             var surfaceTile = _map.TileIndicesFor(surfaceGridUid, surfaceGridComp, surfaceCoords);
@@ -914,7 +913,7 @@ public sealed class ZCaveInSystem : EntitySystem
         _overlappingGrids.Clear();
         var min = impact.Position - new Vector2(DropshipCollapseDetectionRadius);
         var max = impact.Position + new Vector2(DropshipCollapseDetectionRadius);
-        _mapManager.FindGridsIntersecting(impact.MapId, new Box2(min, max), ref _overlappingGrids, approx: true, includeMap: false);
+        _map.FindGridsIntersecting(impact.MapId, new Box2(min, max), ref _overlappingGrids, approx: true, includeMap: false);
 
         var marked = false;
         foreach (var grid in _overlappingGrids)

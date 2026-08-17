@@ -43,9 +43,7 @@ public sealed class ZLevelSupportSystem : EntitySystem
     [Dependency] private readonly SharedMapSystem _map = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly DamageableSystem _damage = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IMapManager _mapManager = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly ThrowingSystem _throwing = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
@@ -880,7 +878,7 @@ public sealed class ZLevelSupportSystem : EntitySystem
             return false;
 
         var coords = new MapCoordinates(worldPos, belowMapComp.MapId);
-        if (!_mapManager.TryFindGridAt(coords, out var belowGridUid, out var belowGrid))
+        if (!_map.TryFindGridAt(coords, out var belowGridUid, out var belowGrid))
             return false;
 
         var tile = _map.TileIndicesFor(belowGridUid, belowGrid, coords);
