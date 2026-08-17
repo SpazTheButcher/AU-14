@@ -9692,5 +9692,12 @@
   id: 635
   time: '2026-08-17T01:24:39.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1842
+- author: CatoChristopherMrow
+  changes:
+  - message: Wouldn't YOU like to know, freak.
+    type: Tweak
+  id: 636
+  time: '2026-08-17T03:11:41.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1846
 Name: CMU
 Order: -1
