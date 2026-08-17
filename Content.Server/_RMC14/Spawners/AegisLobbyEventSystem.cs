@@ -159,7 +159,12 @@ public sealed partial class AegisLobbyEventSystem : EntitySystem
             ? labelComp.CurrentLabel
             : string.Empty;
 
-        var printout = new FaxPrintout(customMsg ?? paper.Content, faxPaper.Name, label, faxProto, paper.StampState, paper.StampedBy);
+        var content = paper.Content;
+        if (!string.IsNullOrEmpty(customMsg))
+            content += "\n\n[color=#134975]▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬[/color]\n" +
+                       "[bold][color=#134975]COMMAND NOTE[/color][/bold]\n\n" + customMsg;
+
+        var printout = new FaxPrintout(content, faxPaper.Name, label, faxProto, paper.StampState, paper.StampedBy);
         var sentFax = false;
         var faxQuery = entityManager.EntityQueryEnumerator<FaxMachineComponent>();
 
