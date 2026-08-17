@@ -79893,7 +79893,7 @@ entities:
     - type: Transform
       pos: 216.5,-115.5
       parent: 1
-- proto: RMCComputerDropshipNavigationSmall
+- proto: CMComputerDropshipNavigationPlanetside
   entities:
   - uid: 4067
     components:
