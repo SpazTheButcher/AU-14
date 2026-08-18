@@ -1281,7 +1281,6 @@
 
 - type: entity
   parent: BaseComputer
-  abstract: true
   id: ComputerSurveillanceCameraMonitor
   name: camera monitor
   description: A surveillance camera monitor. You're watching them. Maybe.
@@ -1318,7 +1317,6 @@
 
 - type: entity
   parent: BaseComputer
-  abstract: true
   id: ComputerSurveillanceWirelessCameraMonitor
   name: wireless camera monitor
   description: A wireless surveillance camera monitor. You're watching them. Maybe.

@@ -78,7 +78,6 @@
 
 - type: entity
   parent: SurveillanceWirelessCameraAnchoredBase
-  abstract: true
   suffix: Constructed, Anchored
   id: SurveillanceWirelessCameraAnchoredConstructed
   components:
@@ -91,7 +90,6 @@
 
 - type: entity
   parent: SurveillanceWirelessCameraMovableBase
-  abstract: true
   suffix: Constructed, Movable
   id: SurveillanceWirelessCameraMovableConstructed
   components:
@@ -104,7 +102,6 @@
 
 - type: entity
   parent: SurveillanceWirelessCameraAnchoredBase
-  abstract: true
   suffix: Entertainment, Anchored
   id: SurveillanceWirelessCameraAnchoredEntertainment
   components:
@@ -116,7 +113,6 @@
 
 - type: entity
   parent: SurveillanceWirelessCameraMovableBase
-  abstract: true
   suffix: Entertainment, Movable
   id: SurveillanceWirelessCameraMovableEntertainment
   components:

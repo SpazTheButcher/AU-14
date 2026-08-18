@@ -1,5 +1,4 @@
 - type: entity
-  abstract: true
   id: CameraBug
   parent: [ BaseItem, BaseSyndicateContraband ]
   name: camera bug

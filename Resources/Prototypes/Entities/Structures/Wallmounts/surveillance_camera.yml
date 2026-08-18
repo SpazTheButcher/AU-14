@@ -99,7 +99,6 @@
 
 - type: entity
   parent: SurveillanceCameraBase
-  abstract: true
   id: SurveillanceCameraConstructed
   name: camera
   suffix: Constructed
@@ -120,7 +119,6 @@
 
 - type: entity
   parent: SurveillanceCameraBase
-  abstract: true
   id: SurveillanceCameraEngineering
   name: camera
   suffix: Engineering
@@ -134,7 +132,6 @@
 
 - type: entity
   parent: SurveillanceCameraBase
-  abstract: true
   id: SurveillanceCameraSecurity
   name: camera
   suffix: Security
@@ -148,7 +145,6 @@
 
 - type: entity
   parent: SurveillanceCameraBase
-  abstract: true
   id: SurveillanceCameraScience
   name: camera
   suffix: Science
@@ -162,7 +158,6 @@
 
 - type: entity
   parent: SurveillanceCameraBase
-  abstract: true
   id: SurveillanceCameraSupply
   name: camera
   suffix: Supply
@@ -176,7 +171,6 @@
 
 - type: entity
   parent: SurveillanceCameraBase
-  abstract: true
   id: SurveillanceCameraCommand
   name: camera
   suffix: Command
@@ -190,7 +184,6 @@
 
 - type: entity
   parent: SurveillanceCameraBase
-  abstract: true
   id: SurveillanceCameraService
   name: camera
   suffix: Service
@@ -204,7 +197,6 @@
 
 - type: entity
   parent: SurveillanceCameraBase
-  abstract: true
   id: SurveillanceCameraMedical
   name: camera
   suffix: Medical
@@ -218,7 +210,6 @@
 
 - type: entity
   parent: SurveillanceCameraBase
-  abstract: true
   id: SurveillanceCameraGeneral
   name: camera
   suffix: General
@@ -231,7 +222,6 @@
     networkSet: true
 
 - type: entity
-  abstract: true
   id: SurveillanceCameraAssembly
   name: camera
   description: A surveillance camera. Doesn't seem to be watching anybody any time soon. Probably.

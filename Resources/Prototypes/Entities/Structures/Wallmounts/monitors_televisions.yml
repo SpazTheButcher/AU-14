@@ -1,6 +1,5 @@
 - type: entity
   parent: ComputerSurveillanceWirelessCameraMonitor
-  abstract: true
   id: ComputerTelevision
   name: wooden television
   description: Finally, some decent reception around here...
@@ -87,7 +86,6 @@
 
 - type: entity
   parent: WallmountTelescreenFrame
-  abstract: true
   id: WallmountTelescreen
   suffix: camera monitor
   name: telescreen
@@ -146,7 +144,6 @@
 
 - type: entity
   parent: WallmountTelevisionFrame
-  abstract: true
   id: WallmountTelevision
   suffix: entertainment
   name: television

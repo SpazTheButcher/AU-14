@@ -618,7 +618,6 @@
 
 - type: entity
   parent: PonderingOrb
-  abstract: true
   id: PonderingOrbWizard
   name: pondering orb
   description: Ponderous, man... Really ponderous. Magically shows the station's camera network.
