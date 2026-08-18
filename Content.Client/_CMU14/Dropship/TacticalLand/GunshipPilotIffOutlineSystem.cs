@@ -29,7 +29,6 @@ public sealed partial class GunshipPilotIffOutlineSystem : EntitySystem
 
     [Dependency] private IEyeManager _eye = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
-    [Dependency] private IMapManager _mapManager = default!;
     [Dependency] private IPlayerManager _player = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private SharedMapSystem _map = default!;
@@ -130,7 +129,6 @@ public sealed partial class GunshipPilotIffOutlineSystem : EntitySystem
                 int.MaxValue,
                 true,
                 _openingGrids,
-                _mapManager,
                 _map,
                 _transform,
                 _tile) ||
