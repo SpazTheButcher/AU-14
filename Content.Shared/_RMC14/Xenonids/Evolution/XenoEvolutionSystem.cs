@@ -65,9 +65,7 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
     [Dependency] private SharedXenoHiveSystem _xenoHive = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private SharedContainerSystem _container = default!;
-    [Dependency] private SharedXenoWeedsSystem _xenoWeeds = default!;
-    [Dependency] private IMapManager _map = default!;
-    [Dependency] private ISharedPlaytimeManager _playtime = default!;
+    [Dependency] private SharedXenoWeedsSystem _xenoWeeds = default!;    [Dependency] private ISharedPlaytimeManager _playtime = default!;
 
     private TimeSpan _evolutionPointsRequireOvipositorAfter;
     private TimeSpan _evolutionAccumulatePointsBefore;
@@ -521,7 +519,7 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
 
         if (TryComp<RestrictEvolveOffWeedsComponent>(xeno.Owner, out var comp))
         {
-            var coordinates = _transform.GetMoverCoordinates(xeno).SnapToGrid(EntityManager, _map);
+            var coordinates = _transform.GetMoverCoordinates(xeno).SnapToGrid(EntityManager);
             if (_transform.GetGrid(coordinates) is not { } gridUid ||
                 !TryComp(gridUid, out MapGridComponent? grid))
             {

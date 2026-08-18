@@ -27,7 +27,6 @@ public sealed partial class CMUZLevelsSystem
     [Dependency] private IConfigurationManager _config = default!;
     [Dependency] private ExamineSystemShared _examine = default!;
     [Dependency] private SharedContainerSystem _containers = default!;
-    [Dependency] private IMapManager _viewMapManager = default!;
 
     private readonly EntProtoId _zEyeProto = "CMUZLevelEye";
     private const int ZProbeOpeningTileRadius = 24;
@@ -980,7 +979,6 @@ public sealed partial class CMUZLevelsSystem
                 ZProbeOpeningTileRadius * grid.TileSize,
                 _probeOpeningCandidates,
                 _probeOpeningGrids,
-                _viewMapManager,
                 _map,
                 _transform,
                 TilDefMan);
@@ -993,7 +991,6 @@ public sealed partial class CMUZLevelsSystem
                 ZProbeOpeningTileRadius * grid.TileSize,
                 _probeOpeningCandidates,
                 _probeOpeningGrids,
-                _viewMapManager,
                 _map,
                 _transform,
                 TilDefMan);
