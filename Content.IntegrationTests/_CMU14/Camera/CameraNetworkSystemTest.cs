@@ -282,7 +282,7 @@ public sealed class CameraNetworkSystemTest
                         Assert.That(rmc.BuildAvailableNetworks(firstUid).Select(network => network.Id),
                             Does.Not.Contain((ProtoId<CameraNetworkPrototype>) NetworkA));
                         Assert.That(rmc.BuildAvailableNetworks(secondUid).Single(network => network.Id == NetworkA).Name,
-                            Is.EqualTo("cmu-test-camera-network-a"));
+                            Is.EqualTo("CMU test camera network A"));
                         Assert.That(rmc.BuildEditorState((firstUid, first)).Networks
                             .Single(network => network.Id == NetworkA).Name, Is.EqualTo("Local engineering"));
                         Assert.That(rmc.BuildEditorState((firstUid, first)).Networks
@@ -1122,8 +1122,8 @@ public sealed class CameraNetworkSystemTest
                         }));
                         Assert.That(state.Networks.Select(network => network.Name), Is.EqualTo(new[]
                         {
-                            "cmu-test-camera-network-a",
-                            "cmu-test-camera-network-b",
+                            "CMU test camera network A",
+                            "CMU test camera network B",
                         }));
                         Assert.That(console.ActiveNetwork, Is.EqualTo((ProtoId<CameraNetworkPrototype>) NetworkA));
                         Assert.That(state.ActiveNetwork, Is.EqualTo((ProtoId<CameraNetworkPrototype>) NetworkA));
