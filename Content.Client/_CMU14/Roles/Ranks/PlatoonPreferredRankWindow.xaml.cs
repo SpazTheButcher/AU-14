@@ -147,17 +147,6 @@ public sealed class PlatoonRankPreferenceWindow : DefaultWindow
 
         vbox.AddChild(header);
 
-        if (!string.IsNullOrWhiteSpace(platoonOptions.LoreText))
-        {
-            var loreLabel = new RichTextLabel
-            {
-                HorizontalExpand = true,
-                Margin = new Thickness(0, 0, 0, 8),
-            };
-            loreLabel.SetMessage(FormattedMessage.FromUnformatted(platoonOptions.LoreText));
-            vbox.AddChild(loreLabel);
-        }
-
         vbox.AddChild(new PanelContainer
         {
             HorizontalExpand = true,
@@ -247,17 +236,6 @@ public sealed class PlatoonRankPreferenceWindow : DefaultWindow
             VerticalAlignment = VAlignment.Center,
             FontColorOverride = unlocked ? null : Color.Gray
         });
-
-        if (!unlocked && !string.IsNullOrEmpty(requirementsText))
-        {
-            row.AddChild(new Label
-            {
-                Text = requirementsText,
-                MinWidth = 140,
-                VerticalAlignment = VAlignment.Center,
-                FontColorOverride = Color.OrangeRed
-            });
-        }
 
         row.AddChild(new Label
         {

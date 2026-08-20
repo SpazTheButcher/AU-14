@@ -36,19 +36,13 @@ public sealed class PlatoonRankOptions
     /// </summary>
     public ResPath? PatchPath;
 
-    /// <summary>
-    /// Optional lore blurb from the platoon's LorePrimer, shown below the header.
-    /// </summary>
-    public string? LoreText;
-
     public List<RankOption> Ranks;
 
-    public PlatoonRankOptions(string platoonId, string platoonName, ResPath? patchPath, string? loreText, List<RankOption> ranks)
+    public PlatoonRankOptions(string platoonId, string platoonName, ResPath? patchPath, List<RankOption> ranks)
     {
         PlatoonId = platoonId;
         PlatoonName = platoonName;
         PatchPath = patchPath;
-        LoreText = loreText;
         Ranks = ranks;
     }
 }

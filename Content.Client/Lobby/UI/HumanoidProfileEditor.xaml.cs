@@ -3121,20 +3121,12 @@ namespace Content.Client.Lobby.UI
         
                 if (ranks.Count == 0)
                     continue;
-        
-                // Resolve lore primer text for this platoon.
-                string? loreText = null;
-                if (platoon.LorePrimer is { } primerProtoId &&
-                    _prototypeManager.TryIndex<LorePrimerPrototype>(primerProtoId, out var primerProto))
-                {
-                    loreText = primerProto.PlatoonInfo;
-                }
+    
         
                 platoonOptions.Add(new PlatoonRankOptions(
                     platoon.ID,
                     platoon.Name,
                     platoon.PlatoonPatch,
-                    loreText,
                     ranks));
             }
         
