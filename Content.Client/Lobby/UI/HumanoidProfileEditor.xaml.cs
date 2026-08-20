@@ -3095,21 +3095,21 @@ namespace Content.Client.Lobby.UI
         private PlatoonRankPreferenceJobEntry? BuildRankPreferenceJobEntry(JobPrototype job)
         {
             var platoonOptions = new List<PlatoonRankOptions>();
-
+        
             foreach (var platoon in _prototypeManager.EnumeratePrototypes<PlatoonPrototype>())
             {
                 var chevronMap = ResolveChevronMapForPlatoon(job, platoon);
                 if (chevronMap == null || chevronMap.Count == 0)
                     continue;
-
+        
                 var ranks = new List<RankOption>();
                 foreach (var (rankId, chevronDef) in chevronMap)
                 {
                     if (!_prototypeManager.TryIndex<RankPrototype>(rankId, out var rankProto))
                         continue;
-
+        
                     var (unlocked, requirementsText) = EvaluateChevronRequirements(chevronDef.Requirements);
-
+        
                     ranks.Add(new RankOption(
                         rankId,
                         rankProto.Name,
@@ -3118,13 +3118,26 @@ namespace Content.Client.Lobby.UI
                         requirementsText,
                         chevronDef.Entity));
                 }
-
+        
                 if (ranks.Count == 0)
                     continue;
-
-                platoonOptions.Add(new PlatoonRankOptions(platoon.ID, platoon.Name, ranks));
+        
+                // Resolve lore primer text for this platoon.
+                string? loreText = null;
+                if (platoon.LorePrimer is { } primerProtoId &&
+                    _prototypeManager.TryIndex<LorePrimerPrototype>(primerProtoId, out var primerProto))
+                {
+                    loreText = primerProto.PlatoonInfo;
+                }
+        
+                platoonOptions.Add(new PlatoonRankOptions(
+                    platoon.ID,
+                    platoon.Name,
+                    platoon.PlatoonPatch,
+                    loreText,
+                    ranks));
             }
-
+        
             return platoonOptions.Count > 0
                 ? new PlatoonRankPreferenceJobEntry(job.ID, GetJobDisplayName(job), platoonOptions)
                 : null;

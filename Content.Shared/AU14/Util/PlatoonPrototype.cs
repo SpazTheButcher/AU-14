@@ -84,4 +84,7 @@ public sealed partial class PlatoonPrototype : IPrototype
 
     [DataField]
     public Dictionary<ProtoId<JobPrototype>, Dictionary<ProtoId<RankPrototype>, ChevronDefinition>>? ChevronOverrides;
+
+    [DataField("platoonPatch")]
+    public ResPath? PlatoonPatch { get; private set; }
 }

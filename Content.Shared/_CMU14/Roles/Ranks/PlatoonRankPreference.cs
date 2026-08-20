@@ -1,4 +1,5 @@
 using Robust.Shared.Prototypes;
+using Robust.Shared.Utility;
 
 namespace Content.Shared._CMU14.Roles.Ranks;
 
@@ -21,19 +22,33 @@ public sealed class PlatoonRankPreferenceJobEntry
 }
 
 /// <summary>
-/// The selectable ranks for a job under one specific platoons chevron map - either that
-/// platoons override, or the job's base chevrons if the platoon has no override for it.
+/// The selectable ranks for a job under one specific platoon's chevron map - either that
+/// platoon's override, or the job's base chevrons if the platoon has no override for it.
 /// </summary>
 public sealed class PlatoonRankOptions
 {
     public string PlatoonId;
     public string PlatoonName;
+
+    /// <summary>
+    /// Optional path to the platoon patch texture shown in the tab header.
+    /// Example: /Textures/_AU14/Clothing/Patches/uscm_patch.rsi/icon.png
+    /// </summary>
+    public ResPath? PatchPath;
+
+    /// <summary>
+    /// Optional lore blurb from the platoon's LorePrimer, shown below the header.
+    /// </summary>
+    public string? LoreText;
+
     public List<RankOption> Ranks;
 
-    public PlatoonRankOptions(string platoonId, string platoonName, List<RankOption> ranks)
+    public PlatoonRankOptions(string platoonId, string platoonName, ResPath? patchPath, string? loreText, List<RankOption> ranks)
     {
         PlatoonId = platoonId;
         PlatoonName = platoonName;
+        PatchPath = patchPath;
+        LoreText = loreText;
         Ranks = ranks;
     }
 }

@@ -9,6 +9,7 @@ using Robust.Client.UserInterface.Controls;
 using Robust.Client.UserInterface.CustomControls;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
+using Content.Client.Lobby.UI;
 
 namespace Content.Client._CMU14.Roles.Ranks;
 
@@ -27,8 +28,8 @@ public sealed class PlatoonRankPreferenceWindow : DefaultWindow
         IoCManager.InjectDependencies(this);
 
         Title = Loc.GetString("cmu14-rank-preference-window-title");
-        MinSize = new Vector2(920, 320);
-        SetSize = new Vector2(920, 320);
+        MinSize = new Vector2(920, 660);
+        SetSize = new Vector2(920, 660);
 
         var root = new BoxContainer
         {
@@ -55,6 +56,7 @@ public sealed class PlatoonRankPreferenceWindow : DefaultWindow
         root.AddChild(saveButton);
 
         Contents.AddChild(root);
+        CrtLobbyTheme.ApplyWindow(this);
     }
 
     /// <summary>
@@ -101,12 +103,72 @@ public sealed class PlatoonRankPreferenceWindow : DefaultWindow
             HorizontalExpand = true,
             VerticalExpand = true,
         };
+
         var vbox = new BoxContainer
         {
             Orientation = BoxContainer.LayoutOrientation.Vertical,
             Margin = new Thickness(4),
             HorizontalExpand = true,
         };
+
+        var header = new BoxContainer
+        {
+            Orientation = BoxContainer.LayoutOrientation.Horizontal,
+            Margin = new Thickness(0, 0, 0, 4),
+            HorizontalExpand = true,
+        };
+
+        if (platoonOptions.PatchPath is { } patchPath)
+        {
+            try
+            {
+                var tex = _resourceCache.GetResource<TextureResource>(patchPath);
+                header.AddChild(new TextureRect
+                {
+                    Texture = tex.Texture,
+                    Stretch = TextureRect.StretchMode.KeepAspectCentered,
+                    TextureScale = new Vector2(2f, 2f),
+                    VerticalAlignment = VAlignment.Center,
+                    Margin = new Thickness(0, 0, 8, 0),
+                });
+            }
+            catch
+            {
+                // Patch texture missing - degrade gracefully, name label still renders.
+            }
+        }
+
+        header.AddChild(new Label
+        {
+            Text = platoonOptions.PlatoonName,
+            VerticalAlignment = VAlignment.Center,
+            StyleClasses = { "LabelHeading" },
+        });
+
+        vbox.AddChild(header);
+
+        if (!string.IsNullOrWhiteSpace(platoonOptions.LoreText))
+        {
+            var loreLabel = new RichTextLabel
+            {
+                HorizontalExpand = true,
+                Margin = new Thickness(0, 0, 0, 8),
+            };
+            loreLabel.SetMessage(FormattedMessage.FromUnformatted(platoonOptions.LoreText));
+            vbox.AddChild(loreLabel);
+        }
+
+        vbox.AddChild(new PanelContainer
+        {
+            HorizontalExpand = true,
+            Margin = new Thickness(0, 0, 0, 6),
+            PanelOverride = new StyleBoxFlat
+            {
+                BackgroundColor = Color.FromHex("#444444"),
+                ContentMarginTopOverride = 1,
+                ContentMarginBottomOverride = 1,
+            },
+        });
 
         var toggles = new List<(string? RankId, Button Button)>();
 
@@ -125,17 +187,29 @@ public sealed class PlatoonRankPreferenceWindow : DefaultWindow
         foreach (var rank in platoonOptions.Ranks)
         {
             var button = MakeSelectButton();
-            button.Disabled = !rank.Unlocked;
-            button.OnPressed += _ => SelectRank(rank.RankId);
+            if (!rank.Unlocked)
+            {
+                button.Disabled = true;
+                button.Modulate = Color.FromHex("#888888");
+            }
+            else
+            {
+                button.OnPressed += _ => SelectRank(rank.RankId);
+            }
             toggles.Add((rank.RankId, button));
 
             vbox.AddChild(BuildRow(rank.ChevronEntity, rank.RankName, rank.Paygrade, rank.Unlocked, rank.RequirementsText, button));
         }
 
-        SelectRank(toggles.Any(t => t.RankId == currentPreference) ? currentPreference : null);
+        var validPreference = toggles
+            .FirstOrDefault(t => t.RankId == currentPreference && (t.RankId == null || platoonOptions.Ranks.FirstOrDefault(r => r.RankId == currentPreference)?.Unlocked == true));
+
+        SelectRank(validPreference != default ? currentPreference : null);
 
         scroll.AddChild(vbox);
         _tabs.AddChild(scroll);
+
+        // Keep text title as tooltip/accessibility fallback; the header inside the tab is the real label.
         _tabs.SetTabTitle(_tabs.ChildCount - 1, platoonOptions.PlatoonName);
     }
 
@@ -174,14 +248,6 @@ public sealed class PlatoonRankPreferenceWindow : DefaultWindow
             FontColorOverride = unlocked ? null : Color.Gray
         });
 
-        row.AddChild(new Label
-        {
-            Text = paygrade ?? string.Empty,
-            MinWidth = 60,
-            VerticalAlignment = VAlignment.Center,
-            FontColorOverride = unlocked ? null : Color.Gray
-        });
-
         if (!unlocked && !string.IsNullOrEmpty(requirementsText))
         {
             row.AddChild(new Label
@@ -192,6 +258,14 @@ public sealed class PlatoonRankPreferenceWindow : DefaultWindow
                 FontColorOverride = Color.OrangeRed
             });
         }
+
+        row.AddChild(new Label
+        {
+            Text = paygrade ?? string.Empty,
+            MinWidth = 60,
+            VerticalAlignment = VAlignment.Center,
+            FontColorOverride = unlocked ? null : Color.Gray
+        });
 
         row.AddChild(selectButton);
 

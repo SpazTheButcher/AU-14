@@ -1069,6 +1069,7 @@ namespace Content.Shared.Preferences
             if (HideMetaInformation != other.HideMetaInformation) return false;
             if (!_threatPreferences.SetEquals(other._threatPreferences)) return false;
             if (!GamemodeSetPreferencesEqual(_gamemodeThreatPreferences, other._gamemodeThreatPreferences)) return false;
+            if (!RankPreferencesEqual(RankPreferences, other.RankPreferences)) return false;
             return Appearance.MemberwiseEquals(other.Appearance);
         }
 
@@ -1613,6 +1614,30 @@ namespace Content.Shared.Preferences
         public HumanoidCharacterProfile Clone()
         {
             return new HumanoidCharacterProfile(this);
+        }
+
+        private static bool RankPreferencesEqual(
+            Dictionary<string, Dictionary<string, string?>> left,
+            Dictionary<string, Dictionary<string, string?>> right)
+        {
+            if (left.Count != right.Count)
+                return false;
+
+            foreach (var (jobId, leftPlatoons) in left)
+            {
+                if (!right.TryGetValue(jobId, out var rightPlatoons) ||
+                    leftPlatoons.Count != rightPlatoons.Count)
+                    return false;
+
+                foreach (var (platoonId, leftRank) in leftPlatoons)
+                {
+                    if (!rightPlatoons.TryGetValue(platoonId, out var rightRank) ||
+                        leftRank != rightRank)
+                        return false;
+                }
+            }
+
+            return true;
         }
     }
 }

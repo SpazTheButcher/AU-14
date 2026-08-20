@@ -5,6 +5,7 @@
   Allegiance: UA
   reqlist: USCMCargoCatalog
   vendorSet: USCM
+  platoonPatch: /Textures/_AU14/Clothing/Patches/uscm_patch.rsi/icon.png
   #platoonflag:  uaflag
   languages:
     - English
@@ -27,6 +28,7 @@
     - Brazilian
   reqlist: LACNCargoCatalog
   vendorSet: LACN
+  platoonPatch: /Textures/_AU14/Clothing/Patches/brazilunit_patch.rsi/icon.png
   chevronOverrides:
     AU14JobPlatCoBase:
       AU14RankLACNLieutenantCommander:
@@ -58,6 +60,7 @@
     - Spanish
   reqlist: UPPCargoCatalog
   vendorSet: UPP
+  platoonPatch: /Textures/_AU14/Clothing/Patches/naval_patch.rsi/icon.png
   chevronOverrides:
     AU14JobPlatCoBase:
       UPP_JuniorColonel:
@@ -95,6 +98,7 @@
   lorePrimer: AU14PrimerPlatoonWEYU
   reqlist: WEYUCargoCatalog
   vendorSet: WEYU
+  platoonPatch: /Textures/_AU14/Clothing/Patches/wy_white_patch.rsi/icon.png
   chevronOverrides:
     AU14JobPlatCoBase:
       AU14RankWeYuSiteDirector:
@@ -135,6 +139,7 @@
     - English
   reqlist: CMBCIUCargoCatalog
   vendorSet: CMBCIU
+  platoonPatch: /Textures/_AU14/Clothing/Patches/ua_patch.rsi/icon.png
   chevronOverrides:
     AU14JobPlatCoBase:
       AU14RankCMBMarshal:
@@ -171,6 +176,7 @@
     - English
   reqlist: HAZOPSCargoCatalog
   vendorSet: HAZOPS
+  platoonPatch: /Textures/_AU14/Clothing/Patches/hazops_patch.rsi/icon.png
   possibleships:
       - USSBushRedux
   CompatibleDropships:
@@ -189,6 +195,7 @@
   languages:
     - English
   vendorSet: ProdigySF
+  platoonPatch: /Textures/_AU14/Clothing/Patches/merc_red_patch.rsi/icon.png
   chevronOverrides:
     AU14JobPlatCoBase:
       AU14RankPrDRegionDirector:
@@ -221,6 +228,7 @@
     - English
     - TacticalSignLanguage
   vendorSet: VAIPO
+  platoonPatch: /Textures/_AU14/Clothing/Patches/merc_patch.rsi/icon.png
   chevronOverrides:
     AU14JobPlatCoBase:
       VAI_VASCGroupCommander:
@@ -246,6 +254,7 @@
     - English
   reqlist: RMCCargoCatalog
   vendorSet: RMC
+  platoonPatch: /Textures/_AU14/Clothing/Patches/rmc_patch.rsi/icon.png
   chevronOverrides:
     AU14JobPlatCoBase:
       AU14RankRMCLieutenantColonel:
