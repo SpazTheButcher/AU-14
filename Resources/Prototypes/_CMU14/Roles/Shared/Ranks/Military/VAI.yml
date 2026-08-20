@@ -34,3 +34,9 @@
   name: VASC Synthetic
   prefix: VASC SYN
   paygrade: VASCS
+
+- type: rank
+  id: VAI_VASCGroupCommander
+  name: VASC Group Commander
+  prefix: VASC GC
+  paygrade: VASGC

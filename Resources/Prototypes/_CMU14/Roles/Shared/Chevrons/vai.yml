@@ -103,3 +103,19 @@
   - type: RankChanger
     rank: VAI_Synthetic
     override: true
+
+- type: entity
+  parent: AU14ChevronWeYuBase
+  id: CMU14ChevronVASCGroupCommander
+  name: vasc group commander chevron
+  components:
+  - type: Sprite
+    sprite: _AU14/Clothing/Accessory/Chevrons/universal.rsi
+    state: ranks_flagofficer
+  - type: UniformAccessory
+    playerSprite:
+      sprite: _AU14/Clothing/Accessory/Chevrons/universal.rsi
+      state: equipped-ranks_flagofficer
+  - type: RankChanger
+    rank: VAI_VASCGroupCommander
+    override: true

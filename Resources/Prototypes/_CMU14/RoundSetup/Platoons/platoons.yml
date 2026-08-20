@@ -29,12 +29,6 @@
   vendorSet: LACN
   chevronOverrides:
     AU14JobPlatCoBase:
-      AU14RankLACNCommander:
-        entity: AU14ChevronLACNCommander
-        requirements: 
-        - !type:RoleTimeRequirement
-          role: AU14JobGOVFORPlatCo
-          time: 360000 # 100 hours
       AU14RankLACNLieutenantCommander:
         entity: AU14ChevronLACNLieutenantCommander
         requirements: 
@@ -66,12 +60,6 @@
   vendorSet: UPP
   chevronOverrides:
     AU14JobPlatCoBase:
-      UPP_Colonel:
-        entity: AU14ChevronUPPNIColonel
-        requirements: 
-        - !type:RoleTimeRequirement
-          role: AU14JobGOVFORPlatCo
-          time: 360000 # 100 hours
       UPP_JuniorColonel:
         entity: AU14ChevronUPPNIJuniorColonel
         requirements: 
