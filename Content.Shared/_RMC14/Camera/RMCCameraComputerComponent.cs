@@ -11,19 +11,19 @@ public sealed partial class RMCCameraComputerComponent : Component
     [DataField(required: true), AutoNetworkedField]
     public HashSet<EntProtoId> ProtoIds = new ();
 
-    [DataField, AutoNetworkedField]
+    [AutoNetworkedField]
     public EntityUid? CurrentCamera;
 
-    [DataField, AutoNetworkedField]
+    [AutoNetworkedField]
     public ProtoId<CameraNetworkPrototype>? ActiveNetwork;
 
-    [DataField, AutoNetworkedField]
+    [AutoNetworkedField]
     public List<NetEntity> CameraIds = new();
 
-    [DataField, AutoNetworkedField]
+    [AutoNetworkedField]
     public List<string> CameraNames = new();
 
-    [DataField, AutoNetworkedField]
+    [AutoNetworkedField]
     public List<EntityUid> Watchers = new();
 
     [DataField, AutoNetworkedField]

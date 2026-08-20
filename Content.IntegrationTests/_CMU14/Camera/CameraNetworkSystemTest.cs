@@ -1714,6 +1714,21 @@ public sealed class CameraNetworkSystemTest
           name: cmu-test-camera-network-b
           configurable: false
 
+        # Legacy RMC IDs are entity-prototype references. These abstract
+        # placeholders intentionally share IDs with the logical test networks.
+        - type: entity
+          abstract: true
+          id: CMUTestCameraNetworkA
+
+        - type: entity
+          abstract: true
+          id: CMUTestCameraNetworkB
+
+        # Exists as an entity ID but deliberately has no matching camera network.
+        - type: entity
+          abstract: true
+          id: CMUTestUnknownCameraNetwork
+
         - type: gameMap
           id: CMUTestCameraZMap
           mapName: CMU Test Camera Z Map
@@ -1922,7 +1937,7 @@ public sealed class CameraNetworkSystemTest
           components:
           - type: AccessReader
             access:
-            - [CMUAccessYautjaSecure]
+            - [Engineering]
 
         - type: entity
           id: CMUTestRmcShipCamera
@@ -4510,6 +4525,9 @@ public sealed class CameraNetworkSystemTest
 
     private static async Task LoadPrototypes(RobustIntegrationTest.IntegrationInstance server)
     {
+        if (server.ProtoMan.HasIndex<CameraNetworkPrototype>(NetworkA))
+            return;
+
         var changed = new Dictionary<Type, HashSet<string>>();
         server.ProtoMan.LoadString(Prototypes, changed: changed);
         await server.WaitPost(() => server.ProtoMan.ReloadPrototypes(changed));

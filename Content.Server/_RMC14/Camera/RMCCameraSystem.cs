@@ -155,10 +155,11 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
     {
         return !TerminatingOrDeleted(camera)
                && !Paused(camera)
-               && computer.Comp.CameraIds.Contains(GetNetEntity(camera))
                && _cameraNetworks.CanAccess(computer.Owner, camera)
                && TryComp(camera, out CameraNetworkMemberComponent? member)
                && (member.SourceKinds & CameraSourceKinds.Rmc) != CameraSourceKinds.None
+               && computer.Comp.ActiveNetwork is { } selectedNetwork
+               && member.Networks.Contains(selectedNetwork)
                && (!TryComp(camera, out SurveillanceCameraComponent? surveillance) || surveillance.Active);
     }
 

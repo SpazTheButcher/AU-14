@@ -135,8 +135,6 @@ public sealed class CameraNetworkPrototypeTest
                 "RMCTelevision",
                 "RMCTelevisionWallMount",
                 "RMCCameraBroadcasting",
-                "CMUMobYautjaHellhound",
-                "CMUYautjaHoundObservationPadInternalCamera",
             })
             {
                 AssertNoCameraNetworkComponents(prototypes, factory, id);
@@ -253,7 +251,7 @@ public sealed class CameraNetworkPrototypeTest
     }
 
     [Test]
-    public async Task GenericStationCameraAndMonitorPrototypesAreDisabled()
+    public async Task GenericStationCameraAndMonitorPrototypesAreNotRmcSources()
     {
         var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
         try
@@ -261,7 +259,7 @@ public sealed class CameraNetworkPrototypeTest
             await server.WaitAssertion(() =>
             {
                 var prototypes = server.ResolveDependency<IPrototypeManager>();
-                var disabled = new[]
+                var generic = new[]
                 {
                     "SurveillanceCameraEngineering",
                     "SurveillanceCameraSecurity",
@@ -280,10 +278,18 @@ public sealed class CameraNetworkPrototypeTest
                     "PonderingOrbWizard",
                 };
 
-                foreach (var id in disabled)
+                foreach (var id in generic)
                 {
-                    if (prototypes.HasIndex<EntityPrototype>(id))
-                        Assert.That(prototypes.Index<EntityPrototype>(id).Abstract, Is.True, id);
+                    if (!prototypes.TryIndex<EntityPrototype>(id, out var prototype))
+                        continue;
+
+                    Assert.That(prototype.TryComp<RMCCameraComputerComponent>(out _, server.EntMan.ComponentFactory),
+                        Is.False,
+                        id);
+                    if (prototype.TryComp<CameraNetworkMemberComponent>(out var member, server.EntMan.ComponentFactory))
+                        Assert.That(member!.SourceKinds & CameraSourceKinds.Rmc, Is.EqualTo(CameraSourceKinds.None), id);
+                    if (prototype.TryComp<CameraNetworkReceiverComponent>(out var receiver, server.EntMan.ComponentFactory))
+                        Assert.That(receiver!.SupportedSources & CameraSourceKinds.Rmc, Is.EqualTo(CameraSourceKinds.None), id);
                 }
             });
         }
@@ -369,8 +375,6 @@ public sealed class CameraNetworkPrototypeTest
                     "RMCTelevision",
                     "RMCTelevisionWallMount",
                     "RMCCameraBroadcasting",
-                    "CMUMobYautjaHellhound",
-                    "CMUYautjaHoundObservationPadInternalCamera",
                 })
                 {
                     var prototype = prototypes.Index<EntityPrototype>(id);
