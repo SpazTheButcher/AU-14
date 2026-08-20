@@ -27,6 +27,23 @@
     - Brazilian
   reqlist: LACNCargoCatalog
   vendorSet: LACN
+  chevronOverrides:
+    AU14JobPlatCoBase:
+      AU14RankLACNCommander:
+        entity: AU14ChevronLACNCommander
+        requirements: 
+        - !type:RoleTimeRequirement
+          role: AU14JobGOVFORPlatCo
+          time: 360000 # 100 hours
+      AU14RankLACNLieutenantCommander:
+        entity: AU14ChevronLACNLieutenantCommander
+        requirements: 
+        - !type:RoleTimeRequirement
+          role: AU14JobGOVFORPlatCo
+          time: 180000 # 50 hours
+      AU14RankLACNLieutenant:
+        entity: AU14ChevronLACNLieutenant
+        requirements: []
   possibleships:
     - USSBushRedux
   #platoonflag: uaflag
@@ -47,6 +64,23 @@
     - Spanish
   reqlist: UPPCargoCatalog
   vendorSet: UPP
+  chevronOverrides:
+    AU14JobPlatCoBase:
+      UPP_Colonel:
+        entity: AU14ChevronUPPNIColonel
+        requirements: 
+        - !type:RoleTimeRequirement
+          role: AU14JobGOVFORPlatCo
+          time: 360000 # 100 hours
+      UPP_JuniorColonel:
+        entity: AU14ChevronUPPNIJuniorColonel
+        requirements: 
+        - !type:RoleTimeRequirement
+          role: AU14JobGOVFORPlatCo
+          time: 180000 # 50 hours
+      UPP_Major:
+        entity: AU14ChevronUPPNIMajor
+        requirements: []
   possibleships:
       - USSBushRedux
   # jobClassOverride:
@@ -73,6 +107,11 @@
   lorePrimer: AU14PrimerPlatoonWEYU
   reqlist: WEYUCargoCatalog
   vendorSet: WEYU
+  chevronOverrides:
+    AU14JobPlatCoBase:
+      AU14RankWeYuSiteDirector:
+        entity: AU14ChevronWeYuSiteDirector
+        requirements: []
   languages:
     - English
     - Japanese
@@ -162,6 +201,17 @@
   languages:
     - English
   vendorSet: ProdigySF
+  chevronOverrides:
+    AU14JobPlatCoBase:
+      AU14RankPrDRegionDirector:
+        entity: AU14ChevronPrDRegionDirector
+        requirements: 
+        - !type:RoleTimeRequirement
+          role: AU14JobGOVFORPlatCo
+          time: 180000 # 50 hours
+      AU14RankPrDOperationsDirector:
+        entity: AU14ChevronPrDOperationsDirector
+        requirements: []
   #platoonflag:  uaflag
   CompatibleDropships:
   - /Maps/_CMU14/Shuttles/alamo.yml
@@ -183,6 +233,11 @@
     - English
     - TacticalSignLanguage
   vendorSet: VAIPO
+  chevronOverrides:
+    AU14JobPlatCoBase:
+      VAI_VASCGroupCommander:
+        entity: CMU14ChevronVASCGroupCommander
+        requirements: []
   CompatibleDropships:
   - /Maps/_CMU14/Shuttles/alamo.yml
   - /Maps/_CMU14/Shuttles/lexingtonsmall.yml
@@ -203,6 +258,17 @@
     - English
   reqlist: RMCCargoCatalog
   vendorSet: RMC
+  chevronOverrides:
+    AU14JobPlatCoBase:
+      AU14RankRMCLieutenantColonel:
+        entity: AU14ChevronRMCLieutenantColonel
+        requirements: 
+        - !type:RoleTimeRequirement
+          role: AU14JobGOVFORPlatCo
+          time: 180000 # 50 hours
+      AU14RankRMCMajor:
+        entity: AU14ChevronRMCMajor
+        requirements: []
   # jobClassOverride:
   #   SquadRifleman: AU14JobGOVFORSquadRiflemanRMC
   #   PlatCo: AU14JobGOVFORPlatCoRMC
