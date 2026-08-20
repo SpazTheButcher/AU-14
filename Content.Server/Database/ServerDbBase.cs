@@ -345,6 +345,7 @@ namespace Content.Server.Database
                 profile.ShortExamine,
                 profile.FullDescription,
                 profile.MedicalRecord,
+                null,
                 profile.CriminalRecord,
                 profile.GeneralRecord,
                 profile.Height,

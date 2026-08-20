@@ -1,3 +1,4 @@
+using System.Linq;
 using Content.Server.Players.PlayTimeTracking;
 using Content.Shared.GameTicking;
 using Content.Shared.Roles;
@@ -10,8 +11,9 @@ using Content.Shared.Mind;
 using Content.Server.Ghost.Roles.Components;
 using Robust.Shared.Utility;
 using Robust.Server.Player;
-using System.Linq;
 using Robust.Shared.Player;
+using Content.Shared.AU14.util;
+using Content.Shared.Preferences;
 
 namespace Content.Server._AU14.Marines.Roles.Chevrons;
 
@@ -25,105 +27,139 @@ public sealed partial class ChevronSystem : EntitySystem
     [Dependency] private IPlayerManager _playerManager = default!;
 
     public override void Initialize()
-        {
-            base.Initialize();
-            SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawnComplete);
-            SubscribeLocalEvent<PlayerAttachedEvent>(OnPlayerAttached);
-        }
-
-        private void OnPlayerAttached(PlayerAttachedEvent ev)
-        {
-            if (HasComp<ChevronSpawnedComponent>(ev.Entity)) // already spawned -> we dont spawn another one
-                return;
-            // Only care about entities with a ghost role job
-            if (!TryComp<GhostRoleComponent>(ev.Entity, out var ghostRole) || ghostRole.JobProto == null)
-                return;
-
-            if (!_prototypes.TryIndex<JobPrototype>(ghostRole.JobProto, out var jobPrototype))
-                return;
-
-            if (jobPrototype.Chevrons == null || jobPrototype.Chevrons.Count == 0)
-                return;
-
-            if (!_tracking.TryGetTrackerTimes(ev.Player, out var playTimes))
-            {
-                Log.Warning($"Playtimes not ready for ghost role takeover by {ev.Player}");
-                playTimes ??= new Dictionary<string, TimeSpan>();
-            }
-
-            foreach (var (_, chevronDef) in jobPrototype.Chevrons)
-            {
-                var failed = false;
-
-                if (chevronDef.Requirements != null)
-                {
-                    foreach (var req in chevronDef.Requirements)
-                    {
-                        if (!req.Check(_entityManager, _prototypes, null, playTimes, out FormattedMessage? _))
-                        {
-                            failed = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!failed)
-                {
-                    SpawnChevron(chevronDef, ev.Entity);
-                    break;
-                }
-            }
-        }
-
-        private void OnPlayerSpawnComplete(PlayerSpawnCompleteEvent ev)
-        {
-            if (ev.JobId == null || ev.Player == null)
-                return;
-
-            if (!_prototypes.TryIndex<JobPrototype>(ev.JobId, out var jobPrototype))
-                return;
-
-            if (jobPrototype.Chevrons == null || jobPrototype.Chevrons.Count == 0)
-                return;
-
-            if (!_tracking.TryGetTrackerTimes(ev.Player, out var playTimes))
-            {
-                Log.Error($"Playtimes weren't ready yet for {ev.Player} on roundstart!");
-                playTimes ??= new Dictionary<string, TimeSpan>();
-            }
-
-            foreach (var (_, chevronDef) in jobPrototype.Chevrons)
-            {
-                var failed = false;
-
-                if (chevronDef.Requirements != null)
-                {
-                    foreach (var req in chevronDef.Requirements)
-                    {
-                        if (!req.Check(_entityManager, _prototypes, ev.Profile, playTimes, out FormattedMessage? _))
-                        {
-                            failed = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!failed)
-                {
-                    SpawnChevron(chevronDef, ev.Mob);
-                    break;
-                }
-            }
-        }
-
-        private void SpawnChevron(ChevronDefinition chevronDef, EntityUid mob)
-            {
-                var coords = _entityManager.GetComponent<TransformComponent>(mob).Coordinates;
-                var chevron = _entityManager.SpawnEntity(chevronDef.Entity, coords);
-
-                if (!_uniformAccessory.TryInsertToValidSlot(chevron, mob))
-                    _hands.TryPickupAnyHand(mob, chevron, false);
-
-                EnsureComp<ChevronSpawnedComponent>(mob);
-            }
+    {
+        base.Initialize();
+        SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawnComplete);
+        SubscribeLocalEvent<PlayerAttachedEvent>(OnPlayerAttached);
     }
+
+    private void OnPlayerAttached(PlayerAttachedEvent ev)
+    {
+        if (HasComp<ChevronSpawnedComponent>(ev.Entity))
+            return;
+
+        if (!TryComp<GhostRoleComponent>(ev.Entity, out var ghostRole) || ghostRole.JobProto == null)
+            return;
+
+        if (!_prototypes.TryIndex<JobPrototype>(ghostRole.JobProto, out var jobPrototype))
+            return;
+
+        if (!_tracking.TryGetTrackerTimes(ev.Player, out var playTimes))
+        {
+            Log.Warning($"Playtimes not ready for ghost role takeover by {ev.Player}");
+            playTimes ??= new Dictionary<string, TimeSpan>();
+        }
+
+        var chevrons = ResolveChevronMap(jobPrototype, null);
+        if (chevrons == null || chevrons.Count == 0)
+            return;
+
+        TrySpawnChevron(chevrons, ev.Entity, null, playTimes);
+    }
+
+    private void OnPlayerSpawnComplete(PlayerSpawnCompleteEvent ev)
+    {
+        if (ev.JobId == null || ev.Player == null)
+            return;
+
+        if (!_prototypes.TryIndex<JobPrototype>(ev.JobId, out var jobPrototype))
+            return;
+
+        if (!_tracking.TryGetTrackerTimes(ev.Player, out var playTimes))
+        {
+            Log.Error($"Playtimes weren't ready yet for {ev.Player} on roundstart!");
+            playTimes ??= new Dictionary<string, TimeSpan>();
+        }
+
+        var chevrons = ResolveChevronMap(jobPrototype, ev.Profile);
+        if (chevrons == null || chevrons.Count == 0)
+            return;
+
+        TrySpawnChevron(chevrons, ev.Mob, ev.Profile, playTimes);
+    }
+
+    /// <summary>
+    /// Returns the chevron map to use for a given job, checking platoon overrides first
+    /// (only possible when a character profile with a chosen platoon is available).
+    /// </summary>
+    private Dictionary<string, ChevronDefinition>? ResolveChevronMap(JobPrototype job, HumanoidCharacterProfile? profile)
+    {
+        if (profile?.Platoon is { } platoonId &&
+            _prototypes.TryIndex(platoonId, out var platoon) &&
+            platoon.ChevronOverrides != null)
+        {
+            foreach (var (overrideJob, overrideChevrons) in platoon.ChevronOverrides)
+            {
+                if (JobInheritsFrom(job.ID, overrideJob.Id))
+                {
+                    return overrideChevrons.ToDictionary(
+                        kvp => kvp.Key.Id,
+                        kvp => kvp.Value);
+                }
+            }
+        }
+
+        return job.Chevrons;
+    }
+
+    private bool JobInheritsFrom(string jobId, string ancestorId)
+    {
+        if (jobId == ancestorId)
+            return true;
+
+        if (!_prototypes.TryIndex<JobPrototype>(jobId, out var job))
+            return false;
+
+        if (job.Parents == null)
+            return false;
+
+        foreach (var parent in job.Parents)
+        {
+            if (JobInheritsFrom(parent, ancestorId))
+                return true;
+        }
+
+        return false;
+    }
+
+    private void TrySpawnChevron(
+        Dictionary<string, ChevronDefinition> chevrons,
+        EntityUid mob,
+        HumanoidCharacterProfile? profile,
+        Dictionary<string, TimeSpan> playTimes)
+    {
+        foreach (var (_, chevronDef) in chevrons)
+        {
+            var failed = false;
+
+            if (chevronDef.Requirements != null)
+            {
+                foreach (var req in chevronDef.Requirements)
+                {
+                    if (!req.Check(_entityManager, _prototypes, profile, playTimes, out FormattedMessage? _))
+                    {
+                        failed = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!failed)
+            {
+                SpawnChevron(chevronDef, mob);
+                return;
+            }
+        }
+    }
+
+    private void SpawnChevron(ChevronDefinition chevronDef, EntityUid mob)
+    {
+        var coords = _entityManager.GetComponent<TransformComponent>(mob).Coordinates;
+        var chevron = _entityManager.SpawnEntity(chevronDef.Entity, coords);
+
+        if (!_uniformAccessory.TryInsertToValidSlot(chevron, mob))
+            _hands.TryPickupAnyHand(mob, chevron, false);
+
+        EnsureComp<ChevronSpawnedComponent>(mob);
+    }
+}

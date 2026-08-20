@@ -108,6 +108,11 @@
     - English
   reqlist: CMBCIUCargoCatalog
   vendorSet: CMBCIU
+  chevronOverrides:
+    AU14JobPlatCoBase:
+      AU14RankCMBMarshal:
+        entity: AU14ChevronCMBMarshal
+        requirements: []
   # jobClassOverride:
   #   SquadRifleman: AU14JobGOVFORSquadRiflemanCMBCIU
   #   PlatCo: AU14JobGOVFORPlatCoCMBCIU
