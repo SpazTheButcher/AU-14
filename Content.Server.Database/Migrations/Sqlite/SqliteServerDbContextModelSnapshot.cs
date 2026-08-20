@@ -1166,6 +1166,10 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .HasColumnType("TEXT")
                         .HasColumnName("platoon");
 
+                    b.Property<string>("RankPreferences")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("rank_preferences");
+
                     b.Property<bool>("PlaytimePerks")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
