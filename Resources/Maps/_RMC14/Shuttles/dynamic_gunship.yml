@@ -475,23 +475,6 @@ entities:
           maxDistance: 30
           volume: 2
         path: /Audio/_RMC14/Machines/Shuttle/dropship_launch_alarm.ogg
-    - type: DropshipIntegrity
-      activeMalfunctions: []
-      proximityHazards: []
-      malfunctionThresholds:
-      - 0.6
-      - 0.4
-      - 0.25
-      repairSound: !type:SoundPathSpecifier
-        path: /Audio/Items/welder.ogg
-      impactSound: !type:SoundPathSpecifier
-        params:
-          volume: -2
-        path: /Audio/_RMC14/Effects/metal_crash.ogg
-      proximityAlarmSound: !type:SoundPathSpecifier
-        path: /Audio/_CMU14/Dropship/ssmasteralarm.wav
-      lowIntegrityAlarmSound: !type:SoundPathSpecifier
-        path: /Audio/_CMU14/Dropship/726ppalm.wav
 - proto: AU14AttachmentTwoPointSling
   entities:
   - uid: 4

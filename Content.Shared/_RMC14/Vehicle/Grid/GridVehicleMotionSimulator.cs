@@ -52,6 +52,23 @@ public static class GridVehicleMotionSimulator
     }
 
     /// <summary>
+    /// Returns whether a movement step carries a vehicle away from an obstacle
+    /// that already overlaps its starting pose. This is used only to let an
+    /// embedded vehicle back out; movement further into the obstacle remains
+    /// blocked.
+    /// </summary>
+    public static bool IsMovingAwayFromObstacle(
+        Vector2 moveDelta,
+        Vector2 vehicleCenter,
+        Vector2 obstacleCenter)
+    {
+        if (moveDelta.LengthSquared() <= 0.000001f)
+            return false;
+
+        return Vector2.Dot(moveDelta, obstacleCenter - vehicleCenter) < -0.000001f;
+    }
+
+    /// <summary>
     /// Returns whether an obstacle lies against the chassis' forward face.
     /// Normalized local coordinates partition corner contacts consistently for
     /// rectangular vehicles, including while the chassis is freely rotated.

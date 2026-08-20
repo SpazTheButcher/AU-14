@@ -81,6 +81,8 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
     public override void Initialize()
     {
         SubscribeLocalEvent<DropshipComponent, ComponentStartup>(OnDropshipStartup);
+        SubscribeLocalEvent<GunshipControlsComponent, ComponentStartup>(OnGunshipControlsStartup);
+        SubscribeLocalEvent<GunshipPilotSeatComponent, ComponentStartup>(OnGunshipPilotSeatStartup);
         SubscribeLocalEvent<StationMemberComponent, ComponentStartup>(OnStationMemberStartup);
         SubscribeLocalEvent<DropshipHullComponent, ProjectileHitTargetEvent>(OnProjectileHit);
         SubscribeLocalEvent<DropshipHullComponent, BeforeDamageChangedEvent>(OnBeforeHullDamageChanged);
@@ -95,21 +97,62 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
     private void OnDropshipStartup(Entity<DropshipComponent> ent, ref ComponentStartup args)
     {
         // Navigation computers can cause DropshipComponent to be ensured on their
-        // parent grid. Some maps place those computers directly on a station grid;
-        // only real shuttle grids should receive hull integrity or crash behavior.
-        if (!IsDropshipIntegrityGrid(ent.Owner))
+        // parent grid. Only gunships that explicitly opt in through their pilot
+        // seat or controls console should receive hull integrity and crash behavior.
+        if (!IsDropshipIntegrityGrid(ent.Owner) || !HasGunshipControls(ent.Owner))
         {
             RemoveDropshipIntegrity(ent.Owner);
             return;
         }
 
-        var integrity = EnsureComp<DropshipIntegrityComponent>(ent);
+        InitializeDropshipIntegrity(ent.Owner);
+    }
+
+    private void OnGunshipControlsStartup(Entity<GunshipControlsComponent> ent, ref ComponentStartup args)
+    {
+        TryInitializeControlledGunship(ent.Owner);
+    }
+
+    private void OnGunshipPilotSeatStartup(Entity<GunshipPilotSeatComponent> ent, ref ComponentStartup args)
+    {
+        TryInitializeControlledGunship(ent.Owner);
+    }
+
+    private void TryInitializeControlledGunship(EntityUid controls)
+    {
+        if (Transform(controls).GridUid is not { } grid ||
+            !HasComp<DropshipComponent>(grid) ||
+            !IsDropshipIntegrityGrid(grid))
+        {
+            return;
+        }
+
+        InitializeDropshipIntegrity(grid);
+    }
+
+    private void InitializeDropshipIntegrity(EntityUid grid)
+    {
+        var integrity = EnsureComp<DropshipIntegrityComponent>(grid);
         integrity.Integrity = Math.Clamp(integrity.Integrity, 0f, integrity.MaxIntegrity);
-        integrity.Wrecked |= ent.Comp.Crashed;
-        Dirty(ent.Owner, integrity);
-        MarkInitialHull(ent.Owner);
+        if (TryComp(grid, out DropshipComponent? dropship))
+            integrity.Wrecked |= dropship.Crashed;
+
+        Dirty(grid, integrity);
+        MarkInitialHull(grid);
         integrity.HullInitializationScansRemaining = HullInitializationFollowupScans;
         integrity.NextHullInitializationScan = _timing.CurTime + HullInitializationScanInterval;
+    }
+
+    private bool HasGunshipControls(EntityUid grid)
+    {
+        var children = Transform(grid).ChildEnumerator;
+        while (children.MoveNext(out var child))
+        {
+            if (HasComp<GunshipControlsComponent>(child) || HasComp<GunshipPilotSeatComponent>(child))
+                return true;
+        }
+
+        return false;
     }
 
     private void OnStationMemberStartup(Entity<StationMemberComponent> ent, ref ComponentStartup args)

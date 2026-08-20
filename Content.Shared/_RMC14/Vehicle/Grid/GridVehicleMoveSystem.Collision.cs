@@ -69,7 +69,9 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         bool applyEffects,
         bool debug = true,
         HashSet<EntityUid>? blockers = null,
-        HashSet<EntityUid>? ignoredEntities = null)
+        HashSet<EntityUid>? ignoredEntities = null,
+        HashSet<EntityUid>? escapeBlockers = null,
+        Vector2? escapeDirection = null)
     {
         if (!physicsQ.TryComp(uid, out var body) || !fixtureQ.TryComp(uid, out var fixtures))
             return true;
@@ -164,6 +166,20 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
                     operatorUid,
                     isSmashingNow,
                     out var candidate))
+            {
+                continue;
+            }
+
+            // A prediction correction or a high-speed impact can occasionally
+            // leave the chassis already overlapping a blocker. Permit only a
+            // step that moves away from blockers present at the starting pose;
+            // this cannot be used to continue driving through the obstruction.
+            if (escapeDirection is { } escapeDelta &&
+                escapeBlockers?.Contains(candidate.Entity) == true &&
+                GridVehicleMotionSimulator.IsMovingAwayFromObstacle(
+                    escapeDelta,
+                    aabb.Center,
+                    candidate.Aabb.Center))
             {
                 continue;
             }

@@ -997,12 +997,49 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         var probeStep = Math.Clamp(mover.MovementProbeStep, 0.02f, 0.5f);
         var steps = Math.Max(1, (int) MathF.Ceiling(distance / probeStep));
         var lastGood = start;
+        HashSet<EntityUid>? escapeBlockers = null;
 
         for (var i = 1; i <= steps; i++)
         {
             var candidate = start + delta * (i / (float) steps);
-            if (!CanOccupyTransform(uid, mover, grid, candidate, rotation, Clearance, applyEffects: false, debug: debugProbes, ignoredEntities: ignoredEntities))
+            if (!CanOccupyTransform(
+                    uid,
+                    mover,
+                    grid,
+                    candidate,
+                    rotation,
+                    Clearance,
+                    applyEffects: false,
+                    debug: debugProbes,
+                    ignoredEntities: ignoredEntities,
+                    escapeBlockers: escapeBlockers,
+                    escapeDirection: delta))
             {
+                escapeBlockers ??= FindInitialMovementBlockers(
+                    uid,
+                    mover,
+                    grid,
+                    rotation,
+                    ignoredEntities);
+
+                if (escapeBlockers.Count > 0 &&
+                    CanOccupyTransform(
+                        uid,
+                        mover,
+                        grid,
+                        candidate,
+                        rotation,
+                        Clearance,
+                        applyEffects: false,
+                        debug: debugProbes,
+                        ignoredEntities: ignoredEntities,
+                        escapeBlockers: escapeBlockers,
+                        escapeDirection: delta))
+                {
+                    lastGood = candidate;
+                    continue;
+                }
+
                 if (applyBlockEffects)
                     CanOccupyTransform(uid, mover, grid, candidate, rotation, Clearance, applyEffects: true, debug: false, ignoredEntities: ignoredEntities);
 
@@ -1015,7 +1052,18 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         }
 
         if (applyBlockEffects &&
-            !CanOccupyTransform(uid, mover, grid, lastGood, rotation, Clearance, applyEffects: true, debug: false, ignoredEntities: ignoredEntities))
+            !CanOccupyTransform(
+                uid,
+                mover,
+                grid,
+                lastGood,
+                rotation,
+                Clearance,
+                applyEffects: true,
+                debug: false,
+                ignoredEntities: ignoredEntities,
+                escapeBlockers: escapeBlockers,
+                escapeDirection: delta))
         {
             mover.Position = start;
             blocked = true;
@@ -1024,6 +1072,51 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
 
         mover.Position = lastGood;
         return true;
+    }
+
+    private HashSet<EntityUid> FindInitialMovementBlockers(
+        EntityUid uid,
+        GridVehicleMoverComponent mover,
+        EntityUid grid,
+        Angle? rotation,
+        HashSet<EntityUid>? ignoredEntities)
+    {
+        var initialBlockers = new HashSet<EntityUid>();
+        var ignoredDuringSearch = ignoredEntities != null
+            ? new HashSet<EntityUid>(ignoredEntities)
+            : new HashSet<EntityUid>();
+
+        // CanOccupyTransform returns after its first hard blocker. Re-probe while
+        // ignoring each discovered entity so multi-tile walls are collected too.
+        for (var i = 0; i < 16; i++)
+        {
+            var found = new HashSet<EntityUid>();
+            if (CanOccupyTransform(
+                    uid,
+                    mover,
+                    grid,
+                    mover.Position,
+                    rotation,
+                    Clearance,
+                    applyEffects: false,
+                    debug: false,
+                    blockers: found,
+                    ignoredEntities: ignoredDuringSearch))
+            {
+                break;
+            }
+
+            if (found.Count == 0)
+                break;
+
+            foreach (var blocker in found)
+            {
+                initialBlockers.Add(blocker);
+                ignoredDuringSearch.Add(blocker);
+            }
+        }
+
+        return initialBlockers;
     }
 
     private bool TryMoveKnownClear(

@@ -45,6 +45,26 @@ public sealed class GridVehicleMotionSimulatorTest
         Assert.That(actual, Is.EqualTo(expected));
     }
 
+    [TestCase(-1f, 0f, 2f, 0f, true)]
+    [TestCase(1f, 0f, 2f, 0f, false)]
+    [TestCase(0f, -1f, 0f, 2f, true)]
+    [TestCase(0f, 1f, 0f, 2f, false)]
+    [TestCase(0f, 0f, 2f, 0f, false)]
+    public void EmbeddedVehicleCanOnlyMoveAwayFromObstacle(
+        float moveX,
+        float moveY,
+        float obstacleX,
+        float obstacleY,
+        bool expected)
+    {
+        Assert.That(
+            GridVehicleMotionSimulator.IsMovingAwayFromObstacle(
+                new Vector2(moveX, moveY),
+                Vector2.Zero,
+                new Vector2(obstacleX, obstacleY)),
+            Is.EqualTo(expected));
+    }
+
     [TestCase(0f, -2f, 0f, true)]
     [TestCase(0f, 2f, 0f, false)]
     [TestCase(2f, 0f, 0f, false)]
