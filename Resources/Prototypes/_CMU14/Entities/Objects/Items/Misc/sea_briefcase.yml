@@ -285,7 +285,7 @@
         amount: 5
       - id: CMU14ChevronLACNSailorFirstClass
         amount: 5
-      - id: CMU14ChevroLACNThirdClassCorporal
+      - id: CMU14ChevronLACNThirdClassCorporal
         amount: 5
     - name: NCOs
       entries:
