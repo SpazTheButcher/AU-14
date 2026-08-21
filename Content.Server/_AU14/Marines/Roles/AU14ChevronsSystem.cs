@@ -196,4 +196,45 @@ public sealed partial class ChevronSystem : EntitySystem
 
         EnsureComp<ChevronSpawnedComponent>(mob);
     }
+
+    /// <summary>
+    /// Returns the rank prototype the mob would receive from the chevron system,
+    /// without actually spawning anything. Used for announcements when the rank
+    /// component hasn't been set yet (chevron is in a backpack)
+    /// </summary>
+    public RankPrototype? ResolveIntendedRank(EntityUid mob, string jobId, HumanoidCharacterProfile? profile, Dictionary<string, TimeSpan> playTimes)
+    {
+        if (!_prototypes.TryIndex<JobPrototype>(jobId, out var jobPrototype))
+            return null;
+
+        if (jobPrototype.Chevrons == null || jobPrototype.Chevrons.Count == 0)
+            return null;
+
+        var platoon = ResolvePlatoonFromMobFaction(mob);
+        var chevronMap = ResolveChevronMapForPlatoon(jobPrototype, platoon);
+
+        if (chevronMap == null)
+            return null;
+
+        foreach (var (rankId, chevronDef) in chevronMap)
+        {
+            var failed = false;
+            if (chevronDef.Requirements != null)
+            {
+                foreach (var req in chevronDef.Requirements)
+                {
+                    if (!req.Check(_entityManager, _prototypes, profile, playTimes, out FormattedMessage? _))
+                    {
+                        failed = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!failed && _prototypes.TryIndex<RankPrototype>(rankId, out var rankProto))
+                return rankProto;
+        }
+
+        return null;
+    }
 }

@@ -24,6 +24,8 @@ namespace Content.Server._RMC14.Announce
         [Dependency] private SquadSystem _squad = default!;
         [Dependency] private IPrototypeManager _prototypeManager = default!;
         [Dependency] private StationRecordsSystem _stationRecords = default!;
+        [Dependency] private ChevronSystem _chevron = default!;
+        [Dependency] private PlayTimeTrackingManager _tracking = default!;
 
         public static readonly ProtoId<RadioChannelPrototype> CommonChannel = "MarineCommon";
 
@@ -33,8 +35,8 @@ namespace Content.Server._RMC14.Announce
                 return;
 
             var aresUid = ares.Value.Owner;
-            var fullRankName = _rankSystem.GetSpeakerFullRankName(mob) ?? Name(mob);
-            var rankName = _rankSystem.GetSpeakerRankName(mob) ?? Name(mob);
+            var fullRankName = GetAnnouncementFullName(mob, jobId, null);
+            var rankName = GetAnnouncementShortName(mob, jobId, null);
 
             if (lateJoin && !silent)
             {
@@ -115,7 +117,7 @@ namespace Content.Server._RMC14.Announce
                 return;
 
             var aresUid = ares.Value.Owner;
-            var rankName = _rankSystem.GetSpeakerRankName(ent.Owner) ?? Name(ent.Owner);
+            var rankName = GetAnnouncementShortName(ent.Owner, jobProto?.ID, null);
             JobPrototype? jobProto = null;
 
             if (!TryComp<StationRecordsComponent>(station, out var stationRecords))
@@ -192,6 +194,47 @@ namespace Content.Server._RMC14.Announce
                         ("job", CultureInfo.CurrentCulture.TextInfo.ToTitleCase(jobName))),
                         CommonChannel);
             }
+        }
+
+        private string GetAnnouncementFullName(EntityUid mob, string? jobId = null, HumanoidCharacterProfile? profile = null)
+        {
+            // Try resolving from chevron map first (rank may not be on mob yet)
+            if (jobId != null)
+            {
+                ICommonSession? session = null;
+                _playerManager.TryGetSessionByEntity(mob, out session); // use TryGet variant
+                Dictionary<string, TimeSpan>? playTimes = null;
+                if (session != null)
+                    _tracking.TryGetTrackerTimes(session, out playTimes);
+
+                playTimes ??= new Dictionary<string, TimeSpan>();
+
+                var intendedRank = _chevron.ResolveIntendedRank(mob, jobId, profile, playTimes);
+                if (intendedRank != null)
+                {
+                    var rankName = Loc.TryGetString($"rank-{intendedRank.ID}", out var ln) ? ln : intendedRank.Name;
+                    return $"{rankName} {Name(mob)}";
+                }
+            }
+            
+            // Fallback to whatever RankComponent currently says
+            return _rankSystem.GetSpeakerFullRankName(mob) ?? Name(mob);
+        }
+
+        private string GetAnnouncementShortName(EntityUid mob, string? jobId = null, HumanoidCharacterProfile? profile = null)
+        {
+            if (jobId != null && _tracking.TryGetTrackerTimes(
+                    _playerManager.GetSessionByEntity(mob), out var playTimes))
+            {
+                var intendedRank = _chevron.ResolveIntendedRank(mob, jobId, profile, playTimes);
+                if (intendedRank != null)
+                {
+                    var prefix = Loc.TryGetString($"rank-{intendedRank.ID}.prefix", out var p) ? p : intendedRank.Prefix;
+                    return $"{prefix} {Name(mob)}";
+                }
+            }
+
+            return _rankSystem.GetSpeakerRankName(mob) ?? Name(mob);
         }
     }
 }
