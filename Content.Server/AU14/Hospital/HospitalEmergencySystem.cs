@@ -69,12 +69,14 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
     private static readonly TimeSpan UiRefreshInterval = TimeSpan.FromSeconds(2);
     private static readonly TimeSpan LandingZoneRefreshInterval = TimeSpan.FromSeconds(5);
     private static readonly TimeSpan PainSpeechCheckInterval = TimeSpan.FromSeconds(1);
+    private static readonly TimeSpan FatalOutcomeCheckInterval = TimeSpan.FromSeconds(1);
 
     private readonly List<EntityUid> _bodyPartBuffer = new();
     private readonly List<(EntityUid Id, OrganComponent Component)> _organBuffer = new();
     private readonly List<EntityUid> _patientBuffer = new();
     private readonly List<EntityCoordinates> _spawnCoordinates = new();
     private TimeSpan _nextPainSpeechCheck;
+    private TimeSpan _nextFatalOutcomeCheck;
     private static readonly EntProtoId[] EmptyClothing = Array.Empty<EntProtoId>();
 
     private static readonly string[] ModeratePainLines =
@@ -237,7 +239,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
         SubscribeLocalEvent<HospitalEmergencyComputerComponent, HospitalEmergencyRequestPickupMsg>(OnRequestPickup);
         SubscribeLocalEvent<HospitalEmergencyComputerComponent, HospitalEmergencyReleaseShuttleMsg>(OnReleaseShuttle);
         SubscribeLocalEvent<HospitalPatientComponent, MobStateChangedEvent>(OnPatientMobStateChanged);
-        SubscribeLocalEvent<RottingComponent, ComponentStartup>(OnPatientRottingStartup);
         SubscribeLocalEvent<FTLCompletedEvent>(OnDropshipFtlCompleted);
     }
 
@@ -325,6 +326,12 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
             _nextPainSpeechCheck = now + PainSpeechCheckInterval;
             UpdatePatientPainSpeech(now);
         }
+
+        if (now >= _nextFatalOutcomeCheck)
+        {
+            _nextFatalOutcomeCheck = now + FatalOutcomeCheckInterval;
+            UpdatePatientFatalOutcomes();
+        }
     }
 
     private void OnApproveLanding(Entity<HospitalEmergencyComputerComponent> ent, ref HospitalEmergencyApproveLandingMsg args)
@@ -396,12 +403,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
     {
         if (args.NewMobState == MobState.Dead)
             TryApplyImmediateDeathPenalty(ent);
-    }
-
-    private void OnPatientRottingStartup(Entity<RottingComponent> ent, ref ComponentStartup args)
-    {
-        if (TryComp<HospitalPatientComponent>(ent.Owner, out var patient))
-            TryApplyImmediateDeathPenalty((ent.Owner, patient));
     }
 
     private void OnDropshipFtlCompleted(ref FTLCompletedEvent args)
@@ -960,6 +961,15 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
             patient.NextPainLineAt = now + RandomPainLineDelay();
             Dirty(uid, patient);
             TrySpeakPainLine(uid);
+        }
+    }
+
+    private void UpdatePatientFatalOutcomes()
+    {
+        var query = EntityQueryEnumerator<HospitalPatientComponent>();
+        while (query.MoveNext(out var uid, out var patient))
+        {
+            TryApplyImmediateDeathPenalty((uid, patient));
         }
     }
 
