@@ -68,15 +68,13 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
     private static readonly ProtoId<DamageTypePrototype> Cellular = "Cellular";
     private static readonly TimeSpan UiRefreshInterval = TimeSpan.FromSeconds(2);
     private static readonly TimeSpan LandingZoneRefreshInterval = TimeSpan.FromSeconds(5);
-    private static readonly TimeSpan PainSpeechCheckInterval = TimeSpan.FromSeconds(1);
-    private static readonly TimeSpan FatalOutcomeCheckInterval = TimeSpan.FromSeconds(1);
+    private static readonly TimeSpan PatientCheckInterval = TimeSpan.FromSeconds(1);
 
     private readonly List<EntityUid> _bodyPartBuffer = new();
     private readonly List<(EntityUid Id, OrganComponent Component)> _organBuffer = new();
     private readonly List<EntityUid> _patientBuffer = new();
     private readonly List<EntityCoordinates> _spawnCoordinates = new();
-    private TimeSpan _nextPainSpeechCheck;
-    private TimeSpan _nextFatalOutcomeCheck;
+    private TimeSpan _nextPatientCheck;
     private static readonly EntProtoId[] EmptyClothing = Array.Empty<EntProtoId>();
 
     private static readonly string[] ModeratePainLines =
@@ -298,7 +296,7 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
 
                 case HospitalEmergencyStatus.ManualUnloading:
                     if (now >= comp.PhaseEndsAt)
-                        FinishManualUnloadWindow(ent);
+                        BeginManualUnloadDeparture(ent);
                     break;
 
                 case HospitalEmergencyStatus.PickupBoarding:
@@ -319,16 +317,10 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
             }
         }
 
-        if (now >= _nextPainSpeechCheck)
+        if (now >= _nextPatientCheck)
         {
-            _nextPainSpeechCheck = now + PainSpeechCheckInterval;
-            UpdatePatientPainSpeech(now);
-        }
-
-        if (now >= _nextFatalOutcomeCheck)
-        {
-            _nextFatalOutcomeCheck = now + FatalOutcomeCheckInterval;
-            UpdatePatientFatalOutcomes();
+            _nextPatientCheck = now + PatientCheckInterval;
+            UpdatePatients(now);
         }
     }
 
@@ -397,8 +389,13 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
 
     private void OnPatientMobStateChanged(Entity<HospitalPatientComponent> ent, ref MobStateChangedEvent args)
     {
-        if (args.NewMobState == MobState.Dead)
-            TryApplyImmediateDeathPenalty(ent);
+        if (args.NewMobState != MobState.Dead)
+        {
+            ent.Comp.ArrivedWithFatalOutcome = false;
+            return;
+        }
+
+        TryApplyImmediateDeathPenalty(ent);
     }
 
     private void OnDropshipFtlCompleted(ref FTLCompletedEvent args)
@@ -442,7 +439,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
     private void CreateIncident(Entity<HospitalEmergencyComputerComponent> ent)
     {
         var comp = ent.Comp;
-        comp.IncidentId++;
         comp.Casualties = _random.Next(comp.MinCasualties, comp.MaxCasualties + 1);
         comp.Severity = _random.Next(1, 4);
         comp.Reward = comp.Casualties * (comp.BaseRewardPerPatient + comp.SeverityRewardBonus * comp.Severity);
@@ -583,11 +579,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
         return false;
     }
 
-    private void FinishManualUnloadWindow(Entity<HospitalEmergencyComputerComponent> ent)
-    {
-        BeginManualUnloadDeparture(ent);
-    }
-
     private void BeginManualUnloadDeparture(Entity<HospitalEmergencyComputerComponent> ent)
     {
         ent.Comp.Status = HospitalEmergencyStatus.ShuttleDeparting;
@@ -615,9 +606,10 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
             PrepareHospitalPatient(patient);
 
             var patientComp = EnsureComp<HospitalPatientComponent>(patient);
-            patientComp.IncidentId = ent.Comp.IncidentId;
             patientComp.SourceComputer = ent;
             patientComp.IsVip = i == vipIndex;
+            patientComp.DeathPenaltyApplied = false;
+            patientComp.ArrivedWithFatalOutcome = false;
             patientComp.NextPainLineAt = _timing.CurTime + RandomPainLineDelay(initial: true);
 
             if (patientComp.IsVip)
@@ -628,6 +620,7 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
 
             OutfitPatient(ent, patient);
             ApplyPatientInjuries(patient, ent.Comp.Severity);
+            patientComp.ArrivedWithFatalOutcome = HasFatalOutcome(patient);
             ent.Comp.Patients.Add(patient);
         }
     }
@@ -934,11 +927,13 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
         return _random.Next(min, max + 1);
     }
 
-    private void UpdatePatientPainSpeech(TimeSpan now)
+    private void UpdatePatients(TimeSpan now)
     {
         var query = EntityQueryEnumerator<HospitalPatientComponent>();
         while (query.MoveNext(out var uid, out var patient))
         {
+            TryApplyImmediateDeathPenalty((uid, patient));
+
             if (patient.NextPainLineAt == TimeSpan.Zero)
             {
                 patient.NextPainLineAt = now + RandomPainLineDelay(initial: true);
@@ -950,15 +945,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
 
             patient.NextPainLineAt = now + RandomPainLineDelay();
             TrySpeakPainLine(uid);
-        }
-    }
-
-    private void UpdatePatientFatalOutcomes()
-    {
-        var query = EntityQueryEnumerator<HospitalPatientComponent>();
-        while (query.MoveNext(out var uid, out var patient))
-        {
-            TryApplyImmediateDeathPenalty((uid, patient));
         }
     }
 
@@ -1019,7 +1005,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
     {
         var missed = 0;
         var vipPenalty = 0;
-        var permanentDeathPenalty = ent.Comp.LastPermanentDeathPenalty;
         var boardedPatients = 0;
         foreach (var patient in ent.Comp.Patients)
         {
@@ -1032,19 +1017,32 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
                 continue;
             }
 
-            var patientMissed = CountMissedInjuries(patient);
-            var fatalOutcome = HasFatalOutcome(patient);
-            var isVip = ent.Comp.VipPatient == patient ||
-                TryComp<HospitalPatientComponent>(patient, out var patientComp) && patientComp.IsVip;
+            if (!TryComp<HospitalPatientComponent>(patient, out var patientComp))
+            {
+                QueueDel(patient);
+                continue;
+            }
 
-            if (isVip && (patientMissed > 0 || fatalOutcome))
+            var fatalOutcome = TryApplyImmediateDeathPenalty((patient, patientComp), updateUi: false);
+            var fatalOutcomeExempt = IsArrivalFatalOutcomeExempt(patientComp, fatalOutcome);
+            var patientMissed = fatalOutcomeExempt
+                ? 0
+                : CountMissedInjuries(patient);
+            var isVip = ent.Comp.VipPatient == patient || patientComp.IsVip;
+
+            if (isVip && !fatalOutcomeExempt && (patientMissed > 0 || fatalOutcome))
                 vipPenalty += ent.Comp.VipMissedInjuryPenalty;
 
-            boardedPatients++;
-            missed += patientMissed;
+            if (!fatalOutcomeExempt)
+            {
+                boardedPatients++;
+                missed += patientMissed;
+            }
+
             QueueDel(patient);
         }
 
+        var permanentDeathPenalty = ent.Comp.LastPermanentDeathPenalty;
         ent.Comp.Patients.Clear();
         ent.Comp.VipPatient = null;
         ent.Comp.LastMissedInjuries = missed;
@@ -1091,27 +1089,45 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
         return _mobState.IsDead(patient) || HasComp<RottingComponent>(patient);
     }
 
-    private void TryApplyImmediateDeathPenalty(Entity<HospitalPatientComponent> patient)
+    private bool TryApplyImmediateDeathPenalty(Entity<HospitalPatientComponent> patient, bool updateUi = true)
     {
-        if (patient.Comp.DeathPenaltyApplied || !HasFatalOutcome(patient))
-            return;
+        if (patient.Comp.DeathPenaltyApplied)
+            return HasFatalOutcome(patient.Owner);
+
+        var fatalOutcome = HasFatalOutcome(patient.Owner);
+        if (!fatalOutcome)
+        {
+            patient.Comp.ArrivedWithFatalOutcome = false;
+            return false;
+        }
+
+        if (IsArrivalFatalOutcomeExempt(patient.Comp, fatalOutcome))
+            return true;
 
         var computerUid = patient.Comp.SourceComputer;
         if (Deleted(computerUid) ||
             !TryComp<HospitalEmergencyComputerComponent>(computerUid, out var computer) ||
             !computer.Patients.Contains(patient.Owner))
         {
-            return;
+            return true;
         }
 
         patient.Comp.DeathPenaltyApplied = true;
         computer.LastPermanentDeathPenalty += computer.PermanentlyDeceasedPenalty;
         computer.NextUiRefreshAt = _timing.CurTime;
 
-        UpdateUi((computerUid, computer));
+        if (updateUi)
+            UpdateUi((computerUid, computer));
+
+        return true;
     }
 
-    private int CountMissedInjuries(EntityUid patient)
+    private static bool IsArrivalFatalOutcomeExempt(HospitalPatientComponent patient, bool fatalOutcome)
+    {
+        return fatalOutcome && patient.ArrivedWithFatalOutcome;
+    }
+
+    private int CountMissedInjuries(EntityUid patient, bool stopAtFirst = false)
     {
         var missed = 0;
 
@@ -1120,7 +1136,11 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
             foreach (var damage in damageable.Damage.DamageDict.Values)
             {
                 if (damage > 0)
+                {
                     missed++;
+                    if (stopAtFirst)
+                        return missed;
+                }
             }
         }
 
@@ -1130,16 +1150,31 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
                 fracture.Severity != FractureSeverity.None)
             {
                 missed++;
+                if (stopAtFirst)
+                    return missed;
             }
 
             if (HasComp<InternalBleedingComponent>(part.Id))
+            {
                 missed++;
+                if (stopAtFirst)
+                    return missed;
+            }
 
             if (HasComp<CMUEscharComponent>(part.Id))
+            {
                 missed++;
+                if (stopAtFirst)
+                    return missed;
+            }
 
             if (TryComp<BodyPartWoundComponent>(part.Id, out var bodyPartWounds))
-                missed += _woundLedger.GetEntries(bodyPartWounds).Count;
+            {
+                var wounds = _woundLedger.GetEntries(bodyPartWounds).Count;
+                missed += wounds;
+                if (stopAtFirst && wounds > 0)
+                    return missed;
+            }
         }
 
         foreach (var organ in _body.GetBodyOrgans(patient))
@@ -1148,6 +1183,8 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
                 organHealth.Current < organHealth.Max)
             {
                 missed++;
+                if (stopAtFirst)
+                    return missed;
             }
         }
 
@@ -1177,46 +1214,7 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
 
     private bool HasAnyMissedInjury(EntityUid patient)
     {
-        if (TryComp<DamageableComponent>(patient, out var damageable))
-        {
-            foreach (var damage in damageable.Damage.DamageDict.Values)
-            {
-                if (damage > 0)
-                    return true;
-            }
-        }
-
-        foreach (var part in _body.GetBodyChildren(patient))
-        {
-            if (TryComp<FractureComponent>(part.Id, out var fracture) &&
-                fracture.Severity != FractureSeverity.None)
-            {
-                return true;
-            }
-
-            if (HasComp<InternalBleedingComponent>(part.Id) ||
-                HasComp<CMUEscharComponent>(part.Id))
-            {
-                return true;
-            }
-
-            if (TryComp<BodyPartWoundComponent>(part.Id, out var bodyPartWounds) &&
-                _woundLedger.GetEntries(bodyPartWounds).Count > 0)
-            {
-                return true;
-            }
-        }
-
-        foreach (var organ in _body.GetBodyOrgans(patient))
-        {
-            if (TryComp<OrganHealthComponent>(organ.Id, out var organHealth) &&
-                organHealth.Current < organHealth.Max)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return CountMissedInjuries(patient, true) > 0;
     }
 
     private EntityUid? FindLandingZone(Entity<HospitalEmergencyComputerComponent> ent)
@@ -1285,7 +1283,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
         var hasLandingZone = comp.LandingZone != null && !Deleted(comp.LandingZone);
 
         var state = new HospitalEmergencyComputerBuiState(
-            comp.Status,
             GetStatusText(comp, remaining),
             comp.IncidentReport,
             comp.Casualties,

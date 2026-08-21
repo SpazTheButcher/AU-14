@@ -11,7 +11,6 @@ public enum HospitalEmergencyComputerUi
 [Serializable, NetSerializable]
 public sealed class HospitalEmergencyComputerBuiState : BoundUserInterfaceState
 {
-    public HospitalEmergencyStatus Status { get; }
     public string StatusText { get; }
     public string IncidentReport { get; }
     public int Casualties { get; }
@@ -30,7 +29,6 @@ public sealed class HospitalEmergencyComputerBuiState : BoundUserInterfaceState
     public bool CanReleaseShuttle { get; }
 
     public HospitalEmergencyComputerBuiState(
-        HospitalEmergencyStatus status,
         string statusText,
         string incidentReport,
         int casualties,
@@ -48,7 +46,6 @@ public sealed class HospitalEmergencyComputerBuiState : BoundUserInterfaceState
         bool canRequestPickup,
         bool canReleaseShuttle)
     {
-        Status = status;
         StatusText = statusText;
         IncidentReport = incidentReport;
         Casualties = casualties;

@@ -11,10 +11,10 @@ public sealed partial class HospitalDropshipLandingZoneComponent : Component;
 [RegisterComponent]
 public sealed partial class HospitalPatientComponent : Component
 {
-    public int IncidentId;
     public EntityUid SourceComputer;
     public bool IsVip;
     public bool DeathPenaltyApplied;
+    public bool ArrivedWithFatalOutcome;
     public TimeSpan NextPainLineAt;
 }
 
@@ -22,7 +22,7 @@ public sealed partial class HospitalPatientComponent : Component
 public sealed partial class HospitalEmergencyComputerComponent : Component
 {
     [DataField]
-    public ResPath ShuttlePath = new("/Maps/_AU14/ShuttlesDropships/genericthirdpartyshuttle.yml");
+    public ResPath ShuttlePath = new("/Maps/_AU14/ShuttlesDropships/rmc_ert_pmc_shuttle.yml");
 
     [DataField]
     public EntProtoId PatientPrototype = "AU14HospitalPatient";
@@ -182,7 +182,6 @@ public sealed partial class HospitalEmergencyComputerComponent : Component
     public TimeSpan PhaseEndsAt;
     public TimeSpan NextUiRefreshAt;
     public TimeSpan NextLandingZoneRefreshAt;
-    public int IncidentId;
     public int Casualties;
     public int Severity;
     public int Reward;
