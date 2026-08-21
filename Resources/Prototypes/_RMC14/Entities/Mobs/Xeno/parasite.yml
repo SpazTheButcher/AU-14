@@ -116,6 +116,7 @@
   - type: HTN
     rootTask:
       task: RMCParasiteActiveCompound
+    planCooldown: 0.1 # CMU14: replan fast enough to act inside the trap's wake window
     blackboard:
       VisionRadius: !type:Single
         3.0
