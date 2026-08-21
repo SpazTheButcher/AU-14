@@ -18,3 +18,16 @@
   - type: Tag
     tags:
     - GasMask
+  - type: MycotoxinProtection
+    fullProtection: false
+
+# Prescription variants
+
+- type: entity
+  parent: AU14MaskGasRMC
+  id: AU14MaskPrescriptionGasRMC
+  name: prescription L7 pattern gasmask
+  description: The standard issue gasmask utilized by the TWE Royal Marines Commandos and IASF. Contains prescription lenses.
+  components:
+  - type: VisionCorrection
+    visionBonus: -4

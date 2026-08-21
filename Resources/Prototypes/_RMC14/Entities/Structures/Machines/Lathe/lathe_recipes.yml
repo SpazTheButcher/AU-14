@@ -320,3 +320,11 @@
   materials:
     CMSteel: 62 # 50
     CMGlass: 62 # 50
+
+- type: latheRecipe
+  id: CMUUniversalPaperToolRecipe
+  result: CMUUniversalPaperTool
+  completetime: 4
+  materials:
+    CMSteel: 500 # 400
+    CMGlass: 500 # 400

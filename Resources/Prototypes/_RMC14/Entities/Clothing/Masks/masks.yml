@@ -39,6 +39,11 @@
   - type: Tag
     tags:
     - GasMask
+  - type: MycotoxinProtection
+    fullProtection: false
+  - type: CMUItemStain
+    wornStates:
+      mask: gasmask_blood
 
 - type: entity
   parent: [CMBaseMask, CMUBaseGasMaskFilterSlot]
@@ -61,9 +66,34 @@
   - type: Tag
     tags:
     - GasMask
+  - type: MycotoxinProtection
+    fullProtection: true
+  - type: CMUItemStain
+    wornStates:
+      mask: gasmask_blood
 
 - type: Tag
   id: GasMask
+
+# Prescription variants
+
+- type: entity
+  parent: CMMaskGas
+  id: CMMaskPrescriptionGas
+  name: prescription gas mask
+  description: A face-covering mask that can be connected to an air supply. Filters harmful gases from the air. Contains prescription lenses.
+  components:
+  - type: VisionCorrection
+    visionBonus: -4
+
+- type: entity
+  parent: RMCMaskGasSPP
+  id: RMCMaskPrescriptionGasSPP
+  name: prescription ShMB/4 gasmask
+  description: The standard issue gasmask utilized by the UPP Vanguard Collective and many UPP civilian organizations. Contains prescription lenses.
+  components:
+  - type: VisionCorrection
+    visionBonus: -4
 
 - type: entity
   parent: CMBaseMask
@@ -82,6 +112,9 @@
   - type: Tag
     tags:
     - SterileMask
+  - type: CMUItemStain
+    wornStates:
+      mask: sterile_blood
 
 - type: Tag
   id: SterileMask
@@ -96,6 +129,11 @@
     sprite: _RMC14/Objects/Clothing/Mask/medical.rsi
   - type: Clothing
     sprite: _RMC14/Objects/Clothing/Mask/medical.rsi
+  - type: MycotoxinProtection
+    fullProtection: true
+  - type: CMUItemStain
+    wornStates:
+      mask: gasmask_blood
 
 - type: entity
   parent: CMBaseMask
@@ -111,6 +149,8 @@
     - Mask
   - type: Item
     size: Small
+  - type: MycotoxinProtection
+    fullProtection: false
 
 - type: entity
   parent: [CMBaseMask, CMUBaseGasMaskFilterSlot]
@@ -126,6 +166,8 @@
     - Mask
   - type: Item
     size: Small
+  - type: MycotoxinProtection
+    fullProtection: false
 
 - type: entity
   parent: [CMBaseMask, CMUBaseGasMaskFilterSlot]
@@ -141,6 +183,8 @@
     - Mask
   - type: Item
     size: Small
+  - type: MycotoxinProtection
+    fullProtection: false
 
 # Coifs
 - type: entity
@@ -309,6 +353,8 @@
     - Mask
   - type: Item
     size: Small
+  - type: MycotoxinProtection
+    fullProtection: true
 
 - type: entity
   parent: [CMBaseMask, RMCHelmetGarbToggleableBase]

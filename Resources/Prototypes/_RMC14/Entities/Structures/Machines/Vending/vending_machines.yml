@@ -852,7 +852,7 @@
     - name: Products
       entries:
       - id: FoodContainerEgg
-        amount: 18
+        amount: 12
       - id: FoodMeatChicken
         amount: 36
       - id: FoodMeatFish
@@ -915,6 +915,10 @@
       - id: FoodOnion
         amount: 18
       - id: FoodOnionRed
+        amount: 14
+      - id: FoodGrape
+        amount: 14
+      - id: FoodBerries
         amount: 14
       - id: FoodGarlic
         amount: 22

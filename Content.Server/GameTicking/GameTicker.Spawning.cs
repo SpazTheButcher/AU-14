@@ -55,6 +55,7 @@ namespace Content.Server.GameTicking
         [Dependency] private OriginSystem _originSystem = default!;
 
         public static readonly EntProtoId ObserverPrototypeName = "MobObserver";
+        public static readonly EntProtoId MentorObserverPrototypeName = "MentorObserver";
         public static readonly EntProtoId AdminObserverPrototypeName = "RMCAdminObserver";
 
         private const string AuThreatLeaderJob = "AU14JobThreatLeader";
@@ -160,20 +161,25 @@ namespace Content.Server.GameTicking
                 return null;
             }
 
-            // If player is ignoring allegiance, always use selected profile
-            if (_allegianceSystem.IsIgnoringAllegiance(userId))
-                return selectedProfile;
-
             JobPrototype? jobProto = null;
             if (jobId != null)
                 _prototypeManager.TryIndex(jobId, out jobProto);
+
+            bool MeetsSynthetic(HumanoidCharacterProfile profile) =>
+                jobProto == null || _allegianceSystem.DoesCharacterMeetJobSynthetic(profile, jobProto, userId);
+
+            // Synthetic eligibility is a hard requirement — unlike allegiance/origin, it is
+            // not subject to the "Ignore Allegiance" opt-out.
+            if (_allegianceSystem.IsIgnoringAllegiance(userId))
+                return MeetsSynthetic(selectedProfile) ? selectedProfile : FindMatchingProfile(MeetsSynthetic);
 
             bool MeetsJobRequirements(HumanoidCharacterProfile profile)
             {
                 if (jobProto == null)
                     return true;
 
-                return _allegianceSystem.DoesCharacterMeetJobAllegiance(profile, jobProto)
+                return MeetsSynthetic(profile)
+                    && _allegianceSystem.DoesCharacterMeetJobAllegiance(profile, jobProto)
                     && _allegianceSystem.DoesCharacterMeetJobOrigin(profile, jobProto);
             }
 
@@ -192,7 +198,7 @@ namespace Content.Server.GameTicking
                 return MeetsJobRequirements(selectedProfile) ? selectedProfile : FindMatchingProfile(MeetsJobRequirements);
 
             // Check if the selected profile matches
-            if (_allegianceSystem.IsAllegianceApplicableForPlatoon(selectedProfile, platoon, jobProto))
+            if (_allegianceSystem.IsAllegianceApplicableForPlatoon(selectedProfile, platoon, jobProto, userId))
                 return selectedProfile;
 
             // Selected doesn't match — search all character profiles
@@ -203,7 +209,8 @@ namespace Content.Server.GameTicking
                 prefs.Characters,
                 prefs.SelectedCharacterIndex,
                 platoon,
-                jobProto);
+                jobProto,
+                userId);
 
             return match ?? null;
         }
@@ -237,6 +244,7 @@ namespace Content.Server.GameTicking
             bool force)
         {
             _distressSignal.TheHive = _hive.CreateHive("xenonid hive", "CMXenoHive");
+            _hive.CreateHive("Mycelial Confluence", "CMUPathogenHive");
 
             // For presets without CMDistressSignalRule (e.g. AU14 DistressSignal), the planet map
             // has already been loaded by LoadMaps and CMDistressSignalRuleSystem.OnRulePlayerSpawning
@@ -499,8 +507,19 @@ namespace Content.Server.GameTicking
                     _sawmill.Debug("[RoundStart] Starting prepared post-roundstart threat vote.");
                     try
                     {
-                        _threatVoteSystem.StartPreparedThreatVote(assignedJobs);
-                        _sawmill.Debug("[RoundStart] Prepared threat vote started; threat and third-party spawn will continue from vote completion.");
+                        if (_threatVoteSystem.StartPreparedThreatVote(assignedJobs))
+                        {
+                            _sawmill.Debug("[RoundStart] Prepared threat vote handled; threat and third-party spawn will continue from vote completion or single-candidate auto-selection.");
+                        }
+                        else
+                        {
+                            Log.Warning("Prepared threat vote could not start.");
+
+                            _threatVoteSystem.ClearRoundJoinBlocks();
+                            int removed = ThreatSystem.RemoveThreatJobAssignments(assignedJobs);
+                            if (removed > 0)
+                                Log.Warning($"Removed {removed} held threat assignment(s) after threat vote start failed.");
+                        }
                     }
                     catch (Exception threatVoteEx)
                     {
@@ -538,6 +557,24 @@ namespace Content.Server.GameTicking
                         catch (Exception thirdPartyEx)
                         {
                             Log.Error($"StartThirdPartySpawning threw — round will continue without third-party spawn. {thirdPartyEx}");
+                        }
+                    }
+                    else if (_auRoundSystem.SelectedPreset is { ThirdPartyAutoSpawn: true } presetSchedule)
+                    {
+                        if (_sawmill.Level <= LogLevel.Debug)
+                        {
+                            int roundstartThirdParties = _auRoundSystem.SelectedThirdParties.Count(party => party.RoundStart);
+                            _sawmill.Debug(
+                                $"[RoundStart] Starting preset-owned third-party spawning for '{presetSchedule.ID}'; selectedThirdParties={_auRoundSystem.SelectedThirdParties.Count}, roundstartThirdParties={roundstartThirdParties}, intervalSeconds={presetSchedule.ThirdPartyInterval}.");
+                        }
+
+                        try
+                        {
+                            _thirdParty.StartThirdPartySpawning(presetSchedule, assignedJobs);
+                        }
+                        catch (Exception thirdPartyEx)
+                        {
+                            Log.Error($"Preset-owned StartThirdPartySpawning threw — round will continue without third-party spawns. {thirdPartyEx}");
                         }
                     }
                     else

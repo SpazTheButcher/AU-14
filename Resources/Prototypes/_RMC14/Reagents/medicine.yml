@@ -98,6 +98,7 @@
   color: "#e2972e"
   overdose: 15
   criticalOverdose: 25
+  class: Uncommon
   metabolisms:
     Medicine:
       metabolismRate: 0.1
@@ -113,12 +114,14 @@
   color: "#1f28a7"
   overdose: 30
   criticalOverdose: 50
+  class: Common
   metabolisms:
     Medicine:
       metabolismRate: 0.1
       effects:
       - !type:Oxygenating
         potency: 4
+      - !type:ClearRespiratoryStrain
 
 - type: reagent
   parent: [ CMReagentMedicine, DexalinPlus ]
@@ -126,14 +129,16 @@
   name: reagent-name-cmdexalinplus
   desc: reagent-desc-cmdexalinplus
   color: "#5887D5"
-  overdose: 15
-  criticalOverdose: 25
+  overdose: 5
+  criticalOverdose: 15
+  class: Uncommon
   metabolisms:
     Medicine:
       metabolismRate: 0.1
       effects:
       - !type:Oxygenating
         potency: 6
+      - !type:ClearRespiratoryStrain
 
 # TODO RMC14 other effects (pain)
 # TODO RMC14 injected only
@@ -151,6 +156,7 @@
       effects:
       - !type:Electrogenetic
         potency: 2
+      - !type:CureDrugAllergyReaction
       - !type:CMUApplyPainSuppressionEffect
         accumulationSuppression: 0.15
         tierSuppression: 1
@@ -182,10 +188,12 @@
   desc: reagent-desc-cminaprovaline
   color: "#fe33cb"
   overdose: 110
+  class: Common
   metabolisms:
     Medicine:
       metabolismRate: 0.5
       effects:
+      - !type:Allergenic
       - !type:HealthChange
         conditions:
         - !type:MobStateCondition
@@ -200,19 +208,6 @@
         reductionDecreaseRate: 0
         durationPerUnit: 8
         additive: true
-      - !type:Jitter
-        conditions:
-        - !type:ReagentThreshold
-          min: 110
-      - !type:GenericStatusEffect
-        conditions:
-        - !type:ReagentThreshold
-          min: 110
-        key: Unconscious
-        component: RMCUnconscious
-        time: 10 #Yes, it's this much.
-        type: Add
-        refresh: true
 
 - type: reagent
   parent: [ CMReagentMedicine, Kelotane ]
@@ -222,6 +217,7 @@
   color: "#f5e123"
   overdose: 30
   criticalOverdose: 50
+  class: Common
   metabolisms:
     Medicine:
       metabolismRate: 0.1
@@ -254,6 +250,7 @@
   color: "#d87f2b"
   overdose: 30
   criticalOverdose: 50
+  class: Uncommon
   metabolisms:
     Medicine:
       metabolismRate: 0.1
@@ -298,6 +295,8 @@
       metabolismRate: 0.1
       effects:
       - !type:ChemHealEyeDamage
+      - !type:Oculopeutic
+        potency: 2
       - !type:HealthChange
         conditions:
         - !type:ReagentThreshold
@@ -343,16 +342,20 @@
   name: reagent-name-rmcrussianred
   desc: reagent-desc-rmcrussianred
   color: "#ce2727"
-  overdose: 20
-  criticalOverdose: 30
+  overdose: 15
+  criticalOverdose: 25
   metabolisms:
     Medicine:
-      metabolismRate: 0.5
+      metabolismRate: 0.1
       effects:
-      - !type:Antitoxic
-        potency: 1
-      - !type:Biocidic
-        potency: 2
+      - !type:EqualHealthChange
+        conditions:
+        damage:
+        - Genetic: -0.1
+      - !type:Toxic
+        potency: 4
+      - !type:Corrosive
+        potency: 4
 
 # Antidepressants/ADHD meds
 - type: reagent
@@ -438,6 +441,7 @@
   color: "#BBEDA4"
   overdose: 30
   criticalOverdose: 50
+  class: Uncommon
   metabolisms:
     Medicine:
       metabolismRate: 0.1

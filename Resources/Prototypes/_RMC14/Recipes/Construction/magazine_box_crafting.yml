@@ -266,18 +266,6 @@
   description: A 5.7x28mm armor-piercing ammunition box. Used to refill P90 AP magazines. It comes with a leather strap allowing to wear it on the back.
   iconColor: "#727e90"
   objectType: Item
-# MP5  
-- type: construction
-  parent: RMC
-  name: SMG ammunition box (9×19mm)
-  id: CMUBoxBulletsSMG9MMEmpty
-  graph: RMCBoxMagazine
-  startNode: start
-  targetNode: CMUBoxBulletsSMG9MMEmpty
-  category: construction-category-cm-box-magazine
-  description: A 9×19mm ammunition box. Used to refill MP5 magazines. It comes with a leather strap allowing to wear it on the back.
-  iconColor: "#727e90"
-  objectType: Item
 # Type 19
 - type: construction
   parent: RMC
@@ -921,12 +909,6 @@
       - material: RMCSheetCardboard
         amount: 1
         doAfter: 0.25
-   # MP5
-    - to: CMUBoxBulletsSMG9MMEmpty
-      steps:
-      - material: RMCSheetCardboard
-        amount: 1
-        doAfter: 0.25
    # Type 19
     - to: CMUBoxBulletsSMGType19Empty
       steps:
@@ -1267,9 +1249,6 @@
   - node: CMUBoxBulletsSMGP90APEmpty
     entity: CMUBoxBulletsSMGP90APEmpty
     
- # MP5
-  - node: CMUBoxBulletsSMG9MMEmpty
-    entity: CMUBoxBulletsSMG9MMEmpty
  # Type 19
   - node: CMUBoxBulletsSMGType19Empty
     entity: CMUBoxBulletsSMGType19Empty

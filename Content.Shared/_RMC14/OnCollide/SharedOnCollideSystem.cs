@@ -42,6 +42,19 @@ public abstract partial class SharedOnCollideSystem : EntitySystem
 
         SubscribeLocalEvent<DamageOnCollideComponent, StartCollideEvent>(OnStartCollide);
         SubscribeLocalEvent<DamageOnCollideComponent, EndCollideEvent>(OnEndCollide);
+        SubscribeLocalEvent<EntityTerminatingEvent>(OnEntityTerminating);
+    }
+
+    private void OnEntityTerminating(ref EntityTerminatingEvent args)
+    {
+        var terminating = args.Entity.Owner;
+
+        var chains = EntityQueryEnumerator<CollideChainComponent>();
+        while (chains.MoveNext(out var chainUid, out var chain))
+        {
+            if (chain.Hit.Remove(terminating))
+                Dirty(chainUid, chain);
+        }
     }
 
     private void OnStartCollide(Entity<DamageOnCollideComponent> ent, ref StartCollideEvent args)
@@ -60,6 +73,15 @@ public abstract partial class SharedOnCollideSystem : EntitySystem
 
     private void OnCollide(Entity<DamageOnCollideComponent> ent, EntityUid other)
     {
+        if (TerminatingOrDeleted(other))
+            return;
+
+        if (ent.Comp.Disabled)
+            return;
+
+        if (ent.Comp.Chain is { } chain && TerminatingOrDeleted(chain))
+            ent.Comp.Chain = null;
+
         if (ent.Comp.Damaged.Contains(other))
             return;
 
@@ -147,6 +169,15 @@ public abstract partial class SharedOnCollideSystem : EntitySystem
         Dirty(ent);
     }
 
+    public void DisableDamageOnCollide(Entity<DamageOnCollideComponent?> ent)
+    {
+        if (!_damageOnCollideQuery.Resolve(ent, ref ent.Comp, false))
+            return;
+
+        ent.Comp.Disabled = true;
+        Dirty(ent);
+    }
+
     public override void Update(float frameTime)
     {
         _damageOnCollide.Clear();
@@ -157,9 +188,13 @@ public abstract partial class SharedOnCollideSystem : EntitySystem
             while (query.MoveNext(out var uid, out var comp))
             {
                 if (comp.InitDamaged)
+                {
+                    PruneDamaged(comp);
                     continue;
+                }
 
                 comp.InitDamaged = true;
+                PruneDamaged(comp);
                 _damageOnCollide.Add((uid, comp));
             }
 
@@ -175,5 +210,13 @@ public abstract partial class SharedOnCollideSystem : EntitySystem
         {
             _damageOnCollide.Clear();
         }
+    }
+
+    private void PruneDamaged(DamageOnCollideComponent comp)
+    {
+        comp.Damaged.RemoveWhere(uid => TerminatingOrDeleted(uid));
+
+        if (comp.Chain is { } chain && TerminatingOrDeleted(chain))
+            comp.Chain = null;
     }
 }

@@ -229,6 +229,26 @@ namespace Content.Server.GameTicking
                     }
                 }
             }
+
+            LoadAdminFaxHubMap();
+        }
+
+        private static readonly ResPath AdminFaxHubMapPath = new("/Maps/_AU14/Admin/adminfaxhub.yml");
+
+        /// <summary>
+        /// Loads the AU14 admin fax hub utility map every round, on an automatically
+        /// assigned MapId, independent of the selected station/planet map.
+        /// </summary>
+        private void LoadAdminFaxHubMap()
+        {
+            var opts = DeserializationOptions.Default with { InitializeMaps = true };
+            if (!_loader.TryLoadMap(AdminFaxHubMapPath, out var map, out _, opts))
+            {
+                _sawmill.Error($"[RoundStart] Failed to load admin fax hub map at {AdminFaxHubMapPath}");
+                return;
+            }
+
+            _sawmill.Debug($"[RoundStart] Loaded admin fax hub map {map.Value.Comp.MapId} from {AdminFaxHubMapPath}");
         }
 
         public PreGameMapLoad RaisePreLoad(
@@ -446,6 +466,8 @@ namespace Content.Server.GameTicking
                 _startingRound = false;
                 return;
             }
+
+            EnsureDistressSignalSurvivorAnnouncement();
 
             if (RoundId == 0)
                 IncrementRoundNumber();
@@ -1123,6 +1145,8 @@ namespace Content.Server.GameTicking
         /// </summary>
         private void ResettingCleanup()
         {
+            ResetDistressSignalSurvivorAnnouncement();
+
             // Move everybody currently in the server to lobby.
             foreach (var player in _playerManager.Sessions)
             {
@@ -1137,8 +1161,6 @@ namespace Content.Server.GameTicking
             RaiseNetworkEvent(ev);
 
             EntityManager.FlushEntities();
-
-            _mapManager.Restart();
 
             _banManager.Restart();
 
@@ -1167,6 +1189,9 @@ namespace Content.Server.GameTicking
 
             _roundStartTime += time;
 
+            if (_roundStartTime - _gameTiming.CurTime > DistressSignalSurvivorAnnouncementLeadTime)
+                ResetDistressSignalSurvivorAnnouncement();
+
             RaiseNetworkEvent(new TickerLobbyCountdownEvent(_roundStartTime, Paused));
 
             _chatManager.DispatchServerAnnouncement(Loc.GetString("game-ticker-delay-start", ("seconds", time.TotalSeconds)));
@@ -1194,6 +1219,8 @@ namespace Content.Server.GameTicking
                 UpdateLobbyCountdownForPlayerCount();
                 return;
             }
+
+            TryAnnounceDistressSignalSurvivors();
 
             if (_roundStartTime == TimeSpan.Zero ||
                 RunLevel != GameRunLevel.PreRoundLobby ||

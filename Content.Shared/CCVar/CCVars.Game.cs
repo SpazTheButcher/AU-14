@@ -30,6 +30,18 @@ public sealed partial class CCVars
         GameDisallowLateJoins = CVarDef.Create("game.disallowlatejoins", false, CVar.ARCHIVE | CVar.SERVERONLY);
 
     /// <summary>
+    ///     Join timing steps at or above this many seconds are logged as warnings.
+    /// </summary>
+    public static readonly CVarDef<float>
+        GameJoinTimingWarnSeconds = CVarDef.Create("game.join_timing_warn_seconds", 5f, CVar.ARCHIVE | CVar.SERVERONLY);
+
+    /// <summary>
+    ///     Enable the [JOIN-TIMING] log output.
+    /// </summary>
+    public static readonly CVarDef<bool>
+        GameJoinTimingLogEnabled = CVarDef.Create("game.join_timing_log_enabled", false, CVar.ARCHIVE | CVar.SERVERONLY);
+
+    /// <summary>
     ///     Controls the default game preset.
     /// </summary>
     public static readonly CVarDef<string>
@@ -63,7 +75,7 @@ public sealed partial class CCVars
     ///     Controls the maximum number of character slots a player is allowed to have.
     /// </summary>
     public static readonly CVarDef<int>
-        GameMaxCharacterSlots = CVarDef.Create("game.maxcharacterslots", 30, CVar.ARCHIVE | CVar.SERVERONLY);
+        GameMaxCharacterSlots = CVarDef.Create("game.maxcharacterslots", 50, CVar.ARCHIVE | CVar.SERVERONLY);
 
     /// <summary>
     ///     Controls the game map prototype to load. SS14 stores these prototypes in Prototypes/Maps.

@@ -10,7 +10,7 @@
   description: An alien drone. Looks... smaller.
   components:
   - type: GhostRole
-    name: cm-job-name-xeno-lesser-drone
+    name: cmu-job-name-xeno-unknown
     description: roles-lesser-drone-description
     raffle:
       settings: short
@@ -22,6 +22,9 @@
     - map: [ "enum.XenoInhandVisualLayers.Left" ]
       visible: false
     - map: [ "enum.XenoInhandVisualLayers.Right" ]
+      visible: false
+    - map: [ "enum.RMCShieldVisuals.Base" ]
+      sprite: _RMC14/Effects/xeno_shields.rsi
       visible: false
     - map: [ "focused" ]
       sprite: _RMC14/Interface/xeno_hud.rsi
@@ -35,6 +38,11 @@
       sprite: _RMC14/Effects/targeted.rsi
       state: sniper_lockon_intense_direction
       visible: false  # AU14-Edit End
+  - type: FiremanCarriable
+    canThrow: true
+    carrierWhitelist:
+      components:
+      - Synth
   - type: MobState
     allowedStates:
     - Alive
@@ -136,7 +144,7 @@
   - type: XenoInhands
     prefix: lesser
   - type: FixedIdentity
-    name: cm-job-name-xeno-lesser-drone
+    name: cmu-job-name-xeno-unknown
   - type: VentCrawler
     ventCrawlIcon: lesser
   - type: RMCActionOrder

@@ -392,22 +392,30 @@ internal sealed partial class ChatManager : IChatManager
     // RMC14
     public void ChatMessageToOne(ChatChannel channel, string message, string wrappedMessage, EntityUid source, bool hideChat, INetChannel client, Color? colorOverride = null, bool recordReplay = false, string? audioPath = null, float audioVolume = 0, NetUserId? author = null, bool hidePopup = false,
         bool useEmoteSpeechBubble = false,
-        string? languageIcon = null)
+        string? languageIcon = null,
+        string? speechStyleClass = null,
+        ChatDisplayMetadata? display = null)
     // RMC14
     {
         var user = author == null ? null : EnsurePlayer(author);
         var netSource = _entityManager.GetNetEntity(source);
         user?.AddEntity(netSource);
 
-        var speechStyleClass = _entityManager.GetComponentOrNull<RMCSpeechBubbleSpecificStyleComponent>(source)?.SpeechStyleClass;
+        speechStyleClass ??= _entityManager.GetComponentOrNull<RMCSpeechBubbleSpecificStyleComponent>(source)?.SpeechStyleClass;
         var repeatCheckSender = !_entityManager.HasComponent<ChatRepeatIgnoreSenderComponent>(source);
         // CMU14
         var ghostFollowEntity = NetEntity.Invalid;
+        var xenoWatchEntity = NetEntity.Invalid;
         var customWrappedMessage = wrappedMessage;
         if (TryCreateGhostFollowButton(wrappedMessage, source, client, out var wrappedWithFollowButton, out var followEntity))
         {
             customWrappedMessage = wrappedWithFollowButton;
             ghostFollowEntity = followEntity;
+        }
+        if (TryCreateXenoWatchButton(customWrappedMessage, source, client, out var wrappedWithWatchButton, out var watchEntity))
+        {
+            customWrappedMessage = wrappedWithWatchButton;
+            xenoWatchEntity = watchEntity;
         }
 
         var msg = new ChatMessage(
@@ -424,8 +432,10 @@ internal sealed partial class ChatManager : IChatManager
             useEmoteSpeechBubble,
             speechStyleClass: speechStyleClass,
             repeatCheckSender: repeatCheckSender,
+            display: display,
             languageIcon: languageIcon,
-            ghostFollowEntity: ghostFollowEntity
+            ghostFollowEntity: ghostFollowEntity,
+            xenoWatchEntity: xenoWatchEntity
         );
 
         _netManager.ServerSendMessage(new MsgChatMessage() { Message = msg }, client);
@@ -449,16 +459,17 @@ internal sealed partial class ChatManager : IChatManager
                 hidePopup,
                 speechStyleClass: speechStyleClass,
                 repeatCheckSender: repeatCheckSender,
+                display: display,
                 languageIcon: languageIcon
             );
             _replay.RecordServerMessage(replayMsg);
         }
     }
 
-    public void ChatMessageToMany(ChatChannel channel, string message, string wrappedMessage, EntityUid source, bool hideChat, bool recordReplay, IEnumerable<INetChannel> clients, Color? colorOverride = null, string? audioPath = null, float audioVolume = 0, NetUserId? author = null)
-        => ChatMessageToMany(channel, message, wrappedMessage, source, hideChat, recordReplay, clients.ToList(), colorOverride, audioPath, audioVolume, author);
+    public void ChatMessageToMany(ChatChannel channel, string message, string wrappedMessage, EntityUid source, bool hideChat, bool recordReplay, IEnumerable<INetChannel> clients, Color? colorOverride = null, string? audioPath = null, float audioVolume = 0, NetUserId? author = null, bool hidePopup = false)
+        => ChatMessageToMany(channel, message, wrappedMessage, source, hideChat, recordReplay, clients.ToList(), colorOverride, audioPath, audioVolume, author, hidePopup);
 
-    public void ChatMessageToMany(ChatChannel channel, string message, string wrappedMessage, EntityUid source, bool hideChat, bool recordReplay, List<INetChannel> clients, Color? colorOverride = null, string? audioPath = null, float audioVolume = 0, NetUserId? author = null)
+    public void ChatMessageToMany(ChatChannel channel, string message, string wrappedMessage, EntityUid source, bool hideChat, bool recordReplay, List<INetChannel> clients, Color? colorOverride = null, string? audioPath = null, float audioVolume = 0, NetUserId? author = null, bool hidePopup = false)
     {
         var user = author == null ? null : EnsurePlayer(author);
         var netSource = _entityManager.GetNetEntity(source);
@@ -470,11 +481,17 @@ internal sealed partial class ChatManager : IChatManager
         foreach (var client in clients)
         {
             var ghostFollowEntity = NetEntity.Invalid;
+            var xenoWatchEntity = NetEntity.Invalid;
             var customWrappedMessage = wrappedMessage;
             if (TryCreateGhostFollowButton(wrappedMessage, source, client, out var wrappedWithFollowButton, out var followEntity))
             {
                 customWrappedMessage = wrappedWithFollowButton;
                 ghostFollowEntity = followEntity;
+            }
+            if (TryCreateXenoWatchButton(customWrappedMessage, source, client, out var wrappedWithWatchButton, out var watchEntity))
+            {
+                customWrappedMessage = wrappedWithWatchButton;
+                xenoWatchEntity = watchEntity;
             }
 
             var msg = new ChatMessage(
@@ -487,9 +504,11 @@ internal sealed partial class ChatManager : IChatManager
                 colorOverride,
                 audioPath,
                 audioVolume,
+                hidePopup,
                 speechStyleClass: speechStyleClass,
                 repeatCheckSender: repeatCheckSender,
-                ghostFollowEntity: ghostFollowEntity);
+                ghostFollowEntity: ghostFollowEntity,
+                xenoWatchEntity: xenoWatchEntity);
             _netManager.ServerSendMessage(new MsgChatMessage { Message = msg }, client);
         }
         // CMU14
@@ -500,13 +519,13 @@ internal sealed partial class ChatManager : IChatManager
         if ((channel & ChatChannel.AdminRelated) == 0 ||
             _configurationManager.GetCVar(CCVars.ReplayRecordAdminChat))
         {
-            var replayMsg = new ChatMessage(channel, message, wrappedMessage, netSource, user?.Key, hideChat, colorOverride, audioPath, audioVolume, speechStyleClass: speechStyleClass, repeatCheckSender: repeatCheckSender);
+            var replayMsg = new ChatMessage(channel, message, wrappedMessage, netSource, user?.Key, hideChat, colorOverride, audioPath, audioVolume, hidePopup, speechStyleClass: speechStyleClass, repeatCheckSender: repeatCheckSender);
             _replay.RecordServerMessage(replayMsg);
         }
     }
 
     public void ChatMessageToManyFiltered(Filter filter, ChatChannel channel, string message, string wrappedMessage, EntityUid source,
-        bool hideChat, bool recordReplay, Color? colorOverride = null, string? audioPath = null, float audioVolume = 0)
+        bool hideChat, bool recordReplay, Color? colorOverride = null, string? audioPath = null, float audioVolume = 0, bool hidePopup = false)
     {
         if (!recordReplay && !filter.Recipients.Any())
             return;
@@ -517,13 +536,13 @@ internal sealed partial class ChatManager : IChatManager
             clients.Add(recipient.Channel);
         }
 
-        ChatMessageToMany(channel, message, wrappedMessage, source, hideChat, recordReplay, clients, colorOverride, audioPath, audioVolume);
+        ChatMessageToMany(channel, message, wrappedMessage, source, hideChat, recordReplay, clients, colorOverride, audioPath, audioVolume, hidePopup: hidePopup);
     }
 
-    public void ChatMessageToAll(ChatChannel channel, string message, string wrappedMessage, EntityUid source, bool hideChat, bool recordReplay, Color? colorOverride = null, string? audioPath = null, float audioVolume = 0, NetUserId? author = null)
+    public void ChatMessageToAll(ChatChannel channel, string message, string wrappedMessage, EntityUid source, bool hideChat, bool recordReplay, Color? colorOverride = null, string? audioPath = null, float audioVolume = 0, NetUserId? author = null, bool hidePopup = false)
     {
         // CMU14
-        ChatMessageToMany(channel, message, wrappedMessage, source, hideChat, recordReplay, _netManager.Channels.ToList(), colorOverride, audioPath, audioVolume, author);
+        ChatMessageToMany(channel, message, wrappedMessage, source, hideChat, recordReplay, _netManager.Channels.ToList(), colorOverride, audioPath, audioVolume, author, hidePopup);
         // CMU14
     }
 

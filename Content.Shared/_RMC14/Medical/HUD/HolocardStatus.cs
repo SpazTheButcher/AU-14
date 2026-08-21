@@ -11,9 +11,8 @@ public enum HolocardStatus : byte
     Xeno,
     Permadead,
     // Append-only: existing values must not shift (wire compatibility).
-    // AutoHolocardSystem only upgrades — manually-set Permadead / Emergency
-    // / Urgent are never overwritten by an auto-applied Trauma / OrganFailure
-    // / Stable.
+    // AutoHolocardSystem maps these values through an explicit clinical priority
+    // and clears Trauma / OrganFailure after their qualifying injuries resolve.
     Stable,
     Trauma,
     OrganFailure,

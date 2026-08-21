@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using Content.Shared._CMU14.Round.Objectives.Components;
 using Content.Shared._RMC14.Areas;
 using Content.Shared._RMC14.ARES;
 using Content.Shared._RMC14.ARES.Logs;
@@ -39,6 +40,8 @@ using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 using static Content.Shared._RMC14.Intel.IntelSpawnerType;
+using Robust.Shared.Map;
+using Content.Shared._RMC14.Rules;
 
 namespace Content.Shared._RMC14.Intel;
 
@@ -93,42 +96,66 @@ public sealed partial class IntelSystem : EntitySystem
 
     private readonly Dictionary<IntelSpawnerType, float> _paperScrapChances = new()
     {
-        [Close] = 20, [Medium] = 5, [Far] = 2, [Science] = 10,
+        [Close] = 20,
+        [Medium] = 5,
+        [Far] = 2,
+        [Science] = 10,
     };
 
     private readonly Dictionary<IntelSpawnerType, float> _progressReportChances = new()
     {
-        [Close] = 10, [Medium] = 55, [Far] = 3, [Science] = 10,
+        [Close] = 10,
+        [Medium] = 55,
+        [Far] = 3,
+        [Science] = 10,
     };
 
     private readonly Dictionary<IntelSpawnerType, float> _folderChances = new()
     {
-        [Close] = 20, [Medium] = 5, [Far] = 2, [Science] = 10,
+        [Close] = 20,
+        [Medium] = 5,
+        [Far] = 2,
+        [Science] = 10,
     };
 
     private readonly Dictionary<IntelSpawnerType, float> _technicalManualChances = new()
     {
-        [Close] = 20, [Medium] = 40, [Far] = 20, [Science] = 20,
+        [Close] = 20,
+        [Medium] = 40,
+        [Far] = 20,
+        [Science] = 20,
     };
 
     private readonly Dictionary<IntelSpawnerType, float> _diskChances = new()
     {
-        [Close] = 20, [Medium] = 40, [Far] = 20, [Science] = 20,
+        [Close] = 20,
+        [Medium] = 40,
+        [Far] = 20,
+        [Science] = 20,
     };
 
     private readonly Dictionary<IntelSpawnerType, float> _experimentalDeviceChances = new()
     {
-        [Close] = 10, [Medium] = 20, [Far] = 40, [Science] = 30,
+        [Close] = 10,
+        [Medium] = 20,
+        [Far] = 40,
+        [Science] = 30,
     };
 
     private readonly Dictionary<IntelSpawnerType, float> _researchPaperChances = new()
     {
-        [Close] = 25, [Medium] = 20, [Far] = 5, [Science] = 50,
+        [Close] = 25,
+        [Medium] = 20,
+        [Far] = 5,
+        [Science] = 50,
     };
 
     private readonly Dictionary<IntelSpawnerType, float> _vialBoxChances = new()
     {
-        [Close] = 15, [Medium] = 30, [Far] = 5, [Science] = 50,
+        [Close] = 15,
+        [Medium] = 30,
+        [Far] = 5,
+        [Science] = 50,
     };
 
     private int _paperScraps;
@@ -348,7 +375,7 @@ public sealed partial class IntelSystem : EntitySystem
         AddPoints(tree, ent.Comp.Value, team);
 
         var knowledge = EnsureComp<IntelKnowledgeComponent>(user);
-        knowledge.Read.Add(ent);
+        knowledge.ReadIntel.Add(ent);
         Dirty(user, knowledge);
 
         var read = EnsureComp<IntelReadComponent>(ent);
@@ -479,7 +506,7 @@ public sealed partial class IntelSystem : EntitySystem
 
     private void OnKnowledgeRemove<T>(Entity<IntelKnowledgeComponent> ent, ref T args)
     {
-        foreach (var read in ent.Comp.Read)
+        foreach (var read in ent.Comp.ReadIntel)
         {
             if (TerminatingOrDeleted(read))
                 continue;
@@ -501,7 +528,7 @@ public sealed partial class IntelSystem : EntitySystem
 
             if (TryComp(reader, out IntelKnowledgeComponent? knowledge))
             {
-                knowledge.Read.Remove(ent);
+                knowledge.ReadIntel.Remove(ent);
                 Dirty(reader, knowledge);
             }
         }
@@ -509,9 +536,13 @@ public sealed partial class IntelSystem : EntitySystem
 
     private void OnConsoleInteractHand(Entity<IntelConsoleComponent> ent, ref InteractHandEvent args)
     {
+        // CMU14 - claimable enemy intel consoles handle this interaction first.
+        if (args.Handled)
+            return;
+
         var msg = "You start typing in intel into the computer...";
         if (!TryComp(args.User, out IntelKnowledgeComponent? knowledge) ||
-            !knowledge.Read.TryFirstOrNull(out var read))
+            !knowledge.ReadIntel.TryFirstOrNull(out var read))
         {
             msg += " and you have nothing new to add...";
             _popup.PopupClient(msg, ent, args.User, PopupType.Medium);
@@ -561,7 +592,7 @@ public sealed partial class IntelSystem : EntitySystem
             {
                 foreach (var faction in idCardIFF.Factions)
                 {
-                    _aresCore.CreateARESLog(faction, LogCat, (string) $"{Name(args.User)} processed {args.Amount} intel entries");
+                    _aresCore.CreateARESLog(faction, LogCat, (string)$"{Name(args.User)} processed {args.Amount} intel entries");
                 }
             }
         }
@@ -576,7 +607,7 @@ public sealed partial class IntelSystem : EntitySystem
             !TryComp(intel, out IntelUnlocksComponent? unlocks) ||
             !unlocks.Unlocks.TryFirstOrNull(out var unlock))
         {
-            if (!knowledge.Read.TryFirstOrNull(out intel))
+            if (!knowledge.ReadIntel.TryFirstOrNull(out intel))
             {
                 StopPopup(ref args);
                 return;
@@ -586,7 +617,7 @@ public sealed partial class IntelSystem : EntitySystem
             if (!TryComp(intel, out unlocks) ||
                 !unlocks.Unlocks.TryFirstOrNull(out unlock))
             {
-                knowledge.Read.Remove(intel.Value);
+                knowledge.ReadIntel.Remove(intel.Value);
                 args.Repeat = true;
                 return;
             }
@@ -614,7 +645,7 @@ public sealed partial class IntelSystem : EntitySystem
         _audio.PlayPvs(ent.Comp.TypingSound, ent);
 
         if (unlocks.Unlocks.Count == 0)
-            knowledge.Read.Remove(intel.Value);
+            knowledge.ReadIntel.Remove(intel.Value);
 
         if (unlocks.Unlocks.Count == 0)
         {
@@ -715,7 +746,7 @@ public sealed partial class IntelSystem : EntitySystem
                 _ => (EntProtoId<IntelTechTreeComponent>)($"{(string)TechTreeProto}_{teamKey}")
             };
 
-            var candidateIdStr = (string) candidateProto;
+            var candidateIdStr = (string)candidateProto;
             if (_prototypes.HasIndex(candidateIdStr))
             {
                 protoId = candidateProto;
@@ -1261,28 +1292,25 @@ public sealed partial class IntelSystem : EntitySystem
         if (_net.IsClient)
             return fallback;
 
-        var query = EntityQueryEnumerator<Content.Shared.AU14.Objectives.ObjectiveMasterComponent>();
-        while (query.MoveNext(out var uid, out var comp))
+        var factionKey = team.ToLowerInvariant();
+
+        MapId? planetMapId = null;
+        var planetQuery = AllEntityQuery<RMCPlanetComponent>();
+        if (planetQuery.MoveNext(out var mapUid, out _))
+            planetMapId = Transform(mapUid).MapID;
+
+        if (planetMapId == null)
+            return fallback;
+
+        var query = EntityQueryEnumerator<CMUObjectiveMasterComponent, TransformComponent>();
+        while (query.MoveNext(out var uid, out var comp, out var xform))
         {
-            switch (team.ToLowerInvariant())
-            {
-                case Team.GovFor:
-                    return FixedPoint2.New(comp.CurrentWinPointsGovfor);
-                case Team.OpFor:
-                    return FixedPoint2.New(comp.CurrentWinPointsOpfor);
-                case Team.CLF:
-                    return FixedPoint2.New(comp.CurrentWinPointsClf);
-                default:
-                    // support scientist or other factions
-                    if (team.ToLowerInvariant() == "scientist")
-                        return FixedPoint2.New(comp.CurrentWinPointsScientist);
-                    return fallback;
-            }
+            if (comp.IsActive && xform.MapID == planetMapId)
+                return FixedPoint2.New(comp.GetOrCreateFactionData(factionKey).CurrentWinPoints);
         }
 
         return fallback;
     }
-
 
     public void SetTeamTechTreeOverride(string team, string? protoId)
     {

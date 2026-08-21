@@ -16,6 +16,12 @@
   - AU14AccessCorporateWEYU
 
 - type: accessGroup
+  id: auprodigy
+  tags:
+  - CMAccessColonyPublic
+  - CMU14AccessCorporateProdigy
+
+- type: accessGroup
   id: AUPrisonStaff
   tags:
   - AUAccessPrison
@@ -27,6 +33,8 @@
   - CMAccessBrig
   - CMAccessArmory
   - CMAccessMedPrep
+  - CMAccessMedical
+  - CMAccessChemistry
   - CMAccessMarineRifleman
   - CMAccessMarinePrep
   - CMAccessSmartPrep
@@ -35,6 +43,7 @@
   - CMAccessPilot
   - CMAccessCrewman
   - CMAccessRequisitions
+  - RMCAccessVehicleCrew
 
 - type: accessGroup
   id: aulegacygroupmilp

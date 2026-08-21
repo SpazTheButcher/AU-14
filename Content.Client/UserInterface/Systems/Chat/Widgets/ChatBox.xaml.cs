@@ -37,6 +37,7 @@ public partial class ChatBox : UIWidget
     private readonly ChatUIController _controller;
     private readonly Dictionary<string, ChatTabButton> _tabButtons = new();
     private readonly Dictionary<string, int> _tabUnread = new();
+    private readonly HashSet<string> _reportedInvalidMarkup = new();
     private readonly List<ChatTabSettings> _overflowTabs = new();
     private List<ChatTabSettings> _tabs = new();
     private List<ChatStyleSettings> _styles = new();
@@ -1163,7 +1164,7 @@ public partial class ChatBox : UIWidget
 
     private FormattedMessage CreateFormattedMessage(ChatMessage message, Color color, ChatStyleSettings? style = null)
     {
-        var markup = StripGhostFollowCommandLink(message.WrappedMessage, message);
+        var markup = StripChatActionCommandLink(message.WrappedMessage, message);
         markup = StripDuplicateChannelPrefix(markup, message);
         markup = _colorWholeMessage
             ? ChatUserSettings.ApplyStyleMarkup(markup, style, ChatUserSettings.DefaultFontSize)
@@ -1173,7 +1174,7 @@ public partial class ChatBox : UIWidget
         if (_colorWholeMessage)
             formatted.PushColor(color);
 
-        formatted.AddMarkupOrThrow(markup);
+        AddChatMarkup(formatted, markup, message.Channel);
 
         if (_colorWholeMessage)
             formatted.Pop();
@@ -1181,9 +1182,9 @@ public partial class ChatBox : UIWidget
         return FilterProblematicTags(formatted, allowCommandLinks: false);
     }
 
-    private static string StripGhostFollowCommandLink(string markup, ChatMessage message)
+    private static string StripChatActionCommandLink(string markup, ChatMessage message)
     {
-        if (!message.GhostFollowEntity.Valid ||
+        if ((!message.GhostFollowEntity.Valid && !message.XenoWatchEntity.Valid) ||
             !markup.StartsWith("[cmdlink=", StringComparison.OrdinalIgnoreCase))
         {
             return markup;
@@ -1222,13 +1223,24 @@ public partial class ChatBox : UIWidget
 
         // RMC14
         if (!string.IsNullOrWhiteSpace(message.LanguageIcon))
-            formatted.AddMarkupOrThrow($"[langicon language=\"{FormattedMessage.EscapeText(message.LanguageIcon)}\"][/langicon]");
+            AddChatMarkup(formatted, $"[langicon language=\"{FormattedMessage.EscapeStringParameter(message.LanguageIcon)}\"][/langicon]", message.Channel);
         // RMC14
-        formatted.AddMarkupOrThrow(message.WrappedMessage);
+        AddChatMarkup(formatted, message.WrappedMessage, message.Channel);
 
         formatted.Pop();
 
         return FilterProblematicTags(formatted, allowCommandLinks: true);
+    }
+
+    private void AddChatMarkup(FormattedMessage formatted, string markup, ChatChannel channel)
+    {
+        if (ChatMarkupParser.AddMarkup(formatted, markup) is not { } error ||
+            !_reportedInvalidMarkup.Add(markup))
+        {
+            return;
+        }
+
+        _sawmill.Warning($"Invalid markup in {channel} chat message; using permissive fallback: {error}");
     }
 
     private static string StripDuplicateChannelPrefix(string markup, ChatMessage message)

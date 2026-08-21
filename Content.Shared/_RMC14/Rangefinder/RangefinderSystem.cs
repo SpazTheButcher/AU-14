@@ -29,7 +29,6 @@ public sealed partial class RangefinderSystem : EntitySystem
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
     [Dependency] private SharedDropshipWeaponSystem _dropshipWeapon = default!;
     [Dependency] private ExamineSystemShared _examine = default!;
-    [Dependency] private IMapManager _mapManager = default!;
     [Dependency] private INetManager _net = default!;
     [Dependency] private MetaDataSystem _metaData = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
@@ -59,23 +58,70 @@ public sealed partial class RangefinderSystem : EntitySystem
     }
 
     public override void Update(float frameTime)
-    {
-        if (_net.IsClient)
-            return;
+{
+    base.Update(frameTime);
 
-        var activeDesignators = EntityQueryEnumerator<ActiveLaserDesignatorComponent, RangefinderComponent>();
-        while (activeDesignators.MoveNext(out var uid, out var active, out var rangefinder))
+    if (_net.IsClient)
+        return;
+
+    // Validate any laser designator DoAfters that are currently running.
+    var rangefinderQuery = EntityQueryEnumerator<RangefinderComponent>();
+    while (rangefinderQuery.MoveNext(out var rangefinderUid, out var rangefinder))
+    {
+        if (rangefinder.DoAfter is not { } doAfter)
+            continue;
+
+        if (!_doAfter.IsRunning(doAfter.Id))
+            continue;
+
+        if (doAfter.Args.Event is not LaserDesignatorDoAfterEvent laserEvent)
+            continue;
+
+        var coordinates = GetCoordinates(laserEvent.Coordinates);
+        if (!coordinates.IsValid(EntityManager))
+            continue;
+
+        var userCoords = _transform.GetMapCoordinates(doAfter.Args.User);
+        var targetCoords = _transform.ToMapCoordinates(coordinates);
+
+        if (userCoords.MapId != targetCoords.MapId ||
+            !_examine.InRangeUnOccluded(
+                userCoords,
+                targetCoords,
+                rangefinder.Range,
+                uid => uid == doAfter.Args.User || uid == rangefinderUid))
         {
-            if (active.User is not { } user ||
-                active.Target is not { } target ||
-                TerminatingOrDeleted(user) ||
-                TerminatingOrDeleted(target) ||
-                !HasLineOfSight(user, _transform.GetMoverCoordinates(target), rangefinder.Range))
-            {
-                RemCompDeferred<ActiveLaserDesignatorComponent>(uid);
-            }
+            _doAfter.Cancel(doAfter.Id);
         }
     }
+
+    // Validate active laser designations.
+    var activeDesignators = EntityQueryEnumerator<ActiveLaserDesignatorComponent, RangefinderComponent>();
+    while (activeDesignators.MoveNext(out var uid, out var active, out var rangefinder))
+    {
+        if (active.User is not { } user ||
+            active.Target is not { } target ||
+            TerminatingOrDeleted(user) ||
+            TerminatingOrDeleted(target))
+        {
+            RemCompDeferred<ActiveLaserDesignatorComponent>(uid);
+            continue;
+        }
+
+        var userCoords = _transform.GetMapCoordinates(user);
+        var targetCoords = _transform.GetMapCoordinates(target);
+
+        if (userCoords.MapId != targetCoords.MapId ||
+            !_examine.InRangeUnOccluded(
+                userCoords,
+                targetCoords,
+                rangefinder.Range,
+                entity => entity == user || entity == target))
+        {
+            RemCompDeferred<ActiveLaserDesignatorComponent>(uid);
+        }
+    }
+}
 
     private void OnRangefinderMapInit(Entity<RangefinderComponent> rangefinder, ref MapInitEvent args)
     {
@@ -109,7 +155,7 @@ public sealed partial class RangefinderSystem : EntitySystem
     private void OnRangefinderAfterInteract(Entity<RangefinderComponent> rangefinder, ref AfterInteractEvent args)
     {
         var user = args.User;
-        var coordinates = args.ClickLocation.SnapToGrid(EntityManager, _mapManager);
+        var coordinates = args.ClickLocation.SnapToGrid(EntityManager);
         if (!coordinates.IsValid(EntityManager))
             return;
 

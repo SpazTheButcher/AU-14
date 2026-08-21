@@ -77,6 +77,7 @@ rmc-xeno-evolution-failed-marines-dropped = The sky talls have already landed, w
 rmc-xeno-evolution-failed-queen-exists = The hive already has a Queen!
 rmc-xeno-evolution-start-self = We begin to twist and contort.
 rmc-xeno-evolution-start-others = {$xeno} begins to twist and contort.
+rmc-xeno-corruptedevolution-failed-insufficient-hours = You do not have enough playtime to evolve into a Corrupted Queen.
 
 # Insight
 rmc-xeno-insight-empower = We have gained sufficient insight in our prey to empower our next Deploy Traps!
@@ -355,6 +356,12 @@ rmc-xeno-soak-others = {CAPITALIZE(THE($xeno))} begins to tank incoming damage!
 rmc-xeno-soak-end-fail = We stop tanking incoming damage.
 rmc-xeno-soak-end-self = We feel enraged after taking in oncoming damage! Our tail slam's cooldown is reset and we heal!
 rmc-xeno-soak-end-others =  {CAPITALIZE(THE($xeno))} gets enraged after being damaged enough!
+
+# Charger Jockey
+rmc-xeno-jockey-verb = Ride
+rmc-xeno-jockey-start-self = We start climbing onto {$charger}.
+rmc-xeno-jockey-start-others = {$rider} starts climbing onto {$charger}.
+rmc-xeno-jockey-mount = {$rider} climbs onto {$charger}.
 
 # Tail Fountain
 rmc-xeno-tail-fountain-self = We use our tail to pour acid over {$target}.

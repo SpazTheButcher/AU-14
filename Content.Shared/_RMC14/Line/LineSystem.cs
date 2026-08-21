@@ -3,6 +3,7 @@ using System.Numerics;
 using Content.Shared._RMC14.Barricade;
 using Content.Shared._RMC14.Entrenching;
 using Content.Shared._RMC14.Map;
+using Content.Shared._RMC14.Weapons.Ranged.Prediction;
 using Content.Shared.Beam.Components;
 using Content.Shared.Coordinates.Helpers;
 using Content.Shared.Doors.Components;
@@ -17,7 +18,6 @@ namespace Content.Shared._RMC14.Line;
 
 public sealed partial class LineSystem : EntitySystem
 {
-    [Dependency] private IMapManager _mapManager = default!;
     [Dependency] private SharedMapSystem _mapSystem = default!;
     [Dependency] private TagSystem _tag = default!;
     [Dependency] private IGameTiming _timing = default!;
@@ -32,12 +32,14 @@ public sealed partial class LineSystem : EntitySystem
 
     private EntityQuery<BarricadeComponent> _barricadeQuery;
     private EntityQuery<DoorComponent> _doorQuery;
+    private EntityQuery<IgnorePredictionHitComponent> _ignorePredictionHitQuery;
     private EntityQuery<MapGridComponent> _mapGridQuery;
 
     public override void Initialize()
     {
         _barricadeQuery = GetEntityQuery<BarricadeComponent>();
         _doorQuery = GetEntityQuery<DoorComponent>();
+        _ignorePredictionHitQuery = GetEntityQuery<IgnorePredictionHitComponent>();
         _mapGridQuery = GetEntityQuery<MapGridComponent>();
     }
 
@@ -72,7 +74,7 @@ public sealed partial class LineSystem : EntitySystem
         {
             x += xOffset;
             y += yOffset;
-            var center = new EntityCoordinates(start.EntityId, x, y).SnapToGrid(EntityManager, _mapManager);
+            var center = new EntityCoordinates(start.EntityId, x, y).SnapToGrid(EntityManager);
             if (center == lastCoords)
                 continue;
 
@@ -87,7 +89,7 @@ public sealed partial class LineSystem : EntitySystem
                         if (xo == 0 && yo == 0)
                             continue;
 
-                        var point = new EntityCoordinates(start.EntityId, x + xo, y + yo).SnapToGrid(EntityManager, _mapManager);
+                        var point = new EntityCoordinates(start.EntityId, x + xo, y + yo).SnapToGrid(EntityManager);
                         coords.Add(point);
                     }
                 }
@@ -150,6 +152,9 @@ public sealed partial class LineSystem : EntitySystem
         var anchored = _mapSystem.GetAnchoredEntitiesEnumerator(grid.Value, grid, indices);
         while (anchored.MoveNext(out var uid))
         {
+            if (_ignorePredictionHitQuery.HasComp(uid))
+                continue;
+
             if (_barricadeQuery.HasComp(uid))
             {
                 if (ignoreBarricades)

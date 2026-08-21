@@ -1,52 +1,80 @@
 using System.Numerics;
+using Content.Shared._RMC14.Stun;
+using Content.Shared.StatusEffectNew.Components;
 using Robust.Client.Graphics;
+using Robust.Client.Player;
 using Robust.Shared.Enums;
 using Robust.Shared.Prototypes;
-using Robust.Shared.Timing;
 
 namespace Content.Client._RMC14.Stun;
 
 public sealed partial class DazedOverlay : Overlay
 {
-    private static readonly ProtoId<ShaderPrototype> VignetteShader = "GradientCircleMask";
-
-    [Dependency] private IPrototypeManager _prototypeManager = default!;
-    [Dependency] private IGameTiming _timing = default!;
+    private static readonly ProtoId<ShaderPrototype> CircleMaskShader = "GradientCircleMask";
 
     public override OverlaySpace Space => OverlaySpace.WorldSpace;
 
+    private readonly IEntityManager _entManager;
+    private readonly IPlayerManager _playerManager;
+
     private readonly ShaderInstance _vignetteShader;
 
-    public bool IsEnabled { get; set; }
+    private const float MinVisionScale = 0.1f;
+    private const float MaxVisionScale = 1f;
 
-    private float _outerFadeStart = 0.0f;
-    private float _outerFadeEnd = 0.8f;
-    private float _alpha = 1.0f;
-
-    public DazedOverlay()
+    public DazedOverlay(IEntityManager entManager, IPlayerManager playerManager, IPrototypeManager prototypeManager)
     {
-        IoCManager.InjectDependencies(this);
-        _vignetteShader = _prototypeManager.Index(VignetteShader).InstanceUnique();
+        _entManager = entManager;
+        _playerManager = playerManager;
+
+        _vignetteShader = prototypeManager.Index(CircleMaskShader).InstanceUnique();
+    }
+
+    // Picks the strongest active RMCDazed-driven effect (combat daze, opioid haze, etc.) rather than
+    // being tied to a single hardcoded status effect, since several sources can apply this vignette.
+    private RMCDazedComponent? GetStrongestDazed(EntityUid uid)
+    {
+        if (!_entManager.TryGetComponent(uid, out StatusEffectContainerComponent? container))
+            return null;
+
+        RMCDazedComponent? strongest = null;
+        foreach (var effect in container.ActiveStatusEffects)
+        {
+            if (!_entManager.TryGetComponent(effect, out RMCDazedComponent? candidate))
+                continue;
+
+            if (strongest == null || candidate.Alpha > strongest.Alpha)
+                strongest = candidate;
+        }
+
+        return strongest;
     }
 
     protected override void Draw(in OverlayDrawArgs args)
     {
-        if (!IsEnabled)
+        var localEntity = _playerManager.LocalEntity;
+
+        if (localEntity == null)
+            return;
+
+        var dazed = GetStrongestDazed(localEntity.Value);
+
+        if (dazed == null)
             return;
 
         var handle = args.WorldHandle;
         var viewport = args.WorldAABB;
-        var distance = args.ViewportBounds.Width;
+        var visionRadius = args.ViewportBounds.Width * Math.Clamp(1f - dazed.VisionReduction, MinVisionScale, MaxVisionScale);
 
-        _vignetteShader.SetParameter("color", new Vector3(0f, 0f, 0f));
-        _vignetteShader.SetParameter("darknessAlphaOuter", _alpha);
-        _vignetteShader.SetParameter("darknessAlphaInner", 0f);
+        _vignetteShader.SetParameter("color", new Vector3(dazed.Color.R, dazed.Color.G, dazed.Color.B));
+        _vignetteShader.SetParameter("darknessAlphaOuter", dazed.Alpha);
+        _vignetteShader.SetParameter("darknessAlphaInner", dazed.InnerAlpha);
 
-        _vignetteShader.SetParameter("innerCircleRadius", _outerFadeStart * distance * 0.5f);
-        _vignetteShader.SetParameter("innerCircleMaxRadius", _outerFadeStart * distance * 0.5f);
+        _vignetteShader.SetParameter("innerCircleRadius", dazed.OuterFadeStart * visionRadius);
+        _vignetteShader.SetParameter("innerCircleMaxRadius", dazed.OuterFadeStart * visionRadius);
 
-        _vignetteShader.SetParameter("outerCircleRadius", _outerFadeEnd * distance * 0.5f);
-        _vignetteShader.SetParameter("outerCircleMaxRadius", _outerFadeEnd * distance * 0.5f);
+        _vignetteShader.SetParameter("outerCircleRadius", dazed.OuterFadeEnd * visionRadius);
+        _vignetteShader.SetParameter("outerCircleMaxRadius", dazed.OuterFadeEnd * visionRadius);
 
         handle.UseShader(_vignetteShader);
         handle.DrawRect(viewport, Color.White);

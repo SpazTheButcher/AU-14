@@ -70,15 +70,16 @@
     - Epilepsy
     - NonResuscitable
     - NoEnglish
+    - CMUProstheticLeftArm
+    - CMUProstheticRightArm
+    - CMUProstheticLeftLeg
+    - CMUProstheticRightLeg
+    - SlowRunner
+    - Anemic
+    - Asthmatic
   ranks:
     RMCRankCivilian: []
   chevrons:
-    RMCRankLanceCorporal:
-      entity: AU14ChevronUSCMLanceCorporal
-      requirements:
-      - !type:RoleTimeRequirement
-        role: AU14JobGOVFORSquadAutomaticRifleman
-        time: 86400 # 24 hours
     RMCRankPrivateFirstClass:
       entity: AU14ChevronUSCMPrivateFirstClass
       requirements:
@@ -155,7 +156,7 @@
 - type: startingGear
   id: AU14GearopforSquadAutomaticRifleman
   equipment:
-    id: AU14IDCardopforSquadAutomaticRifleman
+    id: AU14IDCardOPFORSquadAutomaticRifleman
     ears: AU14HeadsetOpforMarine
 
 - type: entity

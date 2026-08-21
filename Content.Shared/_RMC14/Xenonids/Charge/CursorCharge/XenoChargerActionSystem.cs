@@ -9,13 +9,13 @@ using Robust.Shared.Network;
 
 namespace Content.Shared._RMC14.Xenonids.Charge.CursorCharge;
 
-public sealed class XenoChargerActionSystem : EntitySystem
+public sealed partial class XenoChargerActionSystem : EntitySystem
 {
-    [Dependency] private readonly INetManager _net = default!;
-    [Dependency] private readonly SharedActionsSystem _actions = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly XenoChargerMovementSystem _movement = default!;
+    [Dependency] private INetManager _net = default!;
+    [Dependency] private SharedActionsSystem _actions = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private XenoChargerMovementSystem _movement = default!;
 
 
     public override void Initialize()

@@ -26,6 +26,8 @@ public abstract partial class SharedStatusEffectsSystem : EntitySystem
     private EntityQuery<StatusEffectContainerComponent> _containerQuery;
     private EntityQuery<StatusEffectComponent> _effectQuery;
 
+    private readonly List<(EntityUid Target, EntProtoId Effect)> _expiredStatusEffects = new();
+
     public override void Initialize()
     {
         base.Initialize();
@@ -34,6 +36,7 @@ public abstract partial class SharedStatusEffectsSystem : EntitySystem
 
         SubscribeLocalEvent<StatusEffectComponent, StatusEffectAppliedEvent>(OnStatusEffectApplied);
         SubscribeLocalEvent<StatusEffectComponent, StatusEffectRemovedEvent>(OnStatusEffectRemoved);
+        SubscribeLocalEvent<StatusEffectComponent, ComponentShutdown>(OnStatusEffectShutdown);
 
         SubscribeLocalEvent<StatusEffectContainerComponent, ComponentGetState>(OnGetState);
 
@@ -50,23 +53,35 @@ public abstract partial class SharedStatusEffectsSystem : EntitySystem
     {
         base.Update(frameTime);
 
-        var query = EntityQueryEnumerator<StatusEffectComponent>();
-        while (query.MoveNext(out var ent, out var effect))
+        try
         {
-            if (effect.EndEffectTime is null)
-                continue;
+            var query = EntityQueryEnumerator<StatusEffectComponent>();
+            while (query.MoveNext(out var ent, out var effect))
+            {
+                if (effect.EndEffectTime is null)
+                    continue;
 
-            if (!(_timing.CurTime >= effect.EndEffectTime))
-                continue;
+                if (!(_timing.CurTime >= effect.EndEffectTime))
+                    continue;
 
-            if (effect.AppliedTo is null)
-                continue;
+                if (effect.AppliedTo is null)
+                    continue;
 
-            var meta = MetaData(ent);
-            if (meta.EntityPrototype is null)
-                continue;
+                var meta = MetaData(ent);
+                if (meta.EntityPrototype is not { } prototype)
+                    continue;
 
-            TryRemoveStatusEffect(effect.AppliedTo.Value, meta.EntityPrototype);
+                _expiredStatusEffects.Add((effect.AppliedTo.Value, prototype));
+            }
+
+            foreach (var (target, effect) in _expiredStatusEffects)
+            {
+                TryRemoveStatusEffect(target, effect);
+            }
+        }
+        finally
+        {
+            _expiredStatusEffects.Clear();
         }
     }
 
@@ -140,6 +155,25 @@ public abstract partial class SharedStatusEffectsSystem : EntitySystem
 
         if (ent.Comp is { AppliedTo: not null, Alert: not null })
             _alerts.ClearAlert(ent.Comp.AppliedTo.Value, ent.Comp.Alert.Value);
+    }
+
+    private void OnStatusEffectShutdown(Entity<StatusEffectComponent> ent, ref ComponentShutdown args)
+    {
+        if (ent.Comp.AppliedTo is not { } target
+            || !_containerQuery.TryComp(target, out var container)
+            || !container.ActiveStatusEffects.Remove(ent.Owner))
+        {
+            return;
+        }
+
+        if (TerminatingOrDeleted(target))
+            return;
+
+        var ev = new StatusEffectRemovedEvent(target);
+        RaiseLocalEvent(ent.Owner, ref ev);
+
+        if (_net.IsServer)
+            Dirty(target, container);
     }
 
     private bool CanAddStatusEffect(EntityUid uid, EntProtoId effectProto)

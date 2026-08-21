@@ -1,6 +1,7 @@
 - type: entity
   abstract: false
   id: UPPCargoCatalog
+  parent: [ CMUASRSResearchGoodies, CMUASRSBotanyGoodies ]
   components:
   - type: RequisitionsComputer
     categories:
@@ -90,6 +91,10 @@
         crate: RMCCrateFoodIngredients
     - name: Gear
       entries:
+      - cost: 300
+        crate: ANPRCFillCardResupplyCrateOPFOR
+      - cost: 1500
+        crate: ANPRCRadioResupplyCrateOPFOR
       - cost: 1200
         crate: AU14CrateTacticalMonocular
       - cost: 1700
@@ -106,6 +111,10 @@
         crate: RMCCrateGearParachute
       - cost: 800
         crate: RMCCrateAttachmentSmartScope
+    - name: Pouches
+      entries:
+      - cost: 150
+        crate: RMCCrateClothingMagazinePouchesLarge
     - name: Medical
       entries:
       - cost: 3000
@@ -158,10 +167,26 @@
         crate: RMCCrateSupplyJanitor
     - name: Vehicle Ammo
       entries:
-      - cost: 2000
-        crate: RMCCrateVehicleAmmoLTBCannon
+      - cost: 1900
+        crate: CMUCrateVehicleAmmoLTBCannonMixed
         maxStock: 2
         stockReplenishDelay: 300
+      - cost: 1900
+        crate: CMUCrateVehicleAmmoLTBCannonAPFSDS
+        maxStock: 2
+      - cost: 1900
+        crate: CMUCrateVehicleAmmoLTBCannonHEAT
+        maxStock: 2
+        stockReplenishDelay: 300
+      - cost: 1900
+        crate: CMUCrateVehicleAmmoLTBCannonHE
+        maxStock: 2
+      - cost: 1900
+        crate: CMUCrateVehicleAmmoLTBCannonCanister
+        maxStock: 2
+      - cost: 1900
+        crate: CMUCrateVehicleAmmoLTBCannonNapalm
+        maxStock: 2
       - cost: 1800
         crate: RMCCrateVehicleAmmoLTAAAP
         maxStock: 2
@@ -179,7 +204,7 @@
         maxStock: 2
         stockReplenishDelay: 300
       - cost: 900
-        crate: RMCCrateVehicleAmmoGrenadeLauncher
+        crate: CMUCrateVehicleAmmoGrenadeLauncherMixed
         maxStock: 2
         stockReplenishDelay: 300
       - cost: 700
@@ -190,8 +215,12 @@
         crate: RMCCrateVehicleAmmoTowLauncher
         maxStock: 2
         stockReplenishDelay: 300
-      - cost: 1000
-        crate: RMCCrateVehicleAmmoCupola
+      - cost: 1025
+        crate: CMUCrateVehicleAmmoCupolaMixed
+        maxStock: 2
+        stockReplenishDelay: 300
+      - cost: 1050
+        crate: CMUCrateVehicleAmmoCupolaTracer
         maxStock: 2
         stockReplenishDelay: 300
       - cost: 1200
@@ -219,8 +248,8 @@
       - cost: 400
         crate: RMCCrateXM88
       - cost: 800
-        crate: RMCCrateMOU53
-      - cost: 400
+        crate: CMUCrateOlympiets
+      - cost: 600
         crate: RMCCrateM85A1
       - cost: 200
         crate: AU14CrateAssortedKnives
@@ -272,6 +301,16 @@
         crate: RMCCrateMagazineBGel
     - name: Specialist Ammo
       entries:
+      - cost: 700
+        crate: CMUCrateEMBLRAP
+      - cost: 600
+        crate: CMUCrateEMBLRMixed
+      - cost: 700
+        crate: CMUCrateEMBLRHE
+      - cost: 900
+        crate: CMUCrateEMBLRWP
+      - cost: 2000
+        crate: RMCCratePyroTankMixedUPP
       # Sniper
       - cost: 2000
         crate: AU14CrateMagazineSpecSniperM96S
@@ -302,6 +341,9 @@
         crate: AU14CrateMagazineSpecScoutFLAK
       - cost: 1500
         crate: AU14CrateMagazineSpecScoutMixed
+      # CMP
+      - cost: 450
+        crate: AU14CrateBoxRSH9SL
     - name: AP Ammo
       entries:
       - cost: 850

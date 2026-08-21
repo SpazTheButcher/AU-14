@@ -29,6 +29,7 @@ using System.Data;
 using Content.Server.AU14.Round;
 using IConfigurationManager = Robust.Shared.Configuration.IConfigurationManager;
 using Content.Server.Radio;
+using Content.Shared._CMU14.Xenomorphs.Pathogen;
 
 namespace Content.Server._RMC14.Xenonids.Hive;
 
@@ -68,6 +69,7 @@ public sealed partial class XenoHiveSystem : SharedXenoHiveSystem
         SubscribeLocalEvent<HijackBurrowedSurgeComponent, ComponentShutdown>(OnBurrowedSurgeShutdown);
         SubscribeLocalEvent<InvincibleHiveStructureComponent, MapInitEvent>(OnInvincibleMapInit);
         SubscribeLocalEvent<RadioReceiveAttemptEvent>(OnRadioReceiveAttempt);
+        SubscribeLocalEvent<CMUPathogenHiveMemberComponent, MapInitEvent>(OnPathogenSpawn);
 
         Subs.CVar(_config,
             RMCCVars.RMCLateJoinsPerBurrowedLarvaEarlyThresholdMinutes,
@@ -82,7 +84,6 @@ public sealed partial class XenoHiveSystem : SharedXenoHiveSystem
         if (args.Channel.ID != SharedChatSystem.HivemindChannel.Id)
             return;
 
-        //since hivemind is an intrinsic channel, we can probably just access it directly
         if (TryComp<HiveMemberComponent>(args.RadioSource, out var hivea) && IsMember(args.RadioReceiver, hivea.Hive))
             return;
         else args.Cancelled = true;
@@ -147,6 +148,36 @@ public sealed partial class XenoHiveSystem : SharedXenoHiveSystem
             ent.Comp.Blocker = Spawn(ent.Comp.BlockerId, ent.Owner.ToCoordinates());
 
         _rmcSprite.SetColor(ent.Owner, ent.Comp.Color);
+    }
+
+    /// <summary>
+    /// When CMUPathogenHive itself finishes MapInit, retroactively assign any Pathogen members
+    /// that spawned before the hive entity existed (e.g. map-placed entities).
+    /// </summary>
+    private void OnPathogenSpawn(Entity<CMUPathogenHiveMemberComponent> ent, ref MapInitEvent args)
+    {
+        TryAssignPathogenHive(ent.Owner);
+    }
+
+    private void TryAssignPathogenHive(EntityUid uid)
+    {
+        if (TerminatingOrDeleted(uid))
+            return;
+
+        var hives = EntityQueryEnumerator<HiveComponent, MetaDataComponent>();
+        while (hives.MoveNext(out var hiveUid, out _, out var meta))
+        {
+            if (meta.EntityPrototype?.ID != "CMUPathogenHive")
+                continue;
+
+            Log.Debug($"TryAssignPathogenHive: assigning {ToPrettyString(uid)} to Pathogen hive {ToPrettyString(hiveUid)}");
+            SetHive(uid, hiveUid);
+            return;
+        }
+
+        // Hive not ready yet — defer one tick and retry.
+        Log.Debug($"TryAssignPathogenHive: CMUPathogenHive not found for {ToPrettyString(uid)}, retrying next tick");
+        Timer.Spawn(0, () => TryAssignPathogenHive(uid));
     }
 
     private void UpdateInvincible()
@@ -266,7 +297,6 @@ public sealed partial class XenoHiveSystem : SharedXenoHiveSystem
                 hive.AnnouncedHiveCoreCooldownOver = true;
                 Dirty(hiveId, hive);
             }
-
         }
 
         var time = _timing.CurTime;
@@ -276,24 +306,30 @@ public sealed partial class XenoHiveSystem : SharedXenoHiveSystem
             if (time < burrowed.NextSurgeAt)
                 continue;
 
-            if (GetHiveCore((id, hive)) == null)
+            if (!HasBurrowedLarvaSpawnPoint((id, hive)))
             {
-                //Reset time between if no core
                 if (burrowed.SurgeEvery != burrowed.ResetSurgeTime)
                     burrowed.SurgeEvery = burrowed.ResetSurgeTime;
+
+                burrowed.NextSurgeAt = time + burrowed.SurgeEvery;
+                Dirty(id, burrowed);
                 continue;
             }
 
-            ChangeBurrowedLarva(1);
+            ChangeBurrowedLarva((id, hive), 1);
             burrowed.PooledLarva--;
             if (burrowed.PooledLarva < 1)
+            {
+                Dirty(id, burrowed);
                 RemCompDeferred<HijackBurrowedSurgeComponent>(id);
+                continue;
+            }
 
             if (burrowed.SurgeEvery > burrowed.MinSurgeTime)
                 burrowed.SurgeEvery -= burrowed.ReduceSurgeBy;
 
             burrowed.NextSurgeAt = time + burrowed.SurgeEvery;
-
+            Dirty(id, burrowed);
         }
 
         UpdateInvincible();
@@ -311,11 +347,9 @@ public sealed partial class XenoHiveSystem : SharedXenoHiveSystem
 
     public void EvoScreech(HiveComponent hive)
     {
-
         if (hive.CurrentQueen is not { } queen)
             return;
 
-        // Get the map that the queen is on
         var map = _transform.GetMapId(queen);
         var mapFilter = Filter.BroadcastMap(map);
 
@@ -326,6 +360,7 @@ public sealed partial class XenoHiveSystem : SharedXenoHiveSystem
 
             if (HasComp<XenoComponent>(recipient))
                 continue;
+
             if (_auRoundSystem.SelectedThreat?.hiveevolution == true)
             {
                 var popupText = Loc.GetString(HasComp<SynthComponent>(recipient)
@@ -336,12 +371,7 @@ public sealed partial class XenoHiveSystem : SharedXenoHiveSystem
 
                 _audio.PlayEntity(hive.MarineAnnounceSound, recipient, recipient);
                 _rmcChat.ChatMessageToOne(ChatChannel.Radio, popupText, popupText, default, false, session.Channel);
-
             }
-
-
-
-
         }
     }
 }

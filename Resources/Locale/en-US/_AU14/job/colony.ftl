@@ -210,9 +210,9 @@ au14-job-name-orbitallawyer = Orbital Counsel
 au14-job-description-orbitallawyer = Defend the innocent (and guilty), prosecute, or just argue until someone pays you.
 au14-job-prefix-orbitallawyer = Orb. Cnsl.
 
-au14-job-name-civiliancolonyadminasssistant = Administrative Assistant
+au14-job-name-civiliancolonyadminasssistant = Deputy Administrator
 au14-job-description-civiliancolonyadminassistant = Be the right hand of the Colony Administrator.
-au14-job-prefix-colonyadminassistant = Admin. Assist.
+au14-job-prefix-colonyadminassistant = Dep. Admin.
 
 au14-job-name-civiliancorporateassistant = Corporate Assistant
 au14-job-description-civiliancorporateassistant = Be the right hand of the Corporate Liaison.
@@ -254,3 +254,15 @@ au14-job-prefix-civiliannspainspector = NSPAINS
 au14-job-name-civilianiccliaison = Interstellar Commerce Commission Liaison
 au14-job-description-civilianiccliaison = You are an Interstellar Commerce Commission Corporate Liaison, a well experienced ICC Agent that has been attached to an NSPA team. You work with the NSPA specifically to observe proper trade practices and investigate any possibilities of smuggling or black market activity.
 au14-job-prefix-civilianiccliaison = ICCL
+
+cmu14-job-name-civilian-supervisor = Supervisor
+cmu14-job-description-civilian-supervisor = You are here to ensure maximum level of followed procedures.
+cmu14-job-prefix-civilian-supervisor = SPRVSR
+
+cmu14-job-name-lawyer = Lawyer
+cmu14-job-description-lawyer = You are a lawyer. Some claim you have no soul but you just like money and have superiority complex. What earns money best than making your clients happy?
+cmu14-job-prefix-lawyer = LAWR
+
+cmu14-job-name-ppo = PPO
+cmu14-job-description-ppo = Personal Protection Officer, you are here to protect the VIP.
+cmu14-job-prefix-ppo = PPO

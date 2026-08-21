@@ -130,7 +130,7 @@
     zeroOnlyOnEmpty: true
   - type: Appearance
   - type: RefillableByBulletBox
-    bulletType: CMUBoxBulletsSMG9MM
+    bulletType: CMUBoxBulletsPistol9MM
     
 - type: entity
   parent: CMCartridge10x20mm

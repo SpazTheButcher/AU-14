@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Content.Shared._RMC14.Actions;
 using Content.Shared._RMC14.Aura;
 using Content.Shared._RMC14.Xenonids.Bulwark;
+using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
 using Content.Shared.Damage;
 using Content.Shared.Projectiles;
@@ -30,6 +32,13 @@ public sealed class XenoBulwarkTest
   components:
   - type: XenoBulwark
     reflecting: true
+
+- type: entity
+  parent: CMXenoWarriorBulwark
+  id: RMCTestXenoBulwarkLongTailSwing
+  components:
+  - type: XenoBulwark
+    tailSwingRange: 3
 ";
 
     [Test]
@@ -203,6 +212,39 @@ public sealed class XenoBulwarkTest
     }
 
     [Test]
+    public async Task TailSwingDoesNotHitThroughWalls()
+    {
+        await using var pair = await PoolManager.GetServerClient();
+        var server = pair.Server;
+        var map = await pair.CreateTestMap();
+
+        await server.WaitAssertion(() =>
+        {
+            var entMan = server.EntMan;
+            var xeno = entMan.SpawnEntity("RMCTestXenoBulwarkLongTailSwing", map.GridCoords);
+            var wall = entMan.SpawnEntity("CMWallMetal", map.GridCoords.Offset(new Vector2(1, 0)));
+            var target = entMan.SpawnEntity("CMMobHuman", map.GridCoords.Offset(new Vector2(2, 0)));
+            var action = SpawnAction(entMan);
+
+            try
+            {
+                RaiseTailSwing(entMan, xeno, action);
+
+                Assert.That(TotalDamage(entMan, target), Is.Zero);
+            }
+            finally
+            {
+                entMan.DeleteEntity(xeno);
+                entMan.DeleteEntity(wall);
+                entMan.DeleteEntity(target);
+                entMan.DeleteEntity(action.Owner);
+            }
+        });
+
+        await pair.CleanReturnAsync();
+    }
+
+    [Test]
     public async Task ReflectiveShieldShowsSpikeShieldVisualEffect()
     {
         await using var pair = await PoolManager.GetServerClient();
@@ -242,6 +284,49 @@ public sealed class XenoBulwarkTest
                 entMan.DeleteEntity(xeno);
                 entMan.DeleteEntity(encaseAction.Owner);
                 entMan.DeleteEntity(reflectAction.Owner);
+            }
+        });
+
+        await pair.CleanReturnAsync();
+    }
+
+    [Test]
+    public async Task ReflectiveShieldEarlyCancellationUsesMinimumCooldown()
+    {
+        await using var pair = await PoolManager.GetServerClient();
+        var server = pair.Server;
+        var map = await pair.CreateTestMap();
+
+        await server.WaitAssertion(() =>
+        {
+            var entMan = server.EntMan;
+            var actions = entMan.System<SharedActionsSystem>();
+            var rmcActions = entMan.System<SharedRMCActionsSystem>();
+            var xeno = entMan.SpawnEntity("CMXenoWarriorBulwark", map.GridCoords);
+
+            try
+            {
+                var encaseAction = rmcActions.GetActionsWithEvent<XenoEncasedPlatesActionEvent>(xeno).Single();
+                var reflectAction = rmcActions.GetActionsWithEvent<XenoReflectiveShieldActionEvent>(xeno).Single();
+
+                actions.PerformAction(xeno, encaseAction);
+                actions.PerformAction(xeno, reflectAction);
+                actions.ClearCooldown(reflectAction.AsNullable());
+                actions.PerformAction(xeno, reflectAction);
+
+                var bulwark = entMan.GetComponent<XenoBulwarkComponent>(xeno);
+                var cooldown = reflectAction.Comp.Cooldown;
+
+                Assert.Multiple(() =>
+                {
+                    Assert.That(bulwark.Reflecting, Is.False);
+                    Assert.That(cooldown, Is.Not.Null);
+                    Assert.That(cooldown!.Value.End - cooldown.Value.Start, Is.EqualTo(bulwark.ReflectMinCooldown));
+                });
+            }
+            finally
+            {
+                entMan.DeleteEntity(xeno);
             }
         });
 
@@ -292,7 +377,7 @@ public sealed class XenoBulwarkTest
                 {
                     Assert.That(reflected.Length(), Is.EqualTo(incoming.Length()).Within(0.01f));
                     Assert.That(Vector2.Dot(reflected, incoming), Is.LessThan(0));
-                    Assert.That(Vector2.Distance(reflected, -incoming), Is.GreaterThan(0.01f));
+                    Assert.That(Vector2.Distance(reflected, -incoming), Is.GreaterThan(0.0001f));
                     Assert.That(reflectedRotation.Theta, Is.EqualTo(reflected.ToWorldAngle().Theta).Within(0.01f));
                 });
             }

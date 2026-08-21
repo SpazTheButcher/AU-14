@@ -29,7 +29,6 @@ using Content.Shared._RMC14.Xenonids.HiveLeader;
 using Content.Shared._RMC14.Xenonids.Weeds;
 using Content.Shared.Actions;
 using Content.Shared.Atmos.Rotting;
-using Content.Shared.AU14.Objectives;
 using Content.Shared.Cuffs.Components;
 using Content.Shared.Database;
 using Content.Shared.Ghost;
@@ -54,12 +53,14 @@ namespace Content.Server._RMC14.TacticalMap;
 
 public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
 {
+    private const string PresetMarineCommand = "MarineCommand";
+
     [Dependency] private SharedActionsSystem _actions = default!;
     [Dependency] private IAdminLogManager _adminLog = default!;
     [Dependency] private IConfigurationManager _config = default!;
     [Dependency] private CMDistressSignalRuleSystem _distressSignal = default!;
     [Dependency] private XenoEvolutionSystem _evolution = default!;
-    [Dependency] private AnnouncementRouterSystem _announcementRouter = default!;
+    [Dependency] private GeneralAnnounceSystem _generalAnnounce = default!;
     [Dependency] private MarineAnnounceSystem _marineAnnounce = default!;
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private INetManager _net = default!;
@@ -2049,15 +2050,11 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
         var request = new AnnouncementRequest
         {
             Message = message,
-            Preset = AnnouncementRouterSystem.PresetMarineCommand,
-            Route = new AnnouncementRoute
-            {
-                Target = AnnouncementTarget.Marines,
-                Channels = AnnouncementChannels.Overlay,
-            },
+            Preset = PresetMarineCommand,
+            Target = AnnouncementTarget.Marines,
         };
 
-        _announcementRouter.Announce(request, BuildFactionAnnouncementFilter(faction));
+        _generalAnnounce.AnnounceAdvanced(request, BuildFactionAnnouncementFilter(faction));
     }
 
     private Filter BuildFactionAnnouncementFilter(string faction)

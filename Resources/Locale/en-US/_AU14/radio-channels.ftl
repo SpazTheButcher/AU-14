@@ -21,9 +21,11 @@ chat-radio-alert = ALRT
 chat-radio-WEYU = WEYU
 chat-radio-CMB = CMB
 chat-radio-CLF = CLF
+chat-radio-CLFCommand = CLF Command
 chat-radio-mob = FAMLY
 
 chat-radio-hivemind = HIVE
+chat-radio-mycelium-link = MYCEL
 chat-radio-ai = AI
 chat-radio-colony-softwave = SWAVE
 

@@ -12,6 +12,7 @@
   playTimeTracker: AU14JobGOVFORMilitaryPoliceMan
   requireAdminNotify: true
   canBeAntag: false
+  displayWeight: 5
   accessGroups:
   - AU14GovforSecurity
   - aulegacygroupmilp # NOTE: should remove & hard migrate
@@ -24,6 +25,8 @@
   roundProfiles:
   - AU14RoundJobProfileMilitaryBase
   roundComponents:
+  - type: AU14CallsignRole
+    category: MP
   - type: Skills
     preset: AU14SkillPresetMilitaryPolice
   - type: AU14CallToAttentionAbility
@@ -49,27 +52,24 @@
     - NonResuscitable
     - Epilepsy
     - NoEnglish
+    - SlowRunner
+    - Anemic
+    - Asthmatic
   ranks:
     RMCRankCivilian: []
   chevrons:
-    RMCRankGunnerySergeant:
-      entity: AU14ChevronUSCMGunnerySergeant
-      requirements:
-      - !type:RoleTimeRequirement
-        role: AU14JobGOVFORMilitaryPoliceMan
-        time: 360000 # 100 hours
     RMCRankStaffSergeant:
       entity: AU14ChevronUSCMStaffSergeant
       requirements:
       - !type:RoleTimeRequirement
         role: AU14JobGOVFORMilitaryPoliceMan
-        time: 180000 # 50 hours
+        time: 86400 # 24 hours
     RMCRankSergeant:
       entity: AU14ChevronUSCMSergeant
       requirements:
       - !type:RoleTimeRequirement
         role: AU14JobGOVFORMilitaryPoliceMan
-        time: 86400 # 24 hours
+        time: 36000 # 10 hours
     RMCRankCorporal:
       entity: AU14ChevronUSCMCorporal
       requirements: []
@@ -85,7 +85,7 @@
     ears: AU14HeadsetGovforMarineMP
     ears2: RMCM5CameraGear
   inhand:
-    - AU14StampCMP
+    - AU14StampMP
 
 - type: startingGear
   id: AU14GearGOVFORMilitaryPoliceManDummy

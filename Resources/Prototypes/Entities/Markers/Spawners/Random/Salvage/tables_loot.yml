@@ -20,18 +20,18 @@
       - id: ScrapPAIGold
         weight: 0.1
     - id: ScrapTube
-    - id: ShardGlass
+    - id: CMShardGlass
       amount: !type:RangeNumberSelector
         range: 1, 3
-    - id: SheetSteel1
+    - id: CMSheetMetal1
       weight: 0.5
       amount: !type:RangeNumberSelector
         range: 1, 3
-    - id: SheetPlastic1
+    - id: CMSheetGlassPhoronReinforced1
       weight: 0.5
       amount: !type:RangeNumberSelector
         range: 1, 3
-    - id: PartRodMetal1
+    - id: CMRodMetal1
       weight: 0.5
       amount: !type:RangeNumberSelector
         range: 1, 3
@@ -46,20 +46,20 @@
       weight: 2
     # - id: ScrapPlastic TODO: high-value plastic scrap.
     #  weight: 2
-    - id: SheetSteel10
-    - id: SheetGlass10
-    - id: SheetPlastic10
+    - id: CMSheetMetal10
+    - id: CMSheetGlass10
+    - id: CMSheetGlassPhoron1
     - id: ScrapGeneratorFuelTank
       weight: 0.5
-    - id: PartRodMetal10
+    - id: CMRodMetal10
       weight: 0.33
-    - id: MaterialWoodPlank10
+    - id: RMCPlankWood10
       weight: 0.2
-    - id: SheetPlasma10
+    - id: CMSheetGlassPhoronReinforced1
       weight: 0.2
-    - id: ArtifactFragment1
+    - id: CMSheetPhoron1
       weight: 0.05
-    - id: SheetPlasteel10
+    - id: CMSheetPlasteel10
       weight: 0.05
 
 - type: entityTable
@@ -93,7 +93,7 @@
   id: SalvageTreasureCommon
   table: !type:GroupSelector
     children:
-    - id: SheetPlasma1
+    - id: CMSheetGlassPhoronReinforced1
       amount: !type:RangeNumberSelector
         range: 3, 5
     - id: ResearchDisk
@@ -126,7 +126,7 @@
       tableId: TreasureCoinPile
       rolls: !type:RangeNumberSelector
         range: 4, 7
-    - id: SpaceCash1000
+    - id: RMCSpaceCash1000
     - id: WristwatchGold
     - !type:NestedSelector
       tableId: RingTableCommon
@@ -153,13 +153,13 @@
         rolls: !type:RangeNumberSelector
           range: 3, 5
         children:
-        - id: SpaceCash1000
+        - id: RMCSpaceCash100
           weight: 60
-        - id: SpaceCash2500
+        - id: RMCSpaceCash200
           weight: 25
-        - id: SpaceCash5000
+        - id: RMCSpaceCash500
           weight: 14
-        - id: SpaceCash10000
+        - id: RMCSpaceCash1000
           weight: 1
     - !type:NestedSelector
       tableId: RingTableRare

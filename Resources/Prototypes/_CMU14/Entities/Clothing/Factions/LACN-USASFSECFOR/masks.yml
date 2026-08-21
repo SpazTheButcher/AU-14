@@ -20,6 +20,7 @@
     - Snout
   - type: Clothing
     sprite: _AU14/Clothing/LACN/PilotGear/mask.rsi
+  - type: BreathMask
   - type: IdentityBlocker
     coverage: MOUTH
   - type: Item
@@ -37,3 +38,5 @@
     - HeadTop
     - HeadSide
     - Snout
+  - type: MycotoxinProtection
+    fullProtection: false

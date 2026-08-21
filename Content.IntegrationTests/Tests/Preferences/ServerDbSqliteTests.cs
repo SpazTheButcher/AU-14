@@ -18,7 +18,7 @@ using Robust.UnitTesting;
 namespace Content.IntegrationTests.Tests.Preferences
 {
     [TestFixture]
-    public sealed class ServerDbSqliteTests
+    public sealed partial class ServerDbSqliteTests
     {
         [TestPrototypes]
         private const string Prototypes = @"
@@ -52,7 +52,11 @@ namespace Content.IntegrationTests.Tests.Preferences
                     Color.Aquamarine,
                     Color.Azure,
                     Color.Beige,
-                    new ())
+                    new (),
+                    HairStyles.DefaultHairStyle,
+                    Color.Black,
+                    HairStyles.DefaultFacialHairStyle,
+                    Color.Black)
             };
         }
 

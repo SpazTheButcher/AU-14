@@ -24,6 +24,7 @@
     coverage: MOUTH
   - type: Item
     storedRotation: -90
+  - type: BreathMask
   - type: Appearance
   - type: Foldable
     canFoldInsideContainer: true
@@ -37,6 +38,8 @@
     - HeadTop
     - HeadSide
     - Snout
+  - type: MycotoxinProtection
+    fullProtection: false
 
 - type: entity
   parent: [CMBaseMask, CMUBaseGasMaskFilterSlot]
@@ -58,3 +61,5 @@
     - HeadSide
     - Hair
     - Snout
+  - type: MycotoxinProtection
+    fullProtection: true

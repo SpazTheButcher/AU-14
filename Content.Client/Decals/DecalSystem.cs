@@ -15,7 +15,7 @@ namespace Content.Client.Decals
 
         private DecalOverlay? _overlay;
 
-        private HashSet<uint> _removedUids = new();
+        private readonly HashSet<uint> _removedUids = new();
         private readonly List<Vector2i> _removedChunks = new();
 
         public override void Initialize()
@@ -120,6 +120,22 @@ namespace Content.Client.Decals
                 UpdateChunks(gridId, gridComp, updatedGridChunks);
             }
 
+            foreach (var (netGrid, gridDeltas) in ev.Deltas)
+            {
+                if (gridDeltas.Count == 0)
+                    continue;
+
+                var gridId = GetEntity(netGrid);
+
+                if (!TryComp(gridId, out DecalGridComponent? gridComp))
+                {
+                    Log.Error($"Received decal information for an entity without a decal component: {ToPrettyString(gridId)}");
+                    continue;
+                }
+
+                ApplyDeltas(gridId, gridComp, gridDeltas);
+            }
+
             // Now we'll cull old chunks out of range as the server will send them to us anyway.
             foreach (var (netGrid, chunks) in ev.RemovedChunks)
             {
@@ -152,36 +168,116 @@ namespace Content.Client.Decals
                     _removedUids.ExceptWith(newChunkData.Decals.Keys);
                     foreach (var removedUid in _removedUids)
                     {
-                        OnDecalRemoved(gridId, removedUid, gridComp, indices, chunk);
-                        gridComp.DecalIndex.Remove(removedUid);
+                        RemoveDecalLocally(gridId, gridComp, indices, removedUid);
                     }
+                }
+
+                foreach (var uid in newChunkData.Decals.Keys)
+                {
+                    if (gridComp.DecalIndex.TryGetValue(uid, out var oldIndices) && oldIndices != indices)
+                        RemoveDecalLocally(gridId, gridComp, oldIndices, uid);
+                }
+
+                if (newChunkData.Decals.Count == 0)
+                {
+                    chunkCollection.Remove(indices);
+                    continue;
                 }
 
                 chunkCollection[indices] = newChunkData;
 
-                foreach (var (uid, decal) in newChunkData.Decals)
+                foreach (var uid in newChunkData.Decals.Keys)
                 {
                     gridComp.DecalIndex[uid] = indices;
                 }
             }
         }
 
-        private void RemoveChunks(EntityUid gridId, DecalGridComponent gridComp, IEnumerable<Vector2i> chunks)
+        private void ApplyDeltas(
+            EntityUid gridId,
+            DecalGridComponent gridComp,
+            Dictionary<Vector2i, DecalChunkDelta> gridDeltas)
+        {
+            foreach (var (indices, delta) in gridDeltas)
+            {
+                if (delta.Cleared)
+                    ClearChunk(gridId, gridComp, indices);
+            }
+
+            // Apply removals first so a decal can move between chunks in one update regardless of dictionary order.
+            foreach (var (indices, delta) in gridDeltas)
+            {
+                foreach (var decalId in delta.RemovedDecals)
+                {
+                    RemoveDecalLocally(gridId, gridComp, indices, decalId);
+                }
+            }
+
+            foreach (var (indices, delta) in gridDeltas)
+            {
+                foreach (var (decalId, decal) in delta.ModifiedDecals)
+                {
+                    UpsertDecal(gridId, gridComp, indices, decalId, decal);
+                }
+            }
+        }
+
+        private void UpsertDecal(
+            EntityUid gridId,
+            DecalGridComponent gridComp,
+            Vector2i indices,
+            uint decalId,
+            Decal decal)
+        {
+            if (gridComp.DecalIndex.TryGetValue(decalId, out var oldIndices) && oldIndices != indices)
+                RemoveDecalLocally(gridId, gridComp, oldIndices, decalId);
+
+            var chunk = gridComp.ChunkCollection.ChunkCollection.GetOrNew(indices);
+            chunk.Decals[decalId] = decal;
+            gridComp.DecalIndex[decalId] = indices;
+        }
+
+        private void RemoveDecalLocally(
+            EntityUid gridId,
+            DecalGridComponent gridComp,
+            Vector2i expectedIndices,
+            uint decalId)
+        {
+            var indices = expectedIndices;
+            if (gridComp.DecalIndex.Remove(decalId, out var indexedChunk))
+                indices = indexedChunk;
+
+            var chunkCollection = gridComp.ChunkCollection.ChunkCollection;
+            if (!chunkCollection.TryGetValue(indices, out var chunk) || !chunk.Decals.ContainsKey(decalId))
+                return;
+
+            OnDecalRemoved(gridId, decalId, gridComp, indices, chunk);
+            if (chunk.Decals.Count == 0)
+                chunkCollection.Remove(indices);
+        }
+
+        private void ClearChunk(EntityUid gridId, DecalGridComponent gridComp, Vector2i indices)
         {
             var chunkCollection = gridComp.ChunkCollection.ChunkCollection;
+            if (!chunkCollection.TryGetValue(indices, out var chunk))
+                return;
 
+            _removedUids.Clear();
+            _removedUids.UnionWith(chunk.Decals.Keys);
+            foreach (var decalId in _removedUids)
+            {
+                OnDecalRemoved(gridId, decalId, gridComp, indices, chunk);
+                gridComp.DecalIndex.Remove(decalId);
+            }
+
+            chunkCollection.Remove(indices);
+        }
+
+        private void RemoveChunks(EntityUid gridId, DecalGridComponent gridComp, IEnumerable<Vector2i> chunks)
+        {
             foreach (var index in chunks)
             {
-                if (!chunkCollection.TryGetValue(index, out var chunk))
-                    continue;
-
-                foreach (var decalId  in chunk.Decals.Keys)
-                {
-                    OnDecalRemoved(gridId, decalId, gridComp, index, chunk);
-                    gridComp.DecalIndex.Remove(decalId);
-                }
-
-                chunkCollection.Remove(index);
+                ClearChunk(gridId, gridComp, index);
             }
         }
     }

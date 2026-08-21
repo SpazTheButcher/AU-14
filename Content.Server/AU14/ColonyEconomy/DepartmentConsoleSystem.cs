@@ -30,6 +30,7 @@ public sealed partial class DepartmentConsoleSystem : EntitySystem
 
     private static readonly Dictionary<string, string[]> DepartmentFallbacks = new()
     {
+        ["AU14DepartmentColonyMedical"] = new[] { "AU14DepartmentCivilian" },
         ["AU14DepartmentCivilian"] = new[] { "AU14DepartmentServices" },
         ["AU14DepartmentLabor"] = new[] { "AU14DepartmentLumbermill" },
         ["AU14DepartmentServices"] = new[] { "AU14DepartmentHydroponics" },
@@ -536,13 +537,34 @@ public sealed partial class DepartmentConsoleSystem : EntitySystem
             if (!_idCard.TryFindIdCard(playerUid, out var idCard))
                 continue;
 
-            if (comp.Members.Contains(idCard.Owner))
+            if (IsDepartmentAnnouncementRecipient(comp, idCard.Owner, idCard.Comp))
                 filter.AddPlayer(session);
         }
 
         var sender = $"{comp.DepartmentName} Dept.";
         var announcementSound = new SoundPathSpecifier("/Audio/Announcements/announce.ogg");
         _chatSystem.DispatchFilteredAnnouncement(filter, msg.Message, uid, sender, true, announcementSound);
+    }
+
+    private static bool IsDepartmentAnnouncementRecipient(
+        DepartmentConsoleComponent comp,
+        EntityUid idCardUid,
+        IdCardComponent idCard)
+    {
+        if (comp.Members.Contains(idCardUid))
+            return true;
+
+        if (comp.DepartmentId is not { } departmentId)
+            return false;
+
+        var departments = idCard.JobDepartments;
+        for (var i = 0; i < departments.Count; i++)
+        {
+            if (departments[i] == departmentId)
+                return true;
+        }
+
+        return false;
     }
 
     /// <summary>

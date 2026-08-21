@@ -18,7 +18,6 @@
   - type: SharpGun
   - type: GunRequiresWield
   - type: GunIFF
-    intrinsic: true
     enabled: true
   - type: ShootAtFixedPoint
     maxFixedRange: 7
@@ -282,7 +281,7 @@
     explosionType: RMC
     maxIntensity: 25
     intensitySlope: 8
-    totalIntensity: 220
+    totalIntensity: 190
     canCreateVacuum: false
   - type: RMCScorchEffect
     radius: 3
@@ -297,7 +296,7 @@
     explosionType: RMC
     maxIntensity: 25
     intensitySlope: 6
-    totalIntensity: 260
+    totalIntensity: 240
     canCreateVacuum: false
 
 - type: entity
@@ -435,6 +434,7 @@
           bounds: "-0.25,-0.25,0.25,0.25"
         hard: false
         layer:
+        - BulletImpassable
         - XenoProjectileImpassable
       fix1:
         shape:
@@ -469,11 +469,13 @@
     placementDelay: 3
     disarmDelay: 3
     shotStackLimit: 1
+    triggerOnAnyProjectile: true
     deploySound:
       path: /Audio/_RMC14/Weapons/Guns/Gunshots/gun_sharp_explode.ogg
   - type: SharpMine
     kind: Explosive
     triggerRadius: 1.5
+    upgradeEvery: 45
     effects:
     - RMCSharpExplosiveMineEffect1
     - RMCSharpExplosiveMineEffect2
@@ -482,6 +484,8 @@
   - type: StepTrigger
     active: false
     requiredTriggeredSpeed: 0
+  - type: RMCNightVisionVisible
+    priority: -1
   - type: RMCMesonsNonviewable
   - type: Flammable
     fireSpread: false

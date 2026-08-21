@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Content.Shared._CMU14.ZLevels.Core.EntitySystems;
 using Content.Shared._RMC14.ARES;
@@ -29,6 +30,7 @@ using Content.Shared.GameTicking;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Popups;
+using Content.Shared.Roles;
 using Content.Shared.Shuttles.Components;
 using Content.Shared.Shuttles.Systems;
 using Content.Shared.UserInterface;
@@ -67,6 +69,7 @@ public abstract partial class SharedDropshipSystem : EntitySystem
     private TimeSpan _hijackInitialDelay;
 
     private static readonly EntProtoId<ARESLogTypeComponent> LogCat = "ARESTabDropshipLogs";
+    private static readonly ProtoId<JobPrototype> QueenRole = "CMXenoQueen";
 
     public override void Initialize()
     {
@@ -116,6 +119,7 @@ public abstract partial class SharedDropshipSystem : EntitySystem
             subs =>
             {
                 subs.Event<DropshipHijackerDestinationChosenBuiMsg>(OnHijackerDestinationChosenMsg);
+                subs.Event<DropshipHijackerDeclineBuiMsg>(OnHijackerDeclineMsg);
             });
 
         Subs.BuiEvents<DropshipTerminalComponent>(DropshipTerminalUiKey.Key,
@@ -347,7 +351,9 @@ public abstract partial class SharedDropshipSystem : EntitySystem
         }
 
         _ui.OpenUi(computer, DropshipHijackerUiKey.Key, user);
-        _ui.SetUiState(computer, DropshipHijackerUiKey.Key, new DropshipHijackerBuiState(destinations));
+        _ui.SetUiState(computer,
+            DropshipHijackerUiKey.Key,
+            new DropshipHijackerBuiState(destinations, IsQueenHijacker(user)));
     }
 
     /// <summary>
@@ -918,6 +924,47 @@ public abstract partial class SharedDropshipSystem : EntitySystem
         }
     }
 
+    private void OnHijackerDeclineMsg(Entity<DropshipNavigationComputerComponent> ent,
+        ref DropshipHijackerDeclineBuiMsg args)
+    {
+        if (_net.IsClient)
+            return;
+
+        _ui.CloseUi(ent.Owner, DropshipHijackerUiKey.Key, args.Actor);
+
+        if (!IsQueenHijacker(args.Actor))
+        {
+            Log.Warning($"{ToPrettyString(args.Actor)} tried to decline a dropship hijack without being the xeno queen");
+            return;
+        }
+
+        if (!TryDropshipHijackPopup(ent, args.Actor, false))
+            return;
+
+        var declined = new DropshipHijackDeclinedEvent(args.Actor);
+        RaiseLocalEvent(ref declined);
+
+        if (!declined.Handled)
+        {
+            _popup.PopupEntity(
+                Loc.GetString("cmu-dropship-hijack-decline-unavailable"),
+                ent,
+                args.Actor,
+                PopupType.MediumCaution);
+            return;
+        }
+
+        Log.Info($"{ToPrettyString(args.Actor)} declined to hijack the dropship and ended the round as a minor xeno victory");
+    }
+
+    private bool IsQueenHijacker(EntityUid user)
+    {
+        return TryComp<XenoComponent>(user, out var xeno) &&
+               xeno.Role == QueenRole &&
+               TryComp<DropshipHijackerComponent>(user, out var hijacker) &&
+               !hijacker.IsHumanHijacker;
+    }
+
     protected bool TryStopLaunchAlarm(Entity<DropshipComponent> dropship, DropshipNavigationComputerComponent? navigationComputerComponent = null)
     {
         if (dropship.Comp.LaunchAlarmEntity == null)
@@ -1205,6 +1252,35 @@ public abstract partial class SharedDropshipSystem : EntitySystem
         }
 
         dropship = default;
+        return false;
+    }
+
+    public bool TryGetGridFaction(EntityUid ent, [NotNullWhen(true)] out string? faction)
+    {
+        faction = null;
+        if (!TryComp(ent, out TransformComponent? xform) || xform.GridUid is not { } grid)
+            return false;
+
+        if (TryComp<ShipFactionComponent>(grid, out var shipFaction) &&
+            !string.IsNullOrWhiteSpace(shipFaction.Faction))
+        {
+            faction = shipFaction.Faction;
+            return true;
+        }
+
+        var children = Transform(grid).ChildEnumerator;
+        while (children.MoveNext(out var child))
+        {
+            if (!TryComp<WhitelistedShuttleComponent>(child, out var shuttle) ||
+                string.IsNullOrWhiteSpace(shuttle.Faction))
+            {
+                continue;
+            }
+
+            faction = shuttle.Faction;
+            return true;
+        }
+
         return false;
     }
 

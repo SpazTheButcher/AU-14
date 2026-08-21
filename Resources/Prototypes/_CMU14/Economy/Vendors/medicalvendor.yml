@@ -12,6 +12,9 @@
     - state: "off"
     - state: "normal-unshaded"
   - type: CMAutomatedVendor
+    requiredSkills:
+      RMCSkillMedical: 2
+    hackable: true
     sections:
     - name: General Medical Supplies
       entries:
@@ -81,6 +84,8 @@
       - id: AU14PillCanisterNephronate
         amount: 10
       - id: AU14PillCanisterOsteoCalc
+        amount: 10
+      - id: CMU14PillCanisterAlkysine
         amount: 10
       - id: AU14PillCanisterPulmovine
         amount: 10
@@ -160,6 +165,8 @@
     needsPower: false # TODO RMC14
     powerLoad: 0
   - type: CMAutomatedVendor
+    requiredSkills:
+      RMCSkillMedical: 2
     hackable: true
     sections:
     - name: Blood Packs

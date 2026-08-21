@@ -1,3 +1,4 @@
+using Content.Server._CMU14.Humanoid;
 using Content.Server.Administration.Managers;
 using Content.Shared.Administration;
 using Content.Shared.Humanoid;
@@ -12,9 +13,14 @@ public sealed partial class HumanoidAppearanceSystem
 {
     [Dependency] private IAdminManager _adminManager = default!;
     [Dependency] private UserInterfaceSystem _uiSystem = default!;
+    [Dependency] private CMUTieHairSystem _tieHair = default!;
 
     private void OnVerbsRequest(EntityUid uid, HumanoidAppearanceComponent component, GetVerbsEvent<Verb> args)
     {
+        // HumanoidAppearanceComponent can only have a single GetVerbsEvent<Verb> subscriber, so the
+        // "Tie Hair Back"/"Untie Hair" verbs are added here rather than via their own subscription.
+        _tieHair.AddVerbs(uid, component, args);
+
         if (!TryComp<ActorComponent>(args.User, out var actor))
         {
             return;

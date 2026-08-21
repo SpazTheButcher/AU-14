@@ -1,66 +1,65 @@
-## stable garrison
+# ├──[ Stable Garrison ]─────────────────────────────────────────────┤
 - type: entity
   name: Capture the Street
   parent: AU14WallFlagUA
   id: captureuaflagobjective
-  description: "Capture mainstreet  for your faction."
+  description: "Capture mainstreet for your faction."
   components:
-    - type: AuObjective
+    - type: CMUObjective
       id: captureuaflagobj
-      factioneutral: true
-      applicableModes:
+      factionNeutral: true
+      allowedPresets:
         - ForceOnForce
         - DistressSignal
-      possiblefactions:
+      factions:
         - govfor
         - opfor
         - clf
-      objectivelevel: 2
-      custompoints: 5
-      ObjectiveDescription: "Capture mainstreet  for your faction."
+      objectiveLevel: 2
+      customPoints: 5
+      objectiveDescription: "Capture mainstreet for your faction."
       roundEndMessage: "By capturing the UA flag"
     - type: CaptureObjective
-      hoisttime: 8
-      maxholdtimes: 10
-      pointincrementtime: 360
-      visibleonmap: true
-      flaghealth: 100
+      hoistTime: 8
+      maxHoldTimes: 10
+      pointIncrementTime: 360
+      visibleOnMap: true
+      flagInitialHealth: 100
     - type: NavMapBeacon
       text: Main Street
-
 
 - type: entity
   name: Capture the Supermarket
   parent: AU14WallFlagUA
   id: capturesupermarketobjective
-  description: "Capture the supermarket  for your faction."
+  description: "Capture the supermarket for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturesupermarketobjective
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 2
-    custompoints: 5
-    ObjectiveDescription: "Capture the supermarket  for your faction."
+    objectiveLevel: 2
+    customPoints: 5
+    objectiveDescription: "Capture the supermarket for your faction."
     roundEndMessage: "By capturing the UA flag"
-    intelTiers:
+    intelTiersProtos:
     - supermarkettier0
     - supermarkettier1
     - supermarkettier2
 
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Super market
 
@@ -83,27 +82,26 @@
   id: capturetunnelobjective
   description: "Capture the Tunnel  for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturetunnelobjective
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-
-    possiblefactions:
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 2
-    custompoints: 5
-    ObjectiveDescription: "Capture the Tunnel  for your faction."
+    objectiveLevel: 2
+    customPoints: 5
+    objectiveDescription: "Capture the Tunnel for your faction."
     roundEndMessage: "By capturing the Tunnel"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Tunnel
 
@@ -112,34 +110,32 @@
   name: Capture the Desert
   parent: AU14WallFlagUA
   id: capturedesertobjective
-  description: "Capture the Desert  for your faction."
+  description: "Capture the Desert for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturedesertobjective
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-
-    possiblefactions:
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 1
-    custompoints: 3
-    ObjectiveDescription: "Capture the Desert  for your faction."
+    objectiveLevel: 1
+    customPoints: 3
+    objectiveDescription: "Capture the Desert for your faction."
     roundEndMessage: "By capturing the Desert"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 15
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 15
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Desert
 
-#gixens
-
+# ├──[ Gixens ]──────────────────────────────────────────────────────┤
 - type: entity
   name: Capture the mine
   parent: AU14WallFlagUA
@@ -148,62 +144,58 @@
   components:
   - type: NavMapBeacon
     text: Mountain LZ
-  - type: AuObjective
+  - type: CMUObjective
     id: capturemountainflagobj
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 2
-    custompoints: 5
-    ObjectiveDescription: "Capture Mountain LZ for your faction."
+    objectiveLevel: 2
+    customPoints: 5
+    objectiveDescription: "Capture Mountain LZ for your faction."
     roundEndMessage: "By capturing the UA flag"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 420
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 420
     airfield: Mountain LZ
-    visibleonmap: true
-    flaghealth: 250
+    visibleOnMap: true
+    flagInitialHealth: 250
 
-
-
-#solaris
+# ├──[ Solaris ]─────────────────────────────────────────────────────┤
 - type: entity
   name: Capture Solar Farms
   parent: AU14WallFlagUA
   id: capturesolarfarmsgobjective
   description: "Capture the Solar Farms"
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturesolarfarmsobj
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
-    objectivelevel: 2
-    custompoints: 5
-    ObjectiveDescription: "Capture the Solar Farms  for your faction."
+    objectiveLevel: 2
+    customPoints: 5
+    objectiveDescription: "Capture the Solar Farms  for your faction."
     roundEndMessage: "By capturing the Solar farms"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 20
-    pointincrementtime: 180
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 20
+    pointIncrementTime: 180
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Solar Farms
-
-
 
 - type: entity
   name: Capture the cabin
@@ -211,31 +203,28 @@
   id: capturhermitscabinobjective
   description: "Capture the Hermits Cabin"
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturehermitscabingobj
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - DistressSignal
-    possiblefactions:
+    factions:
     - govfor
     - opfor
-    objectivelevel: 2
-    custompoints: 4
-    ObjectiveDescription: "Capture the Hermits Cabin for your faction."
+    objectiveLevel: 2
+    customPoints: 4
+    objectiveDescription: "Capture the Hermits Cabin for your faction."
     roundEndMessage: "By capturing the Cabin"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 20
-    pointincrementtime: 400
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 20
+    pointIncrementTime: 400
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Hermits Cabin
   - type: AreaLabel
-
-
 
 - type: entity
   name: Capture the Admins Office
@@ -243,30 +232,28 @@
   id: captureadminobjective
   description: "Capture the Admins Office "
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureadminofficeobj
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-
-    possiblefactions:
+    factions:
     - govfor
     - opfor
-    objectivelevel: 1
-    custompoints: 6
-    ObjectiveDescription: "Capture the Administrators Office  for your faction."
+    objectiveLevel: 1
+    customPoints: 6
+    objectiveDescription: "Capture the Administrators Office  for your faction."
     roundEndMessage: "By capturing the Administrators office"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 20
-    pointincrementtime: 800
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 20
+    pointIncrementTime: 800
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Admins Office
   - type: AreaLabel
-
 
 - type: entity
   name: Capture the Abandoned Camp
@@ -274,62 +261,58 @@
   id: captureabandonedcampobjective
   description: "Capture the Abandoned Camp "
   components:
-  - type: AuObjective
-    id: captureadminofficeobj
-    factioneutral: true
-    applicableModes:
+  - type: CMUObjective
+    id: captureabandonedcampobj
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-
-    possiblefactions:
+    factions:
     - govfor
     - opfor
-    objectivelevel: 1
-    custompoints: 3
-    ObjectiveDescription: "Capture the Abandoned Camp  for your faction."
+    objectiveLevel: 1
+    customPoints: 3
+    objectiveDescription: "Capture the Abandoned Camp  for your faction."
     roundEndMessage: "By capturing the Abandoned Camp"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 20
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 20
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Abandoned Camp
 
-
-
-# Flight
+# ├──[ Flight ]──────────────────────────────────────────────────────┤
 - type: entity
   name: Capture the Basement
   parent: AU14WallFlagUA
   id: capturebasementobj
   description: "Capture the basement "
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturebasementobj
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
-    objectivelevel: 2
-    custompoints: 6
-    ObjectiveDescription: "Capture the basement  for your faction."
+    objectiveLevel: 2
+    customPoints: 6
+    objectiveDescription: "Capture the basement  for your faction."
     roundEndMessage: "By capturing the basement"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 20
-    pointincrementtime: 800
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 20
+    pointIncrementTime: 800
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Basement
   - type: AreaLabel
-
 
 - type: entity
   name: Capture the Roof
@@ -337,30 +320,29 @@
   id: captureroofobj
   description: "Capture the Roof "
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureroofobj
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
-    objectivelevel: 1
-    custompoints: 6
-    ObjectiveDescription: "Capture the Roof for your faction."
+    objectiveLevel: 1
+    customPoints: 6
+    objectiveDescription: "Capture the Roof for your faction."
     roundEndMessage: "By capturing the Roof"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 20
-    pointincrementtime: 800
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 20
+    pointIncrementTime: 800
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Roof
   - type: AreaLabel
-
 
 - type: entity
   name: Capture the Middle Floor
@@ -368,59 +350,58 @@
   id: capturemidobj
   description: "Capture the Middle floor "
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturermidobj
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
-    objectivelevel: 1
-    custompoints: 6
-    ObjectiveDescription: "Capture the Middle Floor for your faction."
+    objectiveLevel: 1
+    customPoints: 6
+    objectiveDescription: "Capture the Middle Floor for your faction."
     roundEndMessage: "By capturing the Middle Floor"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 20
-    pointincrementtime: 800
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 20
+    pointIncrementTime: 800
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Middle Floor
   - type: AreaLabel
 
-#Port Neroid
-
+# ├──[ Port Neroid ]─────────────────────────────────────────────────┤
 - type: entity
   name: Capture the PAEK-500 Reactor Control
   parent: AU14WallFlagUA
   id: captureobjectiveneroidreactorcontrol
   description: "Capture the PAEK-500 Reactor Control for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidreactorcontrol
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 2
-    custompoints: 10
-    ObjectiveDescription: "Capture the PAEK-500 Reactor Control for your faction."
+    objectiveLevel: 2
+    customPoints: 10
+    objectiveDescription: "Capture the PAEK-500 Reactor Control for your faction."
     roundEndMessage: "By capturing the PAEK-500 Reactor Control"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: PAEK-500 Reactor Control
 
@@ -430,27 +411,27 @@
   id: captureobjectiveneroidcoolantcontrol
   description: "Capture the PAEK-500 Coolant Control for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidcoolantcontrol
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 2
-    custompoints: 5
-    ObjectiveDescription: "Capture the PAEK-500 Coolant Control for your faction."
+    objectiveLevel: 2
+    customPoints: 5
+    objectiveDescription: "Capture the PAEK-500 Coolant Control for your faction."
     roundEndMessage: "By capturing the PAEK-500 Coolant Control"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: PAEK-500 Coolant Control
 
@@ -460,27 +441,27 @@
   id: captureobjectiveneroidenginecontrol
   description: "Capture the PAEK-500 Engine Control for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidenginecontrol
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 2
-    custompoints: 5
-    ObjectiveDescription: "Capture the PAEK-500 Engine Control for your faction."
+    objectiveLevel: 2
+    customPoints: 5
+    objectiveDescription: "Capture the PAEK-500 Engine Control for your faction."
     roundEndMessage: "By capturing the PAEK-500 Engine Control"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: PAEK-500 Engine Control
 
@@ -490,27 +471,27 @@
   id: captureobjectiveneroidturbinecontrol
   description: "Capture the PAEK-500 Turbine Control for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidturbinecontrol
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 2
-    custompoints: 5
-    ObjectiveDescription: "Capture the PAEK-500 Turbine Control for your faction."
+    objectiveLevel: 2
+    customPoints: 5
+    objectiveDescription: "Capture the PAEK-500 Turbine Control for your faction."
     roundEndMessage: "By capturing the PAEK-500 Turbine Control"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: PAEK-500 Turbine Control
 
@@ -520,27 +501,27 @@
   id: captureobjectiveneroidcolonyoperationsroom
   description: "Capture the Colony Operations Room for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidoperationsroom
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 1
-    custompoints: 5
-    ObjectiveDescription: "Capture the Colony Operations Room for your faction."
+    objectiveLevel: 1
+    customPoints: 5
+    objectiveDescription: "Capture the Colony Operations Room for your faction."
     roundEndMessage: "By capturing the Colony Operations Room"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Colony Operations Room
 
@@ -550,27 +531,27 @@
   id: captureobjectiveneroidminingsite
   description: "Capture the UAS-1 Mining Site for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroiduasminingsite
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 1
-    custompoints: 5
-    ObjectiveDescription: "Capture the UAS-1 Mining Site for your faction."
+    objectiveLevel: 1
+    customPoints: 5
+    objectiveDescription: "Capture the UAS-1 Mining Site for your faction."
     roundEndMessage: "By capturing the UAS-1 Mining Site"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: UAS-1 Mining Site
 
@@ -580,27 +561,27 @@
   id: captureobjectiveneroidgeothermalgenerators
   description: "Capture the Geothermal Generators for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidgeothermalgenerators
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 1
-    custompoints: 5
-    ObjectiveDescription: "Capture the Geothermal Generators for your faction."
+    objectiveLevel: 1
+    customPoints: 5
+    objectiveDescription: "Capture the Geothermal Generators for your faction."
     roundEndMessage: "By capturing the Geothermal Generators"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Geothermal Generators
 
@@ -610,27 +591,27 @@
   id: captureobjectiveneroidspaceport
   description: "Capture the Spaceport for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidspaceport
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 1
-    custompoints: 5
-    ObjectiveDescription: "Capture the Spaceport for your faction."
+    objectiveLevel: 1
+    customPoints: 5
+    objectiveDescription: "Capture the Spaceport for your faction."
     roundEndMessage: "By capturing the Spaceport"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Spaceport
 
@@ -640,27 +621,27 @@
   id: captureobjectiveneroidac170cargodepot
   description: "Capture the AC-170 Cargo Depot for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidac170cargodepot
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 1
-    custompoints: 5
-    ObjectiveDescription: "Capture the AC-170 Cargo Depot for your faction."
+    objectiveLevel: 1
+    customPoints: 5
+    objectiveDescription: "Capture the AC-170 Cargo Depot for your faction."
     roundEndMessage: "By capturing the AC-170 Cargo Depot"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: AC-170 Cargo Depot
 
@@ -670,59 +651,58 @@
   id: captureobjectiveneroidcargopier
   description: "Capture the Cargo Pier for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: captureneroidcargopier
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 2
-    custompoints: 5
-    ObjectiveDescription: "Capture the Cargo Pier for your faction."
+    objectiveLevel: 2
+    customPoints: 5
+    objectiveDescription: "Capture the Cargo Pier for your faction."
     roundEndMessage: "By capturing the Cargo Pier"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Cargo Pier
 
-#Corsat
-
+# ├──[ Corsat ]──────────────────────────────────────────────────────┤
 - type: entity
   name: Capture Biodome Theta
   parent: AU14WallFlagUA
   id: captureobjectivecorsatbiodometheta
   description: "Capture Biodome Theta for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturecorsatbiodometheta
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 2
-    custompoints: 5
-    ObjectiveDescription: "Capture Biodome Theta for your faction."
+    objectiveLevel: 2
+    customPoints: 5
+    objectiveDescription: "Capture Biodome Theta for your faction."
     roundEndMessage: "By capturing Biodome Theta"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Biodome Theta
 
@@ -732,27 +712,27 @@
   id: captureobjectivecorsatbiodomegamma
   description: "Capture Biodome Gamma for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturecorsatbiodomegamma
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 2
-    custompoints: 5
-    ObjectiveDescription: "Capture Biodome Gamma for your faction."
+    objectiveLevel: 2
+    customPoints: 5
+    objectiveDescription: "Capture Biodome Gamma for your faction."
     roundEndMessage: "By capturing Biodome Gamma"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Biodome Gamma
 
@@ -762,27 +742,27 @@
   id: captureobjectivecorsatbiodomesigma
   description: "Capture Biodome Sigma for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturecorsatbiodomesigma
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 2
-    custompoints: 5
-    ObjectiveDescription: "Capture Biodome Sigma for your faction."
+    objectiveLevel: 2
+    customPoints: 5
+    objectiveDescription: "Capture Biodome Sigma for your faction."
     roundEndMessage: "By capturing Biodome Sigma"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Biodome Sigma
 
@@ -792,27 +772,27 @@
   id: captureobjectivecorsatstationadmin
   description: "Capture Station Administration for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturecorsatstationadmin
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 2
-    custompoints: 5
-    ObjectiveDescription: "Capture Station Administration for your faction."
+    objectiveLevel: 2
+    customPoints: 5
+    objectiveDescription: "Capture Station Administration for your faction."
     roundEndMessage: "By capturing Station Administration"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Station Administration
 
@@ -822,26 +802,26 @@
   id: captureobjectivecorsatreseaechcomplex
   description: "Capture the Research Complex for your faction."
   components:
-  - type: AuObjective
+  - type: CMUObjective
     id: capturecorsatresearchcomplex
-    factioneutral: true
-    applicableModes:
+    factionNeutral: true
+    allowedPresets:
     - ForceOnForce
     - DistressSignal
-    - insurgency
-    possiblefactions:
+    - Insurgency
+    factions:
     - govfor
     - opfor
     - clf
-    objectivelevel: 2
-    custompoints: 5
-    ObjectiveDescription: "Capture the Research Complex for your faction."
+    objectiveLevel: 2
+    customPoints: 5
+    objectiveDescription: "Capture the Research Complex for your faction."
     roundEndMessage: "By capturing the Research Complex"
   - type: CaptureObjective
-    hoisttime: 8
-    maxholdtimes: 10
-    pointincrementtime: 360
-    visibleonmap: true
-    flaghealth: 100
+    hoistTime: 8
+    maxHoldTimes: 10
+    pointIncrementTime: 360
+    visibleOnMap: true
+    flagInitialHealth: 100
   - type: NavMapBeacon
     text: Research Complex

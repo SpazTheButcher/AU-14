@@ -18,13 +18,14 @@ public sealed partial class RMCRadioSystem : EntitySystem
 
     public override void Initialize()
     {
-        SubscribeLocalEvent<RMCHeadsetComponent, EncryptionChannelsChangedEvent>(OnHeadsetEncryptionChannelsChanged, before: [typeof(SharedHeadsetSystem)]);
+        base.Initialize();
 
+        SubscribeLocalEvent<RMCHeadsetComponent, EncryptionChannelsChangedEvent>(OnHeadsetEncryptionChannelsChanged, before: new[] { typeof(SharedHeadsetSystem) });
         SubscribeLocalEvent<RMCRadioFilterComponent, GetVerbsEvent<AlternativeVerb>>(OnGetAltVerbs);
 
-        SubscribeLocalEvent<HeadsetAutoSquadComponent, MapInitEvent>(OnHeadsetAutoSquadRefresh);
-        SubscribeLocalEvent<HeadsetAutoSquadComponent, GotEquippedEvent>(OnHeadsetAutoSquadRefresh);
-        SubscribeLocalEvent<HeadsetAutoSquadComponent, EncryptionChannelsChangedEvent>(OnHeadsetAutoSquadEncryptionChannelsChanged, before: [typeof(SharedHeadsetSystem)]);
+        SubscribeLocalEvent<HeadsetAutoSquadComponent, MapInitEvent>(OnHeadsetAutoSquadMapInit);
+        SubscribeLocalEvent<HeadsetAutoSquadComponent, GotEquippedEvent>(OnHeadsetAutoSquadEquipped);
+        SubscribeLocalEvent<HeadsetAutoSquadComponent, EncryptionChannelsChangedEvent>(OnHeadsetAutoSquadEncryptionChannelsChanged, before: new[] { typeof(SharedHeadsetSystem) });
 
         Subs.BuiEvents<RMCRadioFilterComponent>(RMCRadioFilterUI.Key,
             subs =>
@@ -35,7 +36,7 @@ public sealed partial class RMCRadioSystem : EntitySystem
 
     private void OnHeadsetEncryptionChannelsChanged(Entity<RMCHeadsetComponent> ent, ref EncryptionChannelsChangedEvent args)
     {
-        _toUpdate.Add((ent, ent, args.Component));
+        _toUpdate.Add((ent.Owner, ent.Comp, args.Component));
     }
 
     private void OnGetAltVerbs(Entity<RMCRadioFilterComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
@@ -55,16 +56,26 @@ public sealed partial class RMCRadioSystem : EntitySystem
         });
     }
 
-    private void OnHeadsetAutoSquadRefresh<T>(Entity<HeadsetAutoSquadComponent> ent, ref T args)
+    private void OnHeadsetAutoSquadMapInit(Entity<HeadsetAutoSquadComponent> ent, ref MapInitEvent args)
+    {
+        RefreshHeadsetAutoSquad(ent);
+    }
+
+    private void OnHeadsetAutoSquadEquipped(Entity<HeadsetAutoSquadComponent> ent, ref GotEquippedEvent args)
+    {
+        RefreshHeadsetAutoSquad(ent);
+    }
+
+    private void RefreshHeadsetAutoSquad(Entity<HeadsetAutoSquadComponent> ent)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (TryComp(ent.Owner, out EncryptionKeyHolderComponent? holder) && holder.KeyContainer != null)
-            _encryptionKey.UpdateChannels(ent, holder);
+            _encryptionKey.UpdateChannels(ent.Owner, holder);
     }
 
     private void OnHeadsetAutoSquadEncryptionChannelsChanged(Entity<HeadsetAutoSquadComponent> ent, ref EncryptionChannelsChangedEvent args)
     {
-        if (!_container.TryGetContainingContainer((ent, null), out var container) ||
+        if (!_container.TryGetContainingContainer(ent.Owner, out var container) ||
             !TryComp(container.Owner, out SquadMemberComponent? member) ||
             !TryComp(member.Squad, out SquadTeamComponent? team) ||
             team.Radio is not { } radio)
@@ -86,16 +97,18 @@ public sealed partial class RMCRadioSystem : EntitySystem
             ent.Comp.DisabledChannels.Add(args.Channel);
         }
 
-        Dirty(ent);
+        Dirty(ent.Owner, ent.Comp);
     }
 
     public override void Update(float frameTime)
     {
+        base.Update(frameTime);
+
         try
         {
             foreach (var ent in _toUpdate)
             {
-                if (TerminatingOrDeleted(ent) ||
+                if (TerminatingOrDeleted(ent.Owner) ||
                     !ent.Comp1.Running ||
                     !ent.Comp2.Running)
                 {
@@ -105,7 +118,7 @@ public sealed partial class RMCRadioSystem : EntitySystem
                 foreach (var channel in ent.Comp1.Channels)
                 {
                     ent.Comp2.Channels.Add(channel);
-                    Dirty(ent, ent.Comp2);
+                    Dirty(ent.Owner, ent.Comp2);
                 }
             }
         }

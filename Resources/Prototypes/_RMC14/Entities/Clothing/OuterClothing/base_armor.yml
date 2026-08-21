@@ -35,6 +35,9 @@
       path: /Audio/_RMC14/Machines/armor_equip.ogg
   - type: MoveOrderArmor
   - type: StoreAfterFailedInteract
+  - type: CMUItemStain
+    wornStates:
+      outerClothing: armor_blood
 
 - type: entity
   parent: [ RMCBaseArmorNoAccessory, RMCBaseUniformAccessoryItemOuterClothing ]
@@ -320,7 +323,7 @@
     autoRot: true
     netsync: false
     color: "#FFFFFF"
-    mask: /Textures/_RMC14/Effects/LightMasks/wide_ellipsis.png
+    lightMask: EllipseWide
   - type: PointLightRotation
     rotation: 90
   - type: HandheldLight
@@ -384,7 +387,6 @@
     - Poncho
     - Mask
     - Utility
-    startingAccessories: [ CMUTraumaGovernorAttachment ]
 
 - type: entity
   parent: RMCBaseMarineArmorNoAccessory
@@ -427,7 +429,7 @@
     autoRot: true
     netsync: false
     color: "#FFFFFF"
-    mask: /Textures/_RMC14/Effects/LightMasks/wide_ellipsis.png
+    lightMask: EllipseWide
   - type: PointLightRotation
     rotation: 90
   - type: HandheldLight
@@ -483,7 +485,6 @@
     - Poncho
     - Mask
     - Utility
-    startingAccessories: [ CMUTraumaGovernorAttachment ]
 
 - type: entity
   parent: RMCBaseMarineArmorLight

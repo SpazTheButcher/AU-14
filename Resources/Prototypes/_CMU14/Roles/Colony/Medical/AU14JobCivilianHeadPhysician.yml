@@ -60,7 +60,8 @@
 
 - type: startingGear
   id: AU14GearCivilianHeadPhysician
-  equipment: {}
+  equipment:
+    ears: CMHeadsetColony
   storage:
     back:
     - AU14StampHPHY
@@ -99,3 +100,6 @@
   - RecreationalRMC
   - CannedDrinksAU14
   - SmokablesRMC
+  - EyewearRMC
+  - MasksRMC
+  - HeadwearCLFAU14

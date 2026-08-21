@@ -92,6 +92,16 @@
     sprite: _RMC14/Objects/Clothing/Uniforms/Scrubs/olive.rsi
 
 - type: entity
+  parent: RMCScrubsOlive
+  id: RMCScrubsOliveNurse
+  components:
+  - type: Sprite
+    sprite: _RMC14/Objects/Clothing/Uniforms/Scrubs/olive.rsi
+  - type: UniformAccessoryHolder
+    startingAccessories:
+    - RMCNurseArmband
+
+- type: entity
   parent: CMScrubsBlue
   id: RMCScrubsGrey
   name: grey medical scrubs

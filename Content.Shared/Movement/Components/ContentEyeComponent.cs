@@ -21,4 +21,7 @@ public sealed partial class ContentEyeComponent : Component
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite), DataField("maxZoom"), AutoNetworkedField]
     public Vector2 MaxZoom = Vector2.One;
+
+    [DataField]
+    public Angle BaseRotation = Angle.Zero;
 }

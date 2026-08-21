@@ -61,9 +61,16 @@
 - type: latheRecipe
   id: AU14PacketPillsEmpty
   result: AU14PacketPillsEmpty
-  completetime: 1
+  completetime: 0.5
   materials:
     RMCPlastic: 100
+
+- type: latheRecipe
+  id: CMU14StandardMedkitRecipe
+  result: RMCStandardAidKitPVE
+  completetime: 2
+  materials:
+    RMCPlastic: 2500
 
 - type: latheRecipe
   id: CMBonesetter
@@ -79,6 +86,14 @@
   materials:
     RMCPlastic: 1200
     CMSteel: 2350
+
+- type: latheRecipe
+  id: CMUFixOVein
+  result: CMUFixOVein
+  completetime: 4
+  materials:
+    RMCPlastic: 6250
+    CMSteel: 1250
 
 - type: latheRecipe
   id: CMStasisBag

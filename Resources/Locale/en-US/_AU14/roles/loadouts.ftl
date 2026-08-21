@@ -3,8 +3,10 @@ au14-loadout-group-synth-belt = Synthetic belt
 au14-loadout-group-synth-pouches = Synthetic pouches (left)
 au14-loadout-group-synth-pouches-right = Synthetic pouches (right)
 au14-loadout-group-gloves = Gloves
-au14-loadout-group-synth-suit-special = Suit (Special)
+au14-loadout-group-synth-suit-special = Synthetic Suit (Special)
 au14-loadout-group-synth-equipment = Synthetic Equipment
+au14-loadout-group-synth-webbing = Synthetic Webbing
+au14-loadout-group-synth-backpack = Synthetic Backpack
 AU14JobGOVFORAuxSupportSynth-loadout = GOVFOR Support Synth loadout
 
 au14-loadout-group-commander-sidearm-belt = Sidearm Belt
@@ -14,6 +16,7 @@ au14-loadout-group-doctor-equipment = Specialization
 au14-loadout-group-civilian-footwear = Civilian footwear
 au14-loadout-group-civilian-jumpsuit = Civilian jumpsuits
 au14-loadout-group-civilian-jacket = Civilian jackets
+au14-loadout-group-civilian-glasses = Civilian glasses
 au14-loadout-group-civilian-suit-special = Civilian suit (Special)
 au14-loadout-group-civilian-hat = Civilian hats
 au14-loadout-group-civilian-satchel = Civilian satchels
@@ -40,3 +43,6 @@ au14-loadout-group-auxtech = Fatigues
 au14-loadout-group-role-clf-id = Fake ID's
 
 au14-vending-machine-jo-max = This officer kit was already taken!
+
+cmu-loadout-group-aegis-stamp = AEGIS Armaments stamp
+cmu-loadout-group-provost-stamp = Provost stamp

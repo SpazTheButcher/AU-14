@@ -117,7 +117,6 @@ namespace Content.IntegrationTests.Tests.Doors
 
             await server.WaitIdleAsync();
 
-            var mapManager = server.ResolveDependency<IMapManager>();
             var entityManager = server.ResolveDependency<IEntityManager>();
             var physicsSystem = entityManager.System<SharedPhysicsSystem>();
             var xformSystem = entityManager.System<SharedTransformSystem>();
@@ -178,6 +177,48 @@ namespace Content.IntegrationTests.Tests.Doors
             {
                 Assert.That(Math.Abs(xformSystem.GetWorldPosition(airlockPhysicsDummy).X - 1), Is.GreaterThan(0.01f));
             });
+            await pair.CleanReturnAsync();
+        }
+
+        [Test]
+        public async Task DeletedDoorSoundEntityDoesNotBreakStateSerialization()
+        {
+            await using var pair = await PoolManager.GetServerClient(new PoolSettings { Connected = true });
+            var server = pair.Server;
+
+            var entityManager = server.ResolveDependency<IEntityManager>();
+            var doors = entityManager.EntitySysManager.GetEntitySystem<DoorSystem>();
+
+            var map = await pair.CreateTestMap();
+
+            EntityUid airlock = default;
+            EntityUid soundEntity = default;
+            DoorComponent doorComponent = null;
+
+            await server.WaitAssertion(() =>
+            {
+                airlock = entityManager.SpawnEntity("AirlockDummy", map.GridCoords);
+                soundEntity = entityManager.SpawnEntity(null, map.GridCoords);
+
+                Assert.That(entityManager.TryGetComponent(airlock, out doorComponent), Is.True);
+                doorComponent.SoundEntity = soundEntity;
+            });
+
+            await pair.RunTicksSync(5);
+
+            await server.WaitAssertion(() =>
+            {
+                entityManager.DeleteEntity(soundEntity);
+            });
+
+            await pair.RunTicksSync(5);
+
+            await server.WaitAssertion(() =>
+            {
+                doors.SetState(airlock, DoorState.Open, doorComponent);
+            });
+
+            await pair.RunTicksSync(5);
             await pair.CleanReturnAsync();
         }
     }

@@ -32,6 +32,11 @@
   - type: Corrodible
     isCorrodible: false
   - type: CMIconSmooth
+  - type: FixedIdentity
+    name: cmu-job-name-xeno-unknown
+    whitelist:
+      components:
+      - Marine
   - type: MeleeReceivedMultiplier
     otherMultiplier: 8.2
   - type: XenoConstructionSupport
@@ -116,6 +121,7 @@
   - type: Tag
     tags:
     - Wall
+  - type: ZLevelWallSupport
   - type: Clickable
 
 - type: entity
@@ -139,7 +145,7 @@
   components:
   - type: Damageable
     damageContainer: StructuralMarine
-    damageModifierSet: StructuralMarine
+    damageModifierSet: CMU14StructuralMarine
   - type: ExaminableDamage
     messages: RMCWallMessages
   - type: RMCIntegrityExamine

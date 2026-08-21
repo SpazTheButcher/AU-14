@@ -22,7 +22,7 @@ public abstract partial class CMUSharedZLevelsSystem : EntitySystem
     /// <summary>
     /// World-space sprite displacement used when projecting adjacent z-levels into the active view.
     /// </summary>
-    public const float ZLevelVisualOffset = 0.7f;
+    public const float ZLevelVisualOffset = 0.75f;
 
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private INetManager _net = default!;
@@ -32,7 +32,6 @@ public abstract partial class CMUSharedZLevelsSystem : EntitySystem
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private ActionBlockerSystem _blocker = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
-    [Dependency] private IMapManager _mapManager = default!;
     [Dependency] private SharedMapSystem _map = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private IPrototypeManager _proto = default!;
@@ -88,6 +87,10 @@ public abstract partial class CMUSharedZLevelsSystem : EntitySystem
 
         return false;
     }
+
+    [PublicAPI]
+    public bool IsMapInNetwork(Entity<CMUZLevelsNetworkComponent> network, EntityUid mapUid)
+        => network.Comp.ZLevelByEntity.ContainsKey(mapUid);
 
     [PublicAPI]
     public bool TryMapOffset(Entity<CMUZLevelMapComponent?> inputMapUid,

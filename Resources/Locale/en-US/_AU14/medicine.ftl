@@ -12,6 +12,7 @@ cm-pill-contents-hepatocytin = Heals liver damage.
 cm-pill-contents-pulmovine = Heals lung damage.
 cm-pill-contents-nephronate = Heals kidney damage.
 cm-pill-contents-cardiocaine = Heals heart damage.
+cm-pill-contents-alkysine = Heals brain damage.
 cm-pill-contents-osteocalc = Heals bone damage.
 
 rmc-ethylredoxrazine-container-label-text = ET
@@ -22,14 +23,17 @@ rmc-cryoxadone-container-label-text = CR
 rmc-leporazine-container-label-text = LE
 rmc-albuterol-container-label-text = AL
 AU14-naloxone-medicine-container-label-text = NA
+cmu-inhaler-container-label-text = AL
+cmu-epinephrine-container-label-text = EP
 rmc-osteocalc-container-label-text = OL
 rmc-cardiocaine-container-label-text = CE
+cmu-alkysine-container-label-text = AL
 rmc-nephronate-container-label-text = NE
 rmc-pulmovine-container-label-text = PE
 rmc-hepatocytin-container-label-text = HN
 
 reagent-name-albuterol = Albuterol
-reagent-desc-albuterol = Repairs 4 oxygen damage. OD of 35u.
+reagent-desc-albuterol = Repairs 4 oxygen damage. OD of 20u.
 
 reagent-name-cmnaloxone = Naloxone
 reagent-desc-cmnaloxone = Instantly counteracts toxin damage. Primarily used to treat overdoses.

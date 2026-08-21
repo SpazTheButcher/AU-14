@@ -44,6 +44,7 @@ public sealed partial class LarvaQueueSystem : EntitySystem
     private static readonly ProtoId<JobPrototype> QueenRole = "CMXenoQueen";
     private static readonly ProtoId<TagPrototype> LarvaTag = "RMCXenoLarva";
     private static readonly ProtoId<JobPrototype> LarvaRole = "CMXenoLarva";
+    private static readonly ProtoId<JobPrototype> BloodbursterRole = "CMUJobPathogenBloodburster";
     private static readonly TimeSpan ClaimConfirmDuration = TimeSpan.FromSeconds(30);
 
     private readonly Dictionary<EntityUid, LarvaQueueState> _queues = [];
@@ -267,6 +268,16 @@ public sealed partial class LarvaQueueSystem : EntitySystem
         return _queues.TryGetValue(hive, out queue!);
     }
 
+    public void AddToLarvaQueueFront(Entity<HiveComponent> hive, NetUserId userId)
+    {
+        if (_pendingClaims.ContainsKey(userId))
+            return;
+
+        RemoveFromAllQueues(userId);
+        QueueFor(hive.Owner).AddReadyFirst(userId);
+        NotifyReadyPositions(hive.Owner);
+    }
+
     public void TryClaimQueueable(EntityUid uid)
     {
         if (TryComp(uid, out HiveMemberComponent? member) &&
@@ -316,7 +327,10 @@ public sealed partial class LarvaQueueSystem : EntitySystem
         if (IsReservedForParasiteClaim(uid))
             return false;
 
-        return _tag.HasTag(uid, LarvaTag) && xeno.Role == LarvaRole;
+        if (xeno.Role == LarvaRole)
+            return _tag.HasTag(uid, LarvaTag);
+
+        return xeno.Role == BloodbursterRole;
     }
 
     private bool IsReservedForParasiteClaim(EntityUid uid)

@@ -139,6 +139,9 @@
   - type: IntegratedVisors
     visorsToAdd:
     - RMCVisorSquadIntegrated
+  - type: CMUItemStain
+    wornStates:
+      head: m10helmet_blood
 
 - type: entity
   parent: RMCMarineHelmetBase
@@ -173,7 +176,7 @@
     autoRot: true
     netsync: false
     color: "#FFFFFF"
-    mask: /Textures/_RMC14/Effects/LightMasks/wide_ellipsis.png
+    lightMask: EllipseWide
   - type: PointLightRotation
     rotation: 90
   - type: HandheldLight

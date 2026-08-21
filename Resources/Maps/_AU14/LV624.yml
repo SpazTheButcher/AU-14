@@ -11009,6 +11009,25 @@ entities:
           - 0
           - 0
         chunkSize: 4
+    - type: MapAtmosphere
+      space: False
+      mixture:
+        volume: 2500
+        immutable: True
+        temperature: 293.15
+        moles:
+        - 21.8124
+        - 81.1594
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
     - type: GasTileOverlay
     - type: AreaGrid
       labels: {}
@@ -83369,6 +83388,9 @@ entities:
       parent: 1
     - type: FaxMachine
       name: LV-624 Colonial Administration
+      groups:
+      - marshal-bureau
+      - colony-command
 - proto: CMFaxCLF
   entities:
   - uid: 901
@@ -217130,7 +217152,7 @@ entities:
       rot: -1.5707963267948966 rad
       pos: 91.5,-49.5
       parent: 1
-- proto: fetchobjectivemarkergenericspawnpoint
+- proto: fetchgenericmarker
   entities:
   - uid: 26033
     components:

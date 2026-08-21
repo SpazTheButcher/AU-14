@@ -180,7 +180,7 @@
     energy: 1
     offset: "0,0"
     color: "#FFEFD2"
-    mask: /Textures/_RMC14/Effects/LightMasks/quad_cone.png
+    lightMask: ConeQuad
 
 - type: entity
   parent: CMBaseStructure
@@ -228,7 +228,7 @@
     energy: 1
     offset: "0,0"
     color: "#FFEFD2"
-    mask: /Textures/_RMC14/Effects/LightMasks/quad_cone.png
+    lightMask: ConeQuad
 
 # TODO RMC14 alamo and normandy specific names for each
 - type: entity
@@ -345,7 +345,7 @@
     energy: 1
     offset: "0,0"
     color: "#FFEFD2"
-    mask: /Textures/_RMC14/Effects/LightMasks/quad_cone.png
+    lightMask: ConeQuad
 
 - type: entity
   parent: CMComputerDropship
@@ -541,7 +541,7 @@
     arc: 360
   - type: DropshipNavigationComputer
     canTacticalLand: true
-    tacticalLandFootprintOverride: 7, 13
+    tacticalLandFootprintOverride: 9, 15
   - type: RequiresSkill
     skills:
       RMCSkillPilot: 1
@@ -552,7 +552,7 @@
     energy: 1
     offset: "0,0"
     color: "#FFEFD2"
-    mask: /Textures/_RMC14/Effects/LightMasks/quad_cone.png
+    lightMask: ConeQuad
   - type: WhitelistedShuttle
     faction: govfor
     ShuttleType: Dropship

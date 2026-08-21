@@ -65,14 +65,36 @@
 - type: entity
   parent: AU14StampBase
   id: AU14StampCMP
-  name: military police officer's rubber stamp
+  name: chief MP officer's rubber stamp
   components:
   - type: Sprite
     state: stamp-hos
   - type: Stamp
+    stampedName: stamp-component-stamped-name-au14-cmp
+    stampedColor: "#b34444"
+    stampState: "paper_stamp-hos"
+
+- type: entity
+  parent: AU14StampCMP
+  id: AU14StampMP
+  name: military police's rubber stamp
+  components:
+  - type: Stamp
     stampedName: stamp-component-stamped-name-au14-mp
     stampedColor: "#b34444"
     stampState: "paper_stamp-hos"
+
+- type: entity
+  parent: AU14StampBase
+  id: AU14StampCMO
+  name: chief medical officer's rubber stamp
+  components:
+  - type: Sprite
+    state: stamp-cmo
+  - type: Stamp
+    stampedName: stamp-component-stamped-name-au14-cmo
+    stampedColor: "#4e806a"
+    stampState: "paper_stamp-cmo"
 
 - type: entity
   parent: AU14StampBase
@@ -95,6 +117,16 @@
     state: stamp-ro
   - type: Stamp
     stampedName: stamp-component-stamped-name-au14-aux
+    stampedColor: "#725c0e"
+    stampState: "paper_stamp-ro"
+
+- type: entity
+  parent: AU14StampAUX
+  id: AU14StampLO
+  name: logistics officer's rubber stamp
+  components:
+  - type: Stamp
+    stampedName: stamp-component-stamped-name-au14-lo
     stampedColor: "#725c0e"
     stampState: "paper_stamp-ro"
 
@@ -143,6 +175,44 @@
   components:
   - type: Stamp
     stampedName: stamp-component-stamped-name-au14-cs
+
+# Prodigy
+
+- type: entity
+  parent: AU14StampBase
+  id: CMU14StampProdigyLiaison
+  name: prodigy liaison's rubber stamp
+  components:
+  - type: Sprite
+    state: stamp-rd
+  - type: Stamp
+    stampedName: stamp-component-stamped-name-cmu14-prodigy-liaison
+    stampedColor: "#92969A"
+    stampState: "paper_stamp-wizard"
+
+- type: entity
+  parent: AU14StampBase
+  id: CMU14StampProdigySupervisor
+  name: prodigy supervisor's rubber stamp
+  components:
+  - type: Sprite
+    state: stamp-rd
+  - type: Stamp
+    stampedName: stamp-component-stamped-name-cmu14-prodigy-supervisor
+    stampedColor: "#92969A"
+    stampState: "paper_stamp-wizard"
+
+- type: entity
+  parent: AU14StampBase
+  id: CMU14StampProdigyLawyer
+  name: prodigy lawyer's rubber stamp
+  components:
+  - type: Sprite
+    state: stamp-rd
+  - type: Stamp
+    stampedName: stamp-component-stamped-name-cmu14-prodigy-lawyer
+    stampedColor: "#92969A"
+    stampState: "paper_stamp-wizard"
 
 # Laselle Liaison and Ambassadors
 
@@ -385,7 +455,7 @@
 
 - type: entity
   parent: AU14StampBase
-  id: AU14StampProvostInspector
+  id: CMUStampProvostInspector
   name: provost inspector rubber stamp
   components:
   - type: Sprite
@@ -487,16 +557,27 @@
 
 - type: entity
   parent: AU14StampBase
-  id: AU14StampProvost
+  id: CMUStampProvost
   name: provost rubber stamp
-  suffix: Admin, Provost
   components:
   - type: Sprite
     state: stamp-provost # RMC14 Todo: update sprite
   - type: Stamp
     stampedName: stamp-component-stamped-name-au14-provost
     stampedColor: "#cb0000"
-    stampState: "paper_stamp-provost"
+    stampState: "paper_stamp-provost-inspector"
+
+- type: entity
+  parent: AU14StampBase
+  id: CMUStampAegis
+  name: AEGIS armaments rubber stamp
+  components:
+  - type: Sprite
+    state: stamp-marine
+  - type: Stamp
+    stampedName: stamp-component-stamped-name-au14-aegis
+    stampedColor: "#134975"
+    stampState: "paper_stamp-aegis"
 
 - type: entity
   parent: AU14StampBase

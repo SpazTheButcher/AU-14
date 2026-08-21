@@ -339,10 +339,7 @@ public sealed partial class GunSystem : SharedGunSystem
             AddComp(ent, light);
         }
 
-        Lights.SetEnabled(ent, true, light);
-        Lights.SetRadius(ent, 2f, light);
-        Lights.SetColor(ent, Color.FromHex("#cc8e2b"), light);
-        Lights.SetEnergy(ent, 5f, light);
+        ConfigureMuzzleFlashLight(ent, light, Lights); // CMU14
 
         var animTwo = new Animation()
         {

@@ -1,7 +1,7 @@
 using Content.Server._RMC14.Rules;
 using Content.Server.Administration.Logs;
 using Content.Server.Administration.Managers;
-using Content.Server.AU14.Objectives;
+using Content.Server._CMU14.Round.Objectives;
 using Content.Server.AU14.Round;
 using Content.Server.Chat.Managers;
 using Content.Server.Chat.Systems;
@@ -45,7 +45,6 @@ namespace Content.Server.GameTicking
         [Dependency] private IGameMapManager _gameMapManager = default!;
         [Dependency] private IGameTiming _gameTiming = default!;
         [Dependency] private ILogManager _logManager = default!;
-        [Dependency] private IMapManager _mapManager = default!;
         [Dependency] private IPrototypeManager _prototypeManager = default!;
         [Dependency] private IRobustRandom _robustRandom = default!;
 #if EXCEPTION_TOLERANCE
@@ -70,7 +69,7 @@ namespace Content.Server.GameTicking
         [Dependency] private SharedRoleSystem _roles = default!;
         [Dependency] private ServerDbEntryManager _dbEntryManager = default!;
         [Dependency] private CMDistressSignalRuleSystem _distressSignal = default!;
-        [Dependency] private AuObjectiveSystem _auobjectivesystem = default!;
+        [Dependency] private ObjectiveControlSystem _auobjectivesystem = default!;
         [ViewVariables] private bool _initialized;
         [ViewVariables] private bool _postInitialized;
 
@@ -151,7 +150,7 @@ namespace Content.Server.GameTicking
                 return;
             }
 
-            if (_auobjectivesystem.iswinactive)
+            if (_auobjectivesystem.IsWinActive)
             {
 
                 _chatManager.DispatchServerMessage(args.SenderSession, "Respawn is disabled in this gamemode");

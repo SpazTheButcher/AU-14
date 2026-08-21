@@ -149,7 +149,7 @@
 - type: entity
   parent: RMCDropshipMissileExplosionBase
   id: RMCDropshipMissileExplosionWidowmaker
-  name: AIM-224B 'Widowmaker' explosion
+  name: AIM-224A 'Widowmaker' explosion
   components:
   - type: DropshipAmmo
     travelTime: 3

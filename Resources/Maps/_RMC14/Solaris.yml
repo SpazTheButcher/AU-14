@@ -178996,7 +178996,7 @@ entities:
     - type: Transform
       pos: 46.5,-89.5
       parent: 1
-- proto: RMCAegisCorpseSpawner
+- proto: CMUAegisCorpseSpawner
   entities:
   - uid: 24341
     components:
@@ -179018,7 +179018,7 @@ entities:
     - type: Transform
       pos: 147.5,-31.5
       parent: 1
-- proto: RMCAegisSpawner
+- proto: CMUAegisSpawner
   entities:
   - uid: 24345
     components:
@@ -202895,7 +202895,7 @@ entities:
     - type: Transform
       pos: 99.52935,-80.81713
       parent: 1
-- proto: RMCShovel
+- proto: AU14ToolShovel
   entities:
   - uid: 28306
     components:

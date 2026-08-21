@@ -15,7 +15,7 @@
     guides:
     - RMCGuideRoleCrusher
   - type: GhostRole
-    name: cm-job-name-xeno-crusher
+    name: cmu-job-name-xeno-unknown
   - type: Sprite
     sprite: _AU14/Mobs/Xenos/Crusher/crusher.rsi # AU14-Edit
     scale: 1.3, 1.3
@@ -39,7 +39,7 @@
     - ActionXenoDirectionalStomp
     - ActionXenoDevolve
     tier: 3
-    hudOffset: -0.15,0.1
+    hudOffset: 0.25,0.70
     unlockAt: 900 # 15 minutes
   - type: XenoRegen
     standHealingMultiplier: 0.66
@@ -59,10 +59,10 @@
     directionalTileEffect: RMCEffectXenoTelegraphRed
     damage:
       types:
-        Blunt: 80
+        Blunt: 65
     directionalMinDamage:
       types:
-        Blunt: 65
+        Blunt: 40
     selfEffect: CMEffectSelfStomp
   - type: XenoAnimateMovement
   - type: XenoPlasma
@@ -82,6 +82,25 @@
     damage:
       groups:
         Brute: 40
+  - type: DrawableSolution
+    solution: blood
+  - type: SolutionContainerManager
+    solutions:
+      blood:
+        maxVol: 600
+        reagents:
+        - ReagentId: CMUXenoBlood
+          Quantity: 300
+        - ReagentId: CMUXenoPlasmaChitin
+          Quantity: 300
+  - type: SolutionRegeneration
+    solution: blood
+    generated:
+      reagents:
+      - ReagentId: CMUXenoBlood
+        Quantity: 1
+      - ReagentId: CMUXenoPlasmaChitin
+        Quantity: 1
   - type: XenoTailStab
     tailDamage:
       groups:
@@ -111,9 +130,15 @@
     damage:
       types:
         Blunt: 15
-    armorPiercing: 5
+    armorPiercing: 2
   - type: RMCSize
     size: Immobile
+  - type: XenoChargerJockey
+    maxRiders: 3
+    riderLocalPositions:
+    - 0,0
+    - -0.5625,0
+    - 0.5625,0
   - type: RMCXenoDamageVisuals
     prefix: crusher
   - type: TacticalMapIcon
@@ -126,7 +151,7 @@
     value: 0.7
   - type: TantrumSpeedBuff
   - type: FixedIdentity
-    name: cm-job-name-xeno-crusher
+    name: cmu-job-name-xeno-unknown
   - type: RMCSurgeryXenoHeart
     item: RMCOrganXenoHeartT3
 
@@ -154,7 +179,7 @@
       path: /Audio/_RMC14/Xeno/crusher_windup_sound.ogg
     damage:
       types:
-        Blunt: 80
+        Blunt: 65
         Structural: 750
   - type: XenoShield
   - type: XenoEvolution
@@ -221,10 +246,7 @@
     damage:
       types:
         Blunt: 35
-  - type: XenoChargerJockey
-    maxRiders: 4
   - type: XenoCharger
   - type: XenoHidden
   - type: RMCActionOrder
     id: RMCXenoCrusherCharger
-

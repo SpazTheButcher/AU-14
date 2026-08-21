@@ -2,7 +2,7 @@
 - type: emoteSounds
   id: MaleHuman
   params:
-    variation: 0.125
+    variation: 0.05
   sounds:
     Scream:
       collection: MaleScreams
@@ -44,7 +44,7 @@
 - type: emoteSounds
   id: FemaleHuman
   params:
-    variation: 0.125
+    variation: 0.05
   sounds:
     Scream:
       collection: FemaleScreams

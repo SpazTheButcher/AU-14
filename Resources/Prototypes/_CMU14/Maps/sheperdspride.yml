@@ -1,6 +1,7 @@
 - type: gameMap
   id: Sheperds
   mapName: LV-112 Sheperds Pride
+  allegiance: Neutral
   mapPath: /Maps/_CMU14/sheperds.yml
   mapsBelow:
   - /Maps/_CMU14/sheperds_below.yml
@@ -34,14 +35,16 @@
             # Colony Command (non department)
             AU14JobCivilianColonyAdministrator: [1, 1]
             AU14JobCivilianColonyAdminAssistant: [1, 1]
+
             # Ambassadors
+            AU14JobCivilianUSASFRecruiter: [1, 1]
 
             # Corporate
             AU14JobCivilianCorporateLiaison: [1, 1]
             AU14JobCivilianCorporateAssistant: [1, 1]
 
-            AU14JobCivilianScientist: [3, 3]
-            AU14JobWYGuard: [2, 2]
+            AU14JobCivilianScientist: [4, 4]
+            AU14JobWYGuard: [3, 3]
 
             # Security/LEO
             AU14JobCivilianCWPSRanger: [3, 3]
