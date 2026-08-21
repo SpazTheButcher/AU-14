@@ -1166,10 +1166,6 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .HasColumnType("TEXT")
                         .HasColumnName("platoon");
 
-                    b.Property<string>("RankPreferences")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("rank_preferences");
-
                     b.Property<bool>("PlaytimePerks")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
@@ -1183,6 +1179,10 @@ namespace Content.Server.Database.Migrations.Sqlite
                     b.Property<int>("PreferenceUnavailable")
                         .HasColumnType("INTEGER")
                         .HasColumnName("pref_unavailable");
+
+                    b.Property<string>("RankPreferences")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("rank_preferences");
 
                     b.Property<string>("RegulationFacialHairColor")
                         .HasColumnType("TEXT")
