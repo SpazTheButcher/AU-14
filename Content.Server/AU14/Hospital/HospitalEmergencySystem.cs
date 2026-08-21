@@ -248,7 +248,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
         ent.Comp.Status = HospitalEmergencyStatus.Idle;
         ent.Comp.LandingZone = FindLandingZone(ent);
         ent.Comp.NextLandingZoneRefreshAt = _timing.CurTime + LandingZoneRefreshInterval;
-        Dirty(ent);
     }
 
     private void OnUiOpened(Entity<HospitalEmergencyComputerComponent> ent, ref BoundUIOpenedEvent args)
@@ -271,7 +270,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
 
             comp.NextIncidentAt = now + delay;
             comp.NextUiRefreshAt = now;
-            Dirty(uid, comp);
             UpdateUi((uid, comp));
             updated++;
         }
@@ -352,7 +350,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
             return;
 
         ent.Comp.Status = HospitalEmergencyStatus.Arriving;
-        Dirty(ent);
         UpdateUi(ent);
     }
 
@@ -381,7 +378,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
             return;
 
         ent.Comp.Status = HospitalEmergencyStatus.PickupInbound;
-        Dirty(ent);
         UpdateUi(ent);
     }
 
@@ -438,7 +434,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
                     break;
             }
 
-            Dirty(uid, comp);
             UpdateUi(computer);
             return;
         }
@@ -465,7 +460,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
         comp.NextUiRefreshAt = _timing.CurTime;
 
         _audio.PlayPvs(comp.NotificationSound, ent);
-        Dirty(ent);
         UpdateUi(ent);
     }
 
@@ -599,7 +593,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
         ent.Comp.Status = HospitalEmergencyStatus.ShuttleDeparting;
         ent.Comp.PhaseEndsAt = _timing.CurTime + TimeSpan.FromSeconds(ent.Comp.ShuttleDepartureStartupTime);
         ReturnShuttle(ent, HospitalEmergencyStatus.Treating);
-        Dirty(ent);
         UpdateUi(ent);
     }
 
@@ -632,8 +625,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
                 ent.Comp.VipPatient = patient;
                 _meta.SetEntityName(patient, $"{Name(patient)} (VIP)");
             }
-
-            Dirty(patient, patientComp);
 
             OutfitPatient(ent, patient);
             ApplyPatientInjuries(patient, ent.Comp.Severity);
@@ -951,7 +942,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
             if (patient.NextPainLineAt == TimeSpan.Zero)
             {
                 patient.NextPainLineAt = now + RandomPainLineDelay(initial: true);
-                Dirty(uid, patient);
                 continue;
             }
 
@@ -959,7 +949,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
                 continue;
 
             patient.NextPainLineAt = now + RandomPainLineDelay();
-            Dirty(uid, patient);
             TrySpeakPainLine(uid);
         }
     }
@@ -1077,7 +1066,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
         ent.Comp.Status = HospitalEmergencyStatus.RewardReady;
         ent.Comp.NextIncidentAt = _timing.CurTime + ent.Comp.IncidentInterval;
         ReturnShuttle(ent, HospitalEmergencyStatus.RewardReady);
-        Dirty(ent);
         UpdateUi(ent);
     }
 
@@ -1120,8 +1108,6 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
         computer.LastPermanentDeathPenalty += computer.PermanentlyDeceasedPenalty;
         computer.NextUiRefreshAt = _timing.CurTime;
 
-        Dirty(patient.Owner, patient.Comp);
-        Dirty(computerUid, computer);
         UpdateUi((computerUid, computer));
     }
 
@@ -1273,7 +1259,7 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
         ent.Comp.LandingZone = foundLandingZone;
         ent.Comp.NextLandingZoneRefreshAt = now + LandingZoneRefreshInterval;
         if (changed)
-            Dirty(ent);
+            UpdateUi(ent);
 
         return ent.Comp.LandingZone != null && !Deleted(ent.Comp.LandingZone);
     }
