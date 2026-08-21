@@ -515,14 +515,14 @@
         requirements: []
 
     AU14JobSquadAutomaticRiflemanBase:
-      CMU14RankLACNSeamanApprentice:
-        entity: CMU14ChevronLACNSeamanApprentice
+      UPP_Gefreiter:
+        entity: AU14ChevronUPPNIGefreiter
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORSquadAutomaticRifleman
           time: 36000 #10 hours
-      CMU14RankLACNSeamanRecruit:
-        entity: CMU14ChevronLACNSeamanRecruit
+      UPP_Private:
+        entity: AU14ChevronUPPNIPrivate
         requirements: []
 
     AU14JobSquadRiflemanBase:
@@ -1676,8 +1676,8 @@
         requirements: []
 
     AU14JobOfficerMedicalBase:
-      UPP_Lieutenant:
-        entity: AU14ChevronUPPNILieutenant
+      RMC_Lieutenant:
+        entity: AU14ChevronRMCLieutenant
         requirements: []
     
     AU14JobOfficerMPBase:

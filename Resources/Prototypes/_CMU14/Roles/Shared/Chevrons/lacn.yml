@@ -42,7 +42,7 @@
 
 - type: entity
   parent: CMU14ChevronLACNBase
-  id: CMU14ChevroLACNThirdClassCorporal
+  id: CMU14ChevronLACNThirdClassCorporal
   name: third class corporal chevron
   components:
   - type: Sprite
