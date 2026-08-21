@@ -10,11 +10,6 @@ namespace Content.Server.Database.Migrations.Sqlite
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "platoon",
-                table: "profile",
-                type: "TEXT",
-                nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "rank_preferences",
@@ -26,9 +21,6 @@ namespace Content.Server.Database.Migrations.Sqlite
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "platoon",
-                table: "profile");
 
             migrationBuilder.DropColumn(
                 name: "rank_preferences",
