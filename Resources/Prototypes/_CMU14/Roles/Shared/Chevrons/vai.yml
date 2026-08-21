@@ -127,11 +127,11 @@
   components:
   - type: Sprite
     sprite: _AU14/Clothing/Accessory/Chevrons/universal.rsi
-    state: ranks_flagofficer
+    state: ranks_officer
   - type: UniformAccessory
     playerSprite:
       sprite: _AU14/Clothing/Accessory/Chevrons/universal.rsi
-      state: equipped-ranks_flagofficer
+      state: equipped-ranks_officer
   - type: RankChanger
     rank: VAI_VASCGroupAdvisor
     override: true
@@ -159,11 +159,11 @@
   components:
   - type: Sprite
     sprite: _AU14/Clothing/Accessory/Chevrons/universal.rsi
-    state: ranks_flagofficer
+    state: ranks_officer
   - type: UniformAccessory
     playerSprite:
       sprite: _AU14/Clothing/Accessory/Chevrons/universal.rsi
-      state: equipped-ranks_flagofficer
+      state: equipped-ranks_officer
   - type: RankChanger
     rank: VAI_VASCDepartamentLeader
     override: true
@@ -175,11 +175,11 @@
   components:
   - type: Sprite
     sprite: _AU14/Clothing/Accessory/Chevrons/universal.rsi
-    state: ranks_flagofficer
+    state: ranks_snco
   - type: UniformAccessory
     playerSprite:
       sprite: _AU14/Clothing/Accessory/Chevrons/universal.rsi
-      state: equipped-ranks_flagofficer
+      state: equipped-ranks_snco
   - type: RankChanger
     rank: VAI_VASCSpecialist
     override: true
