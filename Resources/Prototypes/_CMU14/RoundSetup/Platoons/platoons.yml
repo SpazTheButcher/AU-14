@@ -31,291 +31,291 @@
   platoonPatch: /Textures/_AU14/Clothing/Patches/brazilunit_patch.rsi/icon.png
   chevronOverrides:
     AU14JobPlatCoBase:
-      CMU14RankLACNLieutenant:
-        entity: CMU14ChevronLACNLieutenant
+      CMU14RankLACNFrigateCaptain:
+        entity: CMU14ChevronLACNFrigateCaptain
         requirements: []
-      CMU14RankLACNLieutenantCommander:
-        entity: CMU14ChevronLACNLieutenantCommander
+      CMU14RankLACNViceAdmiral:
+        entity: CMU14ChevronLACNViceAdmiral
         requirements: []
-      CMU14RankLACNCommander:
-        entity: CMU14ChevronLACNCommander
+      CMU14RankLACNCounterAdmiral:
+        entity: CMU14ChevronLACNCounterAdmiral
         requirements: []
 
     AU14JobadvisorBase:
-      CMU14RankLACNMasterChief:
-        entity: CMU14ChevronLACNMasterChief
+      CMU14RankLACNMasterSergeant:
+        entity: CMU14ChevronLACNMasterSergeant
         requirements: 
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORadvisor
           time: 180000 # 50 hours
-      CMU14RankLACNSeniorChief:
-        entity: CMU14ChevronLACNSeniorChief
+      CMU14RankLACNFirstClassSergeant:
+        entity: CMU14ChevronLACNFirstClassSergeant
         requirements: 
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORadvisor
           time: 108000 # 30 hours
-      CMU14RankLACNChiefPettyOfficer:
-        entity: CMU14ChevronLACNChiefPettyOfficer
+      CMU14RankLACNSecondClassSergeant:
+        entity: CMU14ChevronLACNSecondClassSergeant
         requirements: 
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORadvisor
           time: 36000 # 10 hours
-      CMU14RankLACNPettyOfficerFirstClass:
-        entity: CMU14ChevronLACNPettyOfficerFirstClass
+      CMU14RankLACNThirdClassSergeant:
+        entity: CMU14ChevronLACNThirdClassSergeant
         requirements: []
 
     AU14JobAdjutantBase:
-      CMU14RankLACNLieutenantJuniorGrade:
-        entity: CMU14ChevronLACNLieutenantJuniorGrade
+      CMU14RankLACNCorvetteCaptain:
+        entity: CMU14ChevronLACNCorvetteCaptain
         requirements: []
       
     AU14JobOfficerEngiBase:
-      CMU14RankLACNSubEnsign:
-        entity: CMU14ChevronLACNSubEnsign
+      CMU14RankLACNShipLineLieutenant:
+        entity: CMU14ChevronLACNShipLineLieutenant
         requirements: []
       
     AU14JobOfficerIntelBase:
-      CMU14RankLACNSubEnsign:
-        entity: CMU14ChevronLACNSubEnsign
+      CMU14RankLACNShipLineLieutenant:
+        entity: CMU14ChevronLACNShipLineLieutenant
         requirements: []
       
     AU14JobOfficerLogisticsBase:
-      CMU14RankLACNSubEnsign:
-        entity: CMU14ChevronLACNSubEnsign
+      CMU14RankLACNShipLineLieutenant:
+        entity: CMU14ChevronLACNShipLineLieutenant
         requirements: []
 
     AU14JobOfficerMedicalBase:
-      CMU14RankLACNEnsign:
-        entity: CMU14ChevronLACNEnsign
+      CMU14RankLACNShipLineLieutenant:
+        entity: CMU14ChevronLACNShipLineLieutenant
         requirements: []
       
     AU14JobOfficerMPBase:
-      CMU14RankLACNSubEnsign:
-        entity: CMU14ChevronLACNSubEnsign
+      CMU14RankLACNShipLineLieutenant:
+        entity: CMU14ChevronLACNShipLineLieutenant
         requirements: []
 
     AU14JobPlatOpBase:
-      CMU14RankLACNEnsign:
-        entity: CMU14ChevronLACNEnsign
+      CMU14RankLACNShipLineLieutenant:
+        entity: CMU14ChevronLACNShipLineLieutenant
         requirements: []
 
     AU14JobVehicleCommanderBase:
-      CMU14RankLACNSeniorChief:
-        entity: CMU14ChevronLACNSeniorChief
+      CMU14RankLACNFirstClassSergeant:
+        entity: CMU14ChevronLACNFirstClassSergeant
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORVehicleCommander
           time: 36000 #10 hours
-      CMU14RankLACNChiefPettyOfficer:
-        entity: CMU14ChevronLACNChiefPettyOfficer
+      CMU14RankLACNSecondClassSergeant:
+        entity: CMU14ChevronLACNSecondClassSergeant
         requirements: []
 
     AU14JobSectionSergeantBase:
-      CMU14RankLACNPettyOfficerFirstClass:
-        entity: CMU14ChevronLACNPettyOfficerFirstClass
+      CMU14RankLACNThirdClassSergeant:
+        entity: CMU14ChevronLACNThirdClassSergeant
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORSectionSergeant
           time: 36000 #10 hours
-      CMU14RankLACNPettyOfficerSecondClass:
-        entity: CMU14ChevronLACNPettyOfficerSecondClass
+      CMU14RankLACNFirstClassCorporal:
+        entity: CMU14ChevronLACNFirstClassCorporal
         requirements: []
 
     AU14JobSquadSergeantBase:
-      CMU14RankLACNPettyOfficerFirstClass:
-        entity: CMU14ChevronLACNPettyOfficerFirstClass
+      CMU14RankLACNThirdClassSergeant:
+        entity: CMU14ChevronLACNThirdClassSergeant
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORSquadSergeant
           time: 36000 #10 hours
-      CMU14RankLACNPettyOfficerSecondClass:
-        entity: CMU14ChevronLACNPettyOfficerSecondClass
+      CMU14RankLACNFirstClassCorporal:
+        entity: CMU14ChevronLACNFirstClassCorporal
         requirements: []
 
     AU14JobDCCBase:
-      CMU14RankLACNPettyOfficerFirstClass:
-        entity: CMU14ChevronLACNPettyOfficerFirstClass
+      CMU14RankLACNThirdClassSergeant:
+        entity: CMU14ChevronLACNThirdClassSergeant
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORDCC
           time: 36000 #10 hours
-      CMU14RankLACNPettyOfficerSecondClass:
-        entity: CMU14ChevronLACNPettyOfficerSecondClass
+      CMU14RankLACNFirstClassCorporal:
+        entity: CMU14ChevronLACNFirstClassCorporal
         requirements: []
 
     AU14JobDSPilotBase:
-      CMU14RankLACNMasterChief:
-        entity: CMU14ChevronLACNMasterChief
+      CMU14RankLACNMasterSergeant:
+        entity: CMU14ChevronLACNMasterSergeant
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORDSPilot
           time: 36000 #10 hours
-      CMU14RankLACNSeniorChief:
-        entity: CMU14ChevronLACNSeniorChief
+      CMU14RankLACNFirstClassSergeant:
+        entity: CMU14ChevronLACNFirstClassSergeant
         requirements: []
 
     AU14JobAuxTechBase:
-      CMU14RankLACNPettyOfficerThirdClass:
-        entity: CMU14ChevronLACNPettyOfficerThirdClass
+      CMU14RankLACNSecondClassCorporal:
+        entity: CMU14ChevronLACNSecondClassCorporal
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORAuxTech
           time: 86400 # 24 hours
-      CMU14RankLACNSeaman:
-        entity: CMU14ChevronLACNSeaman
+      CMU14RankLACNThirdClassCorporal:
+        entity: CMU14ChevronLACNThirdClassCorporal
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORAuxTech
           time: 36000 #10 hours
-      CMU14RankLACNSeamanApprentice:
-        entity: CMU14ChevronLACNSeamanApprentice
+      CMU14RankLACNSailorFirstClass:
+        entity: CMU14ChevronLACNSailorFirstClass
         requirements: []
 
     AU14JobEngineeringTechBase:
-      CMU14RankLACNPettyOfficerThirdClass:
-        entity: CMU14ChevronLACNPettyOfficerThirdClass
+      CMU14RankLACNSecondClassCorporal:
+        entity: CMU14ChevronLACNSecondClassCorporal
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFOREngineeringTech
           time: 86400 # 24 hours
-      CMU14RankLACNSeaman:
-        entity: CMU14ChevronLACNSeaman
+      CMU14RankLACNThirdClassCorporal:
+        entity: CMU14ChevronLACNThirdClassCorporal
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFOREngineeringTech
           time: 36000 #10 hours
-      CMU14RankLACNSeamanApprentice:
-        entity: CMU14ChevronLACNSeamanApprentice
+      CMU14RankLACNSailorFirstClass:
+        entity: CMU14ChevronLACNSailorFirstClass
         requirements: []
 
     AU14JobSquadCombatTechBase:
-      CMU14RankLACNSeamanApprentice:
-        entity: CMU14ChevronLACNSeamanApprentice
+      CMU14RankLACNSailorFirstClass:
+        entity: CMU14ChevronLACNSailorFirstClass
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORSquadCombatTech
           time: 36000 #10 hours
-      CMU14RankLACNSeamanRecruit:
-        entity: CMU14ChevronLACNSeamanRecruit
+      CMU14RankLACNSailor:
+        entity: CMU14ChevronLACNSailor
         requirements: []
 
     CMUJobDroneOperatorBase:
-      CMU14RankLACNPettyOfficerFirstClass:
-        entity: CMU14ChevronLACNPettyOfficerFirstClass
+      CMU14RankLACNThirdClassSergeant:
+        entity: CMU14ChevronLACNThirdClassSergeant
         requirements:
         - !type:RoleTimeRequirement
           role: CMUJobGOVFORDroneOperator
           time: 36000 #10 hours
-      CMU14RankLACNPettyOfficerSecondClass:
-        entity: CMU14ChevronLACNPettyOfficerSecondClass
+      CMU14RankLACNFirstClassCorporal:
+        entity: CMU14ChevronLACNFirstClassCorporal
         requirements: []
 
     AU14JobSquadAutomaticRiflemanBase:
-      CMU14RankLACNSeamanApprentice:
-        entity: CMU14ChevronLACNSeamanApprentice
+      CMU14RankLACNSailorFirstClass:
+        entity: CMU14ChevronLACNSailorFirstClass
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORSquadAutomaticRifleman
           time: 36000 #10 hours
-      CMU14RankLACNSeamanRecruit:
-        entity: CMU14ChevronLACNSeamanRecruit
+      CMU14RankLACNSailor:
+        entity: CMU14ChevronLACNSailor
         requirements: []
 
     AU14JobSquadRiflemanBase:
-      CMU14RankLACNSeamanApprentice:
-        entity: CMU14ChevronLACNSeamanApprentice
+      CMU14RankLACNSailorFirstClass:
+        entity: CMU14ChevronLACNSailorFirstClass
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORSquadRifleman
           time: 36000 #10 hours
-      CMU14RankLACNSeamanRecruit:
-        entity: CMU14ChevronLACNSeamanRecruit
+      CMU14RankLACNSailor:
+        entity: CMU14ChevronLACNSailor
         requirements: []
 
     AU14JobWeaponsSpecialistBase:
-      CMU14RankLACNSeamanApprentice:
-        entity: CMU14ChevronLACNSeamanApprentice
+      CMU14RankLACNSailorFirstClass:
+        entity: CMU14ChevronLACNSailorFirstClass
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORWeaponsSpecialist
           time: 36000 #10 hours
-      CMU14RankLACNSeamanRecruit:
-        entity: CMU14ChevronLACNSeamanRecruit
+      CMU14RankLACNSailor:
+        entity: CMU14ChevronLACNSailor
         requirements: []
 
     AU14JobMilitaryDoctorBase:
-      CMU14RankLACNEnsign:
-        entity: CMU14ChevronLACNEnsign
+      CMU14RankLACNShipLineLieutenant:
+        entity: CMU14ChevronLACNShipLineLieutenant
         requirements: []
 
     AU14JobNurseBase:
-      CMU14RankLACNPettyOfficerSecondClass:
-        entity: CMU14ChevronLACNPettyOfficerSecondClass
+      CMU14RankLACNFirstClassCorporal:
+        entity: CMU14ChevronLACNFirstClassCorporal
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORNurse
           time: 86400 # 24 hours
-      CMU14RankLACNPettyOfficerThirdClass:
-        entity: CMU14ChevronLACNPettyOfficerThirdClass
+      CMU14RankLACNSecondClassCorporal:
+        entity: CMU14ChevronLACNSecondClassCorporal
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORNurse
           time: 36000 #10 hours
-      CMU14RankLACNSeaman:
-        entity: CMU14ChevronLACNSeaman
+      CMU14RankLACNThirdClassCorporal:
+        entity: CMU14ChevronLACNThirdClassCorporal
         requirements: []
 
     AU14JobPlatoonCorpsmanBase:
-      CMU14RankLACNSeamanApprentice:
-        entity: CMU14ChevronLACNSeamanApprentice
+      CMU14RankLACNSailorFirstClass:
+        entity: CMU14ChevronLACNSailorFirstClass
         requirements: []
 
     AU14JobGOVFORCombatCorrespondentBase:
-      CMU14RankLACNPettyOfficerThirdClass:
-        entity: CMU14ChevronLACNPettyOfficerThirdClass
+      CMU14RankLACNSecondClassCorporal:
+        entity: CMU14ChevronLACNSecondClassCorporal
         requirements: []
 
     AU14JobRadioTelephoneOperatorBase: # FTL not RTO
-      CMU14RankLACNPettyOfficerThirdClass:
-        entity: CMU14ChevronLACNPettyOfficerThirdClass
+      CMU14RankLACNSecondClassCorporal:
+        entity: CMU14ChevronLACNSecondClassCorporal
         requirements: []
 
     AU14JobMilitaryPoliceBase:
-      CMU14RankLACNPettyOfficerFirstClass:
-        entity: CMU14ChevronLACNPettyOfficerFirstClass
+      CMU14RankLACNThirdClassSergeant:
+        entity: CMU14ChevronLACNThirdClassSergeant
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORMilitaryPoliceMan
           time: 86400 # 24 hours
-      CMU14RankLACNPettyOfficerSecondClass:
-        entity: CMU14ChevronLACNPettyOfficerSecondClass
+      CMU14RankLACNFirstClassCorporal:
+        entity: CMU14ChevronLACNFirstClassCorporal
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORMilitaryPoliceMan
           time: 36000 #10 hours
-      CMU14RankLACNPettyOfficerThirdClass:
-        entity: CMU14ChevronLACNPettyOfficerThirdClass
+      CMU14RankLACNSecondClassCorporal:
+        entity: CMU14ChevronLACNSecondClassCorporal
         requirements: []
 
     AU14JobRadioTrafficOperatorBase:
-      CMU14RankLACNSeaman:
-        entity: CMU14ChevronLACNSeaman
+      CMU14RankLACNThirdClassCorporal:
+        entity: CMU14ChevronLACNThirdClassCorporal
         requirements: []
 
     AU14JobVehicleCrewmanBase:
-      CMU14RankLACNPettyOfficerSecondClass:
-        entity: CMU14ChevronLACNPettyOfficerSecondClass
+      CMU14RankLACNFirstClassCorporal:
+        entity: CMU14ChevronLACNFirstClassCorporal
         requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORVehicleCrewman
           time: 36000 #10 hours
-      CMU14RankLACNPettyOfficerThirdClass:
-        entity: CMU14ChevronLACNPettyOfficerThirdClass
+      CMU14RankLACNSecondClassCorporal:
+        entity: CMU14ChevronLACNSecondClassCorporal
         requirements: []
 
     AU14JobAuxSupportSynthBase:
-      CMU14RankLACNMasterChief:
-        entity: CMU14ChevronLACNMasterChief
+      CMU14RankLACNMasterSergeant:
+        entity: CMU14ChevronLACNMasterSergeant
         requirements: []
 
   possibleships:
@@ -352,13 +352,13 @@
         requirements: []
 
     AU14JobadvisorBase:
-      UPP_SeniorCommisar:
+      UPP_SeniorCommissar:
         entity: AU14ChevronUPPNISeniorCommisar
         requirements: 
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORadvisor
           time: 36000 # 10 hours
-      UPP_Commisar:
+      UPP_Commissar:
         entity: AU14ChevronUPPNICommisar
         requirements: []
 
@@ -673,8 +673,8 @@
         requirements: []
 
     AU14JobAdjutantBase:
-        AU14ChevronWeYuDeputyDirector:
-          entity: AU14ChevronUPPNILieutenant
+        AU14RankWeYuDeputyDirector:
+          entity: AU14ChevronWeYuDeputyDirector
           requirements: []
       
     AU14JobOfficerEngiBase:
