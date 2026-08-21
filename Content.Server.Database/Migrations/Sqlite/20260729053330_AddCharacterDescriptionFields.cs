@@ -52,6 +52,13 @@ namespace Content.Server.Database.Migrations.Sqlite
                 nullable: false,
                 defaultValue: false);
 
+            migrationBuilder.AddColumn<bool>(
+                name: "playtime_perks",
+                table: "profile",
+                type: "INTEGER",
+                nullable: false,
+                defaultValue: true);
+
             migrationBuilder.AddColumn<string>(
                 name: "medical_record",
                 table: "profile",
@@ -99,6 +106,10 @@ namespace Content.Server.Database.Migrations.Sqlite
 
             migrationBuilder.DropColumn(
                 name: "hide_meta_information",
+                table: "profile");
+
+            migrationBuilder.DropColumn(
+                name: "playtime_perks",
                 table: "profile");
 
             migrationBuilder.DropColumn(
