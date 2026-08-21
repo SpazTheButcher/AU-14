@@ -657,6 +657,13 @@ public sealed class BeneficialChemicalPropertyPrototypeTest
         });
     }
 
+    [Test]
+    public void ChemicalStunDurationModifierDefaultsToNoChange()
+    {
+        var ev = new GetChemicalStunTimeMultiplierEvent();
+        Assert.That(ev.Multiplier, Is.EqualTo(1f));
+    }
+
     private static EntityEffectReagentArgs ReagentArgs(
         EntityUid target,
         IEntityManager entities,

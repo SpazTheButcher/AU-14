@@ -11,7 +11,14 @@ using Robust.Shared.Timing;
 namespace Content.Shared._CMU14.Chemistry.Effects;
 
 [ByRefEvent]
-public record struct GetChemicalStunTimeMultiplierEvent(float Multiplier = 1f);
+public record struct GetChemicalStunTimeMultiplierEvent
+{
+    public float Multiplier = 1f;
+
+    public GetChemicalStunTimeMultiplierEvent()
+    {
+    }
+}
 
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState, AutoGenerateComponentPause]
 public sealed partial class ChemicalNerveStimulationComponent : Component
