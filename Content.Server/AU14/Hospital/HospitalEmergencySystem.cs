@@ -3,12 +3,12 @@ using Content.Server.Stack;
 using Content.Server.Shuttles.Events;
 using Content.Server._CMU14.Ops.ThirdParty;
 using Content.Server._RMC14.Dropship;
-using Content.Shared._CMU14.Medical.Bones;
-using Content.Shared._CMU14.Medical.Organs;
-using Content.Shared._CMU14.Medical.Organs.Events;
-using Content.Shared._CMU14.Medical.Organs.Heart;
-using Content.Shared._CMU14.Medical.StatusEffects;
-using Content.Shared._CMU14.Medical.Wounds;
+using Content.Shared._CMU14.Medical.Anatomy.Bones;
+using Content.Shared._CMU14.Medical.Anatomy.Organs;
+using Content.Shared._CMU14.Medical.Anatomy.Organs.Events;
+using Content.Shared._CMU14.Medical.Anatomy.Organs.Heart;
+using Content.Shared._CMU14.Medical.Injuries.Pain;
+using Content.Shared._CMU14.Medical.Injuries.Wounds;
 using Content.Shared._RMC14.Dropship;
 using Content.Shared.AU14.Hospital;
 using Content.Shared.AU14.Scenario;
@@ -54,6 +54,7 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
     [Dependency] private SharedBodySystem _body = default!;
     [Dependency] private SharedFractureSystem _fracture = default!;
     [Dependency] private SharedCMUWoundsSystem _wounds = default!;
+    [Dependency] private CMUWoundLedgerSystem _woundLedger = default!;
     [Dependency] private InventorySystem _inventory = default!;
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private SharedPainShockSystem _pain = default!;
@@ -806,8 +807,8 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
             var fractureSeverity = severity switch
             {
                 1 => _random.Prob(0.75f) ? FractureSeverity.Simple : FractureSeverity.Compound,
-                2 => _random.Prob(0.7f) ? FractureSeverity.Compound : FractureSeverity.Comminuted,
-                _ => _random.Prob(0.85f) ? FractureSeverity.Comminuted : FractureSeverity.Compound,
+                2 => _random.Prob(0.7f) ? FractureSeverity.Compound : FractureSeverity.Shattered,
+                _ => _random.Prob(0.85f) ? FractureSeverity.Shattered : FractureSeverity.Compound,
             };
 
             _fracture.SetSeverity((part, fracture), fractureSeverity);
@@ -1142,7 +1143,7 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
                 missed++;
 
             if (TryComp<BodyPartWoundComponent>(part.Id, out var bodyPartWounds))
-                missed += bodyPartWounds.Wounds.Count;
+                missed += _woundLedger.GetEntries(bodyPartWounds).Count;
         }
 
         foreach (var organ in _body.GetBodyOrgans(patient))
@@ -1204,7 +1205,7 @@ public sealed partial class HospitalEmergencySystem : EntitySystem
             }
 
             if (TryComp<BodyPartWoundComponent>(part.Id, out var bodyPartWounds) &&
-                bodyPartWounds.Wounds.Count > 0)
+                _woundLedger.GetEntries(bodyPartWounds).Count > 0)
             {
                 return true;
             }
