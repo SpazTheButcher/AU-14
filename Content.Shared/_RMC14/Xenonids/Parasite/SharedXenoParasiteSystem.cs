@@ -60,6 +60,7 @@ using Robust.Shared.Random;
 using Robust.Shared.Serialization;
 using Robust.Shared.Timing;
 using Content.Shared._CMU14.Xenomorphs.Larva;
+using Content.Shared._CMU14.Chemistry.Effects;
 
 namespace Content.Shared._RMC14.Xenonids.Parasite;
 
@@ -106,6 +107,9 @@ public abstract partial class SharedXenoParasiteSystem : EntitySystem
 
     public override void Initialize()
     {
+        SubscribeLocalEvent<ChemicalAntiparasiticComponent, GetInfectedIncubationMultiplierEvent>(OnAntiparasiticMultiplier);
+        SubscribeLocalEvent<ChemicalAntiparasiticComponent, ComponentStartup>(OnAntiparasiticChanged);
+        SubscribeLocalEvent<ChemicalAntiparasiticComponent, ComponentShutdown>(OnAntiparasiticChanged);
         SubscribeLocalEvent<InfectableComponent, ActivateInWorldEvent>(OnInfectableActivate);
         SubscribeLocalEvent<InfectableComponent, CanDropTargetEvent>(OnInfectableCanDropTarget);
 
@@ -150,6 +154,43 @@ public abstract partial class SharedXenoParasiteSystem : EntitySystem
         SubscribeLocalEvent<BursterComponent, MoveInputEvent>(OnTryMove);
         IntializeAI();
 
+    }
+
+    private void OnAntiparasiticMultiplier(Entity<ChemicalAntiparasiticComponent> ent,
+        ref GetInfectedIncubationMultiplierEvent args)
+    {
+        args.Multiply(MathF.Max(0f, 1f - ent.Comp.Strength * 0.5f));
+    }
+
+    private void OnAntiparasiticChanged(Entity<ChemicalAntiparasiticComponent> ent, ref ComponentStartup args)
+        => RefreshIncubationMultipliers(ent.Owner);
+
+    private void OnAntiparasiticChanged(Entity<ChemicalAntiparasiticComponent> ent, ref ComponentShutdown args)
+        => RefreshIncubationMultipliers(ent.Owner);
+
+    public bool TryCureEarlyInfection(Entity<VictimInfectedComponent?> ent)
+    {
+        if (!Resolve(ent, ref ent.Comp, false) || ent.Comp.SpawnedLarva != null)
+            return false;
+
+        RemCompDeferred<VictimInfectedComponent>(ent);
+        return true;
+    }
+
+    /// <summary>
+    /// Chemically destroys an infection at any stage. An already spawned larva is deleted from its
+    /// host container; unlike surgical extraction, it cannot survive this treatment.
+    /// </summary>
+    public bool TryChemicallyExpelInfection(Entity<VictimInfectedComponent?> ent)
+    {
+        if (!Resolve(ent, ref ent.Comp, false))
+            return false;
+
+        if (ent.Comp.SpawnedLarva is { } larva && EntityManager.EntityExists(larva))
+            QueueDel(larva);
+
+        RemCompDeferred<VictimInfectedComponent>(ent);
+        return true;
     }
 
     private void OnInfectableActivate(Entity<InfectableComponent> ent, ref ActivateInWorldEvent args)
