@@ -21,13 +21,15 @@ public sealed partial class EntityInvisibilityVisualsSystem : EntitySystem
         SubscribeLocalEvent<EntityTurnInvisibleComponent, ComponentShutdown>(OnShutdown);
     }
 
+    private void EnsureShader(SpriteComponent sprite) // CMU14 Method
+        => _sprite.SetPostShader(sprite, new SpriteComponent.PostShaderArgs(ShaderId, _prototypes.Index(InvisibilityShader).InstanceUnique()));
+
     private void OnStartup(Entity<EntityTurnInvisibleComponent> ent, ref ComponentStartup args)
     {
         if (!TryComp(ent, out SpriteComponent? sprite))
             return;
 
-        // CMU14: legacy PostShader setter would clear every other post-shader on the sprite
-        _sprite.SetPostShader(sprite, new SpriteComponent.PostShaderArgs(ShaderId, _prototypes.Index(InvisibilityShader).InstanceUnique()));
+        EnsureShader(sprite);
     }
 
     private void OnShutdown(Entity<EntityTurnInvisibleComponent> ent, ref ComponentShutdown args)
@@ -47,9 +49,13 @@ public sealed partial class EntityInvisibilityVisualsSystem : EntitySystem
         while (invisible.MoveNext(out var uid, out var comp, out var sprite))
         {
             var opacity =  TryComp<EntityActiveInvisibleComponent>(uid, out var activeInvisible) ? activeInvisible.Opacity : 1;
-            // CMU14: keyed lookup so we only touch our own shader instance
-            if (_sprite.TryGetPostShader(sprite, ShaderId, out var entry))
-                entry.Shader.SetParameter("visibility", opacity);
+            if (!_sprite.TryGetPostShader(sprite, ShaderId, out var entry)) // CMU14
+            {
+                EnsureShader(sprite);
+                continue;
+            }
+
+            entry.Shader.SetParameter("visibility", opacity);
         }
     }
 }
