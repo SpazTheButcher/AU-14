@@ -25,6 +25,7 @@ public sealed partial class ObjectiveControlSystem : EntitySystem
     [Dependency] private GameTicker _gameTicker = default!;
     [Dependency] private IPlayerManager _playerManager = default!;
     [Dependency] private PlatoonSpawnRuleSystem _platoonSystem = default!;
+    [Dependency] private ObjectiveInterestSystem _interest = default!;
 
     private readonly List<(EntityUid Uid, CMUObjectiveComponent Comp)> _allObjectives = new();
     private EntityUid _objectiveMasterUid = EntityUid.Invalid;
@@ -58,7 +59,10 @@ public sealed partial class ObjectiveControlSystem : EntitySystem
     }
 
     private void OnObjectiveShutdown(EntityUid uid, CMUObjectiveComponent component, ref ComponentShutdown args)
-        => _allObjectives.RemoveAll(o => o.Uid == uid);
+    {
+        _allObjectives.RemoveAll(o => o.Uid == uid);
+        _interest.UnregisterInterest(uid);
+    }
 
     private void OnObjectiveStartup(EntityUid uid, CMUObjectiveComponent component, ref ComponentStartup args)
     {

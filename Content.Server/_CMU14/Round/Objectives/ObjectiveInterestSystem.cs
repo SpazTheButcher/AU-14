@@ -1,6 +1,5 @@
 using Content.Shared._CMU14.Round.Objectives.Components;
 using Content.Shared._CMU14.ZLevels.Core.EntitySystems;
-using Content.Shared.NPC.Components;
 using Robust.Shared.Map;
 
 namespace Content.Server._CMU14.Round.Objectives;
@@ -22,18 +21,10 @@ public sealed class ObjectiveInterestSystem : EntitySystem
     {
         base.Initialize();
         SubscribeLocalEvent<MetaDataComponent, ComponentStartup>(OnEntityStartup);
-        SubscribeLocalEvent<NpcFactionMemberComponent, ComponentStartup>(OnFactionStartup);
-        SubscribeLocalEvent<CMUObjectiveComponent, ComponentShutdown>(OnObjectiveShutdown);
     }
 
     private void OnEntityStartup(EntityUid uid, MetaDataComponent meta, ref ComponentStartup args)
         => RaiseLocalEvent(new ObjectiveWatchedEntityStartupEvent(uid));
-
-    private void OnFactionStartup(EntityUid uid, NpcFactionMemberComponent comp, ref ComponentStartup args)
-        => RaiseLocalEvent(new ObjectiveWatchedEntityStartupEvent(uid));
-
-    private void OnObjectiveShutdown(EntityUid uid, CMUObjectiveComponent comp, ref ComponentShutdown args)
-        => UnregisterInterest(uid);
 
     public override void Shutdown()
     {
