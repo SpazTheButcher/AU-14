@@ -14,7 +14,7 @@ public abstract partial class ObjectiveSystem
         var query = AllEntityQuery<CMUObjectiveMarkerComponent, TransformComponent>();
         while (query.MoveNext(out var markerUid, out var markerComp, out var markerXform))
         {
-            if (markerComp.Used || !searchMaps.Contains(markerXform.MapID))
+            if (markerComp.Used || HasComp<CMUObjectiveComponent>(markerUid) || !searchMaps.Contains(markerXform.MapID))
                 continue;
 
             if (!string.IsNullOrEmpty(markerId) && markerComp.FetchId == markerId)

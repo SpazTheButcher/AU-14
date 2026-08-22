@@ -37,10 +37,10 @@ public sealed partial class ObjKillSystem : ObjectiveSystem
 
     private void OnActivated(EntityUid uid, KillObjectiveComponent killComp, ref ObjectiveActivatedEvent _)
     {
-        if (!TryComp(uid, out CMUObjectiveComponent? comp) || !comp.Active || killComp.HasSpawned)
+        if (!TryComp(uid, out CMUObjectiveComponent? comp) || !comp.Active)
             return;
 
-        if (killComp.SpawnMob && !string.IsNullOrEmpty(killComp.TargetPrototype))
+        if (!killComp.HasSpawned && killComp.SpawnMob && !string.IsNullOrEmpty(killComp.TargetPrototype))
             ActivateKillObjective(uid, killComp);
 
         var objMap = Transform(uid).MapID;
