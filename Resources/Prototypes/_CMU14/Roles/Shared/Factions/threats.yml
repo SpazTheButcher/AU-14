@@ -1,0 +1,80 @@
+- type: npcFaction
+  id: RMCXeno
+  name: Prime Hive
+  hostile:
+  - UNMC
+  - NanoTrasen
+  - SPP
+  - GOVFOR
+  - OPFOR
+  - Halcyon
+  - WeYa
+  - Civilian
+  - CLF
+  - TSE
+  - AUColonist
+  - CMUAPE
+  - CMUYautja
+  - SimpleNeutral
+
+- type: npcFaction
+  id: CMUCorruptedHive
+  name: Corrupted Hive
+
+- type: npcFaction
+  id: THREAT
+  hostile:
+   - GOVFOR
+
+- type: npcFaction
+  id: CMU14PathogenWalker
+  hostile:
+  - UNMC
+  - NanoTrasen
+  - SPP
+  - GOVFOR
+  - OPFOR
+
+- type: npcFaction
+  id: CMUAPE
+  name: Apes
+  hostile:
+  - UNMC
+  - NanoTrasen
+  - SPP
+  - GOVFOR
+  - OPFOR
+  - Halcyon
+  - WeYa
+  - Civilian
+  - CLF
+  - TSE
+  - AUColonist
+
+- type: npcFaction
+  id: RMCDumb
+  hostile:
+  - GOVFOR
+  - OPFOR
+  - UNMC
+  - RMCXeno
+  - SPP
+  - Halcyon
+  - WeYa
+  - Civilian
+  - CLF
+  - TSE
+  - AUColonist
+  - CMUAPE
+
+- type: npcFaction
+  id: AUGoo
+  name: Goo
+  hostile:
+  - GOVFOR
+  - AUUpp
+  - AUWeYu
+  - AUColonist
+  - CLF
+  - CMUAPE
+  - Abomination
