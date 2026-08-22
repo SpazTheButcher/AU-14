@@ -62,14 +62,14 @@
   id: AU14UCMJDNR
   name: DNR
   priority: 2
-  text: "/ServerInfo/guidebook/_AU14/UCMJ/AU14UCMJDNR.xml"
+  text: "/Resources/ServerInfo/Guidebook/_AU14/UCMJ/AU14UCMJDNR.xml"
 
 - type: guideEntry
   parent: RMC 
   id: AU14UCMJExecutions
   name: Executions
   priority: 2
-  text: "/ServerInfo/guidebook/_AU14/UCMJ/AU14UCMJExecutions.xml"
+  text: "/Resources/ServerInfo/Guidebook/_AU14/UCMJ/AU14UCMJExecutions.xml"
 
 - type: guideEntry
   parent: RMC
