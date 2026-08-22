@@ -37,7 +37,7 @@ public sealed partial class ObjDestroySystem : ObjectiveSystem
                 RemComp<DestroyMarkedForComponent>(ent);
         });
 
-        var searchMaps = GetZNetworkMapIds(Transform(uid).MapID);
+        var searchMaps = _zLevels.GetAllNetworkMapIds(Transform(uid).MapID);
         var markerQuery = AllEntityQuery<CMUObjectiveMarkerComponent, TransformComponent>();
         while (markerQuery.MoveNext(out _, out var markerComp, out var markerXform))
         {
@@ -81,7 +81,7 @@ public sealed partial class ObjDestroySystem : ObjectiveSystem
 
     private void MarkExistingEntities(EntityUid uid, DestroyObjectiveComponent comp, CMUObjectiveComponent auComp, MapId objMap)
     {
-        var searchMaps = GetZNetworkMapIds(objMap);
+        var searchMaps = _zLevels.GetAllNetworkMapIds(objMap);
         var query = AllEntityQuery<MetaDataComponent, TransformComponent>();
         while (query.MoveNext(out var ent, out var meta, out var xform))
         {

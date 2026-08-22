@@ -65,7 +65,7 @@ public sealed partial class ObjInteractSystem : ObjectiveSystem
         comp.CompletionsPerFaction.Clear();
         comp.HasSpawned = false;
 
-        var searchMaps = GetZNetworkMapIds(Transform(uid).MapID);
+        var searchMaps = _zLevels.GetAllNetworkMapIds(Transform(uid).MapID);
         var query = EntityQueryEnumerator<InteractTrackerComponent, TransformComponent>();
         while (query.MoveNext(out _, out var tracker, out var xform))
         {
@@ -81,7 +81,7 @@ public sealed partial class ObjInteractSystem : ObjectiveSystem
     {
         var interactableSet = comp.Interactables.ToHashSet(StringComparer.OrdinalIgnoreCase);
         int registered = 0;
-        var searchMaps = GetZNetworkMapIds(Transform(objectiveUid).MapID);
+        var searchMaps = _zLevels.GetAllNetworkMapIds(Transform(objectiveUid).MapID);
 
         var query = AllEntityQuery<MetaDataComponent, TransformComponent>();
         while (query.MoveNext(out var ent, out var meta, out var xform))

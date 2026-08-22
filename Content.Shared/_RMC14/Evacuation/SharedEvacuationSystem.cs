@@ -463,11 +463,7 @@ public abstract partial class SharedEvacuationSystem : EntitySystem
         if (entXform.MapUid is not { } targetMap)
             yield break;
 
-        var searchMaps = new HashSet<EntityUid> { targetMap };
-        if (_zLevels.TryGetZNetwork(targetMap, out var network))
-            foreach (var (_, netMapUid) in network.Value.Comp.ZLevels)
-                if (netMapUid.HasValue)
-                    searchMaps.Add(netMapUid.Value);
+        var searchMaps = new HashSet<EntityUid>(_zLevels.GetAllNetworkMaps(targetMap)); // CMU14
 
         var seen = new HashSet<EntityUid>();
         var gridQuery = EntityQueryEnumerator<AreaGridComponent, TransformComponent>();

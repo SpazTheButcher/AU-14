@@ -132,7 +132,7 @@ public sealed partial class ObjArrestSystem : ObjectiveSystem
 
     private void MarkExistingEntities(EntityUid uid, ArrestObjectiveComponent comp, CMUObjectiveComponent auComp, MapId objMap)
     {
-        var searchMaps = GetZNetworkMapIds(objMap);
+        var searchMaps = _zLevels.GetAllNetworkMapIds(objMap);
         var query = AllEntityQuery<MetaDataComponent, TransformComponent, NpcFactionMemberComponent>();
         while (query.MoveNext(out var ent, out var meta, out var xform, out var factionComp))
         {

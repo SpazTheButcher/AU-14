@@ -20,7 +20,6 @@ public sealed partial class ObjectiveControlSystem : EntitySystem
 {
     [Dependency] private AuRoundSystem _auRoundSystem = default!;
     [Dependency] private SharedMapSystem _mapSystem = default!;
-    [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private CMUSharedZLevelsSystem _zLevels = default!;
     [Dependency] private IPrototypeManager _proto = default!;
     [Dependency] private GameTicker _gameTicker = default!;
@@ -344,27 +343,9 @@ public sealed partial class ObjectiveControlSystem : EntitySystem
         master.SelectionComplete = true;
     }
 
-    private HashSet<MapId> GetZNetworkMapIds(MapId primaryMap)
-    {
-        var maps = new HashSet<MapId> { primaryMap };
-        var mapUid = _mapSystem.GetMap(primaryMap);
-
-        if (_zLevels.TryGetZNetwork(mapUid, out var network) &&
-            _zLevels.TryGetDepthBounds(network.Value, out var minDepth, out var maxDepth))
-        {
-            for (var depth = minDepth; depth <= maxDepth; depth++)
-            {
-                if (_zLevels.TryGetMapAtDepth(network.Value, depth, out var connectedMapUid))
-                    maps.Add(_transform.GetMapId(connectedMapUid));
-            }
-        }
-
-        return maps;
-    }
-
     private void SpawnMissingCatalogObjectives(EntityUid bestPlanetGrid, MapId primaryMapId, string presetId)
     {
-        var planetMaps = GetZNetworkMapIds(primaryMapId);
+        var planetMaps = _zLevels.GetAllNetworkMapIds(primaryMapId);
         var compFactory = EntityManager.ComponentFactory;
 
         foreach (var proto in _proto.EnumeratePrototypes<EntityPrototype>())

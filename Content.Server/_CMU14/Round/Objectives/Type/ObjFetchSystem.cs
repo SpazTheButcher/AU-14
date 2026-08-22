@@ -90,7 +90,7 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
         }
 
         var objMap = Transform(uid).MapID;
-        var searchMaps = GetZNetworkMapIds(objMap);
+        var searchMaps = _zLevels.GetAllNetworkMapIds(objMap);
         var markerQuery = AllEntityQuery<CMUObjectiveMarkerComponent, TransformComponent>();
         while (markerQuery.MoveNext(out _, out var markerComp, out var markerXform))
         {
@@ -182,7 +182,7 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
     private List<EntityUid> FindPreplacedFetchEntities(MapId objMap, string targetPrototype)
     {
         var found = new List<EntityUid>();
-        var searchMaps = GetZNetworkMapIds(objMap);
+        var searchMaps = _zLevels.GetAllNetworkMapIds(objMap);
         var query = EntityQueryEnumerator<MetaDataComponent, TransformComponent>();
         while (query.MoveNext(out var ent, out var meta, out var entXform))
         {
