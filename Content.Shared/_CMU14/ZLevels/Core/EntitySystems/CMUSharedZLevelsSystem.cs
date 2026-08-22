@@ -93,6 +93,20 @@ public abstract partial class CMUSharedZLevelsSystem : EntitySystem
         => network.Comp.ZLevelByEntity.ContainsKey(mapUid);
 
     [PublicAPI]
+    public bool IsSameZNetwork(MapId mapId, MapId primaryMapId)
+        => mapId == primaryMapId
+            || (_map.TryGetMap(mapId, out var mapUid)
+            && _map.TryGetMap(primaryMapId, out var primaryMapUid)
+            && IsSameZNetwork(mapUid.Value, primaryMapUid.Value));
+
+    [PublicAPI]
+    public bool IsSameZNetwork(EntityUid? mapUid, EntityUid primaryMapUid)
+        => mapUid is { } map
+            && (map == primaryMapUid
+            || (TryGetZNetwork(primaryMapUid, out var network)
+            && IsMapInNetwork(network.Value, map)));
+
+    [PublicAPI]
     public bool TryMapOffset(Entity<CMUZLevelMapComponent?> inputMapUid,
         int offset,
         [NotNullWhen(true)] out Entity<CMUZLevelMapComponent>? outputMapUid)
