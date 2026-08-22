@@ -25,6 +25,7 @@ public sealed partial class NukeLightCommand : LocalizedEntityCommands
     private static readonly Color DefaultColor = Color.Orange;
 
     public override string Command => "nuke:lights";
+    public override string Description => "Deletes lights in a radius around you, use 'help nuke:lights' for more info.";
     public override string Help =>
         "Usage: nuke:lights [radius=80] [energy=80] [duration=4] [x y mapId] [color=Orange]";
 
