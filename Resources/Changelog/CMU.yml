@@ -9719,5 +9719,25 @@
   id: 638
   time: '2026-08-17T19:57:53.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1848
+- author: potatoed6
+  changes:
+  - message: chevron preference for govfor, also platoon specific chevrons
+    type: Add
+  - message: Added more patches from CM13
+    type: Add
+  - message: Chevrons now spawn on equipped uniform. You dont spawn with chevrons
+      inhand or in a bag, they always will start on a first uniform you wear.
+    type: Tweak
+  - message: COs now get ranks o4-o6 and dont have time reqs
+    type: Tweak
+  - message: COs now can access SEA rank briefcase
+    type: Tweak
+  - message: Messages about marines waking up or going to cryo now use chevron logic
+      to determine rank, so you wont have "Civilian John Marine woke up", instead
+      it will be "Major John Marine woke up"
+    type: Fix
+  id: 639
+  time: '2026-08-21T15:23:29.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1851
 Name: CMU
 Order: -1
