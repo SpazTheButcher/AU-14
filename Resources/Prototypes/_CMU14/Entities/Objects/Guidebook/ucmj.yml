@@ -57,6 +57,20 @@
 
 - type: guideEntry
   parent: RMC
+  id: AU14UCMJDNR
+  name: DNR
+  priority: 2
+  text: "/serverinfo/guidebook/_AU14/UCMJ/AU14UCMJDNR"
+
+- type: guideEntry
+  parent: RMC 
+  id: AU14UCMJExecutions
+  name: Executions
+  priority: 2
+  text: "/serverinfo/guidebook/_AU14/UCMJ/AU14UCMJExecutions"
+
+- type: guideEntry
+  parent: RMC
   id: AU14UCMJCriminalCode
   name: Criminal Code
   text: "/ServerInfo/Guidebook/_AU14/UCMJ/AU14UCMJCriminalCode.xml"
