@@ -4,6 +4,11 @@
   name: cmu-job-name-aegis-observer
   description: cmu-job-description-aegis-observer
   startingGear: CMUGearAegisObserver
+  accessGroups:
+  - ShipMasterAccess
+  - aulegacygroupcommand
+  - AU14GovforCommand
+  - CMAccessAegis
   roundComponents:
   - type: Skills
     skills:
