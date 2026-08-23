@@ -2,6 +2,8 @@
   parent: AU14JobPARTYPartyContractorBase
   id: AU14JobProdigyPartyLeader #m41a/2
   roundSide: ThirdParty
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   roundForce: PSC
   roundRole: ProdigyPartyLeader
   roundComponents:

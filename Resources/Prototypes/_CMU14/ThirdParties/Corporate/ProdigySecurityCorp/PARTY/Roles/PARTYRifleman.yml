@@ -10,6 +10,8 @@
   parent: AU14JobPARTYPartyContractorBase
   id: AU14JobPARTYPartyContractor
   roundSide: ThirdParty
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   roundForce: PSC
   roundRole: PARTYPartyContractor
   roundComponents:

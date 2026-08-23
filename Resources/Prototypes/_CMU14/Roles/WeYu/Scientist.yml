@@ -12,6 +12,8 @@
   id: AU14JobCivilianScientist
   roundSide: Civilian
   roundForce: WY
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   roundRole: CivilianScientist
   roundComponents:
   - type: Skills
