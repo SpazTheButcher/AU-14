@@ -10,7 +10,7 @@
   parent: RMCHiveBoonBase
   id: RMCHiveBoonFireResistance
   name: Boon of Fire Resistance
-  description: Makes all xenonids immune to fire for 5 minutes.
+  description: Makes all xenomorphs immune to fire for 5 minutes.
   components:
   - type: HiveBoonDefinition
     duration: 5m
@@ -34,7 +34,7 @@
   parent: RMCHiveBoonBase
   id: RMCHiveBoonAggression
   name: Minor Boon of Aggression
-  description: Increases all xenonid damage by 5 for 5 minutes.
+  description: Increases all xenomorph damage by 5 for 5 minutes.
   components:
   - type: HiveBoonDefinition
     duration: 5m
@@ -64,7 +64,7 @@
   parent: RMCHiveBoonBase
   id: RMCHiveBoonAggressionMajor
   name: Major Boon of Aggression
-  description: Increases all xenonid damage by 10 for 10 minutes.
+  description: Increases all xenomorph damage by 10 for 10 minutes.
   components:
   - type: HiveBoonDefinition
     cost: 2
@@ -80,7 +80,7 @@
   parent: RMCHiveBoonBase
   id: RMCHiveBoonAdaptability
   name: Boon of Adaptability
-  description: Allows each xenonid to change to a different caste of the same tier.
+  description: Allows each xenomorph to change to a different caste of the same tier.
   components:
   - type: HiveBoonDefinition
     cost: 2
@@ -105,7 +105,7 @@
   parent: RMCHiveBoonBase
   id: RMCHiveBoonKing
   name: His Grace
-  description: A huge behemoth of a Xenonid which can tear its way through defences and flesh alike. Requires open space around the hive core to spawn.
+  description: A huge behemoth of a xenomorph which can tear its way through defenses and flesh alike. Requires open space around the hive core to spawn.
   components:
   - type: HiveBoonDefinition
     cost: 0
