@@ -227,7 +227,7 @@ public sealed partial class ObjFetchSystem : ObjectiveSystem
             claimed = true;
         }
 
-        if (!claimed && ObjCtrl.SelectionComplete && ObjCtrl.TryGetFetchObjectiveForItem(proto, out var objectiveProto))
+        if (!claimed && ObjCtrl.TryGetFetchObjectiveForItem(proto, out var objectiveProto) && ObjCtrl.SelectionComplete)
             ObjCtrl.LateSpawnFetchObjectiveForItem(uid, objectiveProto);
     }
 
