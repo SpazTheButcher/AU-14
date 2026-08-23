@@ -305,14 +305,60 @@ public sealed partial class NpcFactionSystem : EntitySystem
         RefreshFactions();
     }
 
-    private void RefreshFactions()
+    private void RefreshFactions() // CMU14 Method: faction hostile uses inheritance (e.g. RMCXeno -> CMU14PathogenWalker)
     {
+        var children = new Dictionary<string, List<string>>();
+        foreach (var faction in _proto.EnumeratePrototypes<NpcFactionPrototype>())
+        {
+            if (faction.Parents == null)
+                continue;
+
+            foreach (var parent in faction.Parents)
+            {
+                if (!children.TryGetValue(parent, out var list))
+                    children[parent] = list = new List<string>();
+                list.Add(faction.ID);
+            }
+        }
+
+        var descendants = new Dictionary<string, HashSet<ProtoId<NpcFactionPrototype>>>();
+
+        HashSet<ProtoId<NpcFactionPrototype>> DescendantsOf(string id)
+        {
+            if (descendants.TryGetValue(id, out var found))
+                return found;
+
+            // Reserve before recursing so malformed parent cycles terminate instead of hanging.
+            found = new HashSet<ProtoId<NpcFactionPrototype>> { id };
+            descendants[id] = found;
+
+            if (children.TryGetValue(id, out var kids))
+            {
+                foreach (var kid in kids)
+                    found.UnionWith(DescendantsOf(kid));
+            }
+
+            return found;
+        }
+
+        foreach (var faction in _proto.EnumeratePrototypes<NpcFactionPrototype>())
+            DescendantsOf(faction.ID);
+
         _factions = _proto.EnumeratePrototypes<NpcFactionPrototype>().ToFrozenDictionary(
             faction => faction.ID,
-            faction =>  new FactionData
+            faction =>
             {
-                Friendly = faction.Friendly.ToHashSet(),
-                Hostile = faction.Hostile.ToHashSet()
+                var hostile = new HashSet<ProtoId<NpcFactionPrototype>>();
+                foreach (var h in faction.Hostile)
+                    hostile.UnionWith(DescendantsOf(h));
+
+                hostile.Remove(faction.ID);
+
+                return new FactionData
+                {
+                    Friendly = faction.Friendly.ToHashSet(),
+                    Hostile = hostile,
+                };
             });
 
         var query = AllEntityQuery<NpcFactionMemberComponent>();

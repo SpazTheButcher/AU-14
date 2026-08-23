@@ -477,6 +477,8 @@
       offset: 0.5, 2
     - prototype: CMFaxCLF
       offset: 1.5, 2
+    - prototype: AU14AllianceConsoleCLF
+      offset: -2, 2
     - prototype: AU14AnalyzerMachineCLF
       offset: -1.5, 0
     - prototype: AU14CLFObjectiveWeaponsVendor

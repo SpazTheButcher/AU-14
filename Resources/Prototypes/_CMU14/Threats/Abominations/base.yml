@@ -1,22 +1,7 @@
 # NPC + IFF faction for abominations.
-# Hostile to everything except itself; kept separate from RMCXeno so the
-# two threats can coexist without friendly-firing each other.
 - type: npcFaction
+  parent: THREAT # threat family & hostile factions: inheritance excludes abominations
   id: Abomination
-  hostile:
-  - UNMC
-  - NanoTrasen
-  - SPP
-  - GOVFOR
-  - OPFOR
-  - Halcyon
-  - WeYa
-  - Civilian
-  - CLF
-  - TSE
-  - AUColonist
-  - CMUAPE
-  - RMCXeno
 
 - type: entity
   id: FactionAbomination

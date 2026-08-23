@@ -1354,3 +1354,14 @@
   components:
   - type: VendorMarker
     class: FighterDestination
+
+- type: entity
+  parent: VmarkerShip
+  id: VMarkerShipSentryDeployer
+  name: Ship Sentry Deployer Marker
+  components:
+  - type: VendorMarker
+    class: SentryDeployer
+  - type: Sprite
+    sprite: _RMC14/Structures/Machines/sentry_deployer.rsi
+    state: floor_sentry_installed
