@@ -63,7 +63,7 @@
   parent: AU14MaintenanceJack
   id: AU14MaintenanceJackSpecial
   name: K92-S Special Maintenance Jack
-  description: A very-heavy combination crowbar, wrench, and generally large bludgeoning device that comes in handy in emergencies. Can be used to disengage door jacks. Incredibly hefty, though.
+  description: A very-heavy combination crowbar, wrench, screwdriver, and generally large bludgeoning device that comes in handy in emergencies. Can be used to disengage door jacks. Incredibly hefty, though.
   suffix: CMU, Synth
   components:
   - type: RMCSynthItemRestriction
@@ -76,10 +76,12 @@
     - Wrench
     - Crowbar
     - MaintenanceJack
+    - Screwdriver
   - type: Tool
     qualities:
       - Prying
       - Anchoring
+      - Screwing
       - VehicleServicing
     useSound:
       path: /Audio/Items/jaws_pry.ogg
