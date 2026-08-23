@@ -215,9 +215,9 @@ public sealed partial class ThreatVoteSystem : EntitySystem
                 .ToList(),
             Duration = VoteDuration,
             AllowedVoters = prepared.HeldPlayers.ToHashSet(),
-            RandomizeMissingVotes = true,
-            CarryoverEnabled = true,
-            CarryoverKey = ThreatVoteSystem.BuildCarryoverKey(prepared)
+            RandomizeMissingVotes = false, // only real votes count
+            CarryoverEnabled = false, // threats should respect choice
+            // CarryoverKey = ThreatVoteSystem.BuildCarryoverKey(prepared),
         };
         voteOptions.SetInitiatorOrServer(null);
 
@@ -457,14 +457,14 @@ public sealed partial class ThreatVoteSystem : EntitySystem
         }
     }
 
-    private static string BuildCarryoverKey(PreparedThreatVote prepared)
-    {
-        IOrderedEnumerable<string> candidateIds = prepared.Candidates
-            .Select(candidate => candidate.Threat.ID)
-            .Order(StringComparer.OrdinalIgnoreCase);
-
-        return $"au14-threat:{prepared.PresetId}:{string.Join(",", candidateIds)}";
-    }
+    // Carryover votes for threats disabled for now
+    // private static string BuildCarryoverKey(PreparedThreatVote prepared)
+    // {
+    //     IOrderedEnumerable<string> candidateIds = prepared.Candidates
+    //         .Select(candidate => candidate.Threat.ID)
+    //         .Order(StringComparer.OrdinalIgnoreCase);
+    //     return $"au14-threat:{prepared.PresetId}:{string.Join(",", candidateIds)}";
+    // }
 
     private string? GetSelectedGovforPlatoonId() => _platoonSpawnRule.SelectedGovforPlatoon?.ID;
 
