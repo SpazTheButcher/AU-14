@@ -15,7 +15,7 @@
     - govfor
     repeating: true
     objectiveLevel: 1
-    customPoints: 6
+    customPoints: 15
     maxRepeatable: 1
     objectiveDescription: "Arrest enemy combatants"
   - type: ArrestObjective
@@ -39,7 +39,7 @@
     - govfor
     repeating: true
     objectiveLevel: 1
-    customPoints: 25
+    customPoints: 20
     maxRepeatable: 3
     objectiveDescription: "Arrest Threats"
   - type: ArrestObjective

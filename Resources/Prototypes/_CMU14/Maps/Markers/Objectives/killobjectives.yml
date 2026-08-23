@@ -15,7 +15,7 @@
     - govfor
     repeating: true
     objectiveLevel: 1
-    customPoints: 3
+    customPoints: 15
     maxRepeatable: 1
     objectiveDescription: "Kill the enemy"
     nextTierObjective: destroy_mineable_solaris_steel
@@ -39,7 +39,7 @@
     - govfor
     repeating: false
     objectiveLevel: 1
-    customPoints: 10
+    customPoints: 25
     objectiveDescription: "Kill the OPFOR Commander"
     roundEndMessage: "By Killing the OPFOR Commander"
   - type: KillObjective
@@ -63,7 +63,7 @@
     - opfor
     repeating: false
     objectiveLevel: 1
-    customPoints: 30
+    customPoints: 25
     objectiveDescription: "Kill the GOVFOR Commander"
     roundEndMessage: "By Killing the GOVFOR Commander"
   - type: KillObjective
@@ -87,7 +87,7 @@
     - clf
     repeating: false
     objectiveLevel: 1
-    customPoints: 10
+    customPoints: 25
     objectiveDescription: "Kill the GOVFOR Commander"
     roundEndMessage: "By Killing the GOVFOR Commander"
   - type: KillObjective
@@ -111,7 +111,7 @@
     - govfor
     repeating: false
     objectiveLevel: 1
-    customPoints: 10
+    customPoints: 25
     objectiveDescription: "Eliminate the Threat Leader"
     roundEndMessage: "By Killing the Cell Leader"
   - type: KillObjective
@@ -136,7 +136,7 @@
     - govfor
     repeating: true
     objectiveLevel: 2
-    customPoints: 20
+    customPoints: 15
     maxRepeatable: 8
     objectiveDescription: "Eliminate Threats"
   - type: KillObjective
@@ -160,7 +160,7 @@
     repeating: true
     maxRepeatable: 30
     objectiveLevel: 2
-    customPoints: 10
+    customPoints: 8
     objectiveDescription: "Kill GOVFOR Forces"
   - type: KillObjective
     factionToKill: GOVFOR
@@ -234,7 +234,7 @@
     - govfor
     repeating: false
     objectiveLevel: 1
-    customPoints: 35
+    customPoints: 30
     objectiveDescription: "Eliminate the threat's leader."
     roundEndMessage: "By Killing the threat leader."
   - type: KillObjective
@@ -258,7 +258,7 @@
     - govfor
     repeating: true
     objectiveLevel: 1
-    customPoints: 5
+    customPoints: 10
     objectiveDescription: "Eliminate the threat."
     roundEndMessage: "By killing the threat."
   - type: KillObjective
