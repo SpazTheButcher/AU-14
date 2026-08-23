@@ -9991,5 +9991,92 @@
   id: 650
   time: '2026-08-23T07:25:04.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1860
+- author: Vencallium
+  changes:
+  - message: Beneficial generated-chemical properties now provide their advertised
+      medical, stimulant, organ, botanical, and specialized treatment effects.
+    type: Add
+  - message: Beneficial chemical properties now become linearly more effective at
+      higher generated levels while retaining overdose risks and safety limits.
+    type: Tweak
+  - message: Defibrillating chemicals can now revive medically viable corpses and
+      correctly trigger Electrogenetic reagents.
+    type: Fix
+  - message: Overlapping temporary chemical properties now use the strongest active
+      source and expire correctly.
+    type: Fix
+  - message: Administrators can now create custom generated-chemical contracts and
+      materialize them as 30-unit vials using the admin chemical contract console.
+    type: Add
+  id: 651
+  time: '2026-08-23T10:19:39.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1852
+- author: maertayn
+  changes:
+  - message: Platoon vote is delayed by a minute after a fresh restart (democracy!)
+    type: Tweak
+  - message: Carryover votes are now at 50% strength (showing real/tallied votes)
+      & threat carryover votes gone + threat votes don't randomly assign your vote
+      when you don't pick (only actual player input counts to threat roll)
+    type: Tweak
+  - message: XO, Deputy Administrator and CLF Leader added to priority roles (fills
+      first)
+    type: Tweak
+  - message: Ghost hotbar cleanup (still available in the actions menu, just not default)
+    type: Tweak
+  - message: WeYu and CLF alliance consoles - Weyland-Yutani and CLF command can now
+      set diplomatic standing (friendly, neutral, hostile) with every faction (grants
+      turrets/accesses on friendly relations)
+    type: Add
+  - message: Alliance console rows and headers now use proper faction names instead
+      of ids
+    type: Add
+  - message: CLF cell kit now deploys an alliance console alongside the intel gear
+    type: Map
+  - message: Faction relations now inherit - listing THREAT covers xenos, pathogen
+      walkers, apes and abominations without duplicating lists (or self-targeting)
+    type: Code
+  - message: Sentry turrets can no longer target Provost personnel
+    type: Fix
+  - message: USS Bush Redux sentry deployers are platoon aware and functional without
+      having to tune it - WY PMC crews get locked corporate IFF turrets instead
+    type: Map
+  - message: Dumb turrets now shoot pathogen walkers and the rest of the threat family
+    type: Fix
+  - message: 'GOVFOR tech tree rework - third-party unlocks are back: CMB, ICRC, S&R
+      K9, LACN snipers, US Army, FORECON kill team, PART Sierra, Armored Division,
+      KRAKEN (Tier IV AEGIS Nuke) + objective scaled prices'
+    type: Add
+  - message: Prototypes relocated (Intel, objectives, languages, plants, entity lists)
+      & third-party roles migrated to RoundJobProfiles
+    type: Code
+  - message: Examining an ID card now shows the wearer's faction(s) for use with Alliance
+      Consoles
+    type: Add
+  - message: Buffed objective reward points on completion across the board
+    type: Tweak
+  - message: Tech summons (Prodigy, provost, WY scientists, K9, FORECON) now carry
+      proper faction tags, so alliance standings actually apply to them - tech summons
+      are still neutral, they decide their allegiance as they please (doesn't apply
+      to the WeYu/CLF call-ins)
+    type: Add
+  - message: Type 23 shotgun case now fits the stocked ginormous shotgun
+    type: Fix
+  - message: K92-S is now an all-round bulky multitool for synths (screwdriver, wrench,
+      crowbar, vehicle servicing)
+    type: Tweak
+  - message: RMCInvisible cloak shader no longer breaks under forced premultiplied
+      pass (engine update broke shaders)
+    type: Fix
+  - message: Colony intercom spam no longer floods ghost chat
+    type: Fix
+  - message: planets.yml has been turned from a giant monster file into individual
+      maps in the Maps/Planets/ directory
+    type: Code
+  - message: Map & platoon rotations (feedback/experimenting)
+    type: Tweak
+  id: 652
+  time: '2026-08-23T21:20:16.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1861
 Name: CMU
 Order: -1
