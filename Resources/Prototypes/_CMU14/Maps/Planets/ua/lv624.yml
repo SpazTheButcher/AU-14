@@ -6,19 +6,20 @@
     votename: "LV624 Green Hell"
     mapId: LV624
     lorePrimer: AU14PrimerPlanetLV624
-    Allegiance: UA
+    allegiance: UA
     camouflage: Desert
-    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
-    platoonsOpfor:
-    - UPP
-    - WEYU
-    - ProdigySF
-    - VAIPO
+    announcement: "The frontier colony on LV-624 'Green Hell' has gone silent. A response force has been dispatched to investigate the blackout."
     platoonsGovfor:
     - LACN
     - USCM
     - CMBCIU
+    - WEYU
     - RMC
+    - HAZOPS
+    platoonsOpfor:
+    - UPP
+    - ProdigySF
+    - VAIPO
     defaultgovfor: USCM
     defaultopfor: UPP
     govforinship: false

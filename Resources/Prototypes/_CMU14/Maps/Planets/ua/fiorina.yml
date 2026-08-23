@@ -6,17 +6,22 @@
     votename: "Fiorina Prison"
     mapId: aufiorina
     lorePrimer: AU14PrimerPlanetFiorina
-    Allegiance: UA
+    allegiance: UA
     camouflage: Urban
-    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
+    announcement: "Fiorina 161, a Weyland-Yutani maximum security prison, has gone silent. A response force has been dispatched to investigate."
     platoonsGovfor:
     - USCM
     - WEYU
     - VAIPO
-    - UPP
+    - RMC
+    - CMBCIU
     - HAZOPS
-    defaultgovfor: USCM
-    defaultopfor: UPP
+    platoonsOpfor:
+    - LACN
+    - UPP
+    - ProdigySF
+    defaultgovfor: WEYU
+    defaultopfor: ProdigySF
     govforinship: true
     opforinship: true
     daycycleenabled: false

@@ -6,19 +6,22 @@
     votename: "Stable Garrison Redux"
     mapId: StableGarrisonRedux
     lorePrimer: AU14PrimerPlanetStableGarrison
-    Allegiance: UA
+    allegiance: UA
     camouflage: Desert
-    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
-    platoonsOpfor:
-    - UPP
-    - VAIPO
-    - ProdigySF
+    announcement: "Stable Garrison, a joint UA base and its surrounding settlement, has gone dark. A response force has been dispatched to re-establish contact."
     platoonsGovfor:
+    - LACN
     - WEYU
     - USCM
+    - CMBCIU
     - RMC
+    - VAIPO
+    platoonsOpfor:
+    - UPP
+    - ProdigySF
+    - HAZOPS
     defaultgovfor: USCM
-    defaultopfor: UPP
+    defaultopfor: ProdigySF
     govforinship: false
     opforinship: true
     daycycleenabled: true

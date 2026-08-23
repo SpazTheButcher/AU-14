@@ -8,12 +8,10 @@
   description: Live in an offworld colony as it falls into chaos.
   burrowedLarvaEnabled: false
   supportedPlanets:
-    - SharedPlanetPool
-    - AUPlanetLV624
-    - AuPlanetChances
-    - AUPlanetStableGarrison
-    - CMUPlanetLament
-#    - AUPlanetSorokyne
+  - SharedPlanetPool
+  - AuPlanetChances
+  - AUPlanetSorokyne
+  - AUPlanetLV624 # Green Hell
   rules:
   - AuVoteRule
   - ColonyAntags
@@ -28,12 +26,14 @@
   requiresGovforVote: true
   supportedPlanets:
   - SharedPlanetPool
-  - AUPlanetLV747
-#  - AUPlanetSorokyne
-#  - AUPlanetCorsatStation
+  - AUPlanetLV747 # Solaris Gulch
+  - AUPlanetLV759 # Hybrisa Metro
+  - AUPlanetLV327 # Port Nereid
+  - AUPlanetSorokyne
+  - AUPlanetCorsatStation
   - AUPlanetTrijent
-#  - AuPlanetFiorina
-#  - AuPlanetKutjevo
+  - AuPlanetFiorina
+  - AuPlanetKutjevo
   - AuPlanetShivasSnowball
   - AuPlanetChances
   rules:
@@ -58,13 +58,11 @@
   thirdPartyRatio: 0.15
   maxThirdParties: 3
   supportedPlanets:
-    - SharedPlanetPool
-    - CMUPlanetLament
-    - AUPlanetStableGarrison
-    - AUPlanetLV747
-    - AUPlanetLV624
-    #- AUPlanetSorokyne
-    #- AuPlanetChances
+  - SharedPlanetPool
+  - AUPlanetLV747 # Solaris Gulch
+  - AUPlanetSorokyne
+  - AuPlanetChances
+  - AUPlanetLV624 # Green Hell
   rules:
   - AuVoteRule
   - PlatoonSpawn
@@ -85,18 +83,14 @@
   requiresOpforVote: true
   requiresGovforVote: true
   supportedPlanets:
-  #- AUPlanetGixensCaverns Rout of rotation till fixed - eg
-  #- AUPlanetShepherdsPride
-  #- AUPlanetFlight
+  - SharedPlanetPool
+  - AUPlanetGixensCaverns
+  - AUPlanetFlight
   - AUPlanetLV759
-  - AUPlanetLV327
   - AUPlanetCorsatStation
   - AUPlanetSorokyne
-  - AUPlanetStableGarrison
-  - CMUPlanetStableGarrisonRedux
   - AUPlanetTrijent
-  - CMUPlanetLament
-  - CMUPlanetHopesRetreat
+  - AUPlanetLV624 # Green Hell
   rules:
   - AuVoteRule
   - PlatoonSpawn

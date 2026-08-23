@@ -6,25 +6,25 @@
     votename: "Port Nereid"
     mapId: portneroid
     lorePrimer: AU14PrimerPlanetLV327
-    Allegiance: UA
+    allegiance: UA
     camouflage: Desert
-    announcement: "Weyland-Yutani has lost contact with one of its Biological Storage Facilities, Solaris Ridge, on the planet of LV-1413. The UNS Almayer has been requested to look into the blackout by Weyland-Yutani."
-    platoonsOpfor:
-    - WEYU
-    - VAIPO
-    - ProdigySF
-    - UPP
+    announcement: "Port Nereid, the waterport and transit hub on LV-109 'Elgin's Folly', has gone silent. A response force has been dispatched to investigate the blackout."
     platoonsGovfor:
     - LACN
-    - CMBCIU
     - USCM
     - RMC
-    defaultgovfor: RMC
+    - HAZOPS
+    - ProdigySF
+    - VAIPO
+    platoonsOpfor:
+    - UPP
+    - WEYU
+    - CMBCIU
+    defaultgovfor: HAZOPS
     defaultopfor: WEYU
     govforinship: true
     opforinship: true
     daycycleenabled: true
-    faction: ua
     threats:
     - cultistThreat
     - XenoThreat

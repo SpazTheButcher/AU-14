@@ -6,26 +6,25 @@
     votename: "Corsat Station"
     mapId: aucorsat
     lorePrimer: AU14PrimerPlanetCorsatStation
-    Allegiance: UA
+    allegiance: UA
     camouflage: Urban
-    announcement: "Weyland-Yutani has lost contact with one of its Biological Storage Facilities, Solaris Ridge, on the planet of LV-1413. The UNS Almayer has been requested to look into the blackout by Weyland-Yutani."
-    platoonsOpfor:
-    - ProdigySF
-    - WEYU
-    - VAIPO
+    announcement: "Corsat Station, a Weyland-Yutani research and prison station, has gone silent. A response force has been dispatched to investigate."
     platoonsGovfor:
-    - LACN
     - CMBCIU
     - USCM
     - RMC
     - UPP
     - HAZOPS
-    defaultgovfor: USCM
-    defaultopfor: WEYU
+    - WEYU
+    platoonsOpfor:
+    - ProdigySF
+    - VAIPO
+    - LACN
+    defaultgovfor: WEYU
+    defaultopfor: VAIPO
     govforinship: true
     opforinship: true
     daycycleenabled: true
-    faction: ua
     threats:
     - cultistThreat
     - XenoThreat

@@ -6,19 +6,21 @@
     votename: "Chances Claim"
     mapId: auchances
     lorePrimer: AU14PrimerPlanetChances
-    Allegiance: UA
+    allegiance: UA
     camouflage: Urban
-    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
+    announcement: "A crime wave has engulfed Chances Claim, a Weyland-Yutani administered mining colony on LV-522. A response force has been dispatched to restore order."
     platoonsGovfor:
     - USCM
     - WEYU
     - VAIPO
-    - UPP
+    - RMC
+    - CMBCIU
     - HAZOPS
     - ProdigySF
-    - RMC
+    platoonsOpfor:
+    - LACN
     - UPP
-    defaultgovfor: USCM
+    defaultgovfor: RMC
     defaultopfor: UPP
     govforinship: true
     opforinship: true

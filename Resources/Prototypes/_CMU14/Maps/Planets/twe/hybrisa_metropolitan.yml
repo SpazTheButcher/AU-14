@@ -6,24 +6,25 @@
     votename: "Hybrisa Metropolitan"
     mapId: hybrisametro
     lorePrimer: AU14PrimerPlanetLV759
-    Allegiance: TWE
+    allegiance: TWE
     camouflage: Urban
-    announcement: "Weyland-Yutani has lost contact with one of its Biological Storage Facilities, Solaris Ridge, on the planet of LV-1413. The UNS Almayer has been requested to look into the blackout by Weyland-Yutani."
-    platoonsOpfor:
-    - WEYU
-    - VAIPO
-    - HAZOPS
+    announcement: "The metropolitan district of Hybrisa on LV-759, Three World Empire territory, has gone silent. A response force has been dispatched to investigate."
     platoonsGovfor:
     - USCM
-    - ProdigySF
     - UPP
     - RMC
-    defaultgovfor: USCM
-    defaultopfor: RMC
+    - WEYU
+    - HAZOPS
+    platoonsOpfor:
+    - LACN
+    - CMBCIU
+    - VAIPO
+    - ProdigySF
+    defaultgovfor: RMC
+    defaultopfor: ProdigySF
     govforinship: false
     opforinship: true
     daycycleenabled: false
-    faction: ua
     threats:
     - XenoThreatCF
     - NeomorphsThreatCF

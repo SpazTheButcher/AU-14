@@ -6,20 +6,20 @@
     votename: "Flight"
     mapId: Flight
     lorePrimer: AU14PrimerPlanetFlight
-    Allegiance: UA
+    allegiance: UA
     camouflage: Urban
-    announcement: "A nine-story mixed-use building surrounded by an artificial city landscape, has gone dark. The UNS Almayer is dispatched to investigate the mysterious circumstances."
-    platoonsOpfor:
-    - UPP
-    - WEYU
-    - VAIPO
-    - ProdigySF
+    announcement: "A nine-story mixed-use tower surrounded by an artificial cityscape has gone dark. A response force has been dispatched to investigate the circumstances."
     platoonsGovfor:
     - LACN
     - CMBCIU
     - USCM
+    - WEYU
     - RMC
     - HAZOPS
+    platoonsOpfor:
+    - UPP
+    - ProdigySF
+    - VAIPO
     defaultgovfor: USCM
     defaultopfor: UPP
     govforinship: true

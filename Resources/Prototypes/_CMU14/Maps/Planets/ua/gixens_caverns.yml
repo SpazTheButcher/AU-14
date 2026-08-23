@@ -6,23 +6,25 @@
     votename: "Gixens Caverns"
     mapId: GixensCaverns
     lorePrimer: AU14PrimerPlanetGixensCaverns
-    Allegiance: UA
+    allegiance: UA
     camouflage: Desert
-    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
-    platoonsOpfor:
-    - UPP
-    - WEYU
+    announcement: "All contact has been lost with the subterranean settlement of Gixens Caverns. A response force has been dispatched into the depths."
     platoonsGovfor:
     - LACN
     - ProdigySF
     - HAZOPS
     - VAIPO
+    - RMC
+    platoonsOpfor:
+    - USCM
+    - WEYU
+    - CMBCIU
+    - UPP
     defaultgovfor: HAZOPS
-    defaultopfor: UPP
+    defaultopfor: CMBCIU
     govforinship: true
     opforinship: true
     daycycleenabled: false
-    #faction: ua
     jobScalingFof: DefaultGovforOpforScale
     jobScalingIns: DefaultInsurgencyScale
 

@@ -6,16 +6,20 @@
     votename: "Shivas' Snowball"
     mapId: auShivas
     lorePrimer: AU14PrimerPlanetShivasSnowball
-    Allegiance: UA
+    allegiance: UA
     camouflage: Snow
-    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
+    announcement: "The UA mining and research colony on 'Shiva's Snowball' has gone silent. A response force has been dispatched to investigate."
     platoonsGovfor:
     - USCM
     - WEYU
     - VAIPO
     - RMC
-    - UPP
+    - CMBCIU
     - HAZOPS
+    platoonsOpfor:
+    - LACN
+    - UPP
+    - ProdigySF
     defaultgovfor: USCM
     defaultopfor: UPP
     govforinship: true

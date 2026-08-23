@@ -6,22 +6,25 @@
     votename: "Sorokyne Strata"
     mapId: au14sorokyne
     lorePrimer: AU14PrimerPlanetSorokyne
-    Allegiance: UPP
+    allegiance: UPP
     camouflage: Desert
-    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
-    platoonsOpfor:
-    - LACN
-    - USCM
-    - RMC
+    announcement: "Sorokyne Strata, a Union of Progressive Peoples research outpost in the Neroid Sector, has stopped responding. A response force has been dispatched to investigate."
     platoonsGovfor:
     - UPP
     - ProdigySF
-    defaultgovfor: RMC
-    defaultopfor: UPP
+    - LACN
+    - CMBCIU
+    platoonsOpfor:
+    - USCM
+    - WEYU
+    - HAZOPS
+    - VAIPO
+    - RMC
+    defaultgovfor: UPP
+    defaultopfor: USCM
     govforinship: true
     opforinship: true
     daycycleenabled: true
-    faction: ua
     thirdparties:
     - ProdigySurvLarge
     - ProdigySurvMedium

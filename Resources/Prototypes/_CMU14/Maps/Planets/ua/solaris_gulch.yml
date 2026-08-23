@@ -6,25 +6,25 @@
     votename: "Solaris Gulch"
     mapId: AU747
     lorePrimer: AU14PrimerPlanetLV747
-    Allegiance: UA
+    allegiance: UA
     camouflage: Desert
-    announcement: "Weyland-Yutani has lost contact with one of its Biological Storage Facilities, Solaris Ridge, on the planet of LV-1413. The UNS Almayer has been requested to look into the blackout by Weyland-Yutani."
-    platoonsOpfor:
-    - UPP
-    - VAIPO
-    - ProdigySF
+    announcement: "The desert colony of Solaris Gulch on LV-747 has gone silent. A response force has been dispatched to investigate the blackout."
     platoonsGovfor:
     - LACN
     - USCM
     - WEYU
+    - CMBCIU
     - RMC
     - HAZOPS
+    platoonsOpfor:
+    - UPP
+    - ProdigySF
+    - VAIPO
     defaultgovfor: USCM
-    defaultopfor: UPP
+    defaultopfor: VAIPO
     govforinship: true
     opforinship: true
     daycycleenabled: true
-    faction: ua
     threats:
     - cultistThreat
     - XenoThreat

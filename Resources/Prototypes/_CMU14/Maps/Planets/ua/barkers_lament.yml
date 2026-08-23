@@ -6,25 +6,25 @@
     votename: "Barker's Lament"
     mapId: CMULV376BarkersLament
     lorePrimer: AU14PrimerPlanetLament
-    Allegiance: UA
+    allegiance: UA
     camouflage: Urban
     announcement: "The mining colony of Barker's Lament on LV-376 has gone dark."
     platoonsGovfor:
+    - LACN
     - WEYU
     - USCM
     - RMC
     - CMBCIU
+    - VAIPO
     platoonsOpfor:
     - UPP
+    - HAZOPS
     - ProdigySF
-    - VAIPO
-    - LACN
     defaultgovfor: WEYU
     defaultopfor: ProdigySF
     govforinship: false
     opforinship: true
     daycycleenabled: true
-    faction: ua
     thirdparties:
     - ICRCReliefParty
     - USArmyTank

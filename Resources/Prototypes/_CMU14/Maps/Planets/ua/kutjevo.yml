@@ -6,19 +6,22 @@
     votename: "Kutjevo Biolab"
     mapId: auKutjevo
     lorePrimer: AU14PrimerPlanetKutjevo
-    Allegiance: UA
+    allegiance: UA
     camouflage: Desert
-    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
+    announcement: "Kutjevo Biolab, a Weyland-Yutani level three biohazard containment and research facility, has gone silent. A response force has been dispatched to investigate the blackout."
     platoonsGovfor:
     - USCM
     - WEYU
     - RMC
-    - UPP
+    - CMBCIU
     - HAZOPS
     - ProdigySF
     - VAIPO
+    platoonsOpfor:
+    - LACN
+    - UPP
     defaultgovfor: USCM
-    defaultopfor: UPP
+    defaultopfor: LACN
     govforinship: true
     opforinship: true
     daycycleenabled: true

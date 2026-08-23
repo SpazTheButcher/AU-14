@@ -6,25 +6,22 @@
     votename: "Shepherds' Pride"
     mapId: Sheperds
     lorePrimer: AU14PrimerPlanetShepherdsPride
-    Allegiance: UA
+    allegiance: UA
     camouflage: Desert
-    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
-    platoonsOpfor:
-    - UPP
-    - HAZOPS
-    - VAIPO
-    - ProdigySF
+    announcement: "The wildlife reserve of Shepherds' Pride on the fringe of the Neroid Sector has gone silent. A response force has been dispatched to investigate."
     platoonsGovfor:
     - LACN
     - USCM
     - WEYU
+    - CMBCIU
     - RMC
+    platoonsOpfor:
     - UPP
     - HAZOPS
-    - VAIPO
     - ProdigySF
+    - VAIPO
     defaultgovfor: USCM
-    defaultopfor: UPP
+    defaultopfor: VAIPO
     govforinship: true
     opforinship: true
     daycycleenabled: true
