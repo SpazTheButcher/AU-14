@@ -674,6 +674,15 @@ public sealed class CameraNetworkSystemTest
                     Assert.That(rmc.TrySelectCamera((firstConsoleUid, first), camera), Is.True);
                     Assert.That(rmc.TrySelectCamera((secondConsoleUid, second), camera), Is.True);
 
+                    var initialState = rmc.BuildBuiState((firstConsoleUid, first));
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(first.CameraNames, Does.Contain("Old camera A"));
+                        Assert.That(initialState.Map.Grids.SelectMany(cameraGrid => cameraGrid.Markers)
+                            .Single(marker => marker.Camera == entMan.GetNetEntity(camera)).Name,
+                            Is.EqualTo("Old camera A"));
+                    });
+
                     Assert.That(rmc.TrySaveEditorCamera((firstConsoleUid, first), actor, 0,
                         entMan.GetNetEntity(camera), "Renamed camera", [NetworkA], out _), Is.True);
                     networks.Update(0f);

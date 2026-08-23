@@ -272,7 +272,7 @@ public sealed class CameraNetworkSystem : EntitySystem
             var status = IsAvailable(camera)
                     ? CameraMapMarkerStatus.Active
                     : CameraMapMarkerStatus.Inactive;
-            markers.Add((camera, position, Name(camera), status));
+            markers.Add((camera, position, GetCameraDisplayName(camera), status));
         }
 
         var grids = grouped
@@ -291,6 +291,13 @@ public sealed class CameraNetworkSystem : EntitySystem
             .ToList();
 
         return new CameraMapUiState(GetNetEntity(consoleGrid), grids);
+    }
+
+    private string GetCameraDisplayName(EntityUid camera)
+    {
+        return TryComp(camera, out RMCCameraComponent? rmc)
+            ? rmc.NameOverride ?? Name(camera)
+            : Name(camera);
     }
 
     public void SyncMapViewSubscriptions(EntityUid receiver, EntityUid viewer, CameraMapUiState state)
