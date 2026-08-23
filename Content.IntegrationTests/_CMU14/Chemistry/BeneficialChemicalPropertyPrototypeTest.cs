@@ -733,10 +733,32 @@ public sealed class BeneficialChemicalPropertyPrototypeTest
             Assert.That(plant.Health, Is.EqualTo(25f));
         });
 
+        entities.EventBus.RaiseEvent(EventSource.Local, new HydroTickEvent<Hepatopeutic>(1, hydroArgs));
+        entities.EventBus.RaiseEvent(EventSource.Local, new HydroTickEvent<Nephropeutic>(1, hydroArgs));
+        entities.EventBus.RaiseEvent(EventSource.Local, new HydroTickEvent<Pneumopeutic>(1, hydroArgs));
+        entities.EventBus.RaiseEvent(EventSource.Local, new HydroTickEvent<Oculopeutic>(1, hydroArgs));
+        entities.EventBus.RaiseEvent(EventSource.Local, new HydroTickEvent<Neuropeutic>(1, hydroArgs));
+        Assert.Multiple(() =>
+        {
+            Assert.That(plant.MutationController.Fields["Plant Cancer"], Is.EqualTo(1));
+            Assert.That(plant.MutationController.Fields["Gluttony"], Is.EqualTo(1));
+            Assert.That(plant.MutationController.Fields["Light Tolerance"], Is.EqualTo(1));
+            Assert.That(plant.MutationController.Fields["Weed Tolerance"], Is.EqualTo(1));
+            Assert.That(plant.MutationController.Fields["Toxin Tolerance"], Is.EqualTo(1));
+            Assert.That(plant.MutationController.Fields["Endurance"], Is.EqualTo(1));
+            Assert.That(plant.MutationController.Fields["Lifespan"], Is.EqualTo(1));
+            Assert.That(plant.MutationController.Fields["Production"], Is.EqualTo(1));
+            Assert.That(plant.MutationController.Fields["Maturity"], Is.EqualTo(1));
+            Assert.That(plant.MutationController.Fields["Potency"], Is.EqualTo(1));
+            Assert.That(plant.MutationController.Fields["Bioluminescence"], Is.EqualTo(1));
+            Assert.That(plant.MutationController.Fields["Flowers"], Is.EqualTo(1));
+            Assert.That(plant.MutationController.Fields["Mutate Species"], Is.EqualTo(1));
+        });
+
         SetField(seed, nameof(SeedData.Immutable), true);
-        var potency = seed.Potency;
+        plant.MutationController.Fields["Potency"] = 0;
         entities.EventBus.RaiseEvent(EventSource.Local, new HydroTickEvent<Oculopeutic>(5, hydroArgs));
-        Assert.That(seed.Potency, Is.EqualTo(potency));
+        Assert.That(plant.MutationController.Fields["Potency"], Is.Zero);
 
         plant.Dead = true;
         plant.Toxins = 5f;

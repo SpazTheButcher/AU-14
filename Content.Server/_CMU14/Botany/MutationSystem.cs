@@ -13,58 +13,6 @@ public sealed partial class MutationSystem : EntitySystem
 {
     [Dependency] private ServerReagentGeneratorSystem _gen = default!;
 
-    public enum TargetedPlantMutation : byte
-    {
-        Negative,
-        Tolerances,
-        GrowthAndHealth,
-        Potency,
-        Species,
-    }
-
-    public void MutateSeedField(Entity<PlantHolderComponent> plantHolder, ref SeedData seed,
-        TargetedPlantMutation field, float severity)
-    {
-        if (!seed.Unique || seed.Immutable || severity <= 0f)
-            return;
-
-        severity = Math.Clamp(severity, 0.1f, 5f);
-        switch (field)
-        {
-            case TargetedPlantMutation.Negative:
-                if (_robustRandom.Prob(0.5f))
-                {
-                    seed.Lifespan = MathF.Max(0f, seed.Lifespan - severity * 2f);
-                    seed.Endurance = MathF.Max(10f, seed.Endurance - severity * 5f);
-                }
-                else
-                {
-                    seed.NutrientConsumption = Math.Clamp(seed.NutrientConsumption + severity * 0.2f, 0f, 5f);
-                    seed.WaterConsumption = Math.Clamp(seed.WaterConsumption + severity * 2f, 0f, 50f);
-                }
-                break;
-            case TargetedPlantMutation.Tolerances:
-                seed.IdealLight = Math.Clamp(seed.IdealLight + _robustRandom.NextFloat(-severity, severity), 0f, 30f);
-                seed.LightTolerance = Math.Clamp(seed.LightTolerance + _robustRandom.NextFloat(-severity, severity), 0f, 10f);
-                seed.WeedTolerance = Math.Clamp(seed.WeedTolerance + _robustRandom.NextFloat(-severity, severity), 0f, 10f);
-                seed.ToxinsTolerance = Math.Clamp(seed.ToxinsTolerance + _robustRandom.NextFloat(-severity, severity), 0f, 10f);
-                break;
-            case TargetedPlantMutation.GrowthAndHealth:
-                seed.Maturation = Math.Clamp(seed.Maturation + _robustRandom.NextFloat(-severity, severity), 0f, 30f);
-                seed.Endurance = Math.Clamp(seed.Endurance + _robustRandom.NextFloat(-severity * 5f, severity * 5f), 10f, 100f);
-                break;
-            case TargetedPlantMutation.Potency:
-                seed.Potency = Math.Clamp(seed.Potency + _robustRandom.NextFloat(-severity * 10f, severity * 10f), 0f, 200f);
-                break;
-            case TargetedPlantMutation.Species:
-                MutateSpecies(plantHolder, ref seed, severity);
-                break;
-        }
-
-        plantHolder.Comp.ForceUpdate = true;
-    }
-
-
     public void MutateSeed(Entity<PlantHolderComponent> plantHolder, ref SeedData seed, float severity)
     {
         if (!seed.Unique)

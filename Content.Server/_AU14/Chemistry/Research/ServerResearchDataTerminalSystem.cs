@@ -245,7 +245,7 @@ public sealed partial class ServerResearchDataTerminalSystem : SharedResearchDat
         }
     }
 
-    public GeneratedReagentData LegalizeChem(GeneratedReagentData chem)
+    public void LegalizeChem(GeneratedReagentData chem)
     {
         _generator.ChemicalGenClassesList["TAU"].Add(chem.ID);
         foreach (var ef in chem.Effects)
@@ -258,7 +258,6 @@ public sealed partial class ServerResearchDataTerminalSystem : SharedResearchDat
         RaiseLocalEvent(ev);
         RaiseNetworkEvent(ev);
         _generator.ProceduralReagentData.Add(chem.ID, chem);
-        return chem;
     }
 
     /// <summary>
@@ -266,8 +265,8 @@ public sealed partial class ServerResearchDataTerminalSystem : SharedResearchDat
     /// </summary>
     public EntityUid? IssueAdminContract(EntityUid source, GeneratedReagentData chem)
     {
-        var registered = LegalizeChem(chem);
-        return PrintContract(source, registered.ID, true);
+        LegalizeChem(chem);
+        return PrintContract(source, chem.ID, true);
     }
 
     public void CompleteChemical(ReagentPrototype proto, string faction, EntityUid? scanner)
