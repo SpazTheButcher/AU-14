@@ -16,6 +16,7 @@ public sealed partial class NukeDecalsCommand : LocalizedEntityCommands
     [Dependency] private IPrototypeManager _protoMan = default!;
 
     public override string Command => "nuke:decals";
+    public override string Description => "Deletes decals from every loaded grid.";
     public override string Help =>
         "nuke:decals [all (true/false, default: false)] [decalId...] - Deletes decals from every loaded grid.\n" +
         " By default this will only delete cleanable decals (like blood/dirt etc.) to spare map details.\n" +

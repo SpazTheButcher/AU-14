@@ -435,7 +435,7 @@ public sealed partial class YautjaBracerUtilitySystem : EntitySystem
             return false;
 
         var ev = new BodyPartSeveredEvent(body, part, type);
-        RaiseLocalEvent(part, ref ev);
+        RaiseLocalEvent(part, ref ev, broadcast: true);
         return true;
     }
 

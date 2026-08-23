@@ -22,6 +22,8 @@ public abstract class NukeEntitiesCommand : LocalizedEntityCommands
     [Dependency] protected SharedContainerSystem _container = default!;
     [Dependency] protected IPrototypeManager _protoMan = default!;
 
+    public override string Description => "Nuke/delete from every loaded grid.";
+
     protected static (bool All, HashSet<string>? Ids) ParseBoolAndIds(string[] args)
     {
         var all = false;
@@ -215,14 +217,16 @@ public sealed partial class NukeTrashCommand : NukeEntitiesCommand
 {
     [Dependency] private TagSystem _tag = default!;
 
-    // Curated extras on top of the "Trash" tag
     private static readonly string[] AdditionalTrashTags = { };
     private static readonly string[] AdditionalTrashPrototypes = { };
+
+    private static readonly string[] ExcludedTrashComponents = { "Paper" };
 
     public override string Command => "nuke:trash";
     public override string Help =>
         "nuke:trash [trashId...] - Deletes loose trash entities from the world.\n" +
         " Trash is anything tagged 'Trash', plus the curated AdditionalTrashTags and AdditionalTrashPrototypes lists in this command's source.\n" +
+        " Prototypes carrying a component from ExcludedTrashComponents (papers and friends) are always spared.\n" +
         " Trash that is held, worn, or otherwise inside a container is left alone.\n" +
         " Optionally list prototype ids to restrict the nuke to those types.";
 
@@ -253,8 +257,14 @@ public sealed partial class NukeTrashCommand : NukeEntitiesCommand
 
     private bool IsTrash(EntityUid uid, MetaDataComponent meta)
     {
-        if (meta.EntityPrototype is { } proto && AdditionalTrashPrototypes.Contains(proto.ID))
-            return true;
+        if (meta.EntityPrototype is { } proto)
+        {
+            if (ExcludedTrashComponents.Any(c => proto.Components.ContainsKey(c)))
+                return false;
+
+            if (AdditionalTrashPrototypes.Contains(proto.ID))
+                return true;
+        }
 
         if (!EntityManager.TryGetComponent<TagComponent>(uid, out var tags))
             return false;
@@ -272,8 +282,9 @@ public sealed partial class NukeTrashCommand : NukeEntitiesCommand
     }
 
     protected override bool IncludeProto(EntityPrototype proto) =>
-        AdditionalTrashPrototypes.Contains(proto.ID)
-        || (proto.Components.TryGetValue("Tag", out var reg)
-            && reg.Component is TagComponent tag
-            && (_tag.HasTag(tag, "Trash") || AdditionalTrashTags.Any(t => _tag.HasTag(tag, t)))); // CMU14: analyzer-safe tag access
+        !ExcludedTrashComponents.Any(c => proto.Components.ContainsKey(c))
+        && (AdditionalTrashPrototypes.Contains(proto.ID)
+            || (proto.Components.TryGetValue("Tag", out var reg)
+                && reg.Component is TagComponent tag
+                && (_tag.HasTag(tag, "Trash") || AdditionalTrashTags.Any(t => _tag.HasTag(tag, t))))); // CMU14: analyzer-safe tag access
 }
