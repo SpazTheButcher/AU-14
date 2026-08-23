@@ -1,8 +1,8 @@
+# Maps votable in every mode that inlines this pool
 - type: GamePlanetPool
-  id: ColonyPlanetPool
+  id: SharedPlanetPool
   planets:
-  - AUPlanetLV747
   - AUPlanetShepherdsPride
+  - AUPlanetLV327
+  - CMUPlanetHopesRetreat
   - CMUPlanetStableGarrisonRedux
-  - AUPlanetLV624
-  - AUPlanetFlight
