@@ -3,6 +3,7 @@ using Content.Shared.GameTicking.Components;
 using Content.Server.GameTicking;
 using Content.Shared.GameTicking;
 using Content.Shared._RMC14.CCVar;
+using Content.Shared.CCVar;
 using Robust.Server.Player;
 using Robust.Shared.Configuration;
 using Robust.Shared.Player;
@@ -36,7 +37,13 @@ public sealed partial class AuVoteRuleSystem : GameRuleSystem<AuVoteRuleComponen
 
     private void OnRoundRestartCleanup(RoundRestartCleanupEvent ev)
     {
-        TryStartVoteSequence();
+        // Delay only covers the post-boot connect window; restarts with enough players re-run at once.
+        var delay = TimeSpan.FromSeconds(_cfg.GetCVar(CCVars.VoteStartDelay));
+        if (delay > TimeSpan.Zero
+                && _playerManager.PlayerCount < _cfg.GetCVar(CCVars.VoteStartDelayMinPlayers))
+            Timer.Spawn(delay, TryStartVoteSequence);
+        else
+            TryStartVoteSequence();
     }
 
     private void PlayerStatusChanged(object? sender, SessionStatusEventArgs args)
