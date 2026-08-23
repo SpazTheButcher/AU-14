@@ -964,10 +964,6 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
             }
         }
 
-        var ignoreGranter = EntityQueryEnumerator<EvolutionIgnoreGranterComponent>();
-        if (ignoreGranter.MoveNext(out _))
-            hasGranter = true;
-
         var evoBonus = FixedPoint2.Zero;
         var bonuses = EntityQueryEnumerator<EvolutionBonusComponent>();
         while (bonuses.MoveNext(out var comp))
