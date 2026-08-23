@@ -9983,5 +9983,13 @@
   id: 649
   time: '2026-08-23T01:54:47.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1859
+- author: deepdarkdepths
+  changes:
+  - message: The Queen can now buy the Minor and Major Boons of Evolution, the Minor
+      and Major Boons of Aggression, and the Boon of Adaptability with royal resin.
+    type: Add
+  id: 650
+  time: '2026-08-23T07:25:04.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1860
 Name: CMU
 Order: -1
