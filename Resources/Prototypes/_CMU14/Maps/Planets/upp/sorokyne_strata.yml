@@ -1,0 +1,69 @@
+- type: entity
+  id: AUPlanetSorokyne
+  name: Sorokyne Strata
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Sorokyne Strata"
+    mapId: au14sorokyne
+    lorePrimer: AU14PrimerPlanetSorokyne
+    allegiance: UPP
+    camouflage: Desert
+    announcement: "Sorokyne Strata, a Union of Progressive Peoples research outpost in the Neroid Sector, has stopped responding. A response force has been dispatched to investigate."
+    platoonsGovfor:
+    - UPP
+    - ProdigySF
+    - LACN
+    - CMBCIU
+    platoonsOpfor:
+    - USCM
+    - WEYU
+    - HAZOPS
+    - VAIPO
+    - RMC
+    defaultgovfor: UPP
+    defaultopfor: USCM
+    govforinship: true
+    opforinship: true
+    daycycleenabled: true
+    thirdparties:
+    - ProdigySurvLarge
+    - ProdigySurvMedium
+    - ProdigySurvSmall
+    - ICRCReliefParty
+    - cultistThirdParty
+    - UPPGROM
+    - UPPGROMAlt
+    - UPPGROMAlt2
+    - CLFSurvsBig
+    - CLFSurvsMedium
+    - CLFSurvsSmall
+    - WEYUSurvLarge
+    - WEYUSurvMedium
+    - WEYUSurvSmall
+    - UPPTDLostTeam
+    - PAPInvestigationPartyAlt
+    - PAPInvestigationParty
+    - ProfessorVonBandolier
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - FORECONKillTeam
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    threats:
+    - cultistThreat
+    - XenoThreat
+    - NeomorphsThreat
+    - wendigoThreat
+ #   - TribalsThreat
+    - abominationsThreatDistress
+#    - badBloodClanThreat
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetSorokyne
+  planetText: "Date 2186 - Sorokyne Strata. A major Union of Progressive People's research outpost in the Neroid Sector."

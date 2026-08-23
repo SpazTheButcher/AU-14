@@ -255,6 +255,7 @@
     enabled: true
     channels:
     - colonyAlert
+  - type: ChatRepeatIgnoreSender
   - type: Sprite
     noRot: false
     drawdepth: SmallObjects

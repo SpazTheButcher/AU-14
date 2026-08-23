@@ -16,7 +16,7 @@
     - govfor
     repeating: false
     objectiveLevel: 1
-    customPoints: 5
+    customPoints: 10
     objectiveDescription: "Destroy a steel-rich mineable vein (mineablesolarisrocksteel)"
   - type: DestroyObjective
     targetPrototype: mineablesolarisrocksteel
@@ -42,7 +42,7 @@
     - govfor
     repeating: false
     objectiveLevel: 1
-    customPoints: 5
+    customPoints: 15
     objectiveDescription: "Destroy the AI Processor"
   - type: DestroyObjective
     targetPrototype: AU14ObjectiveItemAIProcessor

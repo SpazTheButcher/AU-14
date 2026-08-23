@@ -1,0 +1,73 @@
+- type: entity
+  id: AUPlanetLV327
+  name: Port Nereid
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Port Nereid"
+    mapId: portneroid
+    lorePrimer: AU14PrimerPlanetLV327
+    allegiance: UA
+    camouflage: Desert
+    announcement: "Port Nereid, the waterport and transit hub on LV-109 'Elgin's Folly', has gone silent. A response force has been dispatched to investigate the blackout."
+    platoonsGovfor:
+    - LACN
+    - USCM
+    - RMC
+    - HAZOPS
+    - ProdigySF
+    - VAIPO
+    platoonsOpfor:
+    - UPP
+    - WEYU
+    - CMBCIU
+    defaultgovfor: HAZOPS
+    defaultopfor: WEYU
+    govforinship: true
+    opforinship: true
+    daycycleenabled: true
+    threats:
+    - cultistThreat
+    - XenoThreat
+    - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
+    - wendigoThreat
+    - abominationsThreatDistress
+#    - badBloodClanThreat
+    thirdparties:
+    - ProdigySurvLarge
+    - ProdigySurvMedium
+    - ProdigySurvSmall
+    - WEYUSurvLarge
+    - WEYUSurvMedium
+    - WEYUSurvSmall
+    - CLFSurvsBig
+    - CLFSurvsMedium
+    - CLFSurvsSmall
+    - FORECON
+    - FORECONAlt
+    - FORECONAlt2
+    - USArmyTank
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UACGLostTeam
+    - NSPAInvestigationParty
+    - LACNSniperteam
+    - ProfessorVonBandolier
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    joboverrides:
+      AU14JobLEOLeaderBase: AU14JobCivilianNSPAInspector
+      AU14JobLEOBase: AU14JobCivilianNSPAConstable
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetLV327
+  planetText: "Date 2181 - Port Nereid, a valuable waterport, atmospheric processor and transit hub on the Neroid Sector frontier world LV-109, named 'Elgin's Folley'. Port Nereid is a joint-venture colony established by the United Americas Colonial Administration and Weyland-Yutani."

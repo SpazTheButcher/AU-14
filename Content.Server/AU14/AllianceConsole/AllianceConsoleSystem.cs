@@ -1,3 +1,4 @@
+using System.Linq;
 using Content.Server.Administration.Logs;
 using Content.Shared.Access;
 using Content.Shared.Access.Components;
@@ -5,6 +6,7 @@ using Content.Shared.AU14.AllianceConsole;
 using Content.Shared.Database;
 using Content.Shared.Inventory;
 using Content.Shared.NPC.Components;
+using Content.Shared.NPC.Prototypes;
 using Content.Shared.NPC.Systems;
 using Content.Shared._RMC14.Sentry;
 using Robust.Shared.Prototypes;
@@ -14,12 +16,13 @@ namespace Content.Server.AU14.AllianceConsole;
 public sealed partial class AllianceConsoleSystem : EntitySystem
 {
     [Dependency] private IAdminLogManager _adminLog = default!;
+    [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private InventorySystem _inventory = default!;
     [Dependency] private NpcFactionSystem _npcFaction = default!;
     [Dependency] private SharedSentryTargetingSystem _sentryTargeting = default!;
     [Dependency] private SharedUserInterfaceSystem _ui = default!;
 
-    // Maps side ("GOVFOR"/"OPFOR") → npcFactionId → status.
+    // Maps side ("GOVFOR"/"OPFOR", plus any console side on first use) → npcFactionId → status.
     // Persists across sentry spawns so new sentries pick up current state.
     private readonly Dictionary<string, Dictionary<string, AllianceStatus>> _globalState = new()
     {
@@ -42,12 +45,41 @@ public sealed partial class AllianceConsoleSystem : EntitySystem
         "AU14AccessOpforSquad",
     };
 
+    private static readonly ProtoId<AccessLevelPrototype>[] WeyuCorporateTags =
+    {
+        "AU14AccessCorporateWEYU",
+    };
+
     public override void Initialize()
     {
+        SubscribeLocalEvent<AllianceConsoleComponent, MapInitEvent>(OnMapInit);
         SubscribeLocalEvent<AllianceConsoleComponent, BoundUIOpenedEvent>(OnUiOpened);
         SubscribeLocalEvent<AllianceConsoleComponent, AllianceConsoleSetFactionStatusMsg>(OnSetFactionStatus);
         // Covers both deployable sentries (SentryComponent) and static turrets (SentryTargetingComponent only).
         SubscribeLocalEvent<SentryTargetingComponent, SentryFactionAssignedEvent>(OnSentryFactionAssigned);
+    }
+
+    private void OnMapInit(Entity<AllianceConsoleComponent> ent, ref MapInitEvent args)
+    {
+        ent.Comp.ControllableFactions ??= new HashSet<string>(
+            _prototypes.EnumeratePrototypes<NpcFactionPrototype>()
+                .Where(p => p.AllianceTarget && !p.Abstract)
+                .Select(p => p.ID));
+
+        var self = ResolveSideId(ent.Comp.Faction);
+        if (!_globalState.ContainsKey(self))
+        {
+            foreach (var side in _globalState.Keys)
+                ent.Comp.ControllableFactions.Add(side);
+        }
+
+        ent.Comp.ControllableFactions.Remove(self);
+    }
+
+    private string ResolveSideId(string faction)
+    {
+        return AllianceConsoleComponent.ResolveFaction(_prototypes, faction)?.ID
+            ?? faction.ToUpperInvariant();
     }
 
     private void OnUiOpened(Entity<AllianceConsoleComponent> ent, ref BoundUIOpenedEvent args)
@@ -60,13 +92,13 @@ public sealed partial class AllianceConsoleSystem : EntitySystem
         var state = new AllianceConsoleBuiState(
             ent.Comp.Faction,
             new Dictionary<string, AllianceStatus>(ent.Comp.FactionStatuses),
-            new List<string>(ent.Comp.ControllableFactions));
+            new List<string>(ent.Comp.ControllableFactions!));
         _ui.SetUiState(ent.Owner, AllianceConsoleUiKey.Key, state);
     }
 
     private void OnSetFactionStatus(Entity<AllianceConsoleComponent> ent, ref AllianceConsoleSetFactionStatusMsg args)
     {
-        if (!ent.Comp.ControllableFactions.Contains(args.TargetFaction))
+        if (!ent.Comp.ControllableFactions!.Contains(args.TargetFaction))
             return;
 
         var oldStatus = ent.Comp.FactionStatuses.TryGetValue(args.TargetFaction, out var prev)
@@ -79,7 +111,7 @@ public sealed partial class AllianceConsoleSystem : EntitySystem
         ent.Comp.FactionStatuses[args.TargetFaction] = args.Status;
         Dirty(ent);
 
-        var sideFactionUpper = ent.Comp.Faction.ToUpperInvariant();
+        var sideFactionUpper = ResolveSideId(ent.Comp.Faction);
         ApplyFactionStatus(sideFactionUpper, args.TargetFaction, oldStatus, args.Status);
 
         _adminLog.Add(LogType.Action, LogImpact.Medium,
@@ -105,7 +137,7 @@ public sealed partial class AllianceConsoleSystem : EntitySystem
     private void ApplyFactionStatus(string sideFactionUpper, string targetFaction, AllianceStatus oldStatus, AllianceStatus newStatus)
     {
         if (!_globalState.TryGetValue(sideFactionUpper, out var sideState))
-            return;
+            _globalState[sideFactionUpper] = sideState = new Dictionary<string, AllianceStatus>();
 
         sideState[targetFaction] = newStatus;
 
@@ -200,6 +232,7 @@ public sealed partial class AllianceConsoleSystem : EntitySystem
         {
             "GOVFOR" => GovforRiflemanTags,
             "OPFOR" => OpforRiflemanTags,
+            "AUWeYu" => WeyuCorporateTags,
             _ => Array.Empty<ProtoId<AccessLevelPrototype>>(),
         };
     }

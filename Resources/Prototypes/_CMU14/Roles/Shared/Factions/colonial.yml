@@ -1,16 +1,15 @@
 - type: npcFaction
-  id: Civilian
-  hostile:
-  - RMCXeno
-
-- type: npcFaction
   id: AUColonist
   name: Colonists
+  allianceTarget: true
   hostile:
-  - RMCXeno
-  - AUGoo
-  - CMUAPE
-  - Abomination
+  - THREAT # whole threat family
+
+- type: npcFaction
+  parent: AUColonist
+  id: Civilian # legacy
+  name: Colonists (legacy)
+  allianceTarget: false
 
 - type: npcFaction
   id: ColonySynth
@@ -19,23 +18,19 @@
 - type: npcFaction
   id: CLF
   name: Colony Liberation Front
+  allianceTarget: true
   hostile:
+  - THREAT
   - GOVFOR
-  - RMCXeno
 
 - type: npcFaction
   id: AUBureau
-  name: Colonial Marshals
+  name: Colonial Marshals Bureau
+  allianceTarget: true
   hostile:
-  - RMCXeno
-  - AUGoo
-  - CMUAPE
+  - THREAT
 
 - type: npcFaction
+  parent: AUBureau
   id: NSPA
   name: Neroid Sector Policing Authority
-  hostile:
-  - RMCXeno
-  - CLF
-  - AUGoo
-  - Abomination

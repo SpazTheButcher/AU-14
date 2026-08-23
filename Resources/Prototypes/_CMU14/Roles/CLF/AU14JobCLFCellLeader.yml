@@ -74,6 +74,7 @@
   accessGroups:
   - Colonist
   roleWeight: 0.25
+  weight: 10 # priority role
 
 - type: startingGear
   id: AU14GearCLFCellLeader

@@ -3,6 +3,8 @@
   id: AU14JobPARTSPartySynthetic
   isSynthetic: true
   roundSide: ThirdParty
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   roundForce: PSC
   roundRole: PARTSPartySynthetic
   roundComponents:
@@ -10,9 +12,6 @@
     icon:
       sprite: /Textures/_RMC14/Interface/map_blips.rsi
       state: forecon_synth
-  - type: NpcFactionMember
-    factions:
-    - GOVFOR
   - type: Skills
     skills:
       RMCSkillCqc: 5

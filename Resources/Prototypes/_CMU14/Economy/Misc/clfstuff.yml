@@ -443,16 +443,6 @@
   - type: Physics
     bodyType: Dynamic
 
-- type: entity
-  parent: RMCComputerIntelCLF
-  id: CMUComputerIntelCLFClaimable
-  suffix: CMU
-  description: A CLF Intelligence Computer for data cataloguing and distribution. It has valuable but very secret information stored on it, don't let the military seize this.
-  components:
-  - type: ClaimableIntelConsole
-    claimingTeam: govfor
-    requiredPreset: Insurgency
-
 - type: clfSpawnConfig
   id: CLFSpawnConfig
   # Safehouse markers are fallback CLF spawn points; operational gear is deployed from the Cell Leader's kit.
@@ -487,6 +477,8 @@
       offset: 0.5, 2
     - prototype: CMFaxCLF
       offset: 1.5, 2
+    - prototype: AU14AllianceConsoleCLF
+      offset: -2, 2
     - prototype: AU14AnalyzerMachineCLF
       offset: -1.5, 0
     - prototype: AU14CLFObjectiveWeaponsVendor

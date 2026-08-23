@@ -2,14 +2,13 @@
   parent: CMJobBase
   id: AU14JobCLFMachineGunnerReinforcement
   roundSide: ThirdParty
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   roundForce: CLF
   roundRole: CLFMachineGunnerReinforcement
   roundComponents:
   - type: EquipEntityPreset
     preset: AU14CLFGuerillaReinforcement
-  - type: NpcFactionMember
-    factions:
-    - CLF
   - type: CLFMember
   - type: Skills
     skills:

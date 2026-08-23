@@ -1,0 +1,81 @@
+- type: entity
+  id: AUPlanetLV747
+  name: Solaris Gulch
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Solaris Gulch"
+    mapId: AU747
+    lorePrimer: AU14PrimerPlanetLV747
+    allegiance: UA
+    camouflage: Desert
+    announcement: "The desert colony of Solaris Gulch on LV-747 has gone silent. A response force has been dispatched to investigate the blackout."
+    platoonsGovfor:
+    - LACN
+    - USCM
+    - WEYU
+    - CMBCIU
+    - RMC
+    - HAZOPS
+    platoonsOpfor:
+    - UPP
+    - ProdigySF
+    - VAIPO
+    defaultgovfor: USCM
+    defaultopfor: VAIPO
+    govforinship: true
+    opforinship: true
+    daycycleenabled: true
+    threats:
+    - cultistThreat
+    - XenoThreat
+    - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
+    - wendigoThreat
+    - abominationsThreatDistress
+#    - badBloodClanThreat
+    thirdparties:
+    - WEYUSurvLarge
+    - WEYUSurvMedium
+    - WEYUSurvSmall
+    - CLFSurvsBig
+    - CLFSurvsMedium
+    - CLFSurvsSmall
+    - FORECON
+    - FORECONAlt
+    - FORECONAlt2
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UACGLostTeam
+    - NSPAInvestigationParty
+    - RMCRRT
+    - USArmyArmored
+    - cultistThirdParty
+    - CMBInvestigationParty
+    - CMBInvestigationPartyAlt
+    - ProfessorVonBandolier
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - FORECONFirstRecon
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    - tribalThirdParty
+    - DrugSmuggler
+    - CMBParoleeTransport
+    - CMBParoleeTransportBig
+    - ForeignCrimeGang
+    - MigratingCivs
+    - MigratingCivsMedium
+    - MigratingCivsLarge
+    - MissionariesParty
+    - MissionariesPartyMedium
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetLV747
+  planetText: "Date 2181 - Solaris Gulch, UA controlled."

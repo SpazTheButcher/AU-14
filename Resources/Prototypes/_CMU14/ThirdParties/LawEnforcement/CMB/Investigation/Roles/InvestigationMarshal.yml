@@ -2,12 +2,11 @@
   parent: AU14JobLEOLeaderBase
   id: AU14JobInvestigationCMBMarshal
   roundSide: ThirdParty
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   roundForce: CMB
   roundRole: InvestigationCMBMarshal
   roundComponents:
-  - type: NpcFactionMember
-    factions:
-    - AUBureau
   - type: Skills
     skills:
       RMCSkillCqc: 3

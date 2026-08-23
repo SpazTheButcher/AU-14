@@ -2,12 +2,11 @@
   parent: CMJobBase
   id: AU14JobInvestigationCMBRightsObserver
   roundSide: ThirdParty
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   roundForce: CMB
   roundRole: InvestigationCMBRightsObserver
   roundComponents:
-  - type: NpcFactionMember
-    factions:
-    - AUBureau
   - type: Skills
     skills:
       RMCSkillEndurance: 2

@@ -1,13 +1,12 @@
 - type: npcFaction
   id: AUWeYu
   name: Weyland-Yutani Corporation
+  allianceTarget: true
   hostile:
-  - RMCXeno
-  - AUGoo
-  - CMUAPE
-  - Abomination
+  - THREAT
 
 - type: npcFaction
-  id: WeYa
-  hostile:
-  - RMCXeno
+  parent: AUWeYu
+  id: WeYa # legacy
+  name: Weyland-Yutani Corp. (legacy)
+  allianceTarget: false

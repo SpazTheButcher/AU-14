@@ -1,4 +1,4 @@
-﻿- type: entity
+- type: entity
   id: RMCActionViewIntelObjectives
   name: View Intel Objectives
   components:
@@ -6,5 +6,6 @@
     checkCanInteract: false
     icon:
       entity: CMFolderWhite
+    autoPopulate: false # CMU14
   - type: InstantAction
     event: !type:ViewIntelObjectivesActionEvent

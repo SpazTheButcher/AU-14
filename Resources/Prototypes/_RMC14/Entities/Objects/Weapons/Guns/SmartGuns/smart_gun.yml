@@ -411,6 +411,7 @@
       map: ["enum.AmmoVisualLayers.Base"]
   - type: CartridgeAmmo
     proto: CMBulletSmartGun10x30mm
+    deleteOnSpawn: true # CMU14: caseless ammo, no casing to eject
   - type: Tag
     tags:
     - CMCartridgeSmartGun10x30mm

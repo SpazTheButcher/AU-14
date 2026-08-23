@@ -4,6 +4,7 @@ using Content.Shared._RMC14.Weapons.Ranged.IFF;
 using Content.Shared.AU14.AllianceConsole;
 using Content.Shared.Inventory;
 using Content.Shared.NPC.Components;
+using Content.Shared.NPC.Prototypes; // CMU14
 using Content.Shared.Weapons.Ranged.Components;
 using Robust.Shared.Containers;
 using Robust.Shared.GameObjects;
@@ -18,6 +19,7 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
     [Dependency] private INetManager _net = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private GunIFFSystem _iff = default!;
+    [Dependency] private IPrototypeManager _prototypes = default!; // CMU14
     [Dependency] private SharedTransformSystem _xform = default!;
     [Dependency] private SharedContainerSystem _container = default!;
 
@@ -119,6 +121,10 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
     {
         if (!TryComp<SentryTargetingComponent>(sentry, out var targeting))
             return false;
+
+        // CMU14: locked IFF is never overwritten by deployer/grid defaults
+        if (RestoreLockedFriendlyFactions((sentry, targeting), true))
+            return true;
 
         faction = string.IsNullOrWhiteSpace(faction) ? targeting.OriginalFaction : faction;
         var sentryFaction = SentryAllowedFactions.FirstOrDefault(allowed =>
@@ -278,6 +284,10 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
         if (sentry.Comp.FriendlyFactions.Count == 0)
             return false;
 
+        // CMU14: factions flagged sentryProtected are never valid targets
+        if (TryComp<NpcFactionMemberComponent>(target, out var validProtected) && IsSentryProtected(validProtected))
+            return false;
+
         // A matching NPC faction is friendly even when that faction also has an IFF mapping.
         // This covers corporate NPCs, synthetics, and other entities that do not carry an ID.
         if (TryComp<NpcFactionMemberComponent>(target, out var targetFaction))
@@ -299,6 +309,17 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
         _friendlyIffBuffer.Clear();
         _targetIffBuffer.Clear();
         return !friendly;
+    }
+
+    private bool IsSentryProtected(NpcFactionMemberComponent member) // CMU14 Method
+    {
+        foreach (var faction in member.Factions)
+        {
+            if (_prototypes.TryIndex(faction, out NpcFactionPrototype? proto) && proto.SentryProtected)
+                return true;
+        }
+
+        return false;
     }
 
     public IEnumerable<EntityUid> GetNearbyIffHostiles(Entity<SentryTargetingComponent> ent, float range)
@@ -330,6 +351,10 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
                 continue;
 
             if (_container.IsEntityInContainer(target))
+                continue;
+
+            // CMU14: factions flagged sentryProtected are never valid targets (e.g. Provost Office)
+            if (TryComp<NpcFactionMemberComponent>(target, out var protectedNpc) && IsSentryProtected(protectedNpc))
                 continue;
 
             if (IsFriendlyByIff(target))

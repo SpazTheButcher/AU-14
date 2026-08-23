@@ -1,0 +1,68 @@
+- type: entity
+  id: AUPlanetLV759
+  name: Hybrisa Metropolitan
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Hybrisa Metropolitan"
+    mapId: hybrisametro
+    lorePrimer: AU14PrimerPlanetLV759
+    allegiance: TWE
+    camouflage: Urban
+    announcement: "The metropolitan district of Hybrisa on LV-759, Three World Empire territory, has gone silent. A response force has been dispatched to investigate."
+    platoonsGovfor:
+    - USCM
+    - UPP
+    - RMC
+    - WEYU
+    - HAZOPS
+    platoonsOpfor:
+    - LACN
+    - CMBCIU
+    - VAIPO
+    - ProdigySF
+    defaultgovfor: RMC
+    defaultopfor: ProdigySF
+    govforinship: false
+    opforinship: true
+    daycycleenabled: false
+    threats:
+    - XenoThreatCF
+    - NeomorphsThreatCF
+    - wendigoThreat
+    - abominationsThreatDistress
+    thirdparties:
+    - IASFSurvLarge
+    - IASFSurvMedium
+    - IASFSurvSmall
+    - WEYUSurvLarge
+    - WEYUSurvMedium
+    - WEYUSurvSmall
+    - CLFSurvsBig
+    - CLFSurvsMedium
+    - CLFSurvsSmall
+    - USArmy
+    - USArmyAlt
+    - USArmyAlt2
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - LACNSniperteam
+    - RMCRRT
+    - USArmyArmored
+    - ProfessorVonBandolier
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    joboverrides:
+      AU14JobLEOLeaderBase: AU14JobCivilianNSPAInspector
+      AU14JobLEOBase: AU14JobCivilianNSPAConstable
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetLV759
+  planetText: "Date 2181 - Hybrisa Metropolitan, Three World Empire territory."

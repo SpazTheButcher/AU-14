@@ -16,7 +16,7 @@
         - opfor
         - clf
       objectiveLevel: 2
-      customPoints: 5
+      customPoints: 8
       objectiveDescription: "Capture mainstreet for your faction."
       roundEndMessage: "By capturing the UA flag"
     - type: CaptureObjective
@@ -46,7 +46,7 @@
     - opfor
     - clf
     objectiveLevel: 2
-    customPoints: 5
+    customPoints: 8
     objectiveDescription: "Capture the supermarket for your faction."
     roundEndMessage: "By capturing the UA flag"
     intelTiersProtos:
@@ -93,7 +93,7 @@
     - opfor
     - clf
     objectiveLevel: 2
-    customPoints: 5
+    customPoints: 8
     objectiveDescription: "Capture the Tunnel for your faction."
     roundEndMessage: "By capturing the Tunnel"
   - type: CaptureObjective
@@ -123,7 +123,7 @@
     - opfor
     - clf
     objectiveLevel: 1
-    customPoints: 3
+    customPoints: 5
     objectiveDescription: "Capture the Desert for your faction."
     roundEndMessage: "By capturing the Desert"
   - type: CaptureObjective
@@ -156,7 +156,7 @@
     - opfor
     - clf
     objectiveLevel: 2
-    customPoints: 5
+    customPoints: 8
     objectiveDescription: "Capture Mountain LZ for your faction."
     roundEndMessage: "By capturing the UA flag"
   - type: CaptureObjective
@@ -185,7 +185,7 @@
     - govfor
     - opfor
     objectiveLevel: 2
-    customPoints: 5
+    customPoints: 6
     objectiveDescription: "Capture the Solar Farms  for your faction."
     roundEndMessage: "By capturing the Solar farms"
   - type: CaptureObjective
@@ -213,7 +213,7 @@
     - govfor
     - opfor
     objectiveLevel: 2
-    customPoints: 4
+    customPoints: 8
     objectiveDescription: "Capture the Hermits Cabin for your faction."
     roundEndMessage: "By capturing the Cabin"
   - type: CaptureObjective
@@ -242,7 +242,7 @@
     - govfor
     - opfor
     objectiveLevel: 1
-    customPoints: 6
+    customPoints: 5
     objectiveDescription: "Capture the Administrators Office  for your faction."
     roundEndMessage: "By capturing the Administrators office"
   - type: CaptureObjective
@@ -271,7 +271,7 @@
     - govfor
     - opfor
     objectiveLevel: 1
-    customPoints: 3
+    customPoints: 5
     objectiveDescription: "Capture the Abandoned Camp  for your faction."
     roundEndMessage: "By capturing the Abandoned Camp"
   - type: CaptureObjective
@@ -301,7 +301,7 @@
     - govfor
     - opfor
     objectiveLevel: 2
-    customPoints: 6
+    customPoints: 8
     objectiveDescription: "Capture the basement  for your faction."
     roundEndMessage: "By capturing the basement"
   - type: CaptureObjective
@@ -331,7 +331,7 @@
     - govfor
     - opfor
     objectiveLevel: 1
-    customPoints: 6
+    customPoints: 5
     objectiveDescription: "Capture the Roof for your faction."
     roundEndMessage: "By capturing the Roof"
   - type: CaptureObjective
@@ -361,7 +361,7 @@
     - govfor
     - opfor
     objectiveLevel: 1
-    customPoints: 6
+    customPoints: 5
     objectiveDescription: "Capture the Middle Floor for your faction."
     roundEndMessage: "By capturing the Middle Floor"
   - type: CaptureObjective
@@ -423,7 +423,7 @@
     - opfor
     - clf
     objectiveLevel: 2
-    customPoints: 5
+    customPoints: 8
     objectiveDescription: "Capture the PAEK-500 Coolant Control for your faction."
     roundEndMessage: "By capturing the PAEK-500 Coolant Control"
   - type: CaptureObjective
@@ -453,7 +453,7 @@
     - opfor
     - clf
     objectiveLevel: 2
-    customPoints: 5
+    customPoints: 8
     objectiveDescription: "Capture the PAEK-500 Engine Control for your faction."
     roundEndMessage: "By capturing the PAEK-500 Engine Control"
   - type: CaptureObjective
@@ -483,7 +483,7 @@
     - opfor
     - clf
     objectiveLevel: 2
-    customPoints: 5
+    customPoints: 8
     objectiveDescription: "Capture the PAEK-500 Turbine Control for your faction."
     roundEndMessage: "By capturing the PAEK-500 Turbine Control"
   - type: CaptureObjective
@@ -663,7 +663,7 @@
     - opfor
     - clf
     objectiveLevel: 2
-    customPoints: 5
+    customPoints: 8
     objectiveDescription: "Capture the Cargo Pier for your faction."
     roundEndMessage: "By capturing the Cargo Pier"
   - type: CaptureObjective
@@ -694,7 +694,7 @@
     - opfor
     - clf
     objectiveLevel: 2
-    customPoints: 5
+    customPoints: 8
     objectiveDescription: "Capture Biodome Theta for your faction."
     roundEndMessage: "By capturing Biodome Theta"
   - type: CaptureObjective
@@ -724,7 +724,7 @@
     - opfor
     - clf
     objectiveLevel: 2
-    customPoints: 5
+    customPoints: 8
     objectiveDescription: "Capture Biodome Gamma for your faction."
     roundEndMessage: "By capturing Biodome Gamma"
   - type: CaptureObjective
@@ -754,7 +754,7 @@
     - opfor
     - clf
     objectiveLevel: 2
-    customPoints: 5
+    customPoints: 8
     objectiveDescription: "Capture Biodome Sigma for your faction."
     roundEndMessage: "By capturing Biodome Sigma"
   - type: CaptureObjective
@@ -784,7 +784,7 @@
     - opfor
     - clf
     objectiveLevel: 2
-    customPoints: 5
+    customPoints: 8
     objectiveDescription: "Capture Station Administration for your faction."
     roundEndMessage: "By capturing Station Administration"
   - type: CaptureObjective
@@ -814,7 +814,7 @@
     - opfor
     - clf
     objectiveLevel: 2
-    customPoints: 5
+    customPoints: 8
     objectiveDescription: "Capture the Research Complex for your faction."
     roundEndMessage: "By capturing the Research Complex"
   - type: CaptureObjective

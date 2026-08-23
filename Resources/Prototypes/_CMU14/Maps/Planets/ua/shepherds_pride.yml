@@ -1,0 +1,82 @@
+- type: entity
+  id: AUPlanetShepherdsPride
+  name: Shepherds' Pride
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Shepherds' Pride"
+    mapId: Sheperds
+    lorePrimer: AU14PrimerPlanetShepherdsPride
+    allegiance: UA
+    camouflage: Desert
+    announcement: "The wildlife reserve of Shepherds' Pride on the fringe of the Neroid Sector has gone silent. A response force has been dispatched to investigate."
+    platoonsGovfor:
+    - LACN
+    - USCM
+    - WEYU
+    - CMBCIU
+    - RMC
+    platoonsOpfor:
+    - UPP
+    - HAZOPS
+    - ProdigySF
+    - VAIPO
+    defaultgovfor: USCM
+    defaultopfor: VAIPO
+    govforinship: true
+    opforinship: true
+    daycycleenabled: true
+    thirdparties:
+    - USArmy
+    - USArmyAlt
+    - USArmyAlt2
+    - USArmyTank
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UACGLostTeam
+    - NSPAInvestigationParty
+    - LACNSniperteam
+    - RMCRRT
+    - USArmyArmored
+    - cultistThirdParty
+    - CMBInvestigationParty
+    - CMBInvestigationPartyAlt
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - CarpInvasiveParty
+    - ProfessorVonBandolier
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    - tribalThirdParty
+    - DrugSmuggler
+    - CMBParoleeTransport
+    - CMBParoleeTransportBig
+    - ForeignCrimeGang
+    - MigratingCivs
+    - MigratingCivsMedium
+    - MigratingCivsLarge
+    - MissionariesParty
+    - MissionariesPartyMedium
+    threats:
+    - cultistThreat
+    - XenoThreat
+    - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
+    - wendigoThreat
+    - abominationsThreat
+    - abominationsThreatDistress
+#    - badBloodClanThreat
+    # Shepherds' Pride exposes CWPS Ranger as its map-specific LEO role.
+    joboverrides:
+      AU14JobLEOLeaderBase: AU14JobCivilianCWPSRanger
+      AU14JobLEOBase: AU14JobCivilianCWPSRanger
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetShepherdsPride
+  planetText: "Date 2180 - Shepherds' Pride, a wildlife reserve on the fringes of the Neroid Sector."

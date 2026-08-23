@@ -16,7 +16,7 @@
     - /Maps/_AU14/ShuttlesDropships/ud_6.yml
   possibleships:
       - USSBushRedux
-  techTree: RMCIntelTechTree_ua
+  techTree: CMUIntelTechTree_GOVFOR # CMUIntelTechTree_UA (TODO)
 
 - type: platoon
   id: LACN
@@ -44,19 +44,19 @@
     AU14JobadvisorBase:
       CMU14RankLACNMasterSergeant:
         entity: CMU14ChevronLACNMasterSergeant
-        requirements: 
+        requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORadvisor
           time: 180000 # 50 hours
       CMU14RankLACNFirstClassSergeant:
         entity: CMU14ChevronLACNFirstClassSergeant
-        requirements: 
+        requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORadvisor
           time: 108000 # 30 hours
       CMU14RankLACNSecondClassSergeant:
         entity: CMU14ChevronLACNSecondClassSergeant
-        requirements: 
+        requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORadvisor
           time: 36000 # 10 hours
@@ -68,17 +68,17 @@
       CMU14RankLACNCorvetteCaptain:
         entity: CMU14ChevronLACNCorvetteCaptain
         requirements: []
-      
+
     AU14JobOfficerEngiBase:
       CMU14RankLACNShipLineLieutenant:
         entity: CMU14ChevronLACNShipLineLieutenant
         requirements: []
-      
+
     AU14JobOfficerIntelBase:
       CMU14RankLACNShipLineLieutenant:
         entity: CMU14ChevronLACNShipLineLieutenant
         requirements: []
-      
+
     AU14JobOfficerLogisticsBase:
       CMU14RankLACNShipLineLieutenant:
         entity: CMU14ChevronLACNShipLineLieutenant
@@ -88,7 +88,7 @@
       CMU14RankLACNShipLineLieutenant:
         entity: CMU14ChevronLACNShipLineLieutenant
         requirements: []
-      
+
     AU14JobOfficerMPBase:
       CMU14RankLACNShipLineLieutenant:
         entity: CMU14ChevronLACNShipLineLieutenant
@@ -324,7 +324,7 @@
   CompatibleDropships:
   - /Maps/_CMU14/Shuttles/alamo.yml
   - /Maps/_CMU14/Shuttles/lexingtonsmall.yml
-  techTree: RMCIntelTechTree_ua
+  techTree: CMUIntelTechTree_GOVFOR
 
 - type: platoon
   id: UPP
@@ -354,7 +354,7 @@
     AU14JobadvisorBase:
       UPP_SeniorCommissar:
         entity: AU14ChevronUPPNISeniorCommisar
-        requirements: 
+        requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORadvisor
           time: 36000 # 10 hours
@@ -365,24 +365,24 @@
     AU14JobAdjutantBase:
       UPP_Captain:
         entity: AU14ChevronUPPNICaptain
-        requirements: 
+        requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORadvisor
           time: 36000 # 10 hours
       UPP_SeniorLieutenant:
         entity: AU14ChevronUPPNISeniorLieutenant
         requirements: []
-      
+
     AU14JobOfficerEngiBase:
       UPP_JuniorLieutenant:
         entity: AU14ChevronUPPNIJuniorLieutenant
         requirements: []
-    
+
     AU14JobOfficerIntelBase:
       UPP_JuniorLieutenant:
         entity: AU14ChevronUPPNIJuniorLieutenant
         requirements: []
-    
+
     AU14JobOfficerLogisticsBase:
       UPP_JuniorLieutenant:
         entity: AU14ChevronUPPNIJuniorLieutenant
@@ -392,7 +392,7 @@
       UPP_Lieutenant:
         entity: AU14ChevronUPPNILieutenant
         requirements: []
-    
+
     AU14JobOfficerMPBase:
       UPP_JuniorLieutenant:
         entity: AU14ChevronUPPNIJuniorLieutenant
@@ -640,7 +640,7 @@
   CompatibleDropships:
   - /Maps/_CMU14/Shuttles/alamo.yml
   - /Maps/_CMU14/Shuttles/lexingtonsmall.yml
-  techTree: RMCIntelTechTree_ua
+  techTree: CMUIntelTechTree_GOVFOR
 
 - type: platoon
   id: WEYU
@@ -664,7 +664,7 @@
     AU14JobadvisorBase:
       AU14RankWeYuCommander:
         entity: AU14ChevronWeYuCommander
-        requirements: 
+        requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORadvisor
           time: 36000 # 10 hours
@@ -676,17 +676,17 @@
         AU14RankWeYuDeputyDirector:
           entity: AU14ChevronWeYuDeputyDirector
           requirements: []
-      
+
     AU14JobOfficerEngiBase:
       AU14RankWeYuAdjutant:
         entity: AU14ChevronWeYuAdjutant
         requirements: []
-    
+
     AU14JobOfficerIntelBase:
       AU14RankWeYuAdjutant:
         entity: AU14ChevronWeYuAdjutant
         requirements: []
-    
+
     AU14JobOfficerLogisticsBase:
       AU14RankWeYuAdjutant:
         entity: AU14ChevronWeYuAdjutant
@@ -696,7 +696,7 @@
       AU14RankWeYuCommander:
         entity: AU14ChevronWeYuCommander
         requirements: []
-    
+
     AU14JobOfficerMPBase:
       AU14RankWeYuAdjutant:
         entity: AU14ChevronWeYuAdjutant
@@ -950,7 +950,7 @@
   compatibleFighters:
   - /Maps/_AU14/ShuttlesDropships/f84owl.yml
   - /Maps/_AU14/ShuttlesDropships/ud_6.yml
-  techTree: RMCIntelTechTree_ua
+  techTree: CMUIntelTechTree_GOVFOR
 
 - type: platoon
   id: CMBCIU
@@ -977,17 +977,17 @@
       AU14RankCMBChiefDeputy:
         entity: AU14ChevronCMBChiefDeputy
         requirements: []
-      
+
     AU14JobOfficerEngiBase:
       AU14RankCMBSrDeputy:
         entity: AU14ChevronCMBSrDeputy
         requirements: []
-    
+
     AU14JobOfficerIntelBase:
       AU14RankCMBSrDeputy:
         entity: AU14ChevronCMBSrDeputy
         requirements: []
-    
+
     AU14JobOfficerLogisticsBase:
       AU14RankCMBSrDeputy:
         entity: AU14ChevronCMBSrDeputy
@@ -997,7 +997,7 @@
       AU14RankCMBSrDeputy:
         entity: AU14ChevronCMBSrDeputy
         requirements: []
-    
+
     AU14JobOfficerMPBase:
       AU14RankCMBSrDeputy:
         entity: AU14ChevronCMBSrDeputy
@@ -1157,7 +1157,7 @@
   - /Maps/_CMU14/Shuttles/lexingtonsmall.yml
   compatibleFighters:
     - /Maps/_AU14/ShuttlesDropships/cmbsquadcar.yml
-  techTree: RMCIntelTechTree_ua
+  techTree: CMUIntelTechTree_GOVFOR
 
 - type: platoon
   id: HAZOPS
@@ -1177,7 +1177,7 @@
   compatibleFighters:
   - /Maps/_AU14/ShuttlesDropships/f84owl.yml
   - /Maps/_AU14/ShuttlesDropships/ud_6.yml
-  techTree: RMCIntelTechTree_ua
+  techTree: CMUIntelTechTree_GOVFOR
 
 - type: platoon
   id: ProdigySF
@@ -1206,17 +1206,17 @@
       AU14RankPrDDeputyDirector:
         entity: AU14ChevronPrDDeputyDirector
         requirements: []
-      
+
     AU14JobOfficerEngiBase:
       AU14RankPrDCommander:
         entity: AU14ChevronPrDCommander
         requirements: []
-    
+
     AU14JobOfficerIntelBase:
       AU14RankPrDCommander:
         entity: AU14ChevronPrDCommander
         requirements: []
-    
+
     AU14JobOfficerLogisticsBase:
       AU14RankPrDCommander:
         entity: AU14ChevronPrDCommander
@@ -1226,7 +1226,7 @@
       AU14RankPrDCommanderSenior:
         entity: AU14ChevronPrDCommanderSenior
         requirements: []
-    
+
     AU14JobOfficerMPBase:
       AU14RankPrDCommander:
         entity: AU14ChevronPrDCommander
@@ -1447,7 +1447,7 @@
     - /Maps/_AU14/ShuttlesDropships/ud_6.yml
   possibleships:
       - USSBushRedux
-  techTree: RMCIntelTechTree_ua
+  techTree: CMUIntelTechTree_GOVFOR
 
 - type: platoon
   id: VAIPO
@@ -1475,17 +1475,17 @@
       VAI_VASCGroupCommanderAssistant:
         entity: CMU14ChevronVASCGroupCommanderAssistant
         requirements: []
-      
+
     AU14JobOfficerEngiBase:
       VAI_VASCDepartamentLeader:
         entity: CMU14ChevronVASCDepartamentLeader
         requirements: []
-    
+
     AU14JobOfficerIntelBase:
       VAI_VASCSpecialist:
         entity: CMU14ChevronVASCSpecialist
         requirements: []
-    
+
     AU14JobOfficerLogisticsBase:
       VAI_VASCDepartamentLeader:
         entity: CMU14ChevronVASCDepartamentLeader
@@ -1495,7 +1495,7 @@
       VAI_VASCDepartamentLeader:
         entity: CMU14ChevronVASCDepartamentLeader
         requirements: []
-    
+
     AU14JobOfficerMPBase:
       VAI_VASCDepartamentLeader:
         entity: CMU14ChevronVASCDepartamentLeader
@@ -1619,7 +1619,7 @@
     - /Maps/_AU14/ShuttlesDropships/ud_6.yml
   possibleships:
       - USSBushRedux
-  techTree: RMCIntelTechTree_ua
+  techTree: CMUIntelTechTree_GOVFOR
 
 - type: platoon
   id: RMC
@@ -1647,7 +1647,7 @@
     AU14JobadvisorBase:
       RMC_WarrantOfficer1:
         entity: AU14ChevronRMCWarrantOfficer1
-        requirements: 
+        requirements:
         - !type:RoleTimeRequirement
           role: AU14JobGOVFORadvisor
           time: 36000 # 10 hours
@@ -1659,17 +1659,17 @@
       RMC_Captain:
         entity: AU14ChevronRMCCaptain
         requirements: []
-      
+
     AU14JobOfficerEngiBase:
       RMC_2Lieutenant:
         entity: AU14ChevronRMCSecondLieutenant
         requirements: []
-    
+
     AU14JobOfficerIntelBase:
       RMC_2Lieutenant:
         entity: AU14ChevronRMCSecondLieutenant
         requirements: []
-    
+
     AU14JobOfficerLogisticsBase:
       RMC_2Lieutenant:
         entity: AU14ChevronRMCSecondLieutenant
@@ -1679,7 +1679,7 @@
       RMC_Lieutenant:
         entity: AU14ChevronRMCLieutenant
         requirements: []
-    
+
     AU14JobOfficerMPBase:
       RMC_2Lieutenant:
         entity: AU14ChevronRMCSecondLieutenant
@@ -1930,7 +1930,7 @@
     - /Maps/_AU14/ShuttlesDropships/ud_6.yml
   possibleships: #TODO: RMC Ship
       - USSBushRedux
-  techTree: RMCIntelTechTree_ua
+  techTree: CMUIntelTechTree_GOVFOR
 
 # Add more platoons as needed
 

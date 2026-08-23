@@ -114,7 +114,7 @@
     - CLF
     repeating: false
     objectiveLevel: 1
-    customPoints: 5
+    customPoints: 10
     roundEndMessage: Finding the AN/PRC-982
     objectiveDescription: "Retrieve the AN/PRC-982 portable radio transceiver box"
   - type: FetchObjective
@@ -145,7 +145,7 @@
     - CLF
     repeating: false
     objectiveLevel: 1
-    customPoints: 5
+    customPoints: 15
     roundEndMessage: Finding the CIR-60 Blackbox
     objectiveDescription: "Retrieve the CIR-60 'blackbox' colony information recorder"
   - type: FetchObjective
@@ -177,7 +177,7 @@
     - CLF
     repeating: false
     objectiveLevel: 1
-    customPoints: 5
+    customPoints: 10
     roundEndMessage: Finding the Nuclear Launch Codes Booklet
     objectiveDescription: "Retrieve the Nuclear Launch Codes Booklet"
   - type: FetchObjective
@@ -208,7 +208,7 @@
     - CLF
     repeating: false
     objectiveLevel: 1
-    customPoints: 5
+    customPoints: 10
     roundEndMessage: Finding the Theater Operations Handbook
     objectiveDescription: "Retrieve the Theater Operations Handbook"
   - type: FetchObjective
@@ -239,7 +239,7 @@
     - CLF
     repeating: false
     objectiveLevel: 1
-    customPoints: 10
+    customPoints: 15
     roundEndMessage: Finding the RCS-9 ARDSUs
     objectiveDescription: "Retrieve two ARCS-9 atmospheric radar data storage units"
   - type: FetchObjective
@@ -268,7 +268,7 @@
     - CLF
     repeating: false
     objectiveLevel: 2
-    customPoints: 10
+    customPoints: 30
     roundEndMessage: Finding the WY laptop
     objectiveDescription: "Retrieve the Weyland-Yutani Research laptop."
   - type: FetchObjective

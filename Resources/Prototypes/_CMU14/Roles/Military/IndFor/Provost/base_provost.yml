@@ -8,6 +8,8 @@
   hidden: true
   roundForce: PROVOST
   roundSide: Indfor
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   marineAuthorityLevel: 8
   accessGroups:
   - ShipMasterAccess

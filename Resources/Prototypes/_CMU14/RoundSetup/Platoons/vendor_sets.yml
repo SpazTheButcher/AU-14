@@ -9,6 +9,7 @@
     JuniorOfficer: AU14JOGenericVendor
     MilitaryDoctor: AU14MilitaryDoctorGenericVendor
     VehicleCrew: AU14USCMVehicleCrewmanVendor
+    SentryDeployer: RMCDeployerSentry
 
 - type: platoonVendorSet
   id: USCM
@@ -79,6 +80,7 @@
     SquadSergeant: AU14WYsquadleaderequipmentvendor
     MilitaryPolice: AU14MilitaryPolicemanGenericVendor
     ReqVend: AU14WYPMCRequisitionVendor
+    SentryDeployer: AU14DeployerSentryWeYu
 
 - type: platoonVendorSet
   id: CMBCIU

@@ -56,6 +56,7 @@ public sealed class WeylandYutaniSentryTest
                 targetingSystem.ToggleFaction((sentry, targeting), "AUWeYu", false);
                 targetingSystem.ClearFactionAssignment((sentry, targeting));
                 targetingSystem.ApplyDeployerFactions(sentry, outsider);
+                targetingSystem.TryApplyDefaultFaction(sentry, "GOVFOR");
 
                 Assert.Multiple(() =>
                 {

@@ -2,6 +2,8 @@
   parent: AU14JobFORECONSpotterBase
   id: AU14FORECONKillTeamSpotter
   roundSide: ThirdParty
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   roundForce: FORECON
   roundRole: AU14FORECONKillTeamSpotter
   roundComponents:

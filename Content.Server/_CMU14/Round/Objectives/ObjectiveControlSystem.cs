@@ -207,7 +207,7 @@ public sealed partial class ObjectiveControlSystem : EntitySystem
             return comp;
         }
 
-        _logs.Warning("[OBJ-CTRL] GetOrReselectObjMaster: no master found.");
+        _logs.Debug("[OBJ-CTRL] GetOrReselectObjMaster: no master found.");
         return null;
     }
 

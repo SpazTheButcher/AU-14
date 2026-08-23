@@ -15,7 +15,7 @@
     - govfor
     repeating: false
     objectiveLevel: 1
-    customPoints: 10
+    customPoints: 15
     objectiveDescription: "Hack an enemy field operations computer"
   - type: InteractObjective
     interactables:
