@@ -235,12 +235,6 @@
         - RMCSynthGrabbable
 
 - type: entity
-  name: Carp Spawner
-  id: CMUSpawnMobCarp
-  parent: MarkerBase
-  suffix: CMU
-
-- type: entity
   parent: CMSpawnMobMonkey
   id: CMUSpawnMobCarp
   name: Small host spawner
