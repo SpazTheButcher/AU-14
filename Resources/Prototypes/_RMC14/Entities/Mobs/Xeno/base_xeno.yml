@@ -295,6 +295,8 @@
       - Infectable
       - Synth
       - Yautja
+      tags:
+      - Carp
   - type: BlockPullingDead
   - type: XenoFriendly
   - type: Undisposable
