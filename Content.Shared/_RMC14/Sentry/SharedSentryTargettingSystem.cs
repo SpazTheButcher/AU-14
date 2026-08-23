@@ -122,6 +122,10 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
         if (!TryComp<SentryTargetingComponent>(sentry, out var targeting))
             return false;
 
+        // CMU14: locked IFF is never overwritten by deployer/grid defaults
+        if (RestoreLockedFriendlyFactions((sentry, targeting), true))
+            return true;
+
         faction = string.IsNullOrWhiteSpace(faction) ? targeting.OriginalFaction : faction;
         var sentryFaction = SentryAllowedFactions.FirstOrDefault(allowed =>
             allowed.Equals(faction, StringComparison.OrdinalIgnoreCase));
