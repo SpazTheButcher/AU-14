@@ -1,12 +1,13 @@
 - type: entity
-  id: RMCIntelTechTree_ua
   parent: RMCIntelTechTree
+  id: CMUIntelTechTree_UA # faction specific (USCM)
   name: intel tech tree (UA)
   categories: [ HideSpawnMenu ]
   components:
   - type: IntelTechTree
     tree:
       options:
+# ├──[ Tier 0 ]──────────────────────────────────────────────────────┤
       -
         - name: Unlock Tier 1
           description: Transitions the tree to another tier.
@@ -17,11 +18,12 @@
           icon:
             sprite: _RMC14/Interface/tech_tree.rsi
             state: upgrade
+# ├──[ Tier 1: Budget ]──────────────────────────────────────────────┤
       -
         - name: Requisition Budget Increase
           description: Distributes resources to requisitions for spending.
-          cost: 20
-          increase: 1
+          cost: 12
+          increase: 3
           repurchasable: true
           events:
           - !type:TechRequisitionsBudgetEvent
@@ -34,17 +36,18 @@
             state: budget_req
         - name: Unlock Tier 2
           description: Transitions the tree to another tier.
-          cost: 1
+          cost: 3
           events:
           - !type:TechUnlockTierEvent
             tier: 2
           icon:
             sprite: _RMC14/Interface/tech_tree.rsi
             state: upgrade
+# ├──[ Tier 2: Reinforcements ]──────────────────────────────────────┤
       -
         - name: US Army 32nd ArmDiv reinforcements
           description: Summon a squad from US Army 32nd Armored Division.
-          cost: 80
+          cost: 55
           repurchasable: false
           events:
           - !type:TechPartySpawnEvent
@@ -58,7 +61,7 @@
 
         - name: Prodigy Armed Repair Team Yankee
           description: Summon a PMC team from PART, specifically Yankee Squad
-          cost: 70
+          cost: 45
           repurchasable: false
           events:
           - !type:TechPartySpawnEvent

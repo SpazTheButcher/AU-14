@@ -1,12 +1,13 @@
 - type: entity
-  id: RMCIntelTechTree_clf
   parent: RMCIntelTechTree
+  id: CMUIntelTechTree_CLF
   name: intel tech tree (CLF)
   categories: [ HideSpawnMenu ]
   components:
   - type: IntelTechTree
     tree:
       options:
+# ├──[ Tier 0 ]──────────────────────────────────────────────────────┤
       -
         - name: Unlock Tier 1
           description: Transitions the tree to another tier.
@@ -17,11 +18,12 @@
           icon:
             sprite: _RMC14/Interface/tech_tree.rsi
             state: upgrade
+# ├──[ Tier 1: Cell support & reinforcements ]───────────────────────┤
       -
         - name: Requisition Budget Increase
           description: Distributes resources to requisitions for spending.
-          cost: 2
-          increase: 1
+          cost: 6
+          increase: 2
           repurchasable: true
           events:
           - !type:TechRequisitionsBudgetEvent
@@ -31,8 +33,8 @@
             state: budget_req
         - name: Insurgent Reinforcements
           description: Summon reinforcements from a neighboring cell.
-          cost: 75
-          increase: 20
+          cost: 25
+          increase: 6
           repurchasable: true
           events:
           - !type:TechPartySpawnEvent
@@ -42,7 +44,7 @@
             state: beacon
         - name: Machine Gunner
           description: Summon a machine gunner from a neighboring cell.
-          cost: 20
+          cost: 8
           repurchasable: false
           events:
           - !type:TechPartySpawnEvent
@@ -52,7 +54,7 @@
             state: beacon
         - name: Call VAISO read on WY
           description: Send intel on local WY facility to VAISO, summoning them for a raid. They are not hostile to CLF but not required to help directly!
-          cost: 80
+          cost: 50
           repurchasable: false
           events:
           - !type:TechPartySpawnEvent
@@ -62,7 +64,7 @@
             state: beacon
         - name: Call Prodigy Armed Repair Team Yankee
           description: Summon a PMC team from PART, specifically Yankee Squad, They are not hostile to CLF but not required to help directly!
-          cost: 70
+          cost: 45
           repurchasable: false
           events:
           - !type:TechPartySpawnEvent
