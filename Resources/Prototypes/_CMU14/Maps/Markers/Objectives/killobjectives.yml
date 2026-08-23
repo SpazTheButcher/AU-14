@@ -285,5 +285,5 @@
     customPoints: 5
     objectiveDescription: "Kill the Carp"
   - type: KillObjective
-    targetPrototype: CMUMobCarp
-    factionToKill: SimpleNeutral
+    targetPrototype: CMUMobSmallHostCarp
+    factionToKill: Passive
