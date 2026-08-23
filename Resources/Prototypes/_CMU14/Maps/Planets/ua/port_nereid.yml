@@ -1,0 +1,73 @@
+- type: entity
+  id: AUPlanetLV327
+  name: Port Nereid
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Port Nereid"
+    mapId: portneroid
+    lorePrimer: AU14PrimerPlanetLV327
+    Allegiance: UA
+    camouflage: Desert
+    announcement: "Weyland-Yutani has lost contact with one of its Biological Storage Facilities, Solaris Ridge, on the planet of LV-1413. The UNS Almayer has been requested to look into the blackout by Weyland-Yutani."
+    platoonsOpfor:
+    - WEYU
+    - VAIPO
+    - ProdigySF
+    - UPP
+    platoonsGovfor:
+    - LACN
+    - CMBCIU
+    - USCM
+    - RMC
+    defaultgovfor: RMC
+    defaultopfor: WEYU
+    govforinship: true
+    opforinship: true
+    daycycleenabled: true
+    faction: ua
+    threats:
+    - cultistThreat
+    - XenoThreat
+    - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
+    - wendigoThreat
+    - abominationsThreatDistress
+#    - badBloodClanThreat
+    thirdparties:
+    - ProdigySurvLarge
+    - ProdigySurvMedium
+    - ProdigySurvSmall
+    - WEYUSurvLarge
+    - WEYUSurvMedium
+    - WEYUSurvSmall
+    - CLFSurvsBig
+    - CLFSurvsMedium
+    - CLFSurvsSmall
+    - FORECON
+    - FORECONAlt
+    - FORECONAlt2
+    - USArmyTank
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UACGLostTeam
+    - NSPAInvestigationParty
+    - LACNSniperteam
+    - ProfessorVonBandolier
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    joboverrides:
+      AU14JobLEOLeaderBase: AU14JobCivilianNSPAInspector
+      AU14JobLEOBase: AU14JobCivilianNSPAConstable
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetLV327
+  planetText: "Date 2181 - Port Nereid, a valuable waterport, atmospheric processor and transit hub on the Neroid Sector frontier world LV-109, named 'Elgin's Folley'. Port Nereid is a joint-venture colony established by the United Americas Colonial Administration and Weyland-Yutani."

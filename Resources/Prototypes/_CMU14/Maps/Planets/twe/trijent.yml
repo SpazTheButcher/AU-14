@@ -1,0 +1,67 @@
+- type: entity
+  id: AUPlanetTrijent
+  name: Trijent
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Raijin Hydroelectric"
+    mapId: AUTrijentMap
+    lorePrimer: AU14PrimerPlanetTrijent
+    Allegiance: TWE
+    camouflage: Desert
+    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
+    platoonsOpfor:
+    - UPP
+    - WEYU
+    - VAIPO
+    - ProdigySF
+    platoonsGovfor:
+    - LACN
+    - USCM
+    - RMC
+    defaultgovfor: RMC
+    defaultopfor: VAIPO
+    govforinship: true
+    opforinship: true
+    daycycleenabled: true
+    faction: ua
+    thirdparties:
+    - ProdigySurvLarge
+    - ProdigySurvMedium
+    - ProdigySurvSmall
+    - IASFSurvLarge
+    - IASFSurvMedium
+    - IASFSurvSmall
+    - WEYUSurvLarge
+    - WEYUSurvMedium
+    - WEYUSurvSmall
+    - CLFSurvsBig
+    - CLFSurvsMedium
+    - CLFSurvsSmall
+    - ICRCReliefParty
+    - cultistThirdParty
+    - cultistThirdPartyNoQueen
+    - UPPGROM
+    - UPPGROMAlt
+    - UPPGROMAlt2
+    - FORECON
+    - FORECONAlt
+    - FORECONAlt2
+    - LACNSniperteam
+    - UPPTDLostTeam
+    - PAPInvestigationPartyAlt
+    - PAPInvestigationParty
+    - FORECONFirstRecon
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    threats:
+    - XenoThreat
+    - NeomorphsThreat
+    #- TribalsThreat
+#    - badBloodClanThreat
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetTrijent
+  planetText: "Date 2179 - LV-670 Raijin Hydroelectric (formerly known as Trijent Dam), a Three World Empire water treatment facility serving a major prospera."

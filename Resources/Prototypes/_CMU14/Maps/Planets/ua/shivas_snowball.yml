@@ -1,0 +1,64 @@
+- type: entity
+  id: AuPlanetShivasSnowball
+  name: Shivas' Snowball
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Shivas' Snowball"
+    mapId: auShivas
+    lorePrimer: AU14PrimerPlanetShivasSnowball
+    Allegiance: UA
+    camouflage: Snow
+    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
+    platoonsGovfor:
+    - USCM
+    - WEYU
+    - VAIPO
+    - RMC
+    - UPP
+    - HAZOPS
+    defaultgovfor: USCM
+    defaultopfor: UPP
+    govforinship: true
+    opforinship: true
+    daycycleenabled: true
+    thirdparties:
+    - ProdigySurvLarge
+    - ProdigySurvMedium
+    - ProdigySurvSmall
+    - USArmy
+    - USArmyAlt
+    - USArmyAlt2
+    - USArmyTank
+    - WEYUSurvLarge
+    - WEYUSurvMedium
+    - WEYUSurvSmall
+    - CLFSurvsBig
+    - CLFSurvsMedium
+    - CLFSurvsSmall
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UACGLostTeam
+    - NSPAInvestigationParty
+    - LACNSniperteam
+    - RMCRRT
+    - USArmyArmored
+    - cultistThirdParty
+    - CMBInvestigationParty
+    - CMBInvestigationPartyAlt
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - ProfessorVonBandolier
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    threats:
+    - XenoThreat
+    - NeomorphsThreat
+ #   - TribalsThreat
+#    - badBloodClanThreat
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetShivasSnowball
+  planetText: "Date 2177 - Shivas' Snowball. A United Americas mining and research colony."

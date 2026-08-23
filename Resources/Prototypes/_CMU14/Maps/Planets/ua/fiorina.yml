@@ -1,0 +1,65 @@
+- type: entity
+  id: AuPlanetFiorina
+  name: Fiorina Prison
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Fiorina Prison"
+    mapId: aufiorina
+    lorePrimer: AU14PrimerPlanetFiorina
+    Allegiance: UA
+    camouflage: Urban
+    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
+    platoonsGovfor:
+    - USCM
+    - WEYU
+    - VAIPO
+    - UPP
+    - HAZOPS
+    defaultgovfor: USCM
+    defaultopfor: UPP
+    govforinship: true
+    opforinship: true
+    daycycleenabled: false
+    thirdparties:
+    - ProdigySurvLarge
+    - ProdigySurvMedium
+    - ProdigySurvSmall
+    - USArmy
+    - USArmyAlt
+    - USArmyAlt2
+    - USArmyTank
+    - WEYUSurvLarge
+    - WEYUSurvMedium
+    - WEYUSurvSmall
+    - CLFSurvsBig
+    - CLFSurvsMedium
+    - CLFSurvsSmall
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UACGLostTeam
+    - NSPAInvestigationParty
+    - LACNSniperteam
+    - RMCRRT
+    - USArmyArmored
+    - CMBInvestigationParty
+    - CMBInvestigationPartyAlt
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - ProfessorVonBandolier
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    threats:
+    - abominationsThreatDistress
+    - XenoThreat
+    - NeomorphsThreat
+#    - badBloodClanThreat
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetFiorina
+  planetText: "Date 2181 - Fiorina Prison. Privately owned and operated by the Weyland-Yutani corporation, Fiorina 161 is a maximum security prison for the most dangerous criminals in the system."

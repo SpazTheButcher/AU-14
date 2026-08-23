@@ -1,0 +1,72 @@
+- type: entity
+  id: AUPlanetStableGarrison
+  name: Stable Garrison
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Stable Garrison"
+    mapId: stablegarrison
+    lorePrimer: AU14PrimerPlanetStableGarrison
+    Allegiance: UA
+    camouflage: Desert
+    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
+    platoonsOpfor:
+    - UPP
+    - VAIPO
+    - ProdigySF
+    platoonsGovfor:
+    - WEYU
+    - USCM
+    - RMC
+    defaultgovfor: USCM
+    defaultopfor: UPP
+    govforinship: false
+    opforinship: true
+    daycycleenabled: true
+    thirdparties:
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UPPGROM
+    - UPPGROMAlt
+    - UPPGROMAlt2
+    - USArmyTank
+    - UACGLostTeam
+    - LACNSniperteam
+    - cultistThirdParty
+    - CMBInvestigationParty
+    - CMBInvestigationPartyAlt
+    - cultistThirdPartyNoQueen
+    - ProfessorVonBandolier
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    - tribalThirdParty
+    - DrugSmuggler
+    - CMBParoleeTransport
+    - CMBParoleeTransportBig
+    - ForeignCrimeGang
+    - MigratingCivs
+    - MigratingCivsMedium
+    - MigratingCivsLarge
+    - MissionariesParty
+    - MissionariesPartyMedium
+    threats:
+    - cultistThreat
+    - XenoThreatCF
+    - NeomorphsThreatCF
+    - wendigoThreat
+    - abominationsThreat
+    - abominationsThreatDistress
+    joboverrides:
+      AU14JobLEOLeaderBase: AU14JobCivilianCMBMarshal
+      AU14JobLEOBase: AU14JobCivilianCMBDeputy
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetStableGarrison
+  planetText: "Date 2183 - Stable Garrison, a UA controlled frontier world with a joint base and sizeable urban community."

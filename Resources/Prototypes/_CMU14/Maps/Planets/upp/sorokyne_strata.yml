@@ -1,0 +1,66 @@
+- type: entity
+  id: AUPlanetSorokyne
+  name: Sorokyne Strata
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Sorokyne Strata"
+    mapId: au14sorokyne
+    lorePrimer: AU14PrimerPlanetSorokyne
+    Allegiance: UPP
+    camouflage: Desert
+    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
+    platoonsOpfor:
+    - LACN
+    - USCM
+    - RMC
+    platoonsGovfor:
+    - UPP
+    - ProdigySF
+    defaultgovfor: RMC
+    defaultopfor: UPP
+    govforinship: true
+    opforinship: true
+    daycycleenabled: true
+    faction: ua
+    thirdparties:
+    - ProdigySurvLarge
+    - ProdigySurvMedium
+    - ProdigySurvSmall
+    - ICRCReliefParty
+    - cultistThirdParty
+    - UPPGROM
+    - UPPGROMAlt
+    - UPPGROMAlt2
+    - CLFSurvsBig
+    - CLFSurvsMedium
+    - CLFSurvsSmall
+    - WEYUSurvLarge
+    - WEYUSurvMedium
+    - WEYUSurvSmall
+    - UPPTDLostTeam
+    - PAPInvestigationPartyAlt
+    - PAPInvestigationParty
+    - ProfessorVonBandolier
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - FORECONKillTeam
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    threats:
+    - cultistThreat
+    - XenoThreat
+    - NeomorphsThreat
+    - wendigoThreat
+ #   - TribalsThreat
+    - abominationsThreatDistress
+#    - badBloodClanThreat
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetSorokyne
+  planetText: "Date 2186 - Sorokyne Strata. A major Union of Progressive People's research outpost in the Neroid Sector."

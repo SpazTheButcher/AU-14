@@ -1,0 +1,67 @@
+- type: entity
+  id: AUPlanetLV759
+  name: Hybrisa Metropolitan
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Hybrisa Metropolitan"
+    mapId: hybrisametro
+    lorePrimer: AU14PrimerPlanetLV759
+    Allegiance: TWE
+    camouflage: Urban
+    announcement: "Weyland-Yutani has lost contact with one of its Biological Storage Facilities, Solaris Ridge, on the planet of LV-1413. The UNS Almayer has been requested to look into the blackout by Weyland-Yutani."
+    platoonsOpfor:
+    - WEYU
+    - VAIPO
+    - HAZOPS
+    platoonsGovfor:
+    - USCM
+    - ProdigySF
+    - UPP
+    - RMC
+    defaultgovfor: USCM
+    defaultopfor: RMC
+    govforinship: false
+    opforinship: true
+    daycycleenabled: false
+    faction: ua
+    threats:
+    - XenoThreatCF
+    - NeomorphsThreatCF
+    - wendigoThreat
+    - abominationsThreatDistress
+    thirdparties:
+    - IASFSurvLarge
+    - IASFSurvMedium
+    - IASFSurvSmall
+    - WEYUSurvLarge
+    - WEYUSurvMedium
+    - WEYUSurvSmall
+    - CLFSurvsBig
+    - CLFSurvsMedium
+    - CLFSurvsSmall
+    - USArmy
+    - USArmyAlt
+    - USArmyAlt2
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - LACNSniperteam
+    - RMCRRT
+    - USArmyArmored
+    - ProfessorVonBandolier
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    joboverrides:
+      AU14JobLEOLeaderBase: AU14JobCivilianNSPAInspector
+      AU14JobLEOBase: AU14JobCivilianNSPAConstable
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetLV759
+  planetText: "Date 2181 - Hybrisa Metropolitan, Three World Empire territory."

@@ -1,0 +1,81 @@
+- type: entity
+  id: AUPlanetLV747
+  name: Solaris Gulch
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Solaris Gulch"
+    mapId: AU747
+    lorePrimer: AU14PrimerPlanetLV747
+    Allegiance: UA
+    camouflage: Desert
+    announcement: "Weyland-Yutani has lost contact with one of its Biological Storage Facilities, Solaris Ridge, on the planet of LV-1413. The UNS Almayer has been requested to look into the blackout by Weyland-Yutani."
+    platoonsOpfor:
+    - UPP
+    - VAIPO
+    - ProdigySF
+    platoonsGovfor:
+    - LACN
+    - USCM
+    - WEYU
+    - RMC
+    - HAZOPS
+    defaultgovfor: USCM
+    defaultopfor: UPP
+    govforinship: true
+    opforinship: true
+    daycycleenabled: true
+    faction: ua
+    threats:
+    - cultistThreat
+    - XenoThreat
+    - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
+    - wendigoThreat
+    - abominationsThreatDistress
+#    - badBloodClanThreat
+    thirdparties:
+    - WEYUSurvLarge
+    - WEYUSurvMedium
+    - WEYUSurvSmall
+    - CLFSurvsBig
+    - CLFSurvsMedium
+    - CLFSurvsSmall
+    - FORECON
+    - FORECONAlt
+    - FORECONAlt2
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UACGLostTeam
+    - NSPAInvestigationParty
+    - RMCRRT
+    - USArmyArmored
+    - cultistThirdParty
+    - CMBInvestigationParty
+    - CMBInvestigationPartyAlt
+    - ProfessorVonBandolier
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - FORECONFirstRecon
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    - tribalThirdParty
+    - DrugSmuggler
+    - CMBParoleeTransport
+    - CMBParoleeTransportBig
+    - ForeignCrimeGang
+    - MigratingCivs
+    - MigratingCivsMedium
+    - MigratingCivsLarge
+    - MissionariesParty
+    - MissionariesPartyMedium
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetLV747
+  planetText: "Date 2181 - Solaris Gulch, UA controlled."

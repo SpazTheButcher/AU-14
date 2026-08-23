@@ -1,0 +1,71 @@
+- type: entity
+  id: CMUPlanetLament
+  name: LV-376 "Ulixes"
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Barker's Lament"
+    mapId: CMULV376BarkersLament
+    lorePrimer: AU14PrimerPlanetLament
+    Allegiance: UA
+    camouflage: Urban
+    announcement: "The mining colony of Barker's Lament on LV-376 has gone dark."
+    platoonsGovfor:
+    - WEYU
+    - USCM
+    - RMC
+    - CMBCIU
+    platoonsOpfor:
+    - UPP
+    - ProdigySF
+    - VAIPO
+    - LACN
+    defaultgovfor: WEYU
+    defaultopfor: ProdigySF
+    govforinship: false
+    opforinship: true
+    daycycleenabled: true
+    faction: ua
+    thirdparties:
+    - ICRCReliefParty
+    - USArmyTank
+    - WYHT
+    - IPIE
+    - IPIESynth
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - CMBInvestigationParty
+    - CMBInvestigationPartyAlt
+    - UPPGROM
+    - ICRCReliefParty
+    - UACGLostTeam
+    - USArmy
+    - abominationThirdParty
+    - tribalThirdParty
+    - DrugSmuggler
+    - CMBParoleeTransport
+    - CMBParoleeTransportBig
+    - ForeignCrimeGang
+    - MigratingCivs
+    - MigratingCivsMedium
+    - MigratingCivsLarge
+    - MissionariesParty
+    - MissionariesPartyMedium
+    threats:
+    - cultistThreatOnMarker
+    - XenoThreat
+    - XenoThreatCF
+    - NeomorphsThreat
+    - NeomorphsThreatCF
+    - wendigoThreat
+    - abominationsThreat
+    - abominationsThreatDistress
+#    - badBloodClanThreat
+    joboverrides:
+      AU14JobLEOBase: AU14JobCivilianCMBDeputy
+      AU14JobLEOLeaderBase: AU14JobCivilianCMBMarshal
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetLament
+  planetText: "Date 2181 - Barker's Lament, a mining and farming colony on the planet of LV-376 'Ulixes'. Primarily under the control of the United Americas, despite the constant interference of Weyland-Yutani."

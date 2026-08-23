@@ -1,0 +1,66 @@
+- type: entity
+  id: AuPlanetChances
+  name: Chances Claim
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Chances Claim"
+    mapId: auchances
+    lorePrimer: AU14PrimerPlanetChances
+    Allegiance: UA
+    camouflage: Urban
+    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
+    platoonsGovfor:
+    - USCM
+    - WEYU
+    - VAIPO
+    - UPP
+    - HAZOPS
+    - ProdigySF
+    - RMC
+    - UPP
+    defaultgovfor: USCM
+    defaultopfor: UPP
+    govforinship: true
+    opforinship: true
+    daycycleenabled: false
+    thirdparties:
+    - ProdigySurvLarge
+    - ProdigySurvMedium
+    - ProdigySurvSmall
+    - USArmy
+    - USArmyAlt
+    - USArmyAlt2
+    - USArmyTank
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UACGLostTeam
+    - NSPAInvestigationParty
+    - LACNSniperteam
+    - RMCRRT
+    - USArmyArmored
+    - CMBInvestigationParty
+    - CMBInvestigationPartyAlt
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - ProfessorVonBandolier
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    threats:
+    - abominationsThreatDistress
+    - XenoThreat
+    - NeomorphsThreat
+#    - badBloodClanThreat
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+    joboverrides:
+      AU14JobLEOLeaderBase: AU14JobCivilianColonySecurityLeader
+      AU14JobLEOBase: AU14JobCivilianColonySecurityOfficer
+      AU14JobCivilianColonyAdministrator: AU14JobCivilianCorporateAdministrator
+
+- type: lorePrimer
+  id: AU14PrimerPlanetChances
+  planetText: "Date 2182 - Chances Claim, a Weyland-Yutani Administrated Frontier Mining Colony entangled in the middle of a horrible crime wave."

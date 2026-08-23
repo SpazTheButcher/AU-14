@@ -1,0 +1,64 @@
+- type: entity
+  id: AuPlanetKutjevo
+  name: Kutjevo Biolab
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Kutjevo Biolab"
+    mapId: auKutjevo
+    lorePrimer: AU14PrimerPlanetKutjevo
+    Allegiance: UA
+    camouflage: Desert
+    announcement: "A remote research outpost, Shepherd's Pride, has gone silent. The UNS Almayer is dispatched to investigate the mysterious circumstances."
+    platoonsGovfor:
+    - USCM
+    - WEYU
+    - RMC
+    - UPP
+    - HAZOPS
+    - ProdigySF
+    - VAIPO
+    defaultgovfor: USCM
+    defaultopfor: UPP
+    govforinship: true
+    opforinship: true
+    daycycleenabled: true
+    thirdparties:
+    - ProdigySurvLarge
+    - ProdigySurvMedium
+    - ProdigySurvSmall
+    - USArmy
+    - USArmyAlt
+    - USArmyAlt2
+    - USArmyTank
+    - WEYUSurvLarge
+    - WEYUSurvMedium
+    - WEYUSurvSmall
+    - CLFSurvsBig
+    - CLFSurvsMedium
+    - CLFSurvsSmall
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UACGLostTeam
+    - NSPAInvestigationParty
+    - LACNSniperteam
+    - RMCRRT
+    - USArmyArmored
+    - CMBInvestigationParty
+    - CMBInvestigationPartyAlt
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - ProfessorVonBandolier
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    threats:
+    - XenoThreat
+    - NeomorphsThreat
+#    - TribalsThreat
+#    - badBloodClanThreat
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetKutjevo
+  planetText: "Date 2181 - Kutjevo Biolab. A level three biohazard containment and research facility operated by the Weyland-Yutani Corporation."
