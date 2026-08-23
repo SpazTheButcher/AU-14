@@ -7,9 +7,6 @@
         - AUPlanetTrijent
         - AuPlanetKutjevo
         - AuPlanetShivasSnowball
-      threatVote:
-        candidates:
-          - DistressSignalXenoRoundGroup
       backupThreatVote:
         candidates:
           - DistressSignalXenoRoundGroup
@@ -19,10 +16,6 @@
         - AUPlanetLV327
         - CMUPlanetHopesRetreat
         - AuPlanetChances
-      threatVote:
-        candidates:
-          - DistressSignalXenoRoundGroup
-          - DistressSignalAbominationRoundGroup
       backupThreatVote:
         candidates:
           - DistressSignalXenoRoundGroup

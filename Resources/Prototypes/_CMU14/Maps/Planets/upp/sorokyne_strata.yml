@@ -54,13 +54,19 @@
     - WYPMCPartyAlt
     - abominationThirdParty
     threats:
-    - cultistThreat
     - XenoThreat
     - NeomorphsThreat
-    - wendigoThreat
- #   - TribalsThreat
     - abominationsThreatDistress
-#    - badBloodClanThreat
+    - apethreat
+    # - badBloodClanThreat
+    - XenoThreatCF
+    - NeomorphsThreatCF
+    - cultistThreat
+    # - cultistThreatOnMarker # no cultcf markers
+    - wendigoThreat
+    - abominationsThreat
+    - TribalsThreat
+    - apethreatcf
     jobScalingFof: DefaultGovforOpforScale
     jobScalingIns: DefaultInsurgencyScale
 

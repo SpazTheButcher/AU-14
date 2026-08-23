@@ -58,9 +58,17 @@
     threats:
     - XenoThreat
     - NeomorphsThreat
-    - cultistThreatOnMarker
-    - abominationsThreat
     - abominationsThreatDistress
+    - apethreat
+    # - badBloodClanThreat
+    - XenoThreatCF
+    - NeomorphsThreatCF
+    - cultistThreat
+    - cultistThreatOnMarker
+    - wendigoThreat
+    - abominationsThreat
+    - TribalsThreat
+    - apethreatcf
     joboverrides:
       AU14JobLEOLeaderBase: AU14JobCivilianNSPAInspector
       AU14JobLEOBase: AU14JobCivilianNSPAConstable

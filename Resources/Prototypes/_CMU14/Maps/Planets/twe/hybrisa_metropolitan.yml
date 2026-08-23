@@ -25,11 +25,20 @@
     govforinship: false
     opforinship: true
     daycycleenabled: false
-    threats:
-    - XenoThreatCF
-    - NeomorphsThreatCF
-    - wendigoThreat
-    - abominationsThreatDistress
+    # threats:
+    # - XenoThreat # map has no threat spawn markers
+    # - NeomorphsThreat # map has no threat spawn markers
+    # - abominationsThreatDistress # no xenocf markers
+    # - apethreat # map has no threat spawn markers
+    # - badBloodClanThreat
+    # - XenoThreatCF # no xenocf markers
+    # - NeomorphsThreatCF # no xenocf markers
+    # - cultistThreat # map has no threat spawn markers
+    # - cultistThreatOnMarker # no cultcf markers
+    # - wendigoThreat # map has no threat spawn markers
+    # - abominationsThreat # no xenocf markers
+    # - TribalsThreat # map has no threat spawn markers
+    # - apethreatcf # map has no threat spawn markers
     thirdparties:
     - IASFSurvLarge
     - IASFSurvMedium

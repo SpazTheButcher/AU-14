@@ -61,16 +61,19 @@
     - MissionariesParty
     - MissionariesPartyMedium
     threats:
-    - cultistThreat
     - XenoThreat
-    - XenoThreatCF
     - NeomorphsThreat
+    - abominationsThreatDistress
+    - apethreat
+    # - badBloodClanThreat
+    - XenoThreatCF
     - NeomorphsThreatCF
+    - cultistThreat
+    # - cultistThreatOnMarker # no cultcf markers
     - wendigoThreat
     - abominationsThreat
-    - abominationsThreatDistress
-#    - badBloodClanThreat
-    # Shepherds' Pride exposes CWPS Ranger as its map-specific LEO role.
+    - TribalsThreat
+    - apethreatcf
     joboverrides:
       AU14JobLEOLeaderBase: AU14JobCivilianCWPSRanger
       AU14JobLEOBase: AU14JobCivilianCWPSRanger
