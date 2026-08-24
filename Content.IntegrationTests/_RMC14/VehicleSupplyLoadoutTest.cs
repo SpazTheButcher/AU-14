@@ -8,6 +8,7 @@ using Content.Shared.UserInterface;
 using NUnit.Framework;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Timing; // CMU14
 
 namespace Content.IntegrationTests._RMC14;
 
@@ -375,6 +376,73 @@ public sealed class VehicleSupplyLoadoutTest
             var available = state.Available.Select(v => v.Id).ToHashSet();
             Assert.That(available, Does.Not.Contain("VehicleSPPVanLogistics"), "the ordered van stays claimed");
             Assert.That(available, Does.Not.Contain("VehicleSPPVanArmed"), "group mates stay hidden");
+        });
+
+        await pair.CleanReturnAsync();
+    }
+
+    // CMU14 method: an additional grant must actually spawn when the same prototype was already deployed
+    [Test]
+    public async Task AdditionalTechGrantSpawnsWhenSameVehicleAlreadyOrdered()
+    {
+        await using var pair = await PoolManager.GetServerClient();
+        var server = pair.Server;
+        var map = await pair.CreateTestMap();
+        EntityUid consoleUid = default;
+        EntityUid lift = default;
+
+        await server.WaitPost(() =>
+        {
+            var entMan = server.EntMan;
+            consoleUid = entMan.SpawnEntity(ConsoleId, map.GridCoords);
+            lift = entMan.SpawnEntity("VehicleLift", map.GridCoords);
+        });
+
+        await pair.RunTicksSync(5);
+
+        await server.WaitPost(() =>
+        {
+            var entMan = server.EntMan;
+
+            // the round's seeded humvee was deployed earlier
+            var liftComp = entMan.GetComponent<VehicleSupplyLiftComponent>(lift);
+            liftComp.Ordered.Add("vehiclehumvee");
+            liftComp.OrderedGroups["vehicle-support"] = "vehiclehumvee";
+            liftComp.Deployed.Add("vehiclehumvee");
+            liftComp.Stored.Remove("vehiclehumvee");
+            entMan.Dirty(lift, liftComp);
+
+            entMan.EventBus.RaiseEvent(EventSource.Local, new TechUnlockVehicleEvent("VehicleHumvee") // CMU14
+            {
+                Additional = true,
+            });
+        });
+
+        await pair.RunTicksSync(5);
+
+        // finish the raise as the console's lift toggle does: stock consumed, vehicle queued
+        await server.WaitPost(() =>
+        {
+            var entMan = server.EntMan;
+            var timing = server.ResolveDependency<IGameTiming>();
+
+            var liftComp = entMan.GetComponent<VehicleSupplyLiftComponent>(lift);
+            Assert.That(liftComp.Stored.TryGetValue("vehiclehumvee", out var stored) && stored == 1, Is.True);
+            liftComp.Stored.Remove("vehiclehumvee");
+            liftComp.PendingVehicle = "VehicleHumvee";
+            liftComp.PendingVehicleGroup = "vehicle-support";
+            liftComp.Mode = VehicleSupplyLiftMode.Raising;
+            liftComp.ToggledAt = timing.CurTime - TimeSpan.FromSeconds(15);
+            entMan.Dirty(lift, liftComp);
+        });
+
+        await pair.RunTicksSync(2);
+
+        await server.WaitAssertion(() =>
+        {
+            var liftComp = server.EntMan.GetComponent<VehicleSupplyLiftComponent>(lift);
+            Assert.That(liftComp.ActiveVehicleId, Is.EqualTo("VehicleHumvee"), "the grant must actually spawn");
+            Assert.That(CountPrototype(server.EntMan, "VehicleHumvee"), Is.EqualTo(1));
         });
 
         await pair.CleanReturnAsync();
