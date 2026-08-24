@@ -561,6 +561,7 @@
     - CMCartridgeRifle10x24mm
   - type: CartridgeAmmo
     proto: BulletRifle10x24mm
+    deleteOnSpawn: true # CMU14: caseless ammo, no casing to eject
 
 - type: entity
   parent: CMCartridgeRifle10x24mm

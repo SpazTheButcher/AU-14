@@ -126,6 +126,7 @@
     - RMCCartridgeSniper10x99mmAntiMateriel
   - type: CartridgeAmmo
     proto: RMCBulletSniper10x99mmAntiMateriel
+    deleteOnSpawn: true # CMU14: caseless ammo, no casing to eject
 
 - type: entity
   parent: CMBulletSniper10x28mm
