@@ -33,3 +33,22 @@
     access: [ [ "AU14AccessOpforCommand" ] ]
   - type: TacticalMapComputer
     faction: opfor
+
+# We-Yu: no dedicated WEYU map faction exists; WY PMC players are tracked in
+# the govfor bucket (their jobs are GOVFOR-side), so the table pins govfor and
+# only swaps access to We-Yu corporate.
+- type: entity
+  parent: RMCTacticalMapTableGovfor
+  id: RMCTacticalMapTableWeYu
+  suffix: We-Yu
+  components:
+  - type: AccessReader
+    access: [ [ "AU14AccessCorporateWEYULiaison" ], [ "AU14AccessCorporateWEYU" ] ]
+
+- type: entity
+  parent: RMCTacticalMapTableLargeGovfor
+  id: RMCTacticalMapTableLargeWeYu
+  suffix: We-Yu, Large
+  components:
+  - type: AccessReader
+    access: [ [ "AU14AccessCorporateWEYULiaison" ], [ "AU14AccessCorporateWEYU" ] ]
