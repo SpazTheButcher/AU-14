@@ -119,14 +119,11 @@ public sealed partial class RMCPlanetMapPrototypeComponent : Component
     [DataField("lorePrimer")]
     public ProtoId<LorePrimerPrototype>? LorePrimer;
 
-    [DataField("faction")]
-    public string? Faction  = String.Empty;
-
     /// <summary>
     /// The allegiance associated with this colony.
     /// Characters with a matching allegiance will preferentially spawn here.
     /// </summary>
-    [DataField("Allegiance"), AutoNetworkedField]
+    [DataField, AutoNetworkedField]
     public ProtoId<AllegiancePrototype>? Allegiance;
 
     [DataField("govforfighters")]

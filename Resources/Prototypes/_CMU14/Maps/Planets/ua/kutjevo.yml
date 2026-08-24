@@ -1,0 +1,76 @@
+- type: entity
+  id: AuPlanetKutjevo
+  name: Kutjevo Biolab
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Kutjevo Biolab"
+    mapId: auKutjevo
+    lorePrimer: AU14PrimerPlanetKutjevo
+    allegiance: UA
+    camouflage: Desert
+    announcement: "Kutjevo Biolab, a Weyland-Yutani level three biohazard containment and research facility, has gone silent. A response force has been dispatched to investigate the blackout."
+    platoonsGovfor:
+    - USCM
+    - WEYU
+    - RMC
+    - CMBCIU
+    - HAZOPS
+    - ProdigySF
+    - VAIPO
+    platoonsOpfor:
+    - LACN
+    - UPP
+    defaultgovfor: USCM
+    defaultopfor: LACN
+    govforinship: true
+    opforinship: true
+    daycycleenabled: true
+    thirdparties:
+    - ProdigySurvLarge
+    - ProdigySurvMedium
+    - ProdigySurvSmall
+    - USArmy
+    - USArmyAlt
+    - USArmyAlt2
+    - USArmyTank
+    - WEYUSurvLarge
+    - WEYUSurvMedium
+    - WEYUSurvSmall
+    - CLFSurvsBig
+    - CLFSurvsMedium
+    - CLFSurvsSmall
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UACGLostTeam
+    - NSPAInvestigationParty
+    - LACNSniperteam
+    - RMCRRT
+    - USArmyArmored
+    - CMBInvestigationParty
+    - CMBInvestigationPartyAlt
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - ProfessorVonBandolier
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    threats:
+    - XenoThreat
+    - NeomorphsThreat
+    # - abominationsThreatDistress # no xenocf markers
+    - apethreat
+    # - badBloodClanThreat
+    # - XenoThreatCF # no xenocf markers
+    # - NeomorphsThreatCF # no xenocf markers
+    - cultistThreat
+    # - cultistThreatOnMarker # no cultcf markers
+    - wendigoThreat
+    # - abominationsThreat # no xenocf markers
+    - TribalsThreat
+    - apethreatcf
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetKutjevo
+  planetText: "Date 2181 - Kutjevo Biolab. A level three biohazard containment and research facility operated by the Weyland-Yutani Corporation."

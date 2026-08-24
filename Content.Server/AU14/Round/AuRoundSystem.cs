@@ -233,21 +233,13 @@ namespace Content.Server.AU14.Round
 
                 _selectedPreset = preset;
 
-                // Get planet list from either pool or direct list
-                List<string>? planetIds = null;
-                // Prefer pool if set, fallback to supportedPlanets
-                if (!string.IsNullOrEmpty(_selectedPreset.PlanetPool) &&
-                    _prototypeManager.TryIndex<GamePlanetPoolPrototype>(_selectedPreset.PlanetPool,
-                        out var poolProto))
-                {
-                    planetIds = poolProto.Planets;
-                }
-                else if (_selectedPreset.SupportedPlanets != null && _selectedPreset.SupportedPlanets.Count > 0)
-                {
-                    planetIds = _selectedPreset.SupportedPlanets;
-                }
+                // Preset-level planetPool replaces the list outright; pool ids inside supportedPlanets expand in place, in order
+                var planetIds = GamePlanetPoolPrototype.ExpandPlanetIds(
+                    _prototypeManager,
+                    _selectedPreset.PlanetPool,
+                    _selectedPreset.SupportedPlanets);
 
-                if (planetIds == null || planetIds.Count == 0)
+                if (planetIds.Count == 0)
                 {
                     _voteSequenceRunning = false;
                     return;

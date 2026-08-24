@@ -347,15 +347,7 @@ public sealed partial class CMUBalanceRatingSystem : EntitySystem
     }
 
     private IEnumerable<string> GetPresetPlanetIds(GamePresetPrototype preset)
-    {
-        if (!string.IsNullOrWhiteSpace(preset.PlanetPool) &&
-            _prototypes.TryIndex<GamePlanetPoolPrototype>(preset.PlanetPool, out var pool))
-        {
-            return pool.Planets;
-        }
-
-        return preset.SupportedPlanets ?? [];
-    }
+        => GamePlanetPoolPrototype.ExpandPlanetIds(_prototypes, preset.PlanetPool, preset.SupportedPlanets);
 
     private static string GetMapTargetName(
         EntityPrototype planetPrototype,

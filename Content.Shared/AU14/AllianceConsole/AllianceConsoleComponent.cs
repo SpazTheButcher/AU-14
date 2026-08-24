@@ -9,7 +9,8 @@ namespace Content.Shared.AU14.AllianceConsole;
 public sealed partial class AllianceConsoleComponent : Component
 {
     /// <summary>
-    /// The military faction this console belongs to ("govfor" or "opfor").
+    /// The faction this console belongs to: govfor/opfor, or an exact npcFaction
+    /// id for any other side ("AUWeYu").
     /// </summary>
     [DataField(required: true), AutoNetworkedField]
     public string Faction = string.Empty;
@@ -22,38 +23,21 @@ public sealed partial class AllianceConsoleComponent : Component
     public Dictionary<string, AllianceStatus> FactionStatuses = new();
 
     /// <summary>
-    /// The set of NPC faction IDs that can be configured via this console.
+    /// Factions whose status this console can set. Null = derived at MapInit from
+    /// npcFaction protos flagged allianceTarget (prefer), plus every military side for
+    /// non-army consoles, minus own faction.
     /// </summary>
     [DataField]
-    public HashSet<string> ControllableFactions = new()
-    {
-        "AUUpp",
-        "AUWeYu",
-        "CLF",
-        "AUColonist",
-        "AUBureau",
-        "CMUProdigy",
-        "CMUVAI",
-        "CMUTWE",
-        "CMUUSCMC",
-        "NSPA",
-        "AUUnitedAmericas",
-    };
+    public HashSet<string>? ControllableFactions;
 
-    public static readonly Dictionary<string, string> FactionDisplayNames = new()
+    public static NpcFactionPrototype? ResolveFaction(IPrototypeManager prototypes, string faction)
     {
-        { "AUUpp",             "UPP" },
-        { "AUWeYu",            "Weyland-Yutani" },
-        { "CLF",               "CLF" },
-        { "AUColonist",        "Colonists" },
-        { "AUBureau",          "Colonial Marshals" },
-        { "CMUProdigy",        "Prodigy Corporation" },
-        { "CMUVAI",            "VAI" },
-        { "CMUTWE",            "Three World Empire" },
-        { "CMUUSCMC",          "USCMC" },
-        { "NSPA",              "NSPA" },
-        { "AUUnitedAmericas",  "United Americas" },
-    };
+        return prototypes.TryIndex(faction, out NpcFactionPrototype? proto)
+            ? proto
+            : prototypes.TryIndex(faction.ToUpperInvariant(), out proto)
+                ? proto
+                : null;
+    }
 }
 
 [Serializable, NetSerializable]

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Content.Server._RMC14.Vehicle;
+using Content.Shared._RMC14.Intel.Tech; // CMU14
 using Content.Shared._RMC14.Vehicle.Supply;
 using Content.Shared.Containers.ItemSlots;
 using Content.Shared.UserInterface;
@@ -43,6 +44,10 @@ public sealed class VehicleSupplyLoadoutTest
 
             foreach (var entry in console!.Vehicles)
             {
+                // CMU14: tech-unlock entries (civ vehicles) ship without loadout categories
+                if (entry.Unlock != null)
+                    continue;
+
                 Assert.That(entry.LoadoutCategories, Is.Not.Empty, $"{entry.Vehicle.Id} has no loadout categories");
 
                 foreach (var cat in entry.LoadoutCategories)
@@ -244,7 +249,9 @@ public sealed class VehicleSupplyLoadoutTest
             Assert.That(prototypes.TryIndex<EntityPrototype>(ConsoleId, out var consoleProto), Is.True);
             Assert.That(consoleProto!.TryComp<VehicleSupplyConsoleComponent>(out var console, factory), Is.True);
 
-            vehicleIds = console!.Vehicles.Select(v => v.Vehicle.Id.ToLowerInvariant()).ToList();
+            vehicleIds = console!.Vehicles
+                .Where(v => v.Unlock == null) // CMU14: tech-gated civ vehicles are not seeded without their unlock
+                .Select(v => v.Vehicle.Id.ToLowerInvariant()).ToList();
 
             consoleUid = entMan.SpawnEntity(ConsoleId, map.GridCoords);
             lift = entMan.SpawnEntity("VehicleLift", map.GridCoords);
@@ -318,6 +325,61 @@ public sealed class VehicleSupplyLoadoutTest
         await pair.CleanReturnAsync();
     }
 
+    // CMU14 method: additional tech grants must stay claimable after the vehicle's group was claimed
+    [Test]
+    public async Task AdditionalTechGrantBypassesClaimedGroup()
+    {
+        await using var pair = await PoolManager.GetServerClient();
+        var server = pair.Server;
+        var map = await pair.CreateTestMap();
+        EntityUid consoleUid = default;
+        EntityUid lift = default;
+
+        await server.WaitPost(() =>
+        {
+            var entMan = server.EntMan;
+            consoleUid = entMan.SpawnEntity(ConsoleId, map.GridCoords);
+            lift = entMan.SpawnEntity("VehicleLift", map.GridCoords);
+        });
+
+        await pair.RunTicksSync(5);
+
+        await server.WaitPost(() =>
+        {
+            var entMan = server.EntMan;
+
+            // support group claimed by the logistics van, as in a live round
+            var liftComp = entMan.GetComponent<VehicleSupplyLiftComponent>(lift);
+            liftComp.Ordered.Add("vehiclesppvanlogistics");
+            liftComp.OrderedGroups["vehicle-support"] = "vehiclesppvanlogistics";
+            liftComp.Stored.Remove("vehiclesppvanlogistics");
+            entMan.Dirty(lift, liftComp);
+
+            entMan.EventBus.RaiseEvent(EventSource.Local, new TechUnlockVehicleEvent("VehicleHumvee") // CMU14
+            {
+                Additional = true,
+            });
+        });
+
+        await pair.RunTicksSync(5);
+
+        await server.WaitAssertion(() =>
+        {
+            var ui = server.EntMan.System<SharedUserInterfaceSystem>();
+            Assert.That(ui.TryGetUiState<VehicleSupplyBuiState>(consoleUid, VehicleSupplyUIKey.Key, out var state), Is.True);
+
+            var humvee = state!.Available.SingleOrDefault(v => v.Id == "VehicleHumvee");
+            Assert.That(humvee, Is.Not.Null);
+            Assert.That(humvee!.Count, Is.EqualTo(1), "dead base stock replaced by the grant");
+
+            var available = state.Available.Select(v => v.Id).ToHashSet();
+            Assert.That(available, Does.Not.Contain("VehicleSPPVanLogistics"), "the ordered van stays claimed");
+            Assert.That(available, Does.Not.Contain("VehicleSPPVanArmed"), "group mates stay hidden");
+        });
+
+        await pair.CleanReturnAsync();
+    }
+
     [Test]
     public async Task ConsoleBackfillsLiftWhenLiftInitializedFirst()
     {
@@ -339,7 +401,9 @@ public sealed class VehicleSupplyLoadoutTest
             Assert.That(prototypes.TryIndex<EntityPrototype>(ConsoleId, out var consoleProto), Is.True);
             Assert.That(consoleProto!.TryComp<VehicleSupplyConsoleComponent>(out var console, factory), Is.True);
 
-            vehicleIds = console!.Vehicles.Select(v => v.Vehicle.Id.ToLowerInvariant()).ToList();
+            vehicleIds = console!.Vehicles
+                .Where(v => v.Unlock == null) // CMU14: tech-gated civ vehicles are not seeded without their unlock
+                .Select(v => v.Vehicle.Id.ToLowerInvariant()).ToList();
             lift = entMan.SpawnEntity("VehicleLift", map.GridCoords);
         });
 

@@ -1235,6 +1235,10 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasColumnType("integer")
                         .HasColumnName("pref_unavailable");
 
+                    b.Property<string>("RankPreferences")
+                        .HasColumnType("text")
+                        .HasColumnName("rank_preferences");
+
                     b.Property<string>("RegulationFacialHairColor")
                         .HasColumnType("text")
                         .HasColumnName("regulation_facial_hair_color");

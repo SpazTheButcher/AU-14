@@ -61,6 +61,10 @@ public sealed partial class ObjectiveEntryControl : Control
                 statusText = "Uncaptured";
                 statusColor = Color.Orange;
                 break;
+            case ObjectiveStatusDisplay.Repeating:
+                statusText = "Repeating";
+                statusColor = Color.FromHex("#2196F3");
+                break;
             default:
                 statusText = "Uncompleted";
                 statusColor = Color.Gold;
@@ -82,7 +86,7 @@ public sealed partial class ObjectiveEntryControl : Control
             details.Append(text);
         }
 
-        if (obj.Repeating)
+        if (obj.Repeating && obj.Status != ObjectiveStatusDisplay.Repeating)
             AppendDetail("Repeating");
         if (!string.IsNullOrEmpty(obj.Progress))
             AppendDetail(obj.Progress);

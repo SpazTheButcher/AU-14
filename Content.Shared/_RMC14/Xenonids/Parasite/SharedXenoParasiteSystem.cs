@@ -70,7 +70,7 @@ public abstract partial class SharedXenoParasiteSystem : EntitySystem
     private static readonly string[] MajorPainSuffixes = ["chest", "breathing", "heart"];
     private static readonly string[] ThroatPainSuffixes = ["sore", "mucous"];
     private static readonly string[] MinorPainSuffixes = ["stomach", "chest"];
-    
+
     [Dependency] private SharedActionsSystem _action = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private SharedAppearanceSystem _appearance = default!;
@@ -840,6 +840,10 @@ public abstract partial class SharedXenoParasiteSystem : EntitySystem
             // spawn the larva
             if (infected.BurstAt <= time && infected.SpawnedLarva == null)
                 SpawnLarva((uid, infected), out _);
+
+            // CMU14: retry the infector's claim until burst
+            if (infected.InfectorWantsLarva && infected.SpawnedLarva is { } larva)
+                LarvaLinked((uid, infected), larva);
 
             // Stages
             // Percentage of how far along we out to burst time times the number of stages, truncated. You can't go back a stage once you've reached one

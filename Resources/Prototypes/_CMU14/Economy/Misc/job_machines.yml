@@ -180,6 +180,7 @@
       Pumpkin: 19
       #CottonBoll: TODO
       Cherry: 3
+      AUwood: 15
   - type: DisposalUnit
     whitelist:
       tags:
@@ -214,6 +215,7 @@
       - Pumpkin
       #- CottonBoll
       - Cherry
+      - AUwood
 
 - type: entity
   parent: RMCCommunicationsConsoleBase
@@ -253,6 +255,7 @@
     enabled: true
     channels:
     - colonyAlert
+  - type: ChatRepeatIgnoreSender
   - type: Sprite
     noRot: false
     drawdepth: SmallObjects

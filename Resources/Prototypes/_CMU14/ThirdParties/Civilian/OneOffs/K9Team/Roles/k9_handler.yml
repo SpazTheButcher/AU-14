@@ -3,6 +3,8 @@
   parent: CMJobBase
   id: AU14Jobk9handlerBase
   roundSide: ThirdParty
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   roundForce: K9
   roundRole: K9Handler
   roundComponents:

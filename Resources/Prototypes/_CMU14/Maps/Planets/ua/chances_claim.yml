@@ -1,0 +1,77 @@
+- type: entity
+  id: AuPlanetChances
+  name: Chances Claim
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Chances Claim"
+    mapId: auchances
+    lorePrimer: AU14PrimerPlanetChances
+    allegiance: UA
+    camouflage: Urban
+    announcement: "A crime wave has engulfed Chances Claim, a Weyland-Yutani administered mining colony on LV-522. A response force has been dispatched to restore order."
+    platoonsGovfor:
+    - USCM
+    - WEYU
+    - VAIPO
+    - RMC
+    - CMBCIU
+    - HAZOPS
+    - ProdigySF
+    platoonsOpfor:
+    - LACN
+    - UPP
+    defaultgovfor: RMC
+    defaultopfor: UPP
+    govforinship: true
+    opforinship: true
+    daycycleenabled: false
+    thirdparties:
+    - ProdigySurvLarge
+    - ProdigySurvMedium
+    - ProdigySurvSmall
+    - USArmy
+    - USArmyAlt
+    - USArmyAlt2
+    - USArmyTank
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UACGLostTeam
+    - NSPAInvestigationParty
+    - LACNSniperteam
+    - RMCRRT
+    - USArmyArmored
+    - CMBInvestigationParty
+    - CMBInvestigationPartyAlt
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - ProfessorVonBandolier
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    threats:
+    - XenoThreat
+    - NeomorphsThreat
+    - abominationsThreatDistress
+    - apethreat
+    # - badBloodClanThreat
+    - XenoThreatCF
+    - NeomorphsThreatCF
+    - cultistThreat
+    - cultistThreatOnMarker
+    - wendigoThreat
+    - abominationsThreat
+    - TribalsThreat
+    - apethreatcf
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+    joboverrides:
+      AU14JobLEOLeaderBase: AU14JobCivilianColonySecurityLeader
+      AU14JobLEOBase: AU14JobCivilianColonySecurityOfficer
+      AU14JobCivilianColonyAdministrator: AU14JobCivilianCorporateAdministrator
+
+- type: lorePrimer
+  id: AU14PrimerPlanetChances
+  planetText: "Date 2182 - Chances Claim, a Weyland-Yutani Administrated Frontier Mining Colony entangled in the middle of a horrible crime wave."

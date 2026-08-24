@@ -2,6 +2,8 @@
   parent: AU14JobFORECONSniperBase
   id: AU14FORECONKillTeamSniper
   roundSide: ThirdParty
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   roundForce: FORECON
   roundRole: AU14FORECONKillTeamSniper
   roundComponents:

@@ -2,12 +2,11 @@
   parent: AU14JobLEOBase
   id: AU14JobParoleeReleaseCMBDeputyJob
   roundSide: ThirdParty
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   roundForce: CMB
   roundRole: ParoleeReleaseCMBDeputyJob
   roundComponents:
-  - type: NpcFactionMember
-    factions:
-    - AUBureau
   - type: Skills
     skills:
       RMCSkillCqc: 2

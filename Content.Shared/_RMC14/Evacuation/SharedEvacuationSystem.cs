@@ -121,7 +121,7 @@ public abstract partial class SharedEvacuationSystem : EntitySystem
         var doors = EntityQueryEnumerator<EvacuationDoorComponent, TransformComponent>();
         while (doors.MoveNext(out var uid, out var door, out var xform))
         {
-            if (!IsSameShip(xform.MapUid, ev.Map))
+            if (!_zLevels.IsSameZNetwork(xform.MapUid, ev.Map)) // CMU14
                 continue;
 
             door.Locked = false;
@@ -137,7 +137,7 @@ public abstract partial class SharedEvacuationSystem : EntitySystem
         var lifeboats = EntityQueryEnumerator<LifeboatComputerComponent, TransformComponent>();
         while (lifeboats.MoveNext(out var uid, out var computer, out var xform))
         {
-            if (!IsSameShip(xform.MapUid, ev.Map))
+            if (!_zLevels.IsSameZNetwork(xform.MapUid, ev.Map)) // CMU14
                 continue;
 
             computer.Enabled = true;
@@ -147,7 +147,7 @@ public abstract partial class SharedEvacuationSystem : EntitySystem
         var evacuation = EntityQueryEnumerator<EvacuationComputerComponent, TransformComponent>();
         while (evacuation.MoveNext(out var computerId, out var computer, out var xform))
         {
-            if (!IsSameShip(xform.MapUid, ev.Map))
+            if (!_zLevels.IsSameZNetwork(xform.MapUid, ev.Map)) // CMU14
                 continue;
 
             if (computer.Mode == EvacuationComputerMode.Disabled)
@@ -164,7 +164,7 @@ public abstract partial class SharedEvacuationSystem : EntitySystem
         var lifeboats = EntityQueryEnumerator<LifeboatComputerComponent, TransformComponent>();
         while (lifeboats.MoveNext(out var uid, out var computer, out var xform))
         {
-            if (!IsSameShip(xform.MapUid, ev.Map))
+            if (!_zLevels.IsSameZNetwork(xform.MapUid, ev.Map)) // CMU14
                 continue;
 
             computer.Enabled = false;
@@ -178,7 +178,7 @@ public abstract partial class SharedEvacuationSystem : EntitySystem
         var evacuation = EntityQueryEnumerator<EvacuationComputerComponent, TransformComponent>();
         while (evacuation.MoveNext(out var computerId, out var computer, out var xform))
         {
-            if (!IsSameShip(xform.MapUid, ev.Map))
+            if (!_zLevels.IsSameZNetwork(xform.MapUid, ev.Map)) // CMU14
                 continue;
 
             if (computer.Mode == EvacuationComputerMode.Disabled)
@@ -416,25 +416,26 @@ public abstract partial class SharedEvacuationSystem : EntitySystem
     {
     }
 
-    private bool IsSameShip(EntityUid? mapUid, EntityUid primaryMapUid)
-    {
-        if (mapUid == null)
-            return false;
+    // CMU14: superseded by CMUSharedZLevelsSystem.IsSameZNetwork
+    // private bool IsSameShip(EntityUid? mapUid, EntityUid primaryMapUid)
+    // {
+    //     if (mapUid == null)
+    //         return false;
 
-        // Single level (legacy) ships
-        if (mapUid == primaryMapUid)
-            return true;
+    //     // Single level (legacy) ships
+    //     if (mapUid == primaryMapUid)
+    //         return true;
 
-        return _zLevels.TryGetZNetwork(primaryMapUid, out var network)
-            && network.Value.Comp.ZLevels.Values.Any(u => u == mapUid);
-    }
+    //     return _zLevels.TryGetZNetwork(primaryMapUid, out var network)
+    //         && network.Value.Comp.ZLevels.Values.Any(u => u == mapUid);
+    // }
 
     private void SetPumpAppearance(EntityUid mapUid, EvacuationPumpVisuals visual)
     {
         var pumps = EntityQueryEnumerator<EvacuationPumpComponent, TransformComponent>();
         while (pumps.MoveNext(out var uid, out _, out var xform))
         {
-            if (!IsSameShip(xform.MapUid, mapUid))
+            if (!_zLevels.IsSameZNetwork(xform.MapUid, mapUid)) // CMU14
                 continue;
 
             _appearance.SetData(uid, EvacuationPumpLayers.Layer, visual);
@@ -446,7 +447,7 @@ public abstract partial class SharedEvacuationSystem : EntitySystem
         var pumps = EntityQueryEnumerator<EvacuationPumpComponent, TransformComponent>();
         while (pumps.MoveNext(out var uid, out var pump, out var xform))
         {
-            if (!IsSameShip(xform.MapUid, mapUid))
+            if (!_zLevels.IsSameZNetwork(xform.MapUid, mapUid)) // CMU14
                 continue;
 
             _ambientSound.SetSound(uid, pump.ActiveSound);
@@ -462,11 +463,7 @@ public abstract partial class SharedEvacuationSystem : EntitySystem
         if (entXform.MapUid is not { } targetMap)
             yield break;
 
-        var searchMaps = new HashSet<EntityUid> { targetMap };
-        if (_zLevels.TryGetZNetwork(targetMap, out var network))
-            foreach (var (_, netMapUid) in network.Value.Comp.ZLevels)
-                if (netMapUid.HasValue)
-                    searchMaps.Add(netMapUid.Value);
+        var searchMaps = new HashSet<EntityUid>(_zLevels.GetAllNetworkMaps(targetMap)); // CMU14
 
         var seen = new HashSet<EntityUid>();
         var gridQuery = EntityQueryEnumerator<AreaGridComponent, TransformComponent>();

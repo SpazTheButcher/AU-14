@@ -1,0 +1,77 @@
+- type: entity
+  id: AuPlanetShivasSnowball
+  name: Shivas' Snowball
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Shivas' Snowball"
+    mapId: auShivas
+    lorePrimer: AU14PrimerPlanetShivasSnowball
+    allegiance: UA
+    camouflage: Snow
+    announcement: "The UA mining and research colony on 'Shiva's Snowball' has gone silent. A response force has been dispatched to investigate."
+    platoonsGovfor:
+    - USCM
+    - WEYU
+    - VAIPO
+    - RMC
+    - CMBCIU
+    - HAZOPS
+    platoonsOpfor:
+    - LACN
+    - UPP
+    - ProdigySF
+    defaultgovfor: USCM
+    defaultopfor: UPP
+    govforinship: true
+    opforinship: true
+    daycycleenabled: true
+    thirdparties:
+    - ProdigySurvLarge
+    - ProdigySurvMedium
+    - ProdigySurvSmall
+    - USArmy
+    - USArmyAlt
+    - USArmyAlt2
+    - USArmyTank
+    - WEYUSurvLarge
+    - WEYUSurvMedium
+    - WEYUSurvSmall
+    - CLFSurvsBig
+    - CLFSurvsMedium
+    - CLFSurvsSmall
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UACGLostTeam
+    - NSPAInvestigationParty
+    - LACNSniperteam
+    - RMCRRT
+    - USArmyArmored
+    - cultistThirdParty
+    - CMBInvestigationParty
+    - CMBInvestigationPartyAlt
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - ProfessorVonBandolier
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    threats:
+    - XenoThreat
+    - NeomorphsThreat
+    # - abominationsThreatDistress # no xenocf markers
+    - apethreat
+    # - badBloodClanThreat
+    # - XenoThreatCF # no xenocf markers
+    # - NeomorphsThreatCF # no xenocf markers
+    - cultistThreat
+    # - cultistThreatOnMarker # no cultcf markers
+    - wendigoThreat
+    # - abominationsThreat # no xenocf markers
+    - TribalsThreat
+    - apethreatcf
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetShivasSnowball
+  planetText: "Date 2177 - Shivas' Snowball. A United Americas mining and research colony."

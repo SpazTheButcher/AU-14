@@ -2,12 +2,11 @@
   parent: CMJobBase
   id: AU14JobRedCrossCMO
   roundSide: ThirdParty
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   roundForce: ICRC
   roundRole: RedCrossCMO
   roundComponents:
-  - type: NpcFactionMember
-    factions:
-    - AUBureau
   - type: Skills
     skills:
       RMCSkillFireman: 4

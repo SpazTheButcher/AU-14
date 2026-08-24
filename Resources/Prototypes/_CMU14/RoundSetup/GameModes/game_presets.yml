@@ -1,64 +1,20 @@
 - type: gamePreset
-  id: ForceOnForce
+  id: ColonyFall
   alias:
-  - forceonforce
-  name: Force on Force
+  - colonyfall
+  name: Colony Fall
   showInVote: true
-  description: Two units face each other in combat.
-  minPlayers: 500
-  requiresOpforVote: true
-  requiresGovforVote: true
+  maxPlayers: 60
+  description: Live in an offworld colony as it falls into chaos.
+  burrowedLarvaEnabled: false
   supportedPlanets:
-  #- AUPlanetGixensCaverns Rout of rotation till fixed - eg
-  #- AUPlanetShepherdsPride
-  #- AUPlanetFlight
-  - AUPlanetLV759
-  - AUPlanetLV327
-  - AUPlanetCorsatStation
-  - AUPlanetSorokyne
-  - AUPlanetStableGarrison
-  - CMUPlanetStableGarrisonRedux
-  - AUPlanetTrijent
-  - CMUPlanetLament
-  - CMUPlanetHopesRetreat
+  - SharedPlanetPool
+# - AuPlanetChances #
+# - AUPlanetSorokyne #
+# - AUPlanetLV624 # Green Hell # missing threat spawns, scenario fails
   rules:
   - AuVoteRule
-  - PlatoonSpawn
-  - RemoveAllJobs
-  - AddGovfor
-  - AddOpfor
-
-- type: gamePreset
-  id: Insurgency
-  alias:
-  - insurgency
-  name: Insurgency
-  showInVote: true
-  description: Insurgency mode
-  minPlayers: 35
-  requiresGovforVote: true
-  thirdPartyAutoSpawn: true
-  thirdPartyInterval: 3600
-  thirdPartyRatio: 0.15
-  maxThirdParties: 3
-  supportedPlanets:
-    - AUPlanetShepherdsPride
-   # - AUPlanetLV327
-    - CMUPlanetLament
-    - AUPlanetStableGarrison
-    - CMUPlanetStableGarrisonRedux
-    #- AUPlanetLV747
-    #- AUPlanetSorokyne
-    #- AuPlanetChances
-    - CMUPlanetHopesRetreat
-  rules:
-  - AuVoteRule
-  - PlatoonSpawn
-  - AddGovfor
-  - AddGovforCorrespondent
-  - AddClf
   - ColonyAntags
-  - InsWinConditionsRule
 
 - type: gamePreset
   id: DistressSignal
@@ -69,17 +25,18 @@
   description: Investigate a mysterious distress signal as government forces.
   requiresGovforVote: true
   supportedPlanets:
-#  - AUPlanetLV747
-#  - AUPlanetShepherdsPride
-#  - AUPlanetSorokyne
-#  - AUPlanetCorsatStation
-  - AUPlanetTrijent
-#  - AuPlanetFiorina
-#  - AuPlanetKutjevo
-  - AuPlanetShivasSnowball
-  - AUPlanetLV327
-#  - AuPlanetChances
+  - CMUPlanetStableGarrisonRedux # Govfor can hunker-down in Garrison; can be rushed by threats
+  - AUPlanetShepherdsPride
   - CMUPlanetHopesRetreat
+  - AUPlanetLV747 # Solaris Gulch
+  - AUPlanetLV759 # Hybrisa Metro
+  - AUPlanetLV327 # Port Nereid
+  - AUPlanetSorokyne
+  - AUPlanetCorsatStation
+  - AUPlanetTrijent
+  - AuPlanetKutjevo
+  - AuPlanetShivasSnowball
+  - AuPlanetChances
   rules:
   - AuVoteRule
   - PlatoonSpawn
@@ -88,25 +45,58 @@
   - AddGovforCorrespondent
 
 - type: gamePreset
-  id: ColonyFall
+  id: Insurgency
   alias:
-  - colonyfall
-  name: Colony Fall
+  - insurgency
+  name: Insurgency
   showInVote: true
-  maxPlayers: 60
-  description: Live in an offworld colony as it falls into chaos.
+  description: Insurgency mode
+  minPlayers: 35
+  burrowedLarvaEnabled: false
+  requiresGovforVote: true
+  thirdPartyAutoSpawn: true
+  thirdPartyInterval: 3600
+  thirdPartyRatio: 0.15
+  maxThirdParties: 3
   supportedPlanets:
-    - AUPlanetShepherdsPride
-#    - AUPlanetLV327
-    - AUPlanetStableGarrison
-    - CMUPlanetStableGarrisonRedux
-    - CMUPlanetLament
-#    - AUPlanetSorokyne
-#    - AuPlanetChances
-    - CMUPlanetHopesRetreat
+  - SharedPlanetPool
+  - AUPlanetSorokyne #
+  - AuPlanetChances #
+  - AUPlanetLV624 # Green Hell
   rules:
   - AuVoteRule
+  - PlatoonSpawn
+  - AddGovfor
+  - AddGovforCorrespondent
+  - AddClf
   - ColonyAntags
+  - InsWinConditionsRule
+
+- type: gamePreset
+  id: ForceOnForce
+  alias:
+  - forceonforce
+  name: Force on Force
+  showInVote: true
+  description: Two units face each other in combat.
+  minPlayers: 500
+  requiresOpforVote: true
+  requiresGovforVote: true
+  supportedPlanets:
+  - SharedPlanetPool
+  - AUPlanetGixensCaverns
+  - AUPlanetFlight
+  - AUPlanetLV759 # Hybrisa Metro
+  - AUPlanetCorsatStation
+  - AUPlanetSorokyne
+  - AUPlanetTrijent
+  - AUPlanetLV624 # Green Hell
+  rules:
+  - AuVoteRule
+  - PlatoonSpawn
+  - RemoveAllJobs
+  - AddGovfor
+  - AddOpfor
 
 - type: gamePreset
   id: Jailbreak
@@ -117,6 +107,8 @@
   description: Jailbreak mode
   rules:
   - AuVoteRule
+  supportedPlanets:
+  - AuPlanetFiorina
 
 - type: gamePreset
   id: Prometheus
@@ -137,3 +129,5 @@
   description: Criminal mode
   rules:
   - AuVoteRule
+  supportedPlanets:
+  - AuPlanetFiorina

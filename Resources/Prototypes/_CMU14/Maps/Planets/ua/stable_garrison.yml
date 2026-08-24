@@ -1,0 +1,82 @@
+- type: entity
+  id: AUPlanetStableGarrison
+  name: Stable Garrison
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Stable Garrison"
+    mapId: stablegarrison
+    lorePrimer: AU14PrimerPlanetStableGarrison
+    allegiance: UA
+    camouflage: Desert
+    announcement: "The joint military base and frontier settlement of Stable Garrison has stopped responding. A response force has been dispatched to re-establish contact."
+    platoonsGovfor:
+    - LACN
+    - USCM
+    - CMBCIU
+    - RMC
+    - HAZOPS
+    - ProdigySF
+    - VAIPO
+    platoonsOpfor:
+    - UPP
+    - WEYU
+    defaultgovfor: USCM
+    defaultopfor: UPP
+    govforinship: false
+    opforinship: true
+    daycycleenabled: true
+    thirdparties:
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UPPGROM
+    - UPPGROMAlt
+    - UPPGROMAlt2
+    - USArmyTank
+    - UACGLostTeam
+    - LACNSniperteam
+    - cultistThirdParty
+    - CMBInvestigationParty
+    - CMBInvestigationPartyAlt
+    - cultistThirdPartyNoQueen
+    - ProfessorVonBandolier
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    - tribalThirdParty
+    - DrugSmuggler
+    - CMBParoleeTransport
+    - CMBParoleeTransportBig
+    - ForeignCrimeGang
+    - MigratingCivs
+    - MigratingCivsMedium
+    - MigratingCivsLarge
+    - MissionariesParty
+    - MissionariesPartyMedium
+    threats:
+    - XenoThreat
+    - NeomorphsThreat
+    - abominationsThreatDistress
+    - apethreat
+    # - badBloodClanThreat
+    - XenoThreatCF
+    - NeomorphsThreatCF
+    - cultistThreat
+    # - cultistThreatOnMarker # no cultcf markers
+    - wendigoThreat
+    - abominationsThreat
+    - TribalsThreat
+    - apethreatcf
+    joboverrides:
+      AU14JobLEOLeaderBase: AU14JobCivilianCMBMarshal
+      AU14JobLEOBase: AU14JobCivilianCMBDeputy
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetStableGarrison
+  planetText: "Date 2183 - Stable Garrison, a UA controlled frontier world with a joint base and sizeable urban community."

@@ -24217,7 +24217,7 @@ entities:
       rot: 3.141592653589793 rad
       pos: -15.5,-14.5
       parent: 1
-- proto: RMCDeployerSentry
+- proto: VMarkerShipSentryDeployer
   entities:
   - uid: 3785
     components:

@@ -1,4 +1,4 @@
-﻿- type: entity
+- type: entity
   id: ActionTogglePropCalling
   parent: BaseToggleAction
   name: Toggle Prop Calling
@@ -8,6 +8,7 @@
     checkCanInteract: false
     icon: { sprite: _RMC14/Interface/prop_calling.rsi, state: RMC_observeraction_not_joining }
     iconOn: { sprite: _RMC14/Interface/prop_calling.rsi, state: RMC_observeraction_joining }
+    autoPopulate: false # CMU14
 
 - type: entity
   id: ActionCallProps
@@ -19,5 +20,6 @@
     icon:
       sprite: _RMC14/Interface/prop_calling.rsi
       state: RMC_observeraction_call_props
+    autoPopulate: false # CMU14
   - type: InstantAction
     event: !type:CallOverPropsEvent

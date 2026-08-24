@@ -1,0 +1,78 @@
+- type: entity
+  id: CMUPlanetStableGarrisonRedux
+  name: Stable Garrison Redux
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Stable Garrison Redux"
+    mapId: StableGarrisonRedux
+    lorePrimer: AU14PrimerPlanetStableGarrison
+    allegiance: UA
+    camouflage: Desert
+    announcement: "Stable Garrison, a joint UA base and its surrounding settlement, has gone dark. A response force has been dispatched to re-establish contact."
+    platoonsGovfor:
+    - LACN
+    - WEYU
+    - USCM
+    - CMBCIU
+    - RMC
+    - VAIPO
+    platoonsOpfor:
+    - UPP
+    - ProdigySF
+    - HAZOPS
+    defaultgovfor: USCM
+    defaultopfor: ProdigySF
+    govforinship: false
+    opforinship: true
+    daycycleenabled: true
+    thirdparties:
+    - ICRCReliefParty
+    - TimeSharesSalesman
+    - UPPGROM
+    - UPPGROMAlt
+    - UPPGROMAlt2
+    - USArmyTank
+    - UACGLostTeam
+    - LACNSniperteam
+    - cultistThirdParty
+    - CMBInvestigationParty
+    - CMBInvestigationPartyAlt
+    - cultistThirdPartyNoQueen
+    - ProfessorVonBandolier
+    - XenoParasiteRunnerParty
+    - ApeThirdParty
+    - IPIE
+    - IPIESynth
+    - WYHT
+    - WYPMCParty
+    - WYPMCPartyAlt
+    - abominationThirdParty
+    - tribalThirdParty
+    - DrugSmuggler
+    - CMBParoleeTransport
+    - CMBParoleeTransportBig
+    - ForeignCrimeGang
+    - MigratingCivs
+    - MigratingCivsMedium
+    - MigratingCivsLarge
+    - MissionariesParty
+    - MissionariesPartyMedium
+    threats:
+    - XenoThreat
+    - NeomorphsThreat
+    - abominationsThreatDistress
+    - apethreat
+    # - badBloodClanThreat
+    - XenoThreatCF
+    - NeomorphsThreatCF
+    - cultistThreat
+    - cultistThreatOnMarker
+    - wendigoThreat
+    - abominationsThreat
+    - TribalsThreat
+    - apethreatcf
+    joboverrides:
+      AU14JobLEOLeaderBase: AU14JobCivilianCMBMarshal
+      AU14JobLEOBase: AU14JobCivilianCMBDeputy
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale

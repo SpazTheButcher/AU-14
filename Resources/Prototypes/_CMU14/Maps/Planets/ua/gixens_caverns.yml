@@ -1,0 +1,47 @@
+- type: entity
+  id: AUPlanetGixensCaverns
+  name: Gixens Caverns
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Gixens Caverns"
+    mapId: GixensCaverns
+    lorePrimer: AU14PrimerPlanetGixensCaverns
+    allegiance: UA
+    camouflage: Desert
+    announcement: "All contact has been lost with the subterranean settlement of Gixens Caverns. A response force has been dispatched into the depths."
+    platoonsGovfor:
+    - LACN
+    - ProdigySF
+    - HAZOPS
+    - VAIPO
+    - RMC
+    platoonsOpfor:
+    - USCM
+    - WEYU
+    - CMBCIU
+    - UPP
+    defaultgovfor: HAZOPS
+    defaultopfor: CMBCIU
+    govforinship: true
+    opforinship: true
+    daycycleenabled: false
+    threats:
+    - XenoThreat
+    - NeomorphsThreat
+    # - abominationsThreatDistress # no xenocf markers
+    - apethreat
+    # - badBloodClanThreat
+    # - XenoThreatCF # no xenocf markers
+    # - NeomorphsThreatCF # no xenocf markers
+    - cultistThreat
+    # - cultistThreatOnMarker # no cultcf markers
+    - wendigoThreat
+    # - abominationsThreat # no xenocf markers
+    - TribalsThreat
+    - apethreatcf
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetGixensCaverns
+  planetText: "Date 2181 - Gixens Caverns."

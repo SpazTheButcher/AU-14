@@ -1488,3 +1488,23 @@
   id: AU14WorkingJoeToSleepPerchanceToDreamVar1
   files:
   - /Audio/_AU14/WorkingJoe/to_sleep_perchance_to_dream_var1.ogg
+
+- type: soundCollection
+  id: AU14WorkingJoeSynthRegistered
+  files: 
+  - /Audio/_AU14/WorkingJoe/synth_registered.ogg
+
+- type: soundCollection
+  id: AU14WorkingJoeSynthWeYRegistered
+  files: 
+  - /Audio/_AU14/WorkingJoe/synth_registered_wy.ogg
+
+- type: soundCollection
+  id: AU14WorkingJoeRegistrationComplete
+  files:
+  - /Audio/_AU14/WorkingJoe/registration.ogg
+
+- type: soundCollection
+  id: AU14WorkingJoeLogAndStoreRecording
+  files:
+  - /Audio/_AU14/WorkingJoe/seegson_access.ogg

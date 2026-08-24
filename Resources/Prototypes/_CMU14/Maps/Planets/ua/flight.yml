@@ -1,0 +1,56 @@
+- type: entity
+  id: AUPlanetFlight
+  name: Flight
+  components:
+  - type: RMCPlanetMapPrototype
+    votename: "Flight"
+    mapId: Flight
+    lorePrimer: AU14PrimerPlanetFlight
+    allegiance: UA
+    camouflage: Urban
+    announcement: "A nine-story mixed-use tower surrounded by an artificial cityscape has gone dark. A response force has been dispatched to investigate the circumstances."
+    platoonsGovfor:
+    - LACN
+    - CMBCIU
+    - USCM
+    - WEYU
+    - RMC
+    - HAZOPS
+    platoonsOpfor:
+    - UPP
+    - ProdigySF
+    - VAIPO
+    defaultgovfor: USCM
+    defaultopfor: UPP
+    govforinship: true
+    opforinship: true
+    daycycleenabled: true
+    threats:
+    - XenoThreat
+    - NeomorphsThreat
+    # - abominationsThreatDistress # no xenocf markers
+    - apethreat
+    # - badBloodClanThreat
+    # - XenoThreatCF # no xenocf markers
+    # - NeomorphsThreatCF # no xenocf markers
+    - cultistThreat
+    # - cultistThreatOnMarker # no cultcf markers
+    - wendigoThreat
+    # - abominationsThreat # no xenocf markers
+    - TribalsThreat
+    - apethreatcf
+    thirdparties:
+    - USArmy
+    - USArmyAlt
+    - USArmyAlt2
+   # - cultistThirdParty
+    - abominationThirdParty
+    joboverrides:
+      AU14JobLEOLeaderBase: AU14JobCivilianCMBMarshal
+      AU14JobLEOBase: AU14JobCivilianCMBDeputy
+    jobScalingFof: DefaultGovforOpforScale
+    jobScalingIns: DefaultInsurgencyScale
+
+- type: lorePrimer
+  id: AU14PrimerPlanetFlight
+  planetText: "Date 2181 - Flight, a multistory colony megastructure."

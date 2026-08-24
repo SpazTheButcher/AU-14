@@ -133,6 +133,7 @@ public sealed partial class VehicleSupplySystem : EntitySystem
     {
         var groupKey = GetEntryGroupKey(entry);
         return groupKey != null &&
+               !lift.TechGranted.Contains(key) && // CMU14: tech-granted extras ignore group claims
                lift.OrderedGroups.TryGetValue(groupKey, out var claimedKey) &&
                claimedKey != key;
     }
@@ -141,9 +142,31 @@ public sealed partial class VehicleSupplySystem : EntitySystem
     {
         var groupKey = GetEntryGroupKey(entry);
         return groupKey != null &&
+               !lift.TechGranted.Contains(key) && // CMU14
                !string.IsNullOrWhiteSpace(lift.PendingVehicleGroup) &&
                lift.PendingVehicleGroup == groupKey &&
                Normalize(lift.PendingVehicle) != key;
+    }
+
+    // CMU14 method: raw group claim check for a vehicle key, resolved from any console entry defining it
+    private bool IsVehicleGroupClaimedByOther(VehicleSupplyLiftComponent lift, string key)
+    {
+        var consoleQuery = EntityQueryEnumerator<VehicleSupplyConsoleComponent>();
+        while (consoleQuery.MoveNext(out _, out var console))
+        {
+            foreach (var entry in console.Vehicles)
+            {
+                if (Normalize(entry.Vehicle.Id) != key)
+                    continue;
+
+                var groupKey = GetEntryGroupKey(entry);
+                return groupKey != null &&
+                       lift.OrderedGroups.TryGetValue(groupKey, out var claimedKey) &&
+                       claimedKey != key;
+            }
+        }
+
+        return false;
     }
 
     private static bool IsEntryAvailableForConsole(VehicleSupplyLiftComponent lift, VehicleSupplyEntry entry, string key)
@@ -346,6 +369,22 @@ public sealed partial class VehicleSupplySystem : EntitySystem
         var liftQuery = EntityQueryEnumerator<VehicleSupplyLiftComponent>();
         while (liftQuery.MoveNext(out var uid, out var lift))
         {
+            // CMU14: additional grants stack on top of the group/one-use limits
+            if (ev.Additional)
+            {
+                if (!lift.TechGranted.Contains(unlock) &&
+                    IsVehicleGroupClaimedByOther(lift, unlock))
+                {
+                    // the group was spent on another variant, its seeded stock here is dead
+                    lift.Stored.Remove(unlock);
+                }
+
+                lift.TechGranted.Add(unlock);
+                AddStored(lift, unlock);
+                Dirty(uid, lift);
+                continue;
+            }
+
             if (GetStoredCount(lift, unlock) > 0 || IsVehicleClaimed(lift, unlock))
                 continue;
 

@@ -2,6 +2,8 @@
   parent: CMJobBase
   id: AU14JobPARTSPartyMedic
   roundSide: ThirdParty
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   roundForce: PSC
   roundRole: PARTSPartyMedic
   roundComponents:

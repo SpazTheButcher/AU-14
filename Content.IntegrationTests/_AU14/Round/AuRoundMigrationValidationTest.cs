@@ -225,10 +225,5 @@ public sealed class AuRoundMigrationValidationTest
     }
 
     private static IEnumerable<string> ResolvePresetPlanetIds(IPrototypeManager prototypes, GamePresetPrototype preset)
-    {
-        if (!string.IsNullOrWhiteSpace(preset.PlanetPool))
-            return prototypes.Index<GamePlanetPoolPrototype>(preset.PlanetPool).Planets;
-
-        return preset.SupportedPlanets ?? Enumerable.Empty<string>();
-    }
+        => GamePlanetPoolPrototype.ExpandPlanetIds(prototypes, preset.PlanetPool, preset.SupportedPlanets);
 }

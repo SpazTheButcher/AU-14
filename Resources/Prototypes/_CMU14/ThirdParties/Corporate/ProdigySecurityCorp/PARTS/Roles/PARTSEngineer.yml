@@ -2,6 +2,8 @@
   parent: CMJobBase
   id: AU14JobPARTSPartyEngineer
   roundSide: ThirdParty
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   roundForce: PSC
   roundRole: PARTSPartyEngineer
   roundComponents:

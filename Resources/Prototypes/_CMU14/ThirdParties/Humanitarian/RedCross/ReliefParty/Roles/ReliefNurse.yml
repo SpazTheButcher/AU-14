@@ -2,12 +2,11 @@
   parent: CMJobBase
   id: AU14JobRedCrossNurse
   roundSide: ThirdParty
+  roundProfiles:
+  - AU14RoundJobProfileThirdParty
   roundForce: ICRC
   roundRole: RedCrossNurse
   roundComponents:
-  - type: NpcFactionMember
-    factions:
-    - AUBureau
   - type: Skills
     skills:
       RMCSkillFireman: 2

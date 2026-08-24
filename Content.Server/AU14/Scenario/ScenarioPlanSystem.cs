@@ -52,14 +52,15 @@ public sealed partial class ScenarioPlanSystem : EntitySystem, IScenarioPlanGene
 
     public IReadOnlyList<ScenarioPlan> GeneratePlans(ScenarioPlanValidationRequest request)
     {
-        if (!_prototypes.TryIndex<GamePresetPrototype>(request.PresetId, out var preset) ||
-            preset.SupportedPlanets is not { Count: > 0 })
-        {
+        if (!_prototypes.TryIndex<GamePresetPrototype>(request.PresetId, out var preset))
             return Array.Empty<ScenarioPlan>();
-        }
 
-        var plans = new List<ScenarioPlan>(preset.SupportedPlanets.Count);
-        foreach (var planetId in preset.SupportedPlanets)
+        var planetIds = GamePlanetPoolPrototype.ExpandPlanetIds(_prototypes, preset.PlanetPool, preset.SupportedPlanets);
+        if (planetIds.Count == 0)
+            return Array.Empty<ScenarioPlan>();
+
+        var plans = new List<ScenarioPlan>(planetIds.Count);
+        foreach (var planetId in planetIds)
         {
             if (request.PlanetId != null &&
                 !planetId.Equals(request.PlanetId, StringComparison.OrdinalIgnoreCase))

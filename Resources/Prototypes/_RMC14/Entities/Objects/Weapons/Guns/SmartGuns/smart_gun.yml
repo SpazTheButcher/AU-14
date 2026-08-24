@@ -64,7 +64,7 @@
     - FullAuto
     recoilWielded: 3
     scatterWielded: 10
-    baseFireRate: 9.6
+    baseFireRate: 8.5
     burstScatterMult: 4
     modifiers:
       FullAuto:
@@ -99,7 +99,7 @@
           components:
           - SmartGunBattery
   - type: GunDamageModifier
-    multiplier: 1
+    multiplier: 0.7
   - type: GunToggleableAmmo
     settings:
     - damage:
@@ -239,7 +239,7 @@
   - type: RMCSelectiveFire
     recoilWielded: 3
     scatterWielded: 10
-    baseFireRate: 18
+    baseFireRate: 16
     burstScatterMult: 1
     modifiers:
       FullAuto:
@@ -411,6 +411,7 @@
       map: ["enum.AmmoVisualLayers.Base"]
   - type: CartridgeAmmo
     proto: CMBulletSmartGun10x30mm
+    deleteOnSpawn: true # CMU14: caseless ammo, no casing to eject
   - type: Tag
     tags:
     - CMCartridgeSmartGun10x30mm
