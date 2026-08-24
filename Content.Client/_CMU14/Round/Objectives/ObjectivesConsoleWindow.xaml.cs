@@ -35,7 +35,7 @@ public sealed partial class ObjectivesConsoleWindow : FancyWindow
     {
         return objectives
             .OrderBy(o => TypeRank(o.Type))
-            .ThenBy(o => IsResolved(o.Status));
+            .ThenBy(o => StatusRank(o.Status));
     }
 
     private static int TypeRank(ObjectiveTypeDisplay type) => type switch
@@ -45,6 +45,10 @@ public sealed partial class ObjectivesConsoleWindow : FancyWindow
         _ => 2,
     };
 
-    private static bool IsResolved(ObjectiveStatusDisplay status) => status is
-        ObjectiveStatusDisplay.Completed or ObjectiveStatusDisplay.Failed or ObjectiveStatusDisplay.Captured;
+    private static int StatusRank(ObjectiveStatusDisplay status) => status switch
+    {
+        ObjectiveStatusDisplay.Uncompleted => 0,
+        ObjectiveStatusDisplay.Repeating => 1,
+        _ => 2,
+    };
 }
