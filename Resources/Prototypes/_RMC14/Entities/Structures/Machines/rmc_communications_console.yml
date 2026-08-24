@@ -26,6 +26,7 @@
           !type:PhysShapeAabb
           bounds: "-0.45,-0.45,0.45,0.45"
         density: 60
+        hard: false # CMU14: stops blocking movement or Z-transitions
         mask:
         - MachineMask
         layer:
