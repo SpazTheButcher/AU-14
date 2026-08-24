@@ -51722,7 +51722,7 @@ entities:
       parent: 1
     - type: Fixtures
       fixtures: {}
-- proto: RMCTacticalMapTable
+- proto: RMCTacticalMapTableGovfor
   entities:
   - uid: 6339
     components:

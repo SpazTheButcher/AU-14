@@ -165,9 +165,10 @@ public abstract partial class SharedTacticalMapSystem : EntitySystem
         bool WantsOpfor() => faction == null || faction == OpforFaction;
         bool WantsGovfor() => faction == null || faction == GovforFaction;
         bool WantsClf() => faction == null || faction == ClfFaction;
+        var sensorsOnline = faction != null && _sensorTowers.HasOnlineSensorForFaction(faction); // CMU14
 
         // Add marine blips if desired
-        AddIf(WantsMarines, map.MarineBlips);
+        AddIf(() => WantsMarines() || sensorsOnline, map.MarineBlips); // CMU14
 
         // Add xeno blips/structures if desired
         if (WantsXenos())
@@ -177,14 +178,9 @@ public abstract partial class SharedTacticalMapSystem : EntitySystem
         }
 
         // Add other factions only if desired
-        if (WantsOpfor())
-            AddIf(() => true, map.OpforBlips);
-
-        if (WantsGovfor())
-            AddIf(() => true, map.GovforBlips);
-
-        if (WantsClf())
-            AddIf(() => true, map.ClfBlips);
+        AddIf(() => WantsOpfor() || sensorsOnline, map.OpforBlips); // CMU14
+        AddIf(() => WantsGovfor() || sensorsOnline, map.GovforBlips); // CMU14
+        AddIf(() => WantsClf() || sensorsOnline, map.ClfBlips); // CMU14
 
             // Ensure infrastructure (comms, sensors, tunnels) is always visible on computers
         // Track their entity ids so we can exclude them from enemy-sprite replacement.

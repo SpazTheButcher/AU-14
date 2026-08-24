@@ -163047,7 +163047,7 @@ entities:
     - type: Transform
       pos: 38.5,-20.5
       parent: 1
-- proto: RMCTacticalMapTableLarge
+- proto: RMCTacticalMapTableLargeGovfor
   entities:
   - uid: 15374
     components:

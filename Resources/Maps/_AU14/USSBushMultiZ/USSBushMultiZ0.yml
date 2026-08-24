@@ -41844,4 +41844,11 @@ entities:
     - type: Transform
       pos: -17.5,-9.5
       parent: 1
+- proto: VMarkerShipTacticalMap
+  entities:
+  - uid: 6257
+    components:
+    - type: Transform
+      pos: -1.5,67.5
+      parent: 1
 ...

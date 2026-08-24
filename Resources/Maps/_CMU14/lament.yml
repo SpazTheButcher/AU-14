@@ -591653,7 +591653,7 @@ entities:
       rot: -1.5707963267948966 rad
       pos: -71.5,36.5
       parent: 1
-- proto: RMCTacticalMapTable
+- proto: RMCTacticalMapTableGovfor
   entities:
   - uid: 87585
     components:

@@ -1,0 +1,35 @@
+- type: entity
+  parent: RMCTacticalMapTable
+  id: RMCTacticalMapTableGovfor
+  suffix: Govfor
+  components:
+  - type: TacticalMapComputer
+    faction: govfor
+
+- type: entity
+  parent: RMCTacticalMapTableLarge
+  id: RMCTacticalMapTableLargeGovfor
+  suffix: Govfor, Large
+  components:
+  - type: TacticalMapComputer
+    faction: govfor
+
+- type: entity
+  parent: RMCTacticalMapTable
+  id: RMCTacticalMapTableOpfor
+  suffix: Opfor
+  components:
+  - type: AccessReader
+    access: [ [ "AU14AccessOpforCommand" ] ]
+  - type: TacticalMapComputer
+    faction: opfor
+
+- type: entity
+  parent: RMCTacticalMapTableLarge
+  id: RMCTacticalMapTableLargeOpfor
+  suffix: Opfor, Large
+  components:
+  - type: AccessReader
+    access: [ [ "AU14AccessOpforCommand" ] ]
+  - type: TacticalMapComputer
+    faction: opfor
