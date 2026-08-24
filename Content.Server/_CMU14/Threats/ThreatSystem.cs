@@ -12,6 +12,7 @@ using Content.Shared._RMC14.Dropship;
 using Content.Shared._RMC14.Synth;
 using Content.Shared._RMC14.Xenonids;
 using Content.Shared._RMC14.Xenonids.Construction.Nest;
+using Content.Shared._RMC14.Xenonids.Evolution;
 using Content.Shared.AU14.Scenario;
 using Content.Shared.AU14.util;
 using Content.Shared.Ghost;
@@ -82,6 +83,8 @@ public sealed partial class ThreatSystem : EntitySystem
     {
         base.Initialize();
         SubscribeLocalEvent<GameRunLevelChangedEvent>(OnRunLevelChanged);
+        SubscribeLocalEvent<NewXenoEvolvedEvent>(OnXenoEvolved);
+        SubscribeLocalEvent<XenoDevolvedEvent>(OnXenoDevolved);
     }
 
     public override void Update(float frameTime)
@@ -1086,6 +1089,21 @@ public sealed partial class ThreatSystem : EntitySystem
         ghostRole.MindRoles = new List<EntProtoId> { ThreatMindRoleId };
 
         EnsureComp<GhostTakeoverAvailableComponent>(entity);
+    }
+
+    private void OnXenoEvolved(ref NewXenoEvolvedEvent ev)
+        => CarryThreatFaction(ev.OldXeno, ev.NewXeno);
+
+    private void OnXenoDevolved(ref XenoDevolvedEvent ev)
+        => CarryThreatFaction(ev.OldXeno, ev.NewXeno);
+
+    private void CarryThreatFaction(EntityUid oldXeno, EntityUid newXeno)
+    {
+        if (!TryComp<NpcFactionMemberComponent>(oldXeno, out var factions)
+            || !factions.Factions.Contains(ThreatNpcFaction))
+            return;
+
+        AddThreatFaction(newXeno);
     }
 
     private void AddThreatFaction(EntityUid entity)
