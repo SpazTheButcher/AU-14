@@ -35,6 +35,9 @@ public sealed partial class NpcFactionPrototype : IPrototype, IInheritingPrototy
 
     [DataField]
     public bool SentryProtected; // CMU14: never a valid sentry/turret target (e.g. Provost Office)
+
+    [DataField]
+    public bool Hidden; // CMU14: never shown on ID examination (e.g. CLF insurgents must stay covert)
 }
 
 /// <summary>
