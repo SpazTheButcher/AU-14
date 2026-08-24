@@ -1,4 +1,5 @@
 using Content.Server.Kitchen.Components;
+using Content.Server.Botany.Components;
 using Content.Server.Power.Components;
 using Content.Server.Power.EntitySystems;
 using Content.Server.Stack;
@@ -12,6 +13,7 @@ using Content.Shared.Kitchen;
 using Content.Shared.Kitchen.Components;
 using Content.Shared.Popups;
 using Content.Shared.Random;
+using Content.Shared.Storage;
 using Content.Shared.Stacks;
 using JetBrains.Annotations;
 using Robust.Server.GameObjects;
@@ -216,6 +218,13 @@ namespace Content.Server.Kitchen.EntitySystems
             var heldEnt = args.Used;
             var inputContainer = _containerSystem.EnsureContainer<Container>(entity.Owner, SharedReagentGrinder.InputContainerId);
 
+            if (HasComp<PlantBagComponent>(heldEnt) && TryComp(heldEnt, out StorageComponent? plantBag))
+            {
+                args.Handled = true;
+                TransferPlantBag(entity, heldEnt, plantBag, inputContainer, args.User);
+                return;
+            }
+
             if (!HasComp<ExtractableComponent>(heldEnt))
             {
                 if (!HasComp<FitsInDispenserComponent>(heldEnt))
@@ -242,6 +251,57 @@ namespace Content.Server.Kitchen.EntitySystems
                 return;
 
             args.Handled = true;
+        }
+
+        private void TransferPlantBag(
+            Entity<ReagentGrinderComponent> grinder,
+            EntityUid plantBagUid,
+            StorageComponent plantBag,
+            BaseContainer inputContainer,
+            EntityUid user)
+        {
+            var availableSpace = grinder.Comp.StorageMaxEntities - inputContainer.ContainedEntities.Count;
+            if (availableSpace <= 0)
+            {
+                _popupSystem.PopupEntity(Loc.GetString("reagent-grinder-component-chamber-full"), grinder, user);
+                return;
+            }
+
+            var transferred = 0;
+            foreach (var item in plantBag.Container.ContainedEntities.ToList())
+            {
+                if (transferred >= availableSpace)
+                    break;
+
+                if (!HasComp<ExtractableComponent>(item) ||
+                    !_containerSystem.Remove(item, plantBag.Container))
+                {
+                    continue;
+                }
+
+                if (_containerSystem.Insert(item, inputContainer))
+                {
+                    transferred++;
+                    continue;
+                }
+
+                _containerSystem.Insert(item, plantBag.Container);
+            }
+
+            if (transferred == 0)
+            {
+                _popupSystem.PopupEntity(
+                    Loc.GetString("reagent-grinder-component-plant-bag-empty", ("bag", plantBagUid)),
+                    grinder,
+                    user);
+                return;
+            }
+
+            _popupSystem.PopupEntity(
+                Loc.GetString("reagent-grinder-component-plant-bag-loaded", ("count", transferred)),
+                grinder,
+                user);
+            UpdateUiState(grinder);
         }
 
         private void UpdateUiState(EntityUid uid)

@@ -1,0 +1,15 @@
+rmc-stimmaster-injectors = [bold]Stored autoinjectors[/bold]
+rmc-stimmaster-none = No autoinjectors fabricated.
+rmc-stimmaster-create = Fabricate Injectors
+rmc-stimmaster-fill = Fill Selected Injectors
+rmc-stimmaster-fill-injector = Fill
+rmc-stimmaster-injector-volume = {$amount} / {$capacity}u
+rmc-stimmaster-fabrication-title = Autoinjector Fabrication
+rmc-stimmaster-fabrication-header = Select an injector type and quantity. Each injector costs 0.2 metal and 0.2 glass.
+rmc-stimmaster-fabrication-option = {$name} — {$capacity}u capacity
+rmc-stimmaster-fabrication-amount = Quantity:
+rmc-stimmaster-fabrication-confirm = Fabricate Selected Injectors
+rmc-stimmaster-no-selection-or-chemicals = Select at least one stored injector and add chemicals to the buffer.
+rmc-stimmaster-not-enough-materials = The Stimmaster needs 0.2 metal and 0.2 glass for every injector.
+rmc-stimmaster-storage-full = The Stimmaster does not have room for that many injectors.
+rmc-stimmaster-eject-material = {$material} ({$sheets} sheets)

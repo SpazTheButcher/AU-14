@@ -90,12 +90,46 @@
   - type: SolutionContainerManager
     solutions:
       buffer:
-        maxVol: 500
+        maxVol: 1000
         canReact: false
   - type: RMCChemMaster
     pillBottleWhitelist:
       tags:
       - PillCanister
+
+- type: entity
+  parent: CMChemMaster
+  id: RMCStimmaster
+  name: Stimmaster 1000
+  description: A chemical manipulator that fabricates and fills custom autoinjectors. Insert metal and glass sheets directly into it.
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: SolutionContainerManager
+    solutions:
+      buffer:
+        maxVol: 1000
+        canReact: false
+  - type: MaterialStorage
+    whitelist:
+      tags:
+      - Metal
+      - RMCGlass
+  - type: Machine
+    board: RMCCircuitboardStimmaster
+  - type: RMCStimmaster
+    injectorPrototypes:
+    - RMCMedicAutoInjectorCS5
+    - RMCMedicAutoInjectorCS15
+    - RMCMedicAutoInjectorCS30
+    - RMCMedicAutoInjectorCS60
+    - RMCMedicAutoInjectorEZ1
+    - RMCMedicAutoInjectorEZ5
+    - RMCMedicAutoInjectorEZ10
+    - RMCMedicAutoInjectorEZ15
+    - RMCMedicAutoInjectorEZ30
+    - RMCMedicAutoInjectorEZ45
+    - RMCMedicAutoInjectorEZ60
 
 - type: entity
   parent: CMChemMaster

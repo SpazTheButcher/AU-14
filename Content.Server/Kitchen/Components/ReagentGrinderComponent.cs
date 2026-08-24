@@ -14,7 +14,7 @@ namespace Content.Server.Kitchen.Components
     public sealed partial class ReagentGrinderComponent : Component
     {
         [DataField]
-        public int StorageMaxEntities = 6;
+        public int StorageMaxEntities = 50;
 
         [DataField]
         public TimeSpan WorkTime = TimeSpan.FromSeconds(3.5); // Roughly matches the grind/juice sounds.
