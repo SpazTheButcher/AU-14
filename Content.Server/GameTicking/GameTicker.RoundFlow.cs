@@ -15,6 +15,7 @@ using Content.Shared._RMC14.CCVar;
 using Content.Shared._RMC14.Prototypes;
 using Content.Shared._RMC14.TacticalMap;
 using Content.Shared.AU14;
+using Content.Shared.AU14.util; // CMU14
 using Content.Shared.CCVar;
 using Content.Shared.Database;
 using Content.Shared.GameTicking;
@@ -116,6 +117,9 @@ namespace Content.Server.GameTicking
 
             // Check for voted planet from AuRoundSystem
             var selectedPlanet = _auRoundSystem.GetSelectedPlanet();
+            if (selectedPlanet != null // CMU14
+                && GamePlanetPoolPrototype.ExpandPlanetIds(_prototypeManager, CurrentPreset?.PlanetPool, CurrentPreset?.SupportedPlanets).Count == 0)
+                selectedPlanet = null;
             if (selectedPlanet != null)
             {
                 // Use the voted planet's map as the primary map
