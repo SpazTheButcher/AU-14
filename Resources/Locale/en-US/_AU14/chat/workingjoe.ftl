@@ -218,6 +218,10 @@ emote-name-workingjoe-youre-going-to-have-to-be-more-careful = You're going to h
 emote-name-workingjoe-youre-going-to-hurt-yourself = You're going to hurt yourself.
 emote-name-workingjoe-youre-not-allowed-in-there = You're not allowed in there.
 emote-name-workingjoe-youre-starting-to-test-my-patience = You're starting to test my patience.
+emote-name-workingjoe-synth-registered = Synthetic Registered.
+emote-name-workingjoe-synth-wey-registered = Weyland Yutani Synthetic Registered.
+emote-name-workingjoe-registration-complete = Your registration is almost complete.
+emote-name-workingjoe-log-and-store-recording = Log and store recording, Seegson access only.
 
 # Death voiceline transcripts (variant-specific)
 emote-name-workingjoe-death-tomorrow-var1 = Tomorrow. And tomorrow.
