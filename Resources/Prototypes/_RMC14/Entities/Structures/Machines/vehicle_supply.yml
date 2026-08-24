@@ -127,6 +127,22 @@
       - VehicleHumveeSnowplow
       - VehicleHumveeOverlight
       - VehicleHumveeWheel
+    # CMU14 Begin: ARC humvee, granted by the WY tech tree node; no group so the grant is never blocked
+    - name: M2420 JTMV Armed (ARC)
+      vehicle: VehicleHumveeARC
+      unlock: VehicleHumveeARC
+      hardpoints:
+      - VehicleHumveeTurret
+      - VehicleHumveeTurretArmed
+      - VehicleHumveeARCTurret
+      - VehicleHumveeCannon
+      - VehicleHumveeARCCannon
+      - VehicleHumveeLauncher
+      - VehicleHumveeSnowplow
+      - VehicleHumveeOverlight
+      - VehicleHumveeHatch
+      - VehicleHumveeWheel
+    # CMU14 End
     - name: Kheshig-1 Transport (UPP)
       vehicle: VehicleSPPVan
       group: vehicle-support
