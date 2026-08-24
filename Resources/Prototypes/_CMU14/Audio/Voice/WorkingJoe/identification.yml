@@ -81,3 +81,45 @@
   whitelist:
     tags:
       - WorkingJoe
+
+- type: emote
+  id: WorkingJoeSynthRegistered
+  name: emote-name-workingjoe-synth-registered
+  category: Identification
+  icon: Interface/Emotes/scream.png
+  available: false
+  chatMessages:
+    - emote-name-workingjoe-synth-registered
+  chatTriggers: 
+    - synthetic registered
+  whitelist:
+    tags:
+      - WorkingJoe
+
+- type: emote
+  id: WorkingJoeSynthWeYRegistered
+  name: emote-name-workingjoe-synth-wey-registered
+  category: Identification
+  icon: Interface/Emotes/scream.png
+  available: false
+  chatMessages:
+    - emote-name-workingjoe-synth-wey-registered
+  chatTriggers: 
+  - weyland yutani synthetic registered
+  whitelist:
+    tags:
+      - WorkingJoe
+
+- type: emote
+  id: WorkingJoeRegistrationComplete
+  name: emote-name-workingjoe-registration-complete
+  category: Identification
+  icon: Interface/Emotes/scream.png
+  available: false
+  chatMessages:
+    - emote-name-workingjoe-registration-complete
+  chatTriggers:
+    - your registration is almost complete
+  whitelist:
+    tags:
+      - WorkingJoe

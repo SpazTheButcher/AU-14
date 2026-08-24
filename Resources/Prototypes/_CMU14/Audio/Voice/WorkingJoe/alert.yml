@@ -305,3 +305,17 @@
   whitelist:
     tags:
       - WorkingJoe
+
+- type: emote
+  id: WorkingJoeLogAndStoreRecording
+  name: emote-name-workingjoe-log-and-store-recording
+  category: Alert
+  icon: Interface/Emotes/scream.png
+  available: false
+  chatMessages:
+    - emote-name-workingjoe-log-and-store-recording
+  chatTriggers:
+    - log and store recoridng, seegson access only
+  whitelist:
+    tags:
+      - WorkingJoe
