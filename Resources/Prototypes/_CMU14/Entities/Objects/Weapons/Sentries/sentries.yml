@@ -11,6 +11,17 @@
     lockedFriendlyFactions:
     - AUWeYu
     - WeYa
+    targetWhitelist:
+      components:
+      - Xeno
+      - XenoFriendly
+      - XenoConstruct
+      - XenoWeeds
+      - CMUBlightCore
+      - CMUPathogenSporeSac
+      - Abomination
+      - AbominationFleshKudzu
+      - AbominationFleshNest
 
 - type: entity
   parent: RMCTurretAlmayer
@@ -22,6 +33,17 @@
     lockedFriendlyFactions:
     - AUWeYu
     - WeYa
+    targetWhitelist:
+      components:
+      - Xeno
+      - XenoFriendly
+      - XenoConstruct
+      - XenoWeeds
+      - CMUBlightCore
+      - CMUPathogenSporeSac
+      - Abomination
+      - AbominationFleshKudzu
+      - AbominationFleshNest
 
 - type: entity
   parent: RMCDeployerSentry

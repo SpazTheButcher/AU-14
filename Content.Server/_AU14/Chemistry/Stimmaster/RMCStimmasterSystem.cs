@@ -1,4 +1,3 @@
-using System.Linq;
 using Content.Server.Materials;
 using Content.Shared._AU14.Chemistry.Stimmaster;
 using Content.Shared._RMC14.Chemistry.ChemMaster;
@@ -213,30 +212,27 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
             return;
         }
 
-        while (buffer.Value.Comp.Solution.Volume > FixedPoint2.Zero)
+        var insufficientChemicals = false;
+        foreach (var injectorSolution in injectors)
         {
-            var fillable = injectors
-                .Where(injector => injector.Comp.Solution.AvailableVolume > FixedPoint2.Zero)
-                .ToArray();
-            if (fillable.Length == 0)
-                break;
-
-            var share = buffer.Value.Comp.Solution.Volume / fillable.Length;
-            if (share <= FixedPoint2.Zero)
-                break;
-
-            var transferred = FixedPoint2.Zero;
-            foreach (var injectorSolution in fillable)
+            var required = injectorSolution.Comp.Solution.AvailableVolume;
+            if (buffer.Value.Comp.Solution.Volume < required)
             {
-                var transfer = FixedPoint2.Min(share, injectorSolution.Comp.Solution.AvailableVolume);
-                var fill = buffer.Value.Comp.Solution.SplitSolution(transfer);
-                _solution.TryAddSolution(injectorSolution, fill);
-                _solution.UpdateChemicals(injectorSolution);
-                transferred += transfer;
+                insufficientChemicals = true;
+                break;
             }
 
-            if (transferred <= FixedPoint2.Zero)
+            if (!_solution.TryTransferSolution(injectorSolution, buffer.Value.Comp.Solution, required))
                 break;
+        }
+
+        if (insufficientChemicals)
+        {
+            _popup.PopupClient(
+                Loc.GetString("rmc-stimmaster-not-enough-chemicals-for-injector"),
+                ent,
+                args.Actor,
+                PopupType.SmallCaution);
         }
 
         _solution.UpdateChemicals(buffer.Value);
@@ -261,11 +257,32 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
                 continue;
 
             _label.Label(injector, label);
-            _rmcIconLabel.Label(injector, "rmc-custom-container-label-text", ("customLabel", label));
+            SetInjectorIconLabel(injector, label);
         }
 
         Dirty(ent);
         DirtyChemMaster(ent.Owner);
+    }
+
+    private void SetInjectorIconLabel(EntityUid injector, string label)
+    {
+        var iconLabel = EnsureComp<IconLabelComponent>(injector);
+        var iconText = label.Trim();
+        if (iconText.Length > iconLabel.LabelMaxSize)
+            iconText = iconText[..iconLabel.LabelMaxSize];
+
+        if (string.IsNullOrWhiteSpace(iconText))
+        {
+            iconLabel.LabelTextLocId = null;
+            iconLabel.LabelTextParams.Clear();
+            Dirty(injector, iconLabel);
+            return;
+        }
+
+        _rmcIconLabel.Label(
+            injector,
+            "rmc-custom-container-label-text",
+            ("customLabel", iconText));
     }
 
     private void OnTransfer(Entity<RMCStimmasterComponent> ent, ref RMCStimmasterTransferMsg args)

@@ -10,6 +10,7 @@ rmc-stimmaster-fabrication-option = {$name} — {$capacity}u capacity
 rmc-stimmaster-fabrication-amount = Quantity:
 rmc-stimmaster-fabrication-confirm = Fabricate Selected Injectors
 rmc-stimmaster-no-selection-or-chemicals = Select at least one stored injector and add chemicals to the buffer.
+rmc-stimmaster-not-enough-chemicals-for-injector = There are not enough chemicals to completely fill the next selected injector.
 rmc-stimmaster-not-enough-materials = The Stimmaster needs 0.2 metal and 0.2 glass for every injector.
 rmc-stimmaster-storage-full = The Stimmaster does not have room for that many injectors.
 rmc-stimmaster-eject-material = {$material} ({$sheets} sheets)

@@ -4,6 +4,7 @@ using Content.Shared._RMC14.Weapons.Ranged.IFF;
 using Content.Shared.AU14.AllianceConsole;
 using Content.Shared.Inventory;
 using Content.Shared.NPC.Components;
+using Content.Shared.Whitelist;
 using Content.Shared.Weapons.Ranged.Components;
 using Robust.Shared.Containers;
 using Robust.Shared.GameObjects;
@@ -20,6 +21,7 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
     [Dependency] private GunIFFSystem _iff = default!;
     [Dependency] private SharedTransformSystem _xform = default!;
     [Dependency] private SharedContainerSystem _container = default!;
+    [Dependency] private EntityWhitelistSystem _whitelist = default!;
 
     private const string SentryExcludedFaction = "RMCDumb";
 
@@ -42,6 +44,7 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
     private readonly HashSet<Entity<NpcFactionMemberComponent>> _factionLookupBuffer = new();
     private readonly HashSet<Entity<UserIFFComponent>> _userIffLookupBuffer = new();
     private readonly HashSet<EntityUid> _candidateLookupBuffer = new();
+    private readonly HashSet<EntityUid> _targetWhitelistLookupBuffer = new();
     private readonly HashSet<string> _friendlyNpcFactionBuffer = new();
 
     public override void Initialize()
@@ -119,6 +122,10 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
     {
         if (!TryComp<SentryTargetingComponent>(sentry, out var targeting))
             return false;
+
+        // Prototype-locked IFF must survive deployer and grid faction defaults.
+        if (RestoreLockedFriendlyFactions((sentry, targeting), true))
+            return true;
 
         faction = string.IsNullOrWhiteSpace(faction) ? targeting.OriginalFaction : faction;
         var sentryFaction = SentryAllowedFactions.FirstOrDefault(allowed =>
@@ -271,9 +278,6 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
 
     public bool IsValidTarget(Entity<SentryTargetingComponent> sentry, EntityUid target)
     {
-        if (!HasComp<UserIFFComponent>(target) && !HasComp<NpcFactionMemberComponent>(target))
-            return false;
-
         // Unconfigured sentry targets no one.
         if (sentry.Comp.FriendlyFactions.Count == 0)
             return false;
@@ -298,7 +302,16 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
         var friendly = IsFriendlyByIff(target);
         _friendlyIffBuffer.Clear();
         _targetIffBuffer.Clear();
-        return !friendly;
+        if (friendly)
+            return false;
+
+        if (sentry.Comp.TargetWhitelist != null &&
+            _whitelist.IsWhitelistPass(sentry.Comp.TargetWhitelist, target))
+        {
+            return true;
+        }
+
+        return HasComp<UserIFFComponent>(target) || HasComp<NpcFactionMemberComponent>(target);
     }
 
     public IEnumerable<EntityUid> GetNearbyIffHostiles(Entity<SentryTargetingComponent> ent, float range)
@@ -323,6 +336,17 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
         _lookup.GetEntitiesInRange(coords, range, _factionLookupBuffer);
         foreach (var target in _factionLookupBuffer)
             _candidateLookupBuffer.Add(target.Owner);
+
+        if (ent.Comp.TargetWhitelist != null)
+        {
+            _targetWhitelistLookupBuffer.Clear();
+            _lookup.GetEntitiesInRange(coords.MapId, coords.Position, range, _targetWhitelistLookupBuffer);
+            foreach (var target in _targetWhitelistLookupBuffer)
+            {
+                if (_whitelist.IsWhitelistPass(ent.Comp.TargetWhitelist, target))
+                    _candidateLookupBuffer.Add(target);
+            }
+        }
 
         foreach (var target in _candidateLookupBuffer)
         {
@@ -355,6 +379,7 @@ public abstract partial class SharedSentryTargetingSystem : EntitySystem
         }
 
         _candidateLookupBuffer.Clear();
+        _targetWhitelistLookupBuffer.Clear();
         _userIffLookupBuffer.Clear();
         _factionLookupBuffer.Clear();
         _friendlyIffBuffer.Clear();

@@ -105,6 +105,16 @@
   placement:
     mode: SnapgridCenter
   components:
+  - type: Sprite
+    sprite: _RMC14/Structures/Machines/Science/industry_dispenser.rsi
+    layers:
+    - state: industry_mixer0_nopower
+    - state: industry_mixer0_screen
+      shader: unshaded
+      map: ["enum.PowerDeviceVisualLayers.Powered"]
+  - type: Icon
+    sprite: _RMC14/Structures/Machines/Science/industry_dispenser.rsi
+    state: industry_mixer0
   - type: SolutionContainerManager
     solutions:
       buffer:
