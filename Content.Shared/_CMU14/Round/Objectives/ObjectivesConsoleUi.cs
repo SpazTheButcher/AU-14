@@ -9,7 +9,8 @@ public enum ObjectiveStatusDisplay
     Completed,
     Failed,
     Captured,
-    Uncaptured
+    Uncaptured,
+    Repeating
 }
 
 [Serializable, NetSerializable]

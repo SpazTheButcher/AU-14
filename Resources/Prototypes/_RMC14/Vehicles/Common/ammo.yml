@@ -356,6 +356,11 @@
     damage:
       types:
         Piercing: 36
+  - type: RMCProjectileAccuracy # CMU14: vehicle cannon, flatter falloff than the sentry block it inherits
+    accuracy: 110
+    thresholds:
+    - range: 30
+      falloff: 5
 
 - type: entity
   parent: CMBulletSentry10x50mm
@@ -382,6 +387,11 @@
         Piercing: 50
   - type: CMArmorPiercing
     amount: 15
+  - type: RMCProjectileAccuracy # CMU14: vehicle cannon, flatter falloff than the sentry block it inherits
+    accuracy: 110
+    thresholds:
+    - range: 30
+      falloff: 5
 
 - type: entity
   parent: CMBulletSentry10x50mm

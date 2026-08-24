@@ -51,15 +51,19 @@
     - MissionariesParty
     - MissionariesPartyMedium
     threats:
-    - cultistThreatOnMarker
     - XenoThreat
-    - XenoThreatCF
     - NeomorphsThreat
+    - abominationsThreatDistress
+    - apethreat
+    # - badBloodClanThreat
+    - XenoThreatCF
     - NeomorphsThreatCF
+    - cultistThreat
+    - cultistThreatOnMarker
     - wendigoThreat
     - abominationsThreat
-    - abominationsThreatDistress
-#    - badBloodClanThreat
+    - TribalsThreat
+    - apethreatcf
     joboverrides:
       AU14JobLEOBase: AU14JobCivilianCMBDeputy
       AU14JobLEOLeaderBase: AU14JobCivilianCMBMarshal

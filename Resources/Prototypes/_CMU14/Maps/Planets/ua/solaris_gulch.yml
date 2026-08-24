@@ -26,14 +26,19 @@
     opforinship: true
     daycycleenabled: true
     threats:
-    - cultistThreat
     - XenoThreat
-    - XenoThreatCF
     - NeomorphsThreat
-    - NeomorphsThreatCF
-    - wendigoThreat
     - abominationsThreatDistress
-#    - badBloodClanThreat
+    - apethreat
+    # - badBloodClanThreat
+    - XenoThreatCF
+    - NeomorphsThreatCF
+    - cultistThreat
+    # - cultistThreatOnMarker # no cultcf markers
+    - wendigoThreat
+    - abominationsThreat
+    - TribalsThreat
+    - apethreatcf
     thirdparties:
     - WEYUSurvLarge
     - WEYUSurvMedium

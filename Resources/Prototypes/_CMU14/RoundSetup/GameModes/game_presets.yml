@@ -9,9 +9,9 @@
   burrowedLarvaEnabled: false
   supportedPlanets:
   - SharedPlanetPool
-  - AuPlanetChances
-  - AUPlanetSorokyne
-  - AUPlanetLV624 # Green Hell
+# - AuPlanetChances #
+# - AUPlanetSorokyne #
+# - AUPlanetLV624 # Green Hell # missing threat spawns, scenario fails
   rules:
   - AuVoteRule
   - ColonyAntags
@@ -25,14 +25,15 @@
   description: Investigate a mysterious distress signal as government forces.
   requiresGovforVote: true
   supportedPlanets:
-  - SharedPlanetPool
+  - CMUPlanetStableGarrisonRedux # Govfor can hunker-down in Garrison; can be rushed by threats
+  - AUPlanetShepherdsPride
+  - CMUPlanetHopesRetreat
   - AUPlanetLV747 # Solaris Gulch
   - AUPlanetLV759 # Hybrisa Metro
   - AUPlanetLV327 # Port Nereid
   - AUPlanetSorokyne
   - AUPlanetCorsatStation
   - AUPlanetTrijent
-  - AuPlanetFiorina
   - AuPlanetKutjevo
   - AuPlanetShivasSnowball
   - AuPlanetChances
@@ -59,9 +60,8 @@
   maxThirdParties: 3
   supportedPlanets:
   - SharedPlanetPool
-  - AUPlanetLV747 # Solaris Gulch
-  - AUPlanetSorokyne
-  - AuPlanetChances
+  - AUPlanetSorokyne #
+  - AuPlanetChances #
   - AUPlanetLV624 # Green Hell
   rules:
   - AuVoteRule
@@ -86,7 +86,7 @@
   - SharedPlanetPool
   - AUPlanetGixensCaverns
   - AUPlanetFlight
-  - AUPlanetLV759
+  - AUPlanetLV759 # Hybrisa Metro
   - AUPlanetCorsatStation
   - AUPlanetSorokyne
   - AUPlanetTrijent
@@ -107,6 +107,8 @@
   description: Jailbreak mode
   rules:
   - AuVoteRule
+  supportedPlanets:
+  - AuPlanetFiorina
 
 - type: gamePreset
   id: Prometheus
@@ -127,3 +129,5 @@
   description: Criminal mode
   rules:
   - AuVoteRule
+  supportedPlanets:
+  - AuPlanetFiorina
