@@ -983,7 +983,7 @@ public sealed class DropshipWeaponsBui : RMCPopOutBui<DropshipWeaponsWindow>
         bool WantsClf() => string.IsNullOrEmpty(faction) || faction == "CLF";
 
         var lines = EntMan.GetComponentOrNull<TacticalMapLinesComponent>(Owner);
-        if (lines != null)
+        if (lines != null) // CMU14 Statement
         {
             if (WantsMarines())
                 wrapper.Map.Lines.AddRange(lines.MarineLines);
@@ -995,6 +995,8 @@ public sealed class DropshipWeaponsBui : RMCPopOutBui<DropshipWeaponsWindow>
                 wrapper.Map.Lines.AddRange(lines.GovforLines);
             if (WantsClf())
                 wrapper.Map.Lines.AddRange(lines.ClfLines);
+            if (faction == "WEYU")
+                wrapper.Map.Lines.AddRange(lines.WeYuLines);
         }
 
         var labels = EntMan.GetComponentOrNull<TacticalMapLabelsComponent>(Owner);
@@ -1032,6 +1034,13 @@ public sealed class DropshipWeaponsBui : RMCPopOutBui<DropshipWeaponsWindow>
             if (WantsClf())
             {
                 foreach (var label in labels.ClfLabels)
+                {
+                    allLabels[label.Key] = label.Value;
+                }
+            }
+            if (faction == "WEYU") // CMU14
+            {
+                foreach (var label in labels.WeYuLabels)
                 {
                     allLabels[label.Key] = label.Value;
                 }

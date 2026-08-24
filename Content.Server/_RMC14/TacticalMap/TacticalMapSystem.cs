@@ -5,6 +5,8 @@ using Content.Server._RMC14.Marines;
 using Content.Server._RMC14.Rules;
 using Content.Server.Administration.Logs;
 using Content.Server.GameTicking.Events;
+using Content.Shared.GameTicking; // CMU14: PlayerSpawnCompleteEvent
+using Content.Shared._CMU14.TacticalMap; // CMU14: WeYuMapTracked
 using Content.Shared._RMC14.Announce;
 using Content.Shared._RMC14.CCVar;
 using Content.Shared._RMC14.Communications;
@@ -51,7 +53,7 @@ using Robust.Shared.Utility;
 
 namespace Content.Server._RMC14.TacticalMap;
 
-public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
+public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14 Class: heavy modifications
 {
     private const string PresetMarineCommand = "MarineCommand";
 
@@ -89,6 +91,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
     private EntityQuery<OpforMapTrackedComponent> _opforMapTrackedQuery;
     private EntityQuery<GovforMapTrackedComponent> _govforMapTrackedQuery;
     private EntityQuery<ClfMapTrackedComponent> _clfMapTrackedQuery;
+    private EntityQuery<WeYuMapTrackedComponent> _weyuMapTrackedQuery; // CMU14
     private EntityQuery<VehicleInteriorOccupantComponent> _vehicleOccupantQuery;
 
     private readonly HashSet<Entity<TacticalMapTrackedComponent>> _toInit = new();
@@ -120,6 +123,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
         _opforMapTrackedQuery = GetEntityQuery<OpforMapTrackedComponent>();
         _govforMapTrackedQuery = GetEntityQuery<GovforMapTrackedComponent>();
         _clfMapTrackedQuery = GetEntityQuery<ClfMapTrackedComponent>();
+        _weyuMapTrackedQuery = GetEntityQuery<WeYuMapTrackedComponent>(); // CMU14
         _vehicleOccupantQuery = GetEntityQuery<VehicleInteriorOccupantComponent>();
 
         SubscribeLocalEvent<VehicleInteriorComponent, MoveEvent>(OnVehicleMove);
@@ -132,6 +136,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
         SubscribeLocalEvent<TacticalMapUserComponent, ComponentStartup>(OnUserStartup);
         SubscribeLocalEvent<TacticalMapUserComponent, RoleAddedEvent>(OnUserFactionChanged);
         SubscribeLocalEvent<TacticalMapUserComponent, MindAddedMessage>(OnUserFactionChanged);
+        SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawnComplete); // CMU14: tags WY PMC spawns into the hidden weyu bucket
 
         SubscribeLocalEvent<TacticalMapComputerComponent, ComponentStartup>(OnComputerStartup);
         SubscribeLocalEvent<TacticalMapComputerComponent, BeforeActivatableUIOpenEvent>(OnComputerBeforeUIOpen);
@@ -273,8 +278,13 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
 
         var faction = NormalizeHumanFaction(marine.Faction);
         bool wantMarines = false, wantOpfor = false, wantGovfor = false, wantClf = false;
+        var wantWeYu = HasComp<WeYuMapTrackedComponent>(uid); // CMU14
 
-        if (faction == ClfFaction)
+        if (wantWeYu) // CMU14
+        {
+            // WY PMC: bucketed exclusively, keep out of every other faction's view
+        }
+        else if (faction == ClfFaction)
             wantClf = true;
         else if (faction == OpforFaction)
             wantOpfor = true;
@@ -303,6 +313,11 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
         else
             RemComp<ClfMapTrackedComponent>(uid);
 
+        if (wantWeYu) // CMU14
+            EnsureComp<WeYuMapTrackedComponent>(uid);
+        else
+            RemComp<WeYuMapTrackedComponent>(uid);
+
         // BreakTracking on old map so the stale blip is cleared, then force re-add.
         if (TryComp<ActiveTacticalMapTrackedComponent>(uid, out var active))
         {
@@ -312,6 +327,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
                 oldMap.OpforBlips.Remove(uid.Id);
                 oldMap.GovforBlips.Remove(uid.Id);
                 oldMap.ClfBlips.Remove(uid.Id);
+                oldMap.WeYuBlips.Remove(uid.Id); // CMU14
                 oldMap.MapDirty = true;
             }
             UpdateTracked((uid, active));
@@ -328,8 +344,8 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
         if (HasComp<GhostComponent>(ent))
         {
             var changed = !ent.Comp.Marines || !ent.Comp.Xenos || !ent.Comp.Opfor
-                || !ent.Comp.Govfor || !ent.Comp.Clf || !ent.Comp.LiveUpdate;
-            ent.Comp.Marines = ent.Comp.Xenos = ent.Comp.Opfor = ent.Comp.Govfor = ent.Comp.Clf = true;
+                || !ent.Comp.Govfor || !ent.Comp.Clf || !ent.Comp.WeYu || !ent.Comp.LiveUpdate; // CMU14: WeYu
+            ent.Comp.Marines = ent.Comp.Xenos = ent.Comp.Opfor = ent.Comp.Govfor = ent.Comp.Clf = ent.Comp.WeYu = true; // CMU14: WeYu
             ent.Comp.LiveUpdate = true;
             if (changed)
                 Dirty(ent);
@@ -338,17 +354,19 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
 
         if (HasComp<XenoComponent>(ent))
         {
-            if (!ent.Comp.Xenos || ent.Comp.Marines || ent.Comp.Opfor || ent.Comp.Govfor || ent.Comp.Clf)
+            if (!ent.Comp.Xenos || ent.Comp.Marines || ent.Comp.Opfor || ent.Comp.Govfor || ent.Comp.Clf || ent.Comp.WeYu) // CMU14: WeYu
             {
                 ent.Comp.Xenos = true;
-                ent.Comp.Marines = ent.Comp.Opfor = ent.Comp.Govfor = ent.Comp.Clf = false;
+                ent.Comp.Marines = ent.Comp.Opfor = ent.Comp.Govfor = ent.Comp.Clf = ent.Comp.WeYu = false; // CMU14: WeYu
                 Dirty(ent);
             }
             return;
         }
 
+        // CMU14: WY corporate players have no readable faction (civilian-side); the tracked comp is the source of truth
+        var weyu = HasComp<WeYuMapTrackedComponent>(ent); // CMU14
         bool marines = false, opfor = false, govfor = false, clf = false;
-        if (TryComp<MarineComponent>(ent, out var marine))
+        if (!weyu && TryComp<MarineComponent>(ent, out var marine))
         {
             if (TryNormalizeHumanFaction(marine.Faction, out var faction))
             {
@@ -371,14 +389,15 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
             }
         }
 
-        var current = (ent.Comp.Marines, ent.Comp.Opfor, ent.Comp.Govfor, ent.Comp.Clf);
-        var desired = (marines, opfor, govfor, clf);
+        var current = (ent.Comp.Marines, ent.Comp.Opfor, ent.Comp.Govfor, ent.Comp.Clf, ent.Comp.WeYu); // CMU14: WeYu
+        var desired = (marines, opfor, govfor, clf, weyu); // CMU14: WeYu
         if (current != desired)
         {
             ent.Comp.Marines = marines;
             ent.Comp.Opfor = opfor;
             ent.Comp.Govfor = govfor;
             ent.Comp.Clf = clf;
+            ent.Comp.WeYu = weyu; // CMU14
             Dirty(ent);
         }
     }
@@ -690,6 +709,9 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
 
         if (ent.Comp.Clf)
             UpdateCanvas(lines, labels, false, false, false, false, true, user, ent.Comp.Sound);
+
+        if (ent.Comp.WeYu) // CMU14
+            UpdateCanvas(lines, labels, false, false, false, false, false, user, ent.Comp.Sound, weyu: true);
     }
 
     private void OnComputerUpdateCanvasMsg(Entity<TacticalMapComputerComponent> ent, ref TacticalMapUpdateCanvasMsg args)
@@ -756,17 +778,17 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
             }
         }
 
-        var (wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf) = ResolveComputerWriteFaction(ent, user);
-        if (!wantsMarines && !wantsXenos && !wantsOpfor && !wantsGovfor && !wantsClf)
+        var (wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf, wantsWeYu) = ResolveComputerWriteFaction(ent, user); // CMU14: weyu
+        if (!wantsMarines && !wantsXenos && !wantsOpfor && !wantsGovfor && !wantsClf && !wantsWeYu) // CMU14: weyu
             return;
 
-        UpdateCanvas(lines, labels, wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf, user);
+        UpdateCanvas(lines, labels, wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf, user, weyu: wantsWeYu); // CMU14: weyu
     }
 
     // Resolves which faction's canvas a drawing/label from a TacticalMapComputer should be written to.
     // If the computer has no faction yet, the first user with an identifiable faction locks theirs
     // in permanently; users with no faction do not assign anything and their action is dropped.
-    private (bool marines, bool xenos, bool opfor, bool govfor, bool clf) ResolveComputerWriteFaction(
+    private (bool marines, bool xenos, bool opfor, bool govfor, bool clf, bool weyu) ResolveComputerWriteFaction( // CMU14: weyu
         Entity<TacticalMapComputerComponent> computer, EntityUid user)
     {
         var faction = NormalizeMapFaction(computer.Comp.Faction);
@@ -776,11 +798,12 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
                     faction == XenosFaction,
                     faction == OpforFaction,
                     faction == GovforFaction,
-                    faction == ClfFaction);
+                    faction == ClfFaction,
+                    faction == WeYuFaction); // CMU14: weyu
         }
 
         string? assign = null;
-        var result = (marines: false, xenos: false, opfor: false, govfor: false, clf: false);
+        var result = (marines: false, xenos: false, opfor: false, govfor: false, clf: false, weyu: false); // CMU14: weyu
 
         if (HasComp<XenoComponent>(user))
         {
@@ -790,7 +813,12 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
         else if (TryComp<MarineComponent>(user, out var marine))
         {
             var userFaction = NormalizeHumanFaction(marine.Faction);
-            if (userFaction == ClfFaction)
+            if (HasComp<WeYuMapTrackedComponent>(user)) // CMU14: WY corporate has no faction to read, tracked comp is the truth
+            {
+                assign = WeYuFaction;
+                result = (false, false, false, false, false, true);
+            }
+            else if (userFaction == ClfFaction)
             {
                 assign = ClfFaction;
                 result = (false, false, false, false, true);
@@ -845,6 +873,9 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
 
         if (ent.Comp.Clf)
             UpdateIndividualLabel(args.Position, args.Text, false, false, false, false, true, user, LabelOperation.Create);
+
+        if (ent.Comp.WeYu) // CMU14
+            UpdateIndividualLabel(args.Position, args.Text, false, false, false, false, false, user, LabelOperation.Create, weyu: true);
     }
 
     private void OnUserEditLabelMsg(Entity<TacticalMapUserComponent> ent, ref TacticalMapEditLabelMsg args)
@@ -871,6 +902,9 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
 
         if (ent.Comp.Clf)
             UpdateIndividualLabel(args.Position, args.NewText, false, false, false, false, true, user, LabelOperation.Edit);
+
+        if (ent.Comp.WeYu) // CMU14
+            UpdateIndividualLabel(args.Position, args.NewText, false, false, false, false, false, user, LabelOperation.Edit, weyu: true);
     }
 
     private void OnUserDeleteLabelMsg(Entity<TacticalMapUserComponent> ent, ref TacticalMapDeleteLabelMsg args)
@@ -897,6 +931,9 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
 
         if (ent.Comp.Clf)
             UpdateIndividualLabel(args.Position, string.Empty, false, false, false, false, true, user, LabelOperation.Delete);
+
+        if (ent.Comp.WeYu) // CMU14
+            UpdateIndividualLabel(args.Position, string.Empty, false, false, false, false, false, user, LabelOperation.Delete, weyu: true);
     }
 
     private void OnUserMoveLabelMsg(Entity<TacticalMapUserComponent> ent, ref TacticalMapMoveLabelMsg args)
@@ -923,6 +960,9 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
 
         if (ent.Comp.Clf)
             UpdateMoveLabel(args.OldPosition, args.NewPosition, false, false, false, false, true, user);
+
+        if (ent.Comp.WeYu) // CMU14
+            UpdateMoveLabel(args.OldPosition, args.NewPosition, false, false, false, false, false, user, weyu: true);
     }
 
     private void OnComputerCreateLabelMsg(Entity<TacticalMapComputerComponent> ent, ref TacticalMapCreateLabelMsg args)
@@ -935,11 +975,11 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
         if (time < ent.Comp.NextAnnounceAt)
             return;
 
-        var (wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf) = ResolveComputerWriteFaction(ent, user);
-        if (!wantsMarines && !wantsXenos && !wantsOpfor && !wantsGovfor && !wantsClf)
+        var (wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf, wantsWeYu) = ResolveComputerWriteFaction(ent, user); // CMU14: weyu
+        if (!wantsMarines && !wantsXenos && !wantsOpfor && !wantsGovfor && !wantsClf && !wantsWeYu) // CMU14: weyu
             return;
 
-        UpdateIndividualLabel(args.Position, args.Text, wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf, user, LabelOperation.Create);
+        UpdateIndividualLabel(args.Position, args.Text, wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf, user, LabelOperation.Create, weyu: wantsWeYu); // CMU14: weyu
     }
 
     private void OnComputerEditLabelMsg(Entity<TacticalMapComputerComponent> ent, ref TacticalMapEditLabelMsg args)
@@ -952,11 +992,11 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
         if (time < ent.Comp.NextAnnounceAt)
             return;
 
-        var (wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf) = ResolveComputerWriteFaction(ent, user);
-        if (!wantsMarines && !wantsXenos && !wantsOpfor && !wantsGovfor && !wantsClf)
+        var (wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf, wantsWeYu) = ResolveComputerWriteFaction(ent, user); // CMU14: weyu
+        if (!wantsMarines && !wantsXenos && !wantsOpfor && !wantsGovfor && !wantsClf && !wantsWeYu) // CMU14: weyu
             return;
 
-        UpdateIndividualLabel(args.Position, args.NewText, wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf, user, LabelOperation.Edit);
+        UpdateIndividualLabel(args.Position, args.NewText, wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf, user, LabelOperation.Edit, weyu: wantsWeYu); // CMU14: weyu
     }
 
     private void OnComputerDeleteLabelMsg(Entity<TacticalMapComputerComponent> ent, ref TacticalMapDeleteLabelMsg args)
@@ -969,11 +1009,11 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
         if (time < ent.Comp.NextAnnounceAt)
             return;
 
-        var (wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf) = ResolveComputerWriteFaction(ent, user);
-        if (!wantsMarines && !wantsXenos && !wantsOpfor && !wantsGovfor && !wantsClf)
+        var (wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf, wantsWeYu) = ResolveComputerWriteFaction(ent, user); // CMU14: weyu
+        if (!wantsMarines && !wantsXenos && !wantsOpfor && !wantsGovfor && !wantsClf && !wantsWeYu) // CMU14: weyu
             return;
 
-        UpdateIndividualLabel(args.Position, string.Empty, wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf, user, LabelOperation.Delete);
+        UpdateIndividualLabel(args.Position, string.Empty, wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf, user, LabelOperation.Delete, weyu: wantsWeYu); // CMU14: weyu
     }
 
     private void OnComputerMoveLabelMsg(Entity<TacticalMapComputerComponent> ent, ref TacticalMapMoveLabelMsg args)
@@ -986,11 +1026,11 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
         if (time < ent.Comp.NextAnnounceAt)
             return;
 
-        var (wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf) = ResolveComputerWriteFaction(ent, user);
-        if (!wantsMarines && !wantsXenos && !wantsOpfor && !wantsGovfor && !wantsClf)
+        var (wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf, wantsWeYu) = ResolveComputerWriteFaction(ent, user); // CMU14: weyu
+        if (!wantsMarines && !wantsXenos && !wantsOpfor && !wantsGovfor && !wantsClf && !wantsWeYu) // CMU14: weyu
             return;
 
-        UpdateMoveLabel(args.OldPosition, args.NewPosition, wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf, user);
+        UpdateMoveLabel(args.OldPosition, args.NewPosition, wantsMarines, wantsXenos, wantsOpfor, wantsGovfor, wantsClf, user, weyu: wantsWeYu); // CMU14: weyu
     }
 
     private enum LabelOperation
@@ -1049,7 +1089,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
         UpdateTacticalMapComputerState((computer.Owner, computer.Comp));
     }
 
-    private void UpdateIndividualLabel(Vector2i position, string text, bool marine, bool xeno, bool opfor, bool govfor, bool clf, EntityUid user, LabelOperation operation)
+    private void UpdateIndividualLabel(Vector2i position, string text, bool marine, bool xeno, bool opfor, bool govfor, bool clf, EntityUid user, LabelOperation operation, bool weyu = false) // CMU14: weyu
     {
         var maps = EntityQueryEnumerator<TacticalMapComponent>();
         while (maps.MoveNext(out var mapId, out var map))
@@ -1155,10 +1195,30 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
                 _adminLog.Add(LogType.RMCTacticalMapUpdated,
                     $"{ToPrettyString(user)} {operation.ToString().ToLower()}d a clf tactical map label at {position} for {ToPrettyString(mapId)}");
             }
+
+            if (weyu) // CMU14
+            {
+                switch (operation)
+                {
+                    case LabelOperation.Create:
+                    case LabelOperation.Edit:
+                        if (string.IsNullOrWhiteSpace(text))
+                            map.WeYuLabels.Remove(position);
+                        else
+                            map.WeYuLabels[position] = text;
+                        break;
+                    case LabelOperation.Delete:
+                        map.WeYuLabels.Remove(position);
+                        break;
+                }
+
+                _adminLog.Add(LogType.RMCTacticalMapUpdated,
+                    $"{ToPrettyString(user)} {operation.ToString().ToLower()}d a weyu tactical map label at {position} for {ToPrettyString(mapId)}");
+            }
         }
     }
 
-    private void UpdateMoveLabel(Vector2i oldPosition, Vector2i newPosition, bool marine, bool xeno, bool opfor, bool govfor, bool clf, EntityUid user)
+    private void UpdateMoveLabel(Vector2i oldPosition, Vector2i newPosition, bool marine, bool xeno, bool opfor, bool govfor, bool clf, EntityUid user, bool weyu = false) // CMU14: weyu
     {
         var maps = EntityQueryEnumerator<TacticalMapComponent>();
         while (maps.MoveNext(out var mapId, out var map))
@@ -1208,6 +1268,15 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
 
                 _adminLog.Add(LogType.RMCTacticalMapUpdated,
                     $"{ToPrettyString(user)} moved a clf tactical map label from {oldPosition} to {newPosition} for {ToPrettyString(mapId)}");
+            }
+
+            if (weyu && map.WeYuLabels.TryGetValue(oldPosition, out var weyuText)) // CMU14
+            {
+                map.WeYuLabels.Remove(oldPosition);
+                map.WeYuLabels[newPosition] = weyuText;
+
+                _adminLog.Add(LogType.RMCTacticalMapUpdated,
+                    $"{ToPrettyString(user)} moved a weyu tactical map label from {oldPosition} to {newPosition} for {ToPrettyString(mapId)}");
             }
         }
     }
@@ -1285,6 +1354,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
         tacticalMap.OpforBlips.Remove(tracked.Owner.Id);
         tacticalMap.GovforBlips.Remove(tracked.Owner.Id);
         tacticalMap.ClfBlips.Remove(tracked.Owner.Id);
+        tacticalMap.WeYuBlips.Remove(tracked.Owner.Id); // CMU14
         tacticalMap.MapDirty = true;
         tracked.Comp.Map = null;
     }
@@ -1394,6 +1464,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
                         map.OpforBlips.Remove(ent.Owner.Id);
                         map.GovforBlips.Remove(ent.Owner.Id);
                         map.ClfBlips.Remove(ent.Owner.Id);
+                        map.WeYuBlips.Remove(ent.Owner.Id); // CMU14
                         map.MapDirty = true;
                     }
                 }
@@ -1405,6 +1476,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
                     curMap.OpforBlips.Remove(ent.Owner.Id);
                     curMap.GovforBlips.Remove(ent.Owner.Id);
                     curMap.ClfBlips.Remove(ent.Owner.Id);
+                    curMap.WeYuBlips.Remove(ent.Owner.Id); // CMU14
                     curMap.MapDirty = true;
                 }
 
@@ -1514,6 +1586,15 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
             placed = true;
         }
 
+        // CMU14: WY PMC bucket - checked before the MarineComponent.Faction fallback
+        // (weyu players carry Faction=govfor) and invisible to every other faction
+        if (!placed && _weyuMapTrackedQuery.HasComp(ent))
+        {
+            tacticalMap.WeYuBlips[ent.Owner.Id] = blip;
+            tacticalMap.MapDirty = true;
+            placed = true;
+        }
+
         // Fallback: infer from MarineComponent.Faction
         if (!placed && TryComp(ent, out Content.Shared._RMC14.Marines.MarineComponent? marineComp) && !string.IsNullOrWhiteSpace(marineComp.Faction))
         {
@@ -1605,7 +1686,8 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
                 bool isFriendly = (map.MarineBlips.ContainsKey(id) && userFaction == "MARINES")
                     || (map.OpforBlips.ContainsKey(id) && userFaction == "OPFOR")
                     || (map.GovforBlips.ContainsKey(id) && userFaction == "GOVFOR")
-                    || (map.ClfBlips.ContainsKey(id) && userFaction == "CLF");
+                    || (map.ClfBlips.ContainsKey(id) && userFaction == "CLF")
+                    || (map.WeYuBlips.ContainsKey(id) && userFaction == "WEYU"); // CMU14
 
                 if (isFriendly)
                     continue;
@@ -1793,12 +1875,27 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
             ApplyEnemySpritesToUser("CLF", user.Comp.ClfBlips, playerId);
         }
 
+        // CMU14: WY PMC sees its own team only; cross-faction reveal arrives with the sensor tower rework
+        if (user.Comp.WeYu)
+        {
+            user.Comp.WeYuBlips = user.Comp.LiveUpdate ? map.WeYuBlips : map.LastUpdateWeYuBlips.ToDictionary();
+
+            if (!user.Comp.LiveUpdate && map.WeYuBlips.TryGetValue(playerId, out var playerWeYuBlip))
+                user.Comp.WeYuBlips[playerId] = playerWeYuBlip;
+
+            AddTowersToBlips(user.Comp.WeYuBlips, map);
+
+            lines.WeYuLines = map.WeYuLines;
+            labels.WeYuLabels = map.WeYuLabels;
+        }
+
 #if DEBUG
         Logger.GetSawmill("tacmap").Debug($"Marine blips: {map.MarineBlips.Count}");
         Logger.GetSawmill("tacmap").Debug($"Xeno blips: {map.XenoBlips.Count}");
         Logger.GetSawmill("tacmap").Debug($"Opfor blips: {map.OpforBlips.Count}");
         Logger.GetSawmill("tacmap").Debug($"Govfor blips: {map.GovforBlips.Count}");
         Logger.GetSawmill("tacmap").Debug($"CLF blips: {map.ClfBlips.Count}");
+        Logger.GetSawmill("tacmap").Debug($"WEYU blips: {map.WeYuBlips.Count}"); // CMU14
 #endif
         // Build squad blips for squad tacmap
         if (TryComp<SquadMemberComponent>(user.Owner, out var squadMember) &&
@@ -1849,7 +1946,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
         return null;
     }
 
-    private void UpdateCanvas(List<TacticalMapLine> lines, Dictionary<Vector2i, string> labels, bool marine, bool xeno, bool opfor, bool govfor, bool clf, EntityUid user, SoundSpecifier? sound = null)
+    private void UpdateCanvas(List<TacticalMapLine> lines, Dictionary<Vector2i, string> labels, bool marine, bool xeno, bool opfor, bool govfor, bool clf, EntityUid user, SoundSpecifier? sound = null, bool weyu = false) // CMU14: weyu
     {
         var maps = EntityQueryEnumerator<TacticalMapComponent>();
         while (maps.MoveNext(out var mapId, out var map))
@@ -2026,6 +2123,16 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
                 _adminLog.Add(LogType.RMCTacticalMapUpdated, $"{ToPrettyString(user)} updated the clf tactical map for {ToPrettyString(mapId)}");
             }
 
+            // CMU14: WY PMC canvas - own bucket only, no cross-faction reveal until the sensor tower rework
+            if (weyu)
+            {
+                map.WeYuLines = lines;
+                map.WeYuLabels = new Dictionary<Vector2i, string>(labels);
+                map.LastUpdateWeYuBlips = map.WeYuBlips.ToDictionary();
+                AnnounceHumanTacticalMapUpdated(user, sound, "WEYU");
+                _adminLog.Add(LogType.RMCTacticalMapUpdated, $"{ToPrettyString(user)} updated the weyu tactical map for {ToPrettyString(mapId)}");
+            }
+
             RaiseLocalEvent(ref ev);
             // Immediately update open tactical computers on this map so canvases reflect the enemy_blip changes
             var computers = EntityQueryEnumerator<TacticalMapComputerComponent>();
@@ -2062,7 +2169,12 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem
         return Filter.Empty().AddWhereAttachedEntity(e =>
         {
             if (TryComp<MarineComponent>(e, out var marine))
+            {
+                if (HasComp<WeYuMapTrackedComponent>(e)) // CMU14: WY corporate announcement filter - tracked comp, not Faction
+                    return NormalizeHumanFaction(faction) == WeYuFaction;
+
                 return NormalizeHumanFaction(marine.Faction) == NormalizeHumanFaction(faction);
+            }
 
             return HasComp<GhostComponent>(e);
         });
