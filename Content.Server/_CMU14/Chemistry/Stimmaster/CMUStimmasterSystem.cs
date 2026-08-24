@@ -1,5 +1,5 @@
 using Content.Server.Materials;
-using Content.Shared._AU14.Chemistry.Stimmaster;
+using Content.Shared._CMU14.Chemistry.Stimmaster;
 using Content.Shared._RMC14.Chemistry.ChemMaster;
 using Content.Shared._RMC14.Chemistry.SmartFridge;
 using Content.Shared._RMC14.IconLabel;
@@ -16,12 +16,12 @@ using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.Prototypes;
 
-namespace Content.Server._AU14.Chemistry.Stimmaster;
+namespace Content.Server._CMU14.Chemistry.Stimmaster;
 
 /// <summary>
 /// Fabricates empty autoinjector shells and fills selected shells from an RMC ChemMaster buffer.
 /// </summary>
-public sealed partial class RMCStimmasterSystem : EntitySystem
+public sealed partial class CMUStimmasterSystem : EntitySystem
 {
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private SharedContainerSystem _container = default!;
@@ -41,29 +41,29 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
 
     public override void Initialize()
     {
-        SubscribeLocalEvent<RMCStimmasterComponent, EntInsertedIntoContainerMessage>(OnEntInserted);
-        SubscribeLocalEvent<RMCStimmasterComponent, EntRemovedFromContainerMessage>(OnEntRemoved);
-        SubscribeLocalEvent<RMCStimmasterComponent, GetVerbsEvent<AlternativeVerb>>(OnGetAlternativeVerbs);
+        SubscribeLocalEvent<CMUStimmasterComponent, EntInsertedIntoContainerMessage>(OnEntInserted);
+        SubscribeLocalEvent<CMUStimmasterComponent, EntRemovedFromContainerMessage>(OnEntRemoved);
+        SubscribeLocalEvent<CMUStimmasterComponent, GetVerbsEvent<AlternativeVerb>>(OnGetAlternativeVerbs);
 
-        Subs.BuiEvents<RMCStimmasterComponent>(RMCChemMasterUI.Key, subs =>
+        Subs.BuiEvents<CMUStimmasterComponent>(RMCChemMasterUI.Key, subs =>
         {
-            subs.Event<RMCStimmasterCreateMsg>(OnCreate);
-            subs.Event<RMCStimmasterSelectInjectorMsg>(OnSelectInjector);
-            subs.Event<RMCStimmasterSelectAllMsg>(OnSelectAll);
-            subs.Event<RMCStimmasterFillMsg>(OnFill);
-            subs.Event<RMCStimmasterLabelMsg>(OnLabel);
-            subs.Event<RMCStimmasterTransferMsg>(OnTransfer);
-            subs.Event<RMCStimmasterEjectMsg>(OnEject);
+            subs.Event<CMUStimmasterCreateMsg>(OnCreate);
+            subs.Event<CMUStimmasterSelectInjectorMsg>(OnSelectInjector);
+            subs.Event<CMUStimmasterSelectAllMsg>(OnSelectAll);
+            subs.Event<CMUStimmasterFillMsg>(OnFill);
+            subs.Event<CMUStimmasterLabelMsg>(OnLabel);
+            subs.Event<CMUStimmasterTransferMsg>(OnTransfer);
+            subs.Event<CMUStimmasterEjectMsg>(OnEject);
         });
     }
 
-    private void OnEntInserted(Entity<RMCStimmasterComponent> ent, ref EntInsertedIntoContainerMessage args)
+    private void OnEntInserted(Entity<CMUStimmasterComponent> ent, ref EntInsertedIntoContainerMessage args)
     {
         if (args.Container.ID == ent.Comp.InjectorContainer)
             Dirty(ent);
     }
 
-    private void OnEntRemoved(Entity<RMCStimmasterComponent> ent, ref EntRemovedFromContainerMessage args)
+    private void OnEntRemoved(Entity<CMUStimmasterComponent> ent, ref EntRemovedFromContainerMessage args)
     {
         if (args.Container.ID != ent.Comp.InjectorContainer)
             return;
@@ -72,7 +72,7 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
         Dirty(ent);
     }
 
-    private void OnGetAlternativeVerbs(Entity<RMCStimmasterComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
+    private void OnGetAlternativeVerbs(Entity<CMUStimmasterComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
     {
         if (!args.CanAccess ||
             !args.CanInteract ||
@@ -94,7 +94,7 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
 
             args.Verbs.Add(new AlternativeVerb
             {
-                Text = Loc.GetString("rmc-stimmaster-eject-material",
+                Text = Loc.GetString("cmu-stimmaster-eject-material",
                     ("material", Loc.GetString(material.Name)),
                     ("sheets", sheets)),
                 Category = VerbCategory.Eject,
@@ -104,14 +104,14 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
         }
     }
 
-    private void EjectMaterial(Entity<RMCStimmasterComponent> ent, string material)
+    private void EjectMaterial(Entity<CMUStimmasterComponent> ent, string material)
     {
         _materials.EjectMaterial(ent, material);
         Dirty(ent);
         DirtyChemMaster(ent.Owner);
     }
 
-    private void OnCreate(Entity<RMCStimmasterComponent> ent, ref RMCStimmasterCreateMsg args)
+    private void OnCreate(Entity<CMUStimmasterComponent> ent, ref CMUStimmasterCreateMsg args)
     {
         if (args.Amount < 1 ||
             args.Amount > ent.Comp.MaxFabricationAmount ||
@@ -124,7 +124,7 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
         var container = _container.EnsureContainer<Container>(ent, ent.Comp.InjectorContainer);
         if (container.Count + args.Amount > ent.Comp.MaxStoredInjectors)
         {
-            _popup.PopupClient(Loc.GetString("rmc-stimmaster-storage-full"), ent, args.Actor, PopupType.SmallCaution);
+            _popup.PopupClient(Loc.GetString("cmu-stimmaster-storage-full"), ent, args.Actor, PopupType.SmallCaution);
             return;
         }
 
@@ -139,7 +139,7 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
         if (!_materials.CanChangeMaterialAmount((ent.Owner, storage), materials) ||
             !_materials.TryChangeMaterialAmount((ent.Owner, storage), materials))
         {
-            _popup.PopupClient(Loc.GetString("rmc-stimmaster-not-enough-materials"), ent, args.Actor, PopupType.SmallCaution);
+            _popup.PopupClient(Loc.GetString("cmu-stimmaster-not-enough-materials"), ent, args.Actor, PopupType.SmallCaution);
             return;
         }
 
@@ -155,7 +155,7 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
         DirtyChemMaster(ent.Owner);
     }
 
-    private void OnSelectInjector(Entity<RMCStimmasterComponent> ent, ref RMCStimmasterSelectInjectorMsg args)
+    private void OnSelectInjector(Entity<CMUStimmasterComponent> ent, ref CMUStimmasterSelectInjectorMsg args)
     {
         if (!TryGetContainedInjector(ent, args.Injector, out var injector))
             return;
@@ -169,7 +169,7 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
         DirtyChemMaster(ent.Owner);
     }
 
-    private void OnSelectAll(Entity<RMCStimmasterComponent> ent, ref RMCStimmasterSelectAllMsg args)
+    private void OnSelectAll(Entity<CMUStimmasterComponent> ent, ref CMUStimmasterSelectAllMsg args)
     {
         if (!_container.TryGetContainer(ent, ent.Comp.InjectorContainer, out var container))
             return;
@@ -183,13 +183,13 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
         DirtyChemMaster(ent.Owner);
     }
 
-    private void OnFill(Entity<RMCStimmasterComponent> ent, ref RMCStimmasterFillMsg args)
+    private void OnFill(Entity<CMUStimmasterComponent> ent, ref CMUStimmasterFillMsg args)
     {
         if (!_container.TryGetContainer(ent, ent.Comp.InjectorContainer, out var container) ||
             !_solution.TryGetSolution(ent.Owner, BufferSolution, out var buffer) ||
             buffer.Value.Comp.Solution.Volume <= FixedPoint2.Zero)
         {
-            _popup.PopupClient(Loc.GetString("rmc-stimmaster-no-selection-or-chemicals"), ent, args.Actor, PopupType.SmallCaution);
+            _popup.PopupClient(Loc.GetString("cmu-stimmaster-no-selection-or-chemicals"), ent, args.Actor, PopupType.SmallCaution);
             return;
         }
 
@@ -208,7 +208,7 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
 
         if (injectors.Count == 0)
         {
-            _popup.PopupClient(Loc.GetString("rmc-stimmaster-no-selection-or-chemicals"), ent, args.Actor, PopupType.SmallCaution);
+            _popup.PopupClient(Loc.GetString("cmu-stimmaster-no-selection-or-chemicals"), ent, args.Actor, PopupType.SmallCaution);
             return;
         }
 
@@ -229,7 +229,7 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
         if (insufficientChemicals)
         {
             _popup.PopupClient(
-                Loc.GetString("rmc-stimmaster-not-enough-chemicals-for-injector"),
+                Loc.GetString("cmu-stimmaster-not-enough-chemicals-for-injector"),
                 ent,
                 args.Actor,
                 PopupType.SmallCaution);
@@ -240,7 +240,7 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
         DirtyChemMaster(ent.Owner);
     }
 
-    private void OnLabel(Entity<RMCStimmasterComponent> ent, ref RMCStimmasterLabelMsg args)
+    private void OnLabel(Entity<CMUStimmasterComponent> ent, ref CMUStimmasterLabelMsg args)
     {
         if (!_container.TryGetContainer(ent, ent.Comp.InjectorContainer, out var container))
             return;
@@ -285,7 +285,7 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
             ("customLabel", iconText));
     }
 
-    private void OnTransfer(Entity<RMCStimmasterComponent> ent, ref RMCStimmasterTransferMsg args)
+    private void OnTransfer(Entity<CMUStimmasterComponent> ent, ref CMUStimmasterTransferMsg args)
     {
         if (!TryGetContainedInjector(ent, args.Injector, out var injector))
             return;
@@ -298,7 +298,7 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
         DirtyChemMaster(ent.Owner);
     }
 
-    private void OnEject(Entity<RMCStimmasterComponent> ent, ref RMCStimmasterEjectMsg args)
+    private void OnEject(Entity<CMUStimmasterComponent> ent, ref CMUStimmasterEjectMsg args)
     {
         if (!TryGetContainedInjector(ent, args.Injector, out var injector) ||
             !_container.TryGetContainingContainer((injector, null), out var container) ||
@@ -316,7 +316,7 @@ public sealed partial class RMCStimmasterSystem : EntitySystem
     }
 
     private bool TryGetContainedInjector(
-        Entity<RMCStimmasterComponent> ent,
+        Entity<CMUStimmasterComponent> ent,
         NetEntity netInjector,
         out EntityUid injector)
     {

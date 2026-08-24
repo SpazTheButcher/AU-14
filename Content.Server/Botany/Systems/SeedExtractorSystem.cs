@@ -1,4 +1,5 @@
 using System.Linq;
+using Content.Server._CMU14.Botany;
 using Content.Server.Botany.Components;
 using Content.Server.Popups;
 using Content.Server.Power.EntitySystems;
@@ -52,7 +53,7 @@ public sealed partial class SeedExtractorSystem : EntitySystem
             !args.CanInteract ||
             !this.IsPowered(ent, EntityManager) ||
             args.Using is not { } plantBag ||
-            !HasComp<PlantBagComponent>(plantBag) ||
+            !HasComp<CMUPlantBagComponent>(plantBag) ||
             !HasComp<StorageComponent>(plantBag))
         {
             return;
@@ -74,7 +75,7 @@ public sealed partial class SeedExtractorSystem : EntitySystem
     {
         if (!Exists(plantBag) ||
             !this.IsPowered(ent, EntityManager) ||
-            !TryComp(plantBag, out PlantBagComponent? _) ||
+            !TryComp(plantBag, out CMUPlantBagComponent? _) ||
             !TryComp(plantBag, out StorageComponent? storage))
         {
             return;

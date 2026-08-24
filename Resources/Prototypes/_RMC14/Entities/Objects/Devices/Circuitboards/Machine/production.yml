@@ -120,18 +120,6 @@
 
 - type: entity
   parent: CMBaseMachineCircuitboard
-  id: RMCCircuitboardStimmaster
-  name: stimmaster machine board
-  description: A machine printed circuit board for a Stimmaster.
-  components:
-  - type: Sprite
-    state: blank_mod
-  - type: MachineBoard
-    prototype: RMCStimmaster
-    # TODO RMC14 material requirements
-
-- type: entity
-  parent: CMBaseMachineCircuitboard
   id: CMCircuitboardMicrowave
   name: microwave machine board
   description: A machine printed circuit board for a microwave.

@@ -183,4 +183,4 @@
         - Produce
         - Seed
   - type: Dumpable
-  - type: PlantBag
+  - type: CMUPlantBag

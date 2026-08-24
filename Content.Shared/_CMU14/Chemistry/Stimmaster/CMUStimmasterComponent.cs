@@ -1,13 +1,13 @@
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
-namespace Content.Shared._AU14.Chemistry.Stimmaster;
+namespace Content.Shared._CMU14.Chemistry.Stimmaster;
 
 /// <summary>
 /// Adds autoinjector fabrication to an RMC ChemMaster-compatible machine.
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true)]
-public sealed partial class RMCStimmasterComponent : Component
+public sealed partial class CMUStimmasterComponent : Component
 {
     /// <summary>
     /// Raw MaterialStorage units per injector. A CM sheet contains 3750 units, so each is 0.2 sheets.
@@ -22,7 +22,7 @@ public sealed partial class RMCStimmasterComponent : Component
     public List<EntProtoId> InjectorPrototypes = [];
 
     [DataField, AutoNetworkedField]
-    public string InjectorContainer = "rmc_stimmaster_injectors";
+    public string InjectorContainer = "cmu_stimmaster_injectors";
 
     [DataField, AutoNetworkedField]
     public int MaxStoredInjectors = 64;

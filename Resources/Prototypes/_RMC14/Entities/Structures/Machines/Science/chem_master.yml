@@ -99,50 +99,6 @@
 
 - type: entity
   parent: CMChemMaster
-  id: RMCStimmaster
-  name: Stimmaster 1000
-  description: A chemical manipulator that fabricates and fills custom autoinjectors. Insert metal and glass sheets directly into it.
-  placement:
-    mode: SnapgridCenter
-  components:
-  - type: Sprite
-    sprite: _RMC14/Structures/Machines/Science/industry_dispenser.rsi
-    layers:
-    - state: industry_mixer0_nopower
-    - state: industry_mixer0_screen
-      shader: unshaded
-      map: ["enum.PowerDeviceVisualLayers.Powered"]
-  - type: Icon
-    sprite: _RMC14/Structures/Machines/Science/industry_dispenser.rsi
-    state: industry_mixer0
-  - type: SolutionContainerManager
-    solutions:
-      buffer:
-        maxVol: 1000
-        canReact: false
-  - type: MaterialStorage
-    whitelist:
-      tags:
-      - Metal
-      - RMCGlass
-  - type: Machine
-    board: RMCCircuitboardStimmaster
-  - type: RMCStimmaster
-    injectorPrototypes:
-    - RMCMedicAutoInjectorCS5
-    - RMCMedicAutoInjectorCS15
-    - RMCMedicAutoInjectorCS30
-    - RMCMedicAutoInjectorCS60
-    - RMCMedicAutoInjectorEZ1
-    - RMCMedicAutoInjectorEZ5
-    - RMCMedicAutoInjectorEZ10
-    - RMCMedicAutoInjectorEZ15
-    - RMCMedicAutoInjectorEZ30
-    - RMCMedicAutoInjectorEZ45
-    - RMCMedicAutoInjectorEZ60
-
-- type: entity
-  parent: CMChemMaster
   id: RMCChemMasterIndustrial
   name: industrial chemical mixer
   description: An industrial grade chemical manipulator.

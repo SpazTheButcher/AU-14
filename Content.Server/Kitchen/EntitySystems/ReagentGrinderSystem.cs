@@ -1,4 +1,5 @@
 using Content.Server.Kitchen.Components;
+using Content.Server._CMU14.Botany;
 using Content.Server.Botany.Components;
 using Content.Server.Power.Components;
 using Content.Server.Power.EntitySystems;
@@ -218,7 +219,7 @@ namespace Content.Server.Kitchen.EntitySystems
             var heldEnt = args.Used;
             var inputContainer = _containerSystem.EnsureContainer<Container>(entity.Owner, SharedReagentGrinder.InputContainerId);
 
-            if (HasComp<PlantBagComponent>(heldEnt) && TryComp(heldEnt, out StorageComponent? plantBag))
+            if (HasComp<CMUPlantBagComponent>(heldEnt) && TryComp(heldEnt, out StorageComponent? plantBag))
             {
                 args.Handled = true;
                 TransferPlantBag(entity, heldEnt, plantBag, inputContainer, args.User);

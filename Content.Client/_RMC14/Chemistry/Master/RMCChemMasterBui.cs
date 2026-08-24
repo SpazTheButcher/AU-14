@@ -1,7 +1,7 @@
 using System.Linq;
 using Content.Client._RMC14.UserInterface;
 using Content.Client.Chemistry.Containers.EntitySystems;
-using Content.Shared._AU14.Chemistry.Stimmaster;
+using Content.Shared._CMU14.Chemistry.Stimmaster;
 using Content.Shared._RMC14.Chemistry.ChemMaster;
 using Content.Shared._RMC14.Chemistry.Reagent;
 using Content.Shared._RMC14.Extensions;
@@ -82,7 +82,7 @@ public sealed partial class RMCChemMasterBui : BoundUserInterface, IRefreshableB
         if (!EntMan.TryGetComponent(Owner, out RMCChemMasterComponent? chemMaster))
             return;
 
-        if (EntMan.TryGetComponent(Owner, out RMCStimmasterComponent? stimmaster))
+        if (EntMan.TryGetComponent(Owner, out CMUStimmasterComponent? stimmaster))
         {
             _window.StimmasterContainer.Visible = true;
             _window.AutoSelectButton.Visible = false;
@@ -91,17 +91,17 @@ public sealed partial class RMCChemMasterBui : BoundUserInterface, IRefreshableB
             _window.PillBottleStatusContainer.Visible = false;
             _window.PillFabricationContainer.Visible = false;
             _window.CreateStimsButton.OnPressed += _ => OpenStimmasterFabricationPopup(stimmaster);
-            _window.FillStimsButton.OnPressed += _ => SendPredictedMessage(new RMCStimmasterFillMsg());
+            _window.FillStimsButton.OnPressed += _ => SendPredictedMessage(new CMUStimmasterFillMsg());
             _window.StimmasterSelectAllButton.OnPressed += _ =>
             {
-                if (!EntMan.TryGetComponent(Owner, out RMCStimmasterComponent? current) ||
+                if (!EntMan.TryGetComponent(Owner, out CMUStimmasterComponent? current) ||
                     !_container.TryGetContainer(Owner, current.InjectorContainer, out var container))
                 {
                     return;
                 }
 
                 var allSelected = current.SelectedInjectors.Count == container.ContainedEntities.Count;
-                SendPredictedMessage(new RMCStimmasterSelectAllMsg(!allSelected));
+                SendPredictedMessage(new CMUStimmasterSelectAllMsg(!allSelected));
             };
         }
 
@@ -163,7 +163,7 @@ public sealed partial class RMCChemMasterBui : BoundUserInterface, IRefreshableB
         UpdatePillBottles((Owner, chemMaster));
         UpdateBuffer((Owner, chemMaster));
 
-        if (EntMan.TryGetComponent(Owner, out RMCStimmasterComponent? stimmaster))
+        if (EntMan.TryGetComponent(Owner, out CMUStimmasterComponent? stimmaster))
             UpdateStimmaster((Owner, stimmaster));
 
         var type = (int) chemMaster.SelectedType - 1;
@@ -184,7 +184,7 @@ public sealed partial class RMCChemMasterBui : BoundUserInterface, IRefreshableB
         _window.AutoSelectButton.Pressed = chemMaster.AutoSelectPillBottles;
     }
 
-    private void OpenStimmasterFabricationPopup(RMCStimmasterComponent stimmaster)
+    private void OpenStimmasterFabricationPopup(CMUStimmasterComponent stimmaster)
     {
         if (_stimmasterFabricationPopup != null)
         {
@@ -194,10 +194,10 @@ public sealed partial class RMCChemMasterBui : BoundUserInterface, IRefreshableB
 
         _stimmasterFabricationPopup = new RMCChemMasterPopupWindow
         {
-            Title = Loc.GetString("rmc-stimmaster-fabrication-title"),
+            Title = Loc.GetString("cmu-stimmaster-fabrication-title"),
         };
         _stimmasterFabricationPopup.OnClose += () => _stimmasterFabricationPopup = null;
-        _stimmasterFabricationPopup.Header.Text = Loc.GetString("rmc-stimmaster-fabrication-header");
+        _stimmasterFabricationPopup.Header.Text = Loc.GetString("cmu-stimmaster-fabrication-header");
         _stimmasterFabricationPopup.Grid.Columns = 1;
 
         EntProtoId? selected = null;
@@ -210,7 +210,7 @@ public sealed partial class RMCChemMasterBui : BoundUserInterface, IRefreshableB
 
         var fabricate = new Button
         {
-            Text = Loc.GetString("rmc-stimmaster-fabrication-confirm"),
+            Text = Loc.GetString("cmu-stimmaster-fabrication-confirm"),
             HorizontalExpand = true,
             Disabled = true,
             StyleClasses = { "OpenBoth" },
@@ -223,10 +223,10 @@ public sealed partial class RMCChemMasterBui : BoundUserInterface, IRefreshableB
 
             var button = new Button
             {
-                Text = Loc.GetString("rmc-stimmaster-fabrication-option",
+                Text = Loc.GetString("cmu-stimmaster-fabrication-option",
                     ("name", name),
                     ("capacity", capacity)),
-                ToolTip = Loc.GetString("rmc-stimmaster-fabrication-option",
+                ToolTip = Loc.GetString("cmu-stimmaster-fabrication-option",
                     ("name", name),
                     ("capacity", capacity)),
                 HorizontalExpand = true,
@@ -245,7 +245,7 @@ public sealed partial class RMCChemMasterBui : BoundUserInterface, IRefreshableB
         var amountRow = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal };
         amountRow.AddChild(new Label
         {
-            Text = Loc.GetString("rmc-stimmaster-fabrication-amount"),
+            Text = Loc.GetString("cmu-stimmaster-fabrication-amount"),
             Margin = new Thickness(0, 0, 5, 0),
         });
         amountRow.AddChild(amount);
@@ -257,7 +257,7 @@ public sealed partial class RMCChemMasterBui : BoundUserInterface, IRefreshableB
             if (selected is not { } prototype)
                 return;
 
-            SendPredictedMessage(new RMCStimmasterCreateMsg(prototype, (int) MathF.Round(amount.Value)));
+            SendPredictedMessage(new CMUStimmasterCreateMsg(prototype, (int) MathF.Round(amount.Value)));
             _stimmasterFabricationPopup?.Close();
         };
 
@@ -285,7 +285,7 @@ public sealed partial class RMCChemMasterBui : BoundUserInterface, IRefreshableB
         return true;
     }
 
-    private void UpdateStimmaster(Entity<RMCStimmasterComponent> stimmaster)
+    private void UpdateStimmaster(Entity<CMUStimmasterComponent> stimmaster)
     {
         if (_window == null)
             return;
@@ -341,10 +341,10 @@ public sealed partial class RMCChemMasterBui : BoundUserInterface, IRefreshableB
                     continue;
 
                 var row = new RMCChemMasterPillBottleRow();
-                row.FillBottleButton.Text = Loc.GetString("rmc-stimmaster-fill-injector");
+                row.FillBottleButton.Text = Loc.GetString("cmu-stimmaster-fill-injector");
                 row.FillBottleButton.Pressed = selectedInjectors.Contains(contained);
                 row.FillBottleButton.OnPressed += args =>
-                    SendPredictedMessage(new RMCStimmasterSelectInjectorMsg(netContained.Value, args.Button.Pressed));
+                    SendPredictedMessage(new CMUStimmasterSelectInjectorMsg(netContained.Value, args.Button.Pressed));
                 row.ColorButton.Visible = false;
 
                 if (i == 0)
@@ -359,9 +359,9 @@ public sealed partial class RMCChemMasterBui : BoundUserInterface, IRefreshableB
                 }
 
                 row.TransferButton.OnPressed += _ =>
-                    SendPredictedMessage(new RMCStimmasterTransferMsg(netContained.Value));
+                    SendPredictedMessage(new CMUStimmasterTransferMsg(netContained.Value));
                 row.EjectButton.OnPressed += _ =>
-                    SendPredictedMessage(new RMCStimmasterEjectMsg(netContained.Value));
+                    SendPredictedMessage(new CMUStimmasterEjectMsg(netContained.Value));
                 UpdateStimmasterInjectorRow(row, contained);
                 _window.StimmasterStoredInjectors.AddChild(row);
                 _stimmasterRows[contained] = row;
@@ -382,7 +382,7 @@ public sealed partial class RMCChemMasterBui : BoundUserInterface, IRefreshableB
     {
         if (_solution.TryGetSolution(injector, "pen", out var injectorSolution))
         {
-            row.PillAmountLabel.Text = Loc.GetString("rmc-stimmaster-injector-volume",
+            row.PillAmountLabel.Text = Loc.GetString("cmu-stimmaster-injector-volume",
                 ("amount", injectorSolution.Value.Comp.Solution.Volume),
                 ("capacity", injectorSolution.Value.Comp.Solution.MaxVolume));
         }
@@ -396,7 +396,7 @@ public sealed partial class RMCChemMasterBui : BoundUserInterface, IRefreshableB
     private void OnStimmasterLabelInputChanged(LineEdit.LineEditEventArgs args)
     {
         if (args.Control.Root != null)
-            SendPredictedMessage(new RMCStimmasterLabelMsg(args.Text));
+            SendPredictedMessage(new CMUStimmasterLabelMsg(args.Text));
     }
 
     private void UpdateBeaker(Entity<RMCChemMasterComponent> chemMaster)
