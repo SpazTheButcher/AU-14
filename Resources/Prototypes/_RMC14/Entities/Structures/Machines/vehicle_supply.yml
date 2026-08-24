@@ -940,22 +940,72 @@
       vehicle: AU14VehicleCivVan
       unlock: AU14VehicleCivVan
       group: vehicle-civ
+      loadoutCategories:
+      - id: wheels
+        name: Wheels
+        options:
+        - id: RMCVanWheel
+          name: wheel
+          item: RMCVanWheel
+          slot: wheel-1
+      hardpoints:
+      - RMCVanWheel
     - name: Civilian Truck
       vehicle: AU14VehicleCivTruck
       unlock: AU14VehicleCivTruck
       group: vehicle-civ
+      loadoutCategories:
+      - id: wheels
+        name: Wheels
+        options:
+        - id: RMCVanWheel
+          name: wheel
+          item: RMCVanWheel
+          slot: wheel-1
+      hardpoints:
+      - RMCVanWheel
     - name: Civilian Armored Truck
       vehicle: AU14VehicleCivArmoredTruck
       unlock: AU14VehicleCivArmoredTruck
       group: vehicle-civ
+      loadoutCategories:
+      - id: wheels
+        name: Wheels
+        options:
+        - id: RMCVanWheel
+          name: wheel
+          item: RMCVanWheel
+          slot: wheel-1
+      hardpoints:
+      - RMCVanWheel
     - name: Paddy Wagon
       vehicle: AU14VehicleCivHSVan
       unlock: AU14VehicleCivHSVan
       group: vehicle-civ
+      loadoutCategories:
+      - id: wheels
+        name: Wheels
+        options:
+        - id: RMCVanWheel
+          name: wheel
+          item: RMCVanWheel
+          slot: wheel-1
+      hardpoints:
+      - RMCVanWheel
     - name: EMS Ambulance
       vehicle: AU14VehicleCivEMSAmbulance
       unlock: AU14VehicleCivEMSAmbulance
       group: vehicle-civ
+      loadoutCategories:
+      - id: wheels
+        name: Wheels
+        options:
+        - id: RMCVanWheel
+          name: wheel
+          item: RMCVanWheel
+          slot: wheel-1
+      hardpoints:
+      - RMCVanWheel
     # CMU14 End
 #    - name: blackfoot (transport)
 #      vehicle: VehicleBlackfootTransport
