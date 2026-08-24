@@ -27,8 +27,8 @@
     prefix: au14-job-prefix-govfornurse
   - type: TacticalMapIcon
     icon:
-      sprite: /Textures/_AU14/Interface/au14govforjobicons.rsi
-      state: govfor_corpsman
+      sprite: /Textures/_CMU14/Interface/cmugovforblips.rsi
+      state: corpsman
 
   requirements:
   - !type:TraitsRequirement

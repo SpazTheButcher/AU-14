@@ -41,13 +41,13 @@
   - type: AU14CallToAttentionImmune
   - type: TacticalMapIcon
     icon:
-      sprite: /Textures/_AU14/Interface/au14govforjobicons.rsi
-      state: govfor_cmp
+      sprite: /Textures/_CMU14/Interface/cmugovforblips.rsi
+      state: cmp
   roundForceComponents:
     OPFOR:
     - type: TacticalMapIcon
       icon:
-        sprite: /Textures/_AU14/Interface/au14opforjobicons.rsi
+        sprite: /Textures/_CMU14/Interface/cmuopforblips.rsi
         state: cmp
     # UPP:
     # - type: JobPrefix

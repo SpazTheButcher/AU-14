@@ -35,13 +35,13 @@
     prefix: au14-job-prefix-govfordspilot
   - type: TacticalMapIcon
     icon:
-      sprite: /Textures/_AU14/Interface/au14govforjobicons.rsi
-      state: govfor_po
+      sprite: /Textures/_CMU14/Interface/cmugovforblips.rsi
+      state: po
   roundForceComponents:
     OPFOR:
     - type: TacticalMapIcon
       icon:
-        sprite: /Textures/_AU14/Interface/au14opforjobicons.rsi
+        sprite: /Textures/_CMU14/Interface/cmuopforblips.rsi
         state: po
     RMC:
     - type: Skills

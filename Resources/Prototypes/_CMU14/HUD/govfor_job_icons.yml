@@ -2,194 +2,194 @@
   parent: CMJobIconBase
   id: AU14JobIconAFN
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_afn
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: afn
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconDoctor
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_doctor
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: doctor
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconCorpsman
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_corpsman
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: corpsman
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconDCC
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_dcc
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: dcc
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconOpsOfc
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_opsofc
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: opsofc
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconPlatCo
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_platco
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: platco
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconPilotOfficer
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_po
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: po
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconRFN
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: old_govfor_rfn
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: old_rfn
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconMP
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_mp
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: mp
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconFTL
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_ftl
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: ftl
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconSquadSgt
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_sergeant
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: sergeant
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconPlatoonSgt
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_platoonsergeant
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: platoonsergeant
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconRTO
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_rto
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: rto
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconAuxTech
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_logisticstech
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: logisticstech
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconGovAdvisor
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_advisor
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: advisor
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconGovSynth
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_synth
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: synth
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconGovCT
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_ct
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: ct
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconGovWorkingJoe
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
     state: working_joe
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconGovRifleman
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
     state: rifleman
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconGovAdjutant
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_adj
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: adj
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconGovEO
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_eo
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: eo
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconGovIO
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_io
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: io
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconGovCMP
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_cmp
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: cmp
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconGovMO
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_cmo
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: cmo
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconGovLO
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_lo
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: lo
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconGovWeaponsSpecialist
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_ws
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: ws
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconGovTankCrewman
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_vc
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: vc
 
 - type: jobIcon
   parent: CMJobIconBase
   id: AU14JobIconGovTankCommander
   icon:
-    sprite: _AU14/Interface/au14govforjobicons.rsi
-    state: govfor_vcc
+    sprite: _CMU14/Interface/cmugovforjobicons.rsi
+    state: vcc

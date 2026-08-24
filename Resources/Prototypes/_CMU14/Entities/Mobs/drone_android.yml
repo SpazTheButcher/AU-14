@@ -56,14 +56,14 @@
     enabled: false
   - type: TacticalMapIcon
     icon:
-      sprite: /Textures/_AU14/Interface/au14govforjobicons.rsi
+      sprite: /Textures/_CMU14/Interface/cmugovforblips.rsi
       state: rifleman
   - type: UserIFF
     factions:
-    - GOVFOR
+    - GOVFOR # TODO
   - type: NpcFactionMember
     factions:
-    - GOVFOR
+    - GOVFOR # TODO
   - type: GrantMarineIcons
     factions:
     - UNMC

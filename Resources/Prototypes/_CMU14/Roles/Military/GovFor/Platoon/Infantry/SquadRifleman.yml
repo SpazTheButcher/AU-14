@@ -28,13 +28,13 @@
     prefix: au14-job-prefix-govforsquadrifleman
   - type: TacticalMapIcon
     icon:
-      sprite: /Textures/_AU14/Interface/au14govforjobicons.rsi
+      sprite: /Textures/_CMU14/Interface/cmugovforblips.rsi
       state: rifleman
   roundForceComponents:
     OPFOR:
     - type: TacticalMapIcon
       icon:
-        sprite: /Textures/_AU14/Interface/au14opforjobicons.rsi
+        sprite: /Textures/_CMU14/Interface/cmuopforblips.rsi
         state: rifleman
     RMC:
     - type: Skills
