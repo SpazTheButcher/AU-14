@@ -54,9 +54,6 @@
       - XenoWeedNode
   - type: RMCWallExplosionDeletable
   - type: DestroyedByExplosionType
-  - type: NpcFactionMember
-    factions:
-    - RMCXeno
   - type: RMCNightVisionVisible
     priority: -1
     transparency: 0.2

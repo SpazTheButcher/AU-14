@@ -44,7 +44,7 @@ public sealed partial class TacticalMapComponent : Component // CMU14 Class: Cus
     [DataField]
     public Dictionary<int, TacticalMapBlip> LastUpdateXenoBlips = new();
     [DataField]
-    public Dictionary<int, TacticalMapBlip> LastUpdateXenoStructureBlips = new();a
+    public Dictionary<int, TacticalMapBlip> LastUpdateXenoStructureBlips = new();
     [DataField]
     public Dictionary<Vector2i, string> XenoLabels = new();
 

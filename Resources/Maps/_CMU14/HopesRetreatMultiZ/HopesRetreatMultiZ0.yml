@@ -332072,7 +332072,7 @@ entities:
     - type: Transform
       pos: 66.5,-56.5
       parent: 1
-- proto: scenariothirdpartyleaderspawnmarker
+- proto: thirdpartyleaderspawnmarker
   entities:
   - uid: 628
     components:

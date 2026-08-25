@@ -26,19 +26,19 @@
     opforinship: true
     daycycleenabled: false
     threats:
-    - XenoThreat
-    - NeomorphsThreat
+    # - XenoThreat # no threat spawn markers
+    # - NeomorphsThreat # no threat spawn markers
     # - abominationsThreatDistress # no xenocf markers
-    - apethreat
-    # - badBloodClanThreat
+    # - apethreat # no threat spawn markers
+    # - badBloodClanThreat # no threat spawn markers
     # - XenoThreatCF # no xenocf markers
     # - NeomorphsThreatCF # no xenocf markers
-    - cultistThreat
+    # - cultistThreat # no threat spawn markers
     # - cultistThreatOnMarker # no cultcf markers
-    - wendigoThreat
+    # - wendigoThreat # no threat spawn markers
     # - abominationsThreat # no xenocf markers
-    - TribalsThreat
-    - apethreatcf
+    # - TribalsThreat # no threat spawn markers
+    # - apethreatcf # no threat spawn markers
     jobScalingFof: DefaultGovforOpforScale
     jobScalingIns: DefaultInsurgencyScale
 

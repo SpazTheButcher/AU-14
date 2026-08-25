@@ -832,7 +832,7 @@ entities:
     - type: Transform
       pos: 4.5,3.5
       parent: 1
-- proto: scenariothirdpartyentityspawnmarker
+- proto: thirdpartyentityspawnmarker
   entities:
   - uid: 9001
     components:
@@ -849,7 +849,7 @@ entities:
     - type: Transform
       pos: 1.5,-1.5
       parent: 1
-- proto: scenariothirdpartyleaderspawnmarker
+- proto: thirdpartyleaderspawnmarker
   entities:
   - uid: 9004
     components:
@@ -871,7 +871,7 @@ entities:
     - type: Transform
       pos: 1.5,3.5
       parent: 1
-- proto: scenariothirdpartymemberspawnmarker
+- proto: thirdpartymemberspawnmarker
   entities:
   - uid: 9008
     components:

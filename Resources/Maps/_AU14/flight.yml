@@ -68285,7 +68285,7 @@ entities:
     - type: Transform
       pos: 13.5,329.5
       parent: 1
-- proto: ScenarioClfCivilianColonistSpawnMarker
+- proto: AU14SpawnPointCivilianColonist
   entities:
   - uid: 632
     components:
@@ -309291,7 +309291,7 @@ entities:
     - type: Transform
       pos: 1.5,397.5
       parent: 1
-- proto: scenariothirdpartyentityspawnmarker
+- proto: thirdpartyentityspawnmarker
   entities:
   - uid: 47848
     components:
@@ -309333,7 +309333,7 @@ entities:
     - type: Transform
       pos: -16.5,62.5
       parent: 1
-- proto: scenariothirdpartyleaderspawnmarker
+- proto: thirdpartyleaderspawnmarker
   entities:
   - uid: 47852
     components:
@@ -309385,7 +309385,7 @@ entities:
     - type: Transform
       pos: 4.5,93.5
       parent: 1
-- proto: scenariothirdpartymemberspawnmarker
+- proto: thirdpartymemberspawnmarker
   entities:
   - uid: 47847
     components:
@@ -309402,21 +309402,21 @@ entities:
     - type: Transform
       pos: 3.5,93.5
       parent: 1
-- proto: scenariothreatentityspawnmarker
+- proto: threatentityspawnmarker
   entities:
   - uid: 47664
     components:
     - type: Transform
       pos: -40.5,26.5
       parent: 1
-- proto: scenariothreatleaderspawnmarker
+- proto: threatleaderspawnmarker
   entities:
   - uid: 47665
     components:
     - type: Transform
       pos: -40.5,20.5
       parent: 1
-- proto: scenariothreatmemberspawnmarker
+- proto: threatmemberspawnmarker
   entities:
   - uid: 47666
     components:

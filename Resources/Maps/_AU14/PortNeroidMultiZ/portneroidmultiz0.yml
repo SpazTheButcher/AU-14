@@ -271672,7 +271672,7 @@ entities:
     - type: Transform
       pos: -19.5,11.5
       parent: 1
-- proto: ScenarioClfCivilianColonistSpawnMarker
+- proto: AU14SpawnPointCivilianColonist
   entities:
   - uid: 90
     components:
@@ -271689,7 +271689,7 @@ entities:
     - type: Transform
       pos: -1.5,98.5
       parent: 1
-- proto: scenariothirdpartyentityspawnmarker
+- proto: thirdpartyentityspawnmarker
   entities:
   - uid: 35755
     components:
@@ -271706,7 +271706,7 @@ entities:
     - type: Transform
       pos: 101.5,99.5
       parent: 1
-- proto: scenariothirdpartyleaderspawnmarker
+- proto: thirdpartyleaderspawnmarker
   entities:
   - uid: 35747
     components:
@@ -271719,7 +271719,7 @@ entities:
     - type: Transform
       pos: 100.5,100.5
       parent: 1
-- proto: scenariothirdpartymemberspawnmarker
+- proto: thirdpartymemberspawnmarker
   entities:
   - uid: 35785
     components:
@@ -271751,7 +271751,7 @@ entities:
     - type: Transform
       pos: 101.5,101.5
       parent: 1
-- proto: scenariothreatentityspawnmarker
+- proto: threatentityspawnmarker
   entities:
   - uid: 35791
     components:
@@ -271803,7 +271803,7 @@ entities:
     - type: Transform
       pos: 91.5,162.5
       parent: 1
-- proto: scenariothreatleaderspawnmarker
+- proto: threatleaderspawnmarker
   entities:
   - uid: 35801
     components:
@@ -271840,7 +271840,7 @@ entities:
     - type: Transform
       pos: 106.5,35.5
       parent: 1
-- proto: scenariothreatmemberspawnmarker
+- proto: threatmemberspawnmarker
   entities:
   - uid: 35808
     components:
@@ -272012,7 +272012,7 @@ entities:
     - type: Transform
       pos: 92.5,165.5
       parent: 1
-- proto: scenarioxenocfthreatentityspawnmarker
+- proto: xenocfthreatentityspawnmarker
   entities:
   - uid: 35855
     components:
@@ -272054,14 +272054,14 @@ entities:
     - type: Transform
       pos: 22.5,223.5
       parent: 1
-- proto: scenarioxenocfthreatleaderspawnmarker
+- proto: xenocfthreatleaderspawnmarker
   entities:
   - uid: 35863
     components:
     - type: Transform
       pos: 20.5,221.5
       parent: 1
-- proto: scenarioxenocfthreatmemberspawnmarker
+- proto: xenocfthreatmemberspawnmarker
   entities:
   - uid: 35864
     components:

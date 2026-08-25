@@ -136,7 +136,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
         SubscribeLocalEvent<TacticalMapUserComponent, ComponentStartup>(OnUserStartup);
         SubscribeLocalEvent<TacticalMapUserComponent, RoleAddedEvent>(OnUserFactionChanged);
         SubscribeLocalEvent<TacticalMapUserComponent, MindAddedMessage>(OnUserFactionChanged);
-        SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawnComplete); // CMU14: tags WY PMC spawns into the hidden weyu bucket
+        SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawnComplete);
 
         SubscribeLocalEvent<TacticalMapComputerComponent, ComponentStartup>(OnComputerStartup);
         SubscribeLocalEvent<TacticalMapComputerComponent, BeforeActivatableUIOpenEvent>(OnComputerBeforeUIOpen);
@@ -339,13 +339,13 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
     // base marine prototype (marines: true), so we translate MarineComponent.Faction
     // into the correct per-faction flag at role-assignment time. Ghosts are forced
     // to see every faction live.
-    private void SyncUserFactionFlags(Entity<TacticalMapUserComponent> ent)
+    private void SyncUserFactionFlags(Entity<TacticalMapUserComponent> ent) // CMU14 Method
     {
         if (HasComp<GhostComponent>(ent))
         {
             var changed = !ent.Comp.Marines || !ent.Comp.Xenos || !ent.Comp.Opfor
-                || !ent.Comp.Govfor || !ent.Comp.Clf || !ent.Comp.WeYu || !ent.Comp.LiveUpdate; // CMU14: WeYu
-            ent.Comp.Marines = ent.Comp.Xenos = ent.Comp.Opfor = ent.Comp.Govfor = ent.Comp.Clf = ent.Comp.WeYu = true; // CMU14: WeYu
+                || !ent.Comp.Govfor || !ent.Comp.Clf || !ent.Comp.WeYu || !ent.Comp.LiveUpdate;
+            ent.Comp.Marines = ent.Comp.Xenos = ent.Comp.Opfor = ent.Comp.Govfor = ent.Comp.Clf = ent.Comp.WeYu = true;
             ent.Comp.LiveUpdate = true;
             if (changed)
                 Dirty(ent);
@@ -354,17 +354,17 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
 
         if (HasComp<XenoComponent>(ent))
         {
-            if (!ent.Comp.Xenos || ent.Comp.Marines || ent.Comp.Opfor || ent.Comp.Govfor || ent.Comp.Clf || ent.Comp.WeYu) // CMU14: WeYu
+            if (!ent.Comp.Xenos || ent.Comp.Marines || ent.Comp.Opfor || ent.Comp.Govfor || ent.Comp.Clf || ent.Comp.WeYu)
             {
                 ent.Comp.Xenos = true;
-                ent.Comp.Marines = ent.Comp.Opfor = ent.Comp.Govfor = ent.Comp.Clf = ent.Comp.WeYu = false; // CMU14: WeYu
+                ent.Comp.Marines = ent.Comp.Opfor = ent.Comp.Govfor = ent.Comp.Clf = ent.Comp.WeYu = false;
                 Dirty(ent);
             }
             return;
         }
 
         // CMU14: WY corporate players have no readable faction (civilian-side); the tracked comp is the source of truth
-        var weyu = HasComp<WeYuMapTrackedComponent>(ent); // CMU14
+        var weyu = HasComp<WeYuMapTrackedComponent>(ent);
         bool marines = false, opfor = false, govfor = false, clf = false;
         if (!weyu && TryComp<MarineComponent>(ent, out var marine))
         {
@@ -389,15 +389,15 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
             }
         }
 
-        var current = (ent.Comp.Marines, ent.Comp.Opfor, ent.Comp.Govfor, ent.Comp.Clf, ent.Comp.WeYu); // CMU14: WeYu
-        var desired = (marines, opfor, govfor, clf, weyu); // CMU14: WeYu
+        var current = (ent.Comp.Marines, ent.Comp.Opfor, ent.Comp.Govfor, ent.Comp.Clf, ent.Comp.WeYu);
+        var desired = (marines, opfor, govfor, clf, weyu);
         if (current != desired)
         {
             ent.Comp.Marines = marines;
             ent.Comp.Opfor = opfor;
             ent.Comp.Govfor = govfor;
             ent.Comp.Clf = clf;
-            ent.Comp.WeYu = weyu; // CMU14
+            ent.Comp.WeYu = weyu;
             Dirty(ent);
         }
     }
@@ -808,7 +808,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
         if (HasComp<XenoComponent>(user))
         {
             assign = "XENONIDS";
-            result = (false, true, false, false, false);
+            result = (false, true, false, false, false, false); // CMU14: weyu
         }
         else if (TryComp<MarineComponent>(user, out var marine))
         {
@@ -821,22 +821,22 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
             else if (userFaction == ClfFaction)
             {
                 assign = ClfFaction;
-                result = (false, false, false, false, true);
+                result = (false, false, false, false, true, false); // CMU14: weyu
             }
             else if (userFaction == OpforFaction)
             {
                 assign = OpforFaction;
-                result = (false, false, true, false, false);
+                result = (false, false, true, false, false, false); // CMU14: weyu
             }
             else if (userFaction == GovforFaction)
             {
                 assign = GovforFaction;
-                result = (false, false, false, true, false);
+                result = (false, false, false, true, false, false); // CMU14: weyu
             }
             else
             {
                 assign = MarinesFaction;
-                result = (true, false, false, false, false);
+                result = (true, false, false, false, false, false); // CMU14: weyu
             }
         }
 
