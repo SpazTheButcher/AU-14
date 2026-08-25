@@ -4,6 +4,8 @@
     - Medical, Requisitions, Brig, Ordnance Workshop and CIC must have at least one member of their department on the ship/installation for any other members of their department to deploy.
     - The CMO, CMP and LO may never deploy to the FOB and never to the frontline unless the ship/installation is overrun.
     - For deployment of staff, the FOB must be declared secure. If it is breached or comes under significant hostile threat, all deployed personnel are to immediately return to the ship or primary installation.
+    - The EO and IO may deploy before the FOB has been declared secure to perform their duties.
+    - Department Heads (CMP, CMO, LO) may deploy the FOB in the event they are the only staff in their department and have duties to perform at the FOB. They may not leave the FOB and must follow deployment regulations.
 
   ### Medical Staff
     - Doctors, nurses, and any other medical staff who are not the CMO may deploy to the FOB with the permission of the CMO or Commander and only to the frontline if they are within a vehicle.
@@ -34,5 +36,5 @@
     - The Adjutant may deploy to the FOB and to the frontline with permission from the Commander
     - The Engineering Officer may deploy freely to the FOB and never to the frontline.
     - The Intelligence Officer may deploy freely and to the frontline, but not for combat purposes, only for gathering intelligence, communication to CIC, or to act as a squad leader.
-    - Junior Officers may only deploy to the FOB with permission from the Commander and if the FOB has, at a minimum, a working Phone and an Overwatch console.
+    - Staff Officers may only deploy to the FOB with permission from the Commander and if the FOB has, at a minimum, a working Phone and an Overwatch console.
 </Document>
