@@ -77,3 +77,18 @@
 - type: lorePrimer
   id: AU14PrimerPlanetFiorina
   planetText: "Date 2181 - Fiorina Prison. Privately owned and operated by the Weyland-Yutani corporation, Fiorina 161 is a maximum security prison for the most dangerous criminals in the system."
+
+- type: gameMap
+  id: aufiorina
+  mapName: Fiorina Prison
+  mapPath: /Maps/_AU14/fiorina.yml
+  minPlayers: 0
+  maxPlayers: 200
+  maxRandomOffset: 0
+  randomRotation: false
+  stations:
+    fiorina:
+      stationProto: StandardUNMCWarship
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: 'Fiorina Prison'

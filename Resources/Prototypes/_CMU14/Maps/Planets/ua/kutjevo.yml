@@ -74,3 +74,23 @@
 - type: lorePrimer
   id: AU14PrimerPlanetKutjevo
   planetText: "Date 2181 - Kutjevo Biolab. A level three biohazard containment and research facility operated by the Weyland-Yutani Corporation."
+
+- type: gameMap
+  id: auKutjevo
+  mapName: Kutjevo Biolab
+  allegiance: WeylandYutani
+  mapPath: /Maps/_AU14/kutjevo.yml
+  mapsBelow:
+  - /Maps/_AU14/kutjevo_below.yml
+  mapsAbove:
+  - /Maps/_AU14/kutjevo_above.yml
+  minPlayers: 0
+  maxPlayers: 200
+  maxRandomOffset: 0
+  randomRotation: false
+  stations:
+    kutjevo:
+      stationProto: StandardUNMCWarship
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: 'Kutjevo Biolab'

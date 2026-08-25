@@ -75,3 +75,22 @@
 - type: lorePrimer
   id: AU14PrimerPlanetTrijent
   planetText: "Date 2179 - LV-670 Raijin Hydroelectric (formerly known as Trijent Dam), a Three World Empire water treatment facility serving a major prospera."
+
+- type: gameMap
+  id: AUTrijentMap
+  mapName: Trijent
+  mapPath: /Maps/_AU14/trijent.yml
+  mapsBelow:
+  - /Maps/_AU14/trijent_below.yml
+  mapsAbove:
+  - /Maps/_AU14/trijent_above.yml
+  minPlayers: 0
+  maxPlayers: 500
+  maxRandomOffset: 0
+  randomRotation: false
+  stations:
+    AUTrijent:
+      stationProto: StandardUNMCWarship
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: 'Raijin Hydroelectric'
