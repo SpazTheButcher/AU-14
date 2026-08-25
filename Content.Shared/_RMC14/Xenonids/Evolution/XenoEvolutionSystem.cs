@@ -19,6 +19,8 @@ using Content.Shared.Database;
 using Content.Shared.DoAfter;
 using Content.Shared.Doors.Components;
 using Content.Shared.FixedPoint;
+using Content.Shared.Follower;
+using Content.Shared.Follower.Components;
 using Content.Shared.GameTicking;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.Hands.EntitySystems;
@@ -67,6 +69,7 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private SharedContainerSystem _container = default!;
     [Dependency] private SharedXenoWeedsSystem _xenoWeeds = default!;    [Dependency] private ISharedPlaytimeManager _playtime = default!;
+    [Dependency] private readonly FollowerSystem _follower = default!;
 
     private TimeSpan _evolutionPointsRequireOvipositorAfter;
     private TimeSpan _evolutionAccumulatePointsBefore;
@@ -859,6 +862,15 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
         if (Prototype(xeno)?.ID is { } oldId)
             newRecently.Recent[oldId] = _timing.CurTime;
 
+        var followers = EntityQueryEnumerator<FollowerComponent>();
+        while (followers.MoveNext(out var uid, out var follower))
+        {
+            if (follower.Following == xeno)
+            {
+                _follower.StartFollowingEntity(uid, newXeno);
+            }
+        }
+
         return newXeno;
     }
 
@@ -943,7 +955,9 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
         var time = _timing.CurTime;
         var roundDuration = _gameTicker.RoundDuration();
         var needsOvipositor = NeedsOvipositor();
-        if (needsOvipositor)
+        var hasGranter = needsOvipositor
+            ? HasOvipositor()
+            : HasLiving<XenoEvolutionGranterComponent>(1);
         {
             var granters = EntityQueryEnumerator<XenoEvolutionGranterComponent>();
             while (granters.MoveNext(out var uid, out var granter))
@@ -959,6 +973,10 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
                     uid,
                     PopupType.LargeCaution
                 );
+
+                var ignoreGranter = EntityQueryEnumerator<EvolutionIgnoreGranterComponent>();
+                if (ignoreGranter.MoveNext(out _))
+                    hasGranter = true;
 
                 _xenoHive.AnnounceNeedsOvipositorToSameHive(uid);
             }
@@ -1003,7 +1021,7 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
             var gain = evoOverride ?? points + evoBonus;
             if (comp.Points < comp.Max || roundDuration < _evolutionAccumulatePointsBefore)
             {
-                if (needsOvipositor && comp.RequiresGranter && !HasOvipositorForXeno(uid))
+                if (needsOvipositor && comp.RequiresGranter && !hasGranter)
                     continue;
 
                 SetPoints((uid, comp), comp.Points + gain);

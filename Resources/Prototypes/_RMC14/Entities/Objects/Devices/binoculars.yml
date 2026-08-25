@@ -53,7 +53,7 @@
   description: A military-issued monocular.
   components:
   # Start _CMU14
-  - type: Item 
+  - type: Item
     heldPrefix: monocular
   # End _CMU14
   - type: Sprite
@@ -223,7 +223,7 @@
   - type: PointLight
     enabled: true
     radius: 3
-  - type: RMCNightVisionVisibleInView
+  - type: RMCNightVisionVisible
 
 - type: entity
   parent: RMCRangefinderTarget

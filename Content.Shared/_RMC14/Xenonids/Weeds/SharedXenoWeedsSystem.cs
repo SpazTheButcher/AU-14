@@ -28,6 +28,7 @@ using Content.Shared.Movement.Systems;
 using Content.Shared.Physics;
 using Content.Shared.Popups;
 using Content.Shared.Prototypes;
+using Content.Shared.Tag;
 using Content.Shared.Whitelist;
 using Robust.Shared.Configuration;
 using Robust.Shared.Containers;
@@ -70,6 +71,9 @@ public abstract partial class SharedXenoWeedsSystem : EntitySystem
     [Dependency] private SharedXenoAnnounceSystem _xenoAnnounce = default!;
     [Dependency] private WeedboundWallSystem _weedboundWall = default!;
     [Dependency] private DesignerNodeBindingSystem _designerBinding = default!;
+    [Dependency] private readonly TagSystem _tags = default!;
+
+    private static readonly ProtoId<TagPrototype> PlatformTag = "Platform";
 
     private readonly HashSet<EntityUid> _toUpdate = new();
     private readonly HashSet<EntityUid> _intersecting = new();
@@ -629,7 +633,8 @@ public abstract partial class SharedXenoWeedsSystem : EntitySystem
             foreach (var entity in entities)
             {
                 if (!HasComp<ClimbableComponent>(entity) && !HasComp<RMCReactorPoweredLightComponent>(entity) ||
-                    HasComp<BarricadeComponent>(entity))
+                    HasComp<BarricadeComponent>(entity) ||
+                    _tags.HasTag(entity, PlatformTag))
                     continue;
 
                 _popup.PopupClient(Loc.GetString("rmc-xeno-weeds-blocked"),
