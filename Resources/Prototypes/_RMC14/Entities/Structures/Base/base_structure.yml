@@ -32,6 +32,9 @@
   - type: Corrodible
     isCorrodible: false
   - type: CMIconSmooth
+  - type: NpcFactionMember # CMU14: hostile structure, valid sentry/turret target
+    factions:
+    - RMCXeno
   - type: FixedIdentity
     name: cmu-job-name-xeno-unknown
     whitelist:

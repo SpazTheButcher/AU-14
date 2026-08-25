@@ -69,6 +69,9 @@
       behaviors:
       - !type:BurnBodyBehavior { }
   - type: XenoFriendly
+  - type: NpcFactionMember # CMU14: hostile structure, valid sentry/turret target
+    factions:
+    - RMCXeno
   - type: StepTrigger
     requiredTriggeredSpeed: 0
     intersectRatio: 0.5

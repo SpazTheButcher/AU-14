@@ -39,6 +39,9 @@
       Brute:
         collection: XenoMove
   - type: XenoConstruct
+  - type: NpcFactionMember # CMU14: hostile structure, valid sentry/turret target
+    factions:
+    - RMCXeno
   - type: RMCNightVisionVisible
     priority: -1
     transparency: 0.2
