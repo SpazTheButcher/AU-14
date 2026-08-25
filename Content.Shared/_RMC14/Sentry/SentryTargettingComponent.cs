@@ -1,5 +1,4 @@
 using Content.Shared.NPC.Prototypes;
-using Content.Shared.Whitelist;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
@@ -27,13 +26,6 @@ public sealed partial class SentryTargetingComponent : Component
 
     [DataField, AutoNetworkedField]
     public HashSet<string> TargetedFactions = new();
-
-    /// <summary>
-    /// Additional entities that this sentry may target even when they do not carry IFF or an NPC faction.
-    /// Used for hostile structures such as resin, weeds, mycelium, and flesh growths.
-    /// </summary>
-    [DataField, AutoNetworkedField]
-    public EntityWhitelist? TargetWhitelist;
 
     [DataField, AutoNetworkedField]
     public HashSet<string> HumanoidAdded = new();
