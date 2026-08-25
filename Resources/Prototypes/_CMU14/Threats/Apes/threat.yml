@@ -1,5 +1,5 @@
 - type: threat
-  id: apethreatcf
+  id: ApeThreatCF
   lorePrimer: AU14PrimerThreatApe
   roundstartspawns: apePartycf
   thirdpartyinterval: 9100
@@ -20,7 +20,7 @@
   spawnTogether: true
 
 - type: threat
-  id: apethreat
+  id: ApeThreatDS
   lorePrimer: AU14PrimerThreatApe
   roundstartspawns: apeParty
   whitelistedgamemodes:

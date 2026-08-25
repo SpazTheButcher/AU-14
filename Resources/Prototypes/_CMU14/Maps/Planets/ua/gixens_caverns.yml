@@ -28,17 +28,16 @@
     # threats: # map has no threat spawn markers (at all)
     # - XenoThreat # no threat spawn markers
     # - NeomorphsThreat # no threat spawn markers
-    # - abominationsThreatDistress # no xenocf markers
-    # - apethreat # no threat spawn markers
-    # - badBloodClanThreat # no threat spawn markers
+    # - AbominationsThreatDS # no xenocf markers
+    # - ApeThreatDS # no threat spawn markers
+    # - BadBloodClanThreat # no threat spawn markers
     # - XenoThreatCF # no xenocf markers
     # - NeomorphsThreatCF # no xenocf markers
-    # - cultistThreat # no threat spawn markers
-    # - cultistThreatOnMarker # no cultcf markers
-    # - wendigoThreat # no threat spawn markers
-    # - abominationsThreat # no xenocf markers
-    # - TribalsThreat # no threat spawn markers
-    # - apethreatcf # no threat spawn markers
+    # - CultistThreatCF # no threat spawn markers
+    # - WendigoThreatCF # no threat spawn markers
+    # - AbominationsThreatCF # no xenocf markers
+    # - TribalsThreatCF # no threat spawn markers
+    # - ApeThreatCF # no threat spawn markers
     jobScalingFof: DefaultGovforOpforScale
     jobScalingIns: DefaultInsurgencyScale
 

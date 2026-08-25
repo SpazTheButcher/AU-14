@@ -56,17 +56,16 @@
     threats:
     - XenoThreat
     - NeomorphsThreat
-    - abominationsThreatDistress
-    - apethreat
-    # - badBloodClanThreat
+    - AbominationsThreatDS
+    - ApeThreatDS
+    - BadBloodClanThreat
     - XenoThreatCF
     - NeomorphsThreatCF
-    - cultistThreat
-    # - cultistThreatOnMarker # no cultcf markers
-    - wendigoThreat
-    - abominationsThreat
-    - TribalsThreat
-    - apethreatcf
+    - CultistThreatCF
+    - WendigoThreatCF
+    - AbominationsThreatCF
+    - TribalsThreatCF
+    - ApeThreatCF
     jobScalingFof: DefaultGovforOpforScale
     jobScalingIns: DefaultInsurgencyScale
 

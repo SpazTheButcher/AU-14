@@ -551679,14 +551679,14 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 164.5,-72.5
       parent: 1
-- proto: cultistcfthreatleaderspawnmarker
+- proto: threatleaderspawnmarker
   entities:
   - uid: 87894
     components:
     - type: Transform
       pos: -44.5,128.5
       parent: 1
-- proto: cultistcfthreatmemberspawnmarker
+- proto: threatmemberspawnmarker
   entities:
   - uid: 87886
     components:

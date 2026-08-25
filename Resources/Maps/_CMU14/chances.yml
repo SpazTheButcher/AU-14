@@ -76595,7 +76595,7 @@ entities:
     - type: Transform
       pos: 44.5,-14.5
       parent: 1
-- proto: cultistcfthreatleaderspawnmarker
+- proto: threatleaderspawnmarker
   entities:
   - uid: 6220
     components:
@@ -76615,7 +76615,7 @@ entities:
       rot: 3.141592653589793 rad
       pos: -74.5,-89.5
       parent: 1
-- proto: cultistcfthreatmemberspawnmarker
+- proto: threatmemberspawnmarker
   entities:
   - uid: 6223
     components:

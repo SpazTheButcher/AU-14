@@ -28,17 +28,16 @@
     threats:
     - XenoThreat
     - NeomorphsThreat
-    # - abominationsThreatDistress # no xenocf markers
-    - apethreat
-    # - badBloodClanThreat
+    # - AbominationsThreatDS # no xenocf markers
+    - ApeThreatDS
+    - BadBloodClanThreat
     # - XenoThreatCF # no xenocf markers
     # - NeomorphsThreatCF # no xenocf markers
-    - cultistThreat
-    # - cultistThreatOnMarker # no cultcf markers
-    - wendigoThreat
-    # - abominationsThreat # no xenocf markers
-    - TribalsThreat
-    - apethreatcf
+    - CultistThreatCF
+    - WendigoThreatCF
+    # - AbominationsThreatCF # no xenocf markers
+    - TribalsThreatCF
+    - ApeThreatCF
     thirdparties:
     - USArmy
     - USArmyAlt

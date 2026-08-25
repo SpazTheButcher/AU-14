@@ -612539,14 +612539,14 @@ entities:
     - type: Transform
       pos: -24.5,-70.5
       parent: 1
-- proto: cultistcfthreatleaderspawnmarker
+- proto: threatleaderspawnmarker
   entities:
   - uid: 82668
     components:
     - type: Transform
       pos: -44.5,128.5
       parent: 1
-- proto: cultistcfthreatmemberspawnmarker
+- proto: threatmemberspawnmarker
   entities:
   - uid: 82669
     components:
