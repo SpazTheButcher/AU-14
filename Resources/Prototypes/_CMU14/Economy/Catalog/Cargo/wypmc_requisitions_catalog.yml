@@ -1,6 +1,6 @@
 - type: entity
   abstract: false
-  id: WEYUCargoCatalog
+  id: WYPMCCargoCatalog
   parent: [ CMUASRSResearchGoodies, CMUASRSBotanyGoodies ]
   components:
   - type: RequisitionsComputer

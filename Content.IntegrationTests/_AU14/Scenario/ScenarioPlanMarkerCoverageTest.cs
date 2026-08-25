@@ -92,12 +92,12 @@ public sealed class ScenarioPlanMarkerCoverageTest
     private static readonly ProtoId<RoundGroupPrototype> GovforRmcPlatoonRoundGroup = "GovforRmcPlatoonRoundGroup";
     private static readonly ProtoId<RoundGroupPrototype> GovforLacnPlatoonRoundGroup = "GovforLacnPlatoonRoundGroup";
     private static readonly ProtoId<RoundGroupPrototype> GovforCmbciuPlatoonRoundGroup = "GovforCmbciuPlatoonRoundGroup";
-    private static readonly ProtoId<RoundGroupPrototype> GovforWeyuPlatoonRoundGroup = "GovforWeyuPlatoonRoundGroup";
+    private static readonly ProtoId<RoundGroupPrototype> GovforWypmcPlatoonRoundGroup = "GovforWypmcPlatoonRoundGroup";
     private static readonly ProtoId<RoundGroupPrototype> GovforHazopsPlatoonRoundGroup = "GovforHazopsPlatoonRoundGroup";
     private static readonly ProtoId<RoundGroupPrototype> GovforVaipoPlatoonRoundGroup = "GovforVaipoPlatoonRoundGroup";
     private static readonly ProtoId<RoundGroupPrototype> GovforProdigySfPlatoonRoundGroup = "GovforProdigySfPlatoonRoundGroup";
     private static readonly ProtoId<RoundGroupPrototype> OpforUppPlatoonRoundGroup = "OpforUppPlatoonRoundGroup";
-    private static readonly ProtoId<RoundGroupPrototype> OpforWeyuPlatoonRoundGroup = "OpforWeyuPlatoonRoundGroup";
+    private static readonly ProtoId<RoundGroupPrototype> OpforWypmcPlatoonRoundGroup = "OpforWypmcPlatoonRoundGroup";
     private static readonly ProtoId<RoundGroupPrototype> OpforVaipoPlatoonRoundGroup = "OpforVaipoPlatoonRoundGroup";
     private static readonly ProtoId<RoundGroupPrototype> OpforProdigySfPlatoonRoundGroup = "OpforProdigySfPlatoonRoundGroup";
     private static readonly ProtoId<RoundGroupPrototype> DistressSignalXenoRoundGroup = "DistressSignalXenoRoundGroup";
@@ -470,8 +470,8 @@ public sealed class ScenarioPlanMarkerCoverageTest
             .SetName("GOVFOR LACN platoon Round Group matches adapter");
         yield return new TestCaseData("AUPlanetCorsatStation", "CMBCIU", GovforCmbciuPlatoonRoundGroup.Id)
             .SetName("GOVFOR CMBCIU platoon Round Group matches adapter");
-        yield return new TestCaseData("AuPlanetKutjevo", "WEYU", GovforWeyuPlatoonRoundGroup.Id)
-            .SetName("GOVFOR WEYU platoon Round Group matches adapter");
+        yield return new TestCaseData("AuPlanetKutjevo", "WYPMC", GovforWypmcPlatoonRoundGroup.Id)
+            .SetName("GOVFOR WYPMC platoon Round Group matches adapter");
         yield return new TestCaseData("AUPlanetCorsatStation", "HAZOPS", GovforHazopsPlatoonRoundGroup.Id)
             .SetName("GOVFOR HAZOPS platoon Round Group matches adapter");
         yield return new TestCaseData("AuPlanetKutjevo", "VAIPO", GovforVaipoPlatoonRoundGroup.Id)
@@ -484,8 +484,8 @@ public sealed class ScenarioPlanMarkerCoverageTest
     {
         yield return new TestCaseData("AUPlanetSorokyne", "UPP", OpforUppPlatoonRoundGroup.Id)
             .SetName("OPFOR UPP platoon Round Group matches adapter");
-        yield return new TestCaseData("AUPlanetCorsatStation", "WEYU", OpforWeyuPlatoonRoundGroup.Id)
-            .SetName("OPFOR WEYU platoon Round Group matches adapter");
+        yield return new TestCaseData("AUPlanetCorsatStation", "WYPMC", OpforWypmcPlatoonRoundGroup.Id)
+            .SetName("OPFOR WYPMC platoon Round Group matches adapter");
         yield return new TestCaseData("AUPlanetTrijent", "VAIPO", OpforVaipoPlatoonRoundGroup.Id)
             .SetName("OPFOR VAIPO platoon Round Group matches adapter");
         yield return new TestCaseData("CMUPlanetHopesRetreat", "ProdigySF", OpforProdigySfPlatoonRoundGroup.Id)

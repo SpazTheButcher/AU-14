@@ -15,12 +15,12 @@
     - RMC
     - UPP
     - HAZOPS
-    - WEYU
+    - WYPMC
     platoonsOpfor:
     - ProdigySF
     - VAIPO
     - LACN
-    defaultgovfor: WEYU
+    defaultgovfor: WYPMC
     defaultopfor: VAIPO
     govforinship: true
     opforinship: true

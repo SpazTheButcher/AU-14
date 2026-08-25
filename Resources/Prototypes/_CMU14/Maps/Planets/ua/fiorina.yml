@@ -11,7 +11,7 @@
     announcement: "Fiorina 161, a Weyland-Yutani maximum security prison, has gone silent. A response force has been dispatched to investigate."
     platoonsGovfor:
     - USCM
-    - WEYU
+    - WYPMC
     - VAIPO
     - RMC
     - CMBCIU
@@ -20,7 +20,7 @@
     - LACN
     - UPP
     - ProdigySF
-    defaultgovfor: WEYU
+    defaultgovfor: WYPMC
     defaultopfor: ProdigySF
     govforinship: true
     opforinship: true

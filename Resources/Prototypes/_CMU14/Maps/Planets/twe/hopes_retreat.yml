@@ -10,7 +10,7 @@
     camouflage: Desert
     announcement: "The Octanis Research Complex and attached colony of Hope's Retreat on charted exoplanet JE-1758 have gone silent, investigate the cause of this communications blackout."
     platoonsGovfor:
-    - WEYU
+    - WYPMC
     - USCM
     - RMC
     - CMBCIU
@@ -20,7 +20,7 @@
     - HAZOPS
     - ProdigySF
     - VAIPO
-    defaultgovfor: WEYU
+    defaultgovfor: WYPMC
     defaultopfor: ProdigySF
     govforinship: false
     opforinship: true

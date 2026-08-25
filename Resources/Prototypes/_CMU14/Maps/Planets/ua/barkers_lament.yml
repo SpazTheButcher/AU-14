@@ -11,7 +11,7 @@
     announcement: "The mining colony of Barker's Lament on LV-376 has gone dark."
     platoonsGovfor:
     - LACN
-    - WEYU
+    - WYPMC
     - USCM
     - RMC
     - CMBCIU
@@ -20,7 +20,7 @@
     - UPP
     - HAZOPS
     - ProdigySF
-    defaultgovfor: WEYU
+    defaultgovfor: WYPMC
     defaultopfor: ProdigySF
     govforinship: false
     opforinship: true

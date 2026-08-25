@@ -29,10 +29,10 @@
   groupId: GovforPlatoon:CMBCIU
 
 - type: roundGroup
-  id: GovforWeyuPlatoonRoundGroup
+  id: GovforWypmcPlatoonRoundGroup
   kind: Platoon
-  sourcePrototypeId: WEYU
-  groupId: GovforPlatoon:WEYU
+  sourcePrototypeId: WYPMC
+  groupId: GovforPlatoon:WYPMC
 
 - type: roundGroup
   id: GovforHazopsPlatoonRoundGroup
@@ -59,10 +59,10 @@
   groupId: OpforPlatoon:UPP
 
 - type: roundGroup
-  id: OpforWeyuPlatoonRoundGroup
+  id: OpforWypmcPlatoonRoundGroup
   kind: Platoon
-  sourcePrototypeId: WEYU
-  groupId: OpforPlatoon:WEYU
+  sourcePrototypeId: WYPMC
+  groupId: OpforPlatoon:WYPMC
 
 - type: roundGroup
   id: OpforVaipoPlatoonRoundGroup

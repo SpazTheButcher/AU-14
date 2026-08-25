@@ -643,11 +643,11 @@
   techTree: CMUIntelTechTree_GOVFOR
 
 - type: platoon
-  id: WEYU
+  id: WYPMC
   name: WY PMC
-  lorePrimer: AU14PrimerPlatoonWEYU
-  reqlist: WEYUCargoCatalog
-  vendorSet: WEYU
+  lorePrimer: AU14PrimerPlatoonWYPMC
+  reqlist: WYPMCCargoCatalog
+  vendorSet: WYPMC
   platoonPatch: /Textures/_AU14/Clothing/Patches/wy_white_patch.rsi/icon.png
   chevronOverrides:
     AU14JobPlatCoBase:
@@ -1947,7 +1947,7 @@
   PlatoonInfo: "The Union of Progressive Peoples Naval Infantry (UPP), under the 5th Fleet of the 5th Division, is known as the 'North Stars.' Drawn from Chinese (former CANC), Russian, German, and Spanish conscripts, the unit is considered one of the most culturally diverse formations in the UPP, even among the 5th Fleet. The 'North Stars' are regarded as underfunded, even by UPP standards, yet despite this, they continue to demonstrate an undying loyalty to the party."
 
 - type: lorePrimer
-  id: AU14PrimerPlatoonWEYU
+  id: AU14PrimerPlatoonWYPMC
   PlatoonInfo: "The Weyland-Yutani Private Military Company (WEYU PMC), known as the 'Whiteshields', is the organized security force of Weyland-Yutani. While usually reserved for operations directly related to Weyland-Yutani facilities, whether for security or containment, colonial governments have often found hiring them to be more efficient and effective than relying on the local military."
 
 - type: lorePrimer

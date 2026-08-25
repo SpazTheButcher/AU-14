@@ -18,10 +18,10 @@
     - VAIPO
     platoonsOpfor:
     - UPP
-    - WEYU
+    - WYPMC
     - CMBCIU
     defaultgovfor: HAZOPS
-    defaultopfor: WEYU
+    defaultopfor: WYPMC
     govforinship: true
     opforinship: true
     daycycleenabled: true
