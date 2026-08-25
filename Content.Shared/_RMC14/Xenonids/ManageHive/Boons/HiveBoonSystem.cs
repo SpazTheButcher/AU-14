@@ -183,14 +183,15 @@ public sealed partial class HiveBoonSystem : EntitySystem
 
     private void OnActivateKing(HiveBoonActivateKingEvent ev)
     {
+
+        if (ev.Core is not { } core)
+            return;
+
         var pylonQuery = EntityQueryEnumerator<HivePylonComponent>();
         while (pylonQuery.MoveNext(out var uid, out _))
         {
             _area.TrySetCanOrbitalBombardRoofing(uid, false);
         }
-
-        if (ev.Core is not { } core)
-            return;
 
         var cocoon = SpawnAtPosition(KingCocoonId, core.ToCoordinates());
         _hive.SetHive(cocoon, ev.Hive);

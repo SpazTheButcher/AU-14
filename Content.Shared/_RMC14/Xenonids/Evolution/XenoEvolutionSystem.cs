@@ -975,13 +975,6 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
             _xenoHive.AnnounceNeedsOvipositorToSameHive(uid);
         }
 
-        var evoBonus = FixedPoint2.Zero;
-        var bonuses = EntityQueryEnumerator<EvolutionBonusComponent>();
-        while (bonuses.MoveNext(out var comp))
-        {
-            evoBonus += comp.Amount;
-        }
-
         FixedPoint2? evoOverride = null;
         var overrides = EntityQueryEnumerator<EvolutionOverrideComponent>();
         while (overrides.MoveNext(out var comp))
@@ -1010,6 +1003,15 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
                 _audio.PlayEntity(comp.EvolutionReadySound, uid, uid);
                 continue;
             }
+            var evoBonus = FixedPoint2.Zero;
+            var bonuses = EntityQueryEnumerator<EvolutionBonusComponent>();
+
+            while (bonuses.MoveNext(out var bonusUid, out var bonus))
+            {
+                if (_xenoHive.FromSameHive(uid, bonusUid))
+                    evoBonus += bonus.Amount;
+            }
+
             var points = (_earlyEvoBoostBefore > _gameTicker.RoundDuration()) ? comp.EarlyPointsPerSecond : comp.PointsPerSecond;
             var gain = evoOverride ?? points + evoBonus;
             if (comp.Points < comp.Max || roundDuration < _evolutionAccumulatePointsBefore)
