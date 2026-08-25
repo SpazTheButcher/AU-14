@@ -959,6 +959,11 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
             ? HasOvipositor()
             : HasLiving<XenoEvolutionGranterComponent>(1);
         {
+
+            var ignoreGranter = EntityQueryEnumerator<EvolutionIgnoreGranterComponent>();
+            if (ignoreGranter.MoveNext(out _))
+                hasGranter = true;
+
             var granters = EntityQueryEnumerator<XenoEvolutionGranterComponent>();
             while (granters.MoveNext(out var uid, out var granter))
             {
@@ -973,10 +978,6 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
                     uid,
                     PopupType.LargeCaution
                 );
-
-                var ignoreGranter = EntityQueryEnumerator<EvolutionIgnoreGranterComponent>();
-                if (ignoreGranter.MoveNext(out _))
-                    hasGranter = true;
 
                 _xenoHive.AnnounceNeedsOvipositorToSameHive(uid);
             }
