@@ -954,33 +954,25 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
 
         var time = _timing.CurTime;
         var roundDuration = _gameTicker.RoundDuration();
+
         var needsOvipositor = NeedsOvipositor();
-        var hasGranter = needsOvipositor
-            ? HasOvipositor()
-            : HasLiving<XenoEvolutionGranterComponent>(1);
+
+        var granters = EntityQueryEnumerator<XenoEvolutionGranterComponent>();
+        while (granters.MoveNext(out var uid, out var granter))
         {
+            if (granter.GotOvipositorPopup)
+                continue;
 
-            var ignoreGranter = EntityQueryEnumerator<EvolutionIgnoreGranterComponent>();
-            if (ignoreGranter.MoveNext(out _))
-                hasGranter = true;
+            granter.GotOvipositorPopup = true;
+            Dirty(uid, granter);
 
-            var granters = EntityQueryEnumerator<XenoEvolutionGranterComponent>();
-            while (granters.MoveNext(out var uid, out var granter))
-            {
-                if (granter.GotOvipositorPopup)
-                    continue;
+            _popup.PopupEntity("It is time to settle down and let your children grow.",
+                uid,
+                uid,
+                PopupType.LargeCaution
+            );
 
-                granter.GotOvipositorPopup = true;
-                Dirty(uid, granter);
-
-                _popup.PopupEntity("It is time to settle down and let your children grow.",
-                    uid,
-                    uid,
-                    PopupType.LargeCaution
-                );
-
-                _xenoHive.AnnounceNeedsOvipositorToSameHive(uid);
-            }
+            _xenoHive.AnnounceNeedsOvipositorToSameHive(uid);
         }
 
         var evoBonus = FixedPoint2.Zero;
@@ -1022,6 +1014,14 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
             var gain = evoOverride ?? points + evoBonus;
             if (comp.Points < comp.Max || roundDuration < _evolutionAccumulatePointsBefore)
             {
+
+                var hasGranter = needsOvipositor
+                    ? HasOvipositorForXeno(uid)
+                    : HasLiving<XenoEvolutionGranterComponent>(1);
+
+                if (needsOvipositor && HasEvolutionIgnoreGranter(uid))
+                    hasGranter = true;
+
                 if (needsOvipositor && comp.RequiresGranter && !hasGranter)
                     continue;
 
@@ -1032,6 +1032,18 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
                 SetPoints((uid, comp), FixedPoint2.Max(comp.Points - gain, comp.Max));
             }
         }
+    }
+
+    private bool HasEvolutionIgnoreGranter(EntityUid xeno)
+    {
+        var ignoreGranter = EntityQueryEnumerator<EvolutionIgnoreGranterComponent>();
+        while (ignoreGranter.MoveNext(out var uid, out _))
+        {
+            if (_xenoHive.FromSameHive(xeno, uid))
+                return true;
+        }
+
+        return false;
     }
 
     /// <summary>
