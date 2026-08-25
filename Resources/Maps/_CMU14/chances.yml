@@ -103708,14 +103708,14 @@ entities:
     - type: Transform
       pos: 30.5,-38.5
       parent: 1
-- proto: RMCTacticalMapTableGovfor
+- proto: CMUTacticalMapTableGovfor
   entities:
   - uid: 10478
     components:
     - type: Transform
       pos: -12,27
       parent: 1
-- proto: RMCTacticalMapTableLargeGovfor
+- proto: CMUTacticalMapTableLargeGovfor
   entities:
   - uid: 10479
     components:

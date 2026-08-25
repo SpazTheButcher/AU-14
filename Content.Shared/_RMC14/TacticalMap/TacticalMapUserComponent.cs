@@ -39,7 +39,7 @@ public sealed partial class TacticalMapUserComponent : Component
     [DataField, AutoNetworkedField] // CMU14
     public bool Clf;
 
-    [DataField, AutoNetworkedField] // CMU14
+    [DataField("WeYu"), AutoNetworkedField] // CMU14
     public bool WeYu;
 
     [DataField, AutoNetworkedField]

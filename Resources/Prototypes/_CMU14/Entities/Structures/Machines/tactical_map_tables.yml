@@ -1,6 +1,7 @@
+# ├──[ GOVFOR ]──────────────────────────────────────────────────────┤
 - type: entity
   parent: RMCTacticalMapTable
-  id: RMCTacticalMapTableGovfor
+  id: CMUTacticalMapTableGovfor
   suffix: Govfor
   components:
   - type: TacticalMapComputer
@@ -8,15 +9,32 @@
 
 - type: entity
   parent: RMCTacticalMapTableLarge
-  id: RMCTacticalMapTableLargeGovfor
+  id: CMUTacticalMapTableLargeGovfor
   suffix: Govfor, Large
   components:
   - type: TacticalMapComputer
     faction: govfor
 
 - type: entity
-  parent: RMCTacticalMapTable
-  id: RMCTacticalMapTableOpfor
+  parent: RMCTacticalMapTableLargeSquare
+  id: CMUTacticalMapTableLargeSquareGovfor
+  suffix: Govfor, Square
+  components:
+  - type: TacticalMapComputer
+    faction: govfor
+
+- type: entity
+  parent: RMCTacticalMapTableLargeRotated
+  id: CMUTacticalMapTableLargeRotatedGovfor
+  suffix: Govfor, Rotated
+  components:
+  - type: TacticalMapComputer
+    faction: govfor
+
+# ├──[ OPFOR ]───────────────────────────────────────────────────────┤
+- type: entity
+  parent: CMUTacticalMapTableGovfor
+  id: CMUTacticalMapTableOpfor
   suffix: Opfor
   components:
   - type: AccessReader
@@ -25,8 +43,8 @@
     faction: opfor
 
 - type: entity
-  parent: RMCTacticalMapTableLarge
-  id: RMCTacticalMapTableLargeOpfor
+  parent: CMUTacticalMapTableLargeGovfor
+  id: CMUTacticalMapTableLargeOpfor
   suffix: Opfor, Large
   components:
   - type: AccessReader
@@ -35,8 +53,29 @@
     faction: opfor
 
 - type: entity
-  parent: RMCTacticalMapTableGovfor
-  id: RMCTacticalMapTableWeYu
+  parent: CMUTacticalMapTableLargeSquareGovfor
+  id: CMUTacticalMapTableLargeSquareOpfor
+  suffix: Opfor, Square
+  components:
+  - type: AccessReader
+    access: [ [ "AU14AccessOpforCommand" ] ]
+  - type: TacticalMapComputer
+    faction: opfor
+
+- type: entity
+  parent: CMUTacticalMapTableLargeRotatedGovfor
+  id: CMUTacticalMapTableLargeRotatedOpfor
+  suffix: Opfor, Rotated
+  components:
+  - type: AccessReader
+    access: [ [ "AU14AccessOpforCommand" ] ]
+  - type: TacticalMapComputer
+    faction: opfor
+
+# ├──[ WEYU ]────────────────────────────────────────────────────────┤
+- type: entity
+  parent: CMUTacticalMapTableGovfor
+  id: CMUTacticalMapTableWeYu
   suffix: We-Yu
   components:
   - type: TacticalMapComputer
@@ -45,9 +84,29 @@
     access: [ [ "AU14AccessCorporateWEYULiaison" ], [ "AU14AccessCorporateWEYU" ] ]
 
 - type: entity
-  parent: RMCTacticalMapTableLargeGovfor
-  id: RMCTacticalMapTableLargeWeYu
+  parent: CMUTacticalMapTableLargeGovfor
+  id: CMUTacticalMapTableLargeWeYu
   suffix: We-Yu, Large
+  components:
+  - type: TacticalMapComputer
+    faction: weyu
+  - type: AccessReader
+    access: [ [ "AU14AccessCorporateWEYULiaison" ], [ "AU14AccessCorporateWEYU" ] ]
+
+- type: entity
+  parent: CMUTacticalMapTableLargeSquareGovfor
+  id: CMUTacticalMapTableLargeSquareWeYu
+  suffix: We-Yu, Square
+  components:
+  - type: TacticalMapComputer
+    faction: weyu
+  - type: AccessReader
+    access: [ [ "AU14AccessCorporateWEYULiaison" ], [ "AU14AccessCorporateWEYU" ] ]
+
+- type: entity
+  parent: CMUTacticalMapTableLargeRotatedGovfor
+  id: CMUTacticalMapTableLargeRotatedWeYu
+  suffix: We-Yu, Rotated
   components:
   - type: TacticalMapComputer
     faction: weyu

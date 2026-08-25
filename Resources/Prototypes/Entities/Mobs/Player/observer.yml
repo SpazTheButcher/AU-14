@@ -98,7 +98,7 @@
     opfor: true
     govfor: true
     clf: true
-    weyu: true
+    WeYu: true
     liveUpdate: true
   - type: ViewIntelObjectives
   - type: VentSight

@@ -260,8 +260,8 @@ public sealed partial class PlatoonSpawnRuleSystem : GameRuleSystem<PlatoonSpawn
                     {
                         var tacMapProtoId = shipFaction.Faction switch
                         {
-                            "govfor" => "RMCTacticalMapTableGovfor",
-                            "opfor" => "RMCTacticalMapTableOpfor",
+                            "govfor" => "CMUTacticalMapTableGovfor",
+                            "opfor" => "CMUTacticalMapTableOpfor",
                             _ => null,
                         };
                         if (tacMapProtoId != null && _prototypeManager.TryIndex(tacMapProtoId, out _))
