@@ -4,6 +4,7 @@ using Content.Server.Access.Systems;
 using Content.Server.AU14.Round;
 using Content.Server.AU14.VendorMarker;
 using Content.Server.Chat.Systems;
+using Content.Server._CMU14.Threats;
 using Content.Server.GameTicking;
 using Content.Server.GameTicking.Presets;
 using Content.Server.IdentityManagement;
@@ -40,12 +41,16 @@ namespace Content.Server._CMU14.Ops.ThirdParty;
 
 public sealed partial class ThirdPartySystem : EntitySystem
 {
+    private static readonly IReadOnlyDictionary<string, JobScaleEntry> EmptyScaling
+        = new Dictionary<string, JobScaleEntry>();
+
     [Dependency] private IPlayerManager _playerManager = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private IEntityManager _entityManager = default!;
     [Dependency] private MapLoaderSystem _mapLoader = default!;
     [Dependency] private IPrototypeManager _prototypeManager = default!;
     [Dependency] private AuRoundSystem _auRoundSystem = default!;
+    [Dependency] private ThreatSystem _threatSystem = default!;
     [Dependency] private ChatSystem _chat = default!;
     [Dependency] private SharedDropshipSystem _sharedDropshipSystem = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
@@ -406,15 +411,18 @@ public sealed partial class ThirdPartySystem : EntitySystem
                 $"[ThirdPartySystem] Candidate marker maps for third party ({party.ID}): count={candidateMapIds.Count}, maps=[{string.Join(", ", candidateMapIds)}], initialMap={mapId?.ToString() ?? "null"}.");
         }
 
-        IReadOnlyDictionary<string, int> leaderBodies = ThirdPartySystem.GetSpawnBodies(
-            ThreatMarkerType.Leader,
-            spawnProto.LeadersToSpawn);
-        IReadOnlyDictionary<string, int> gruntBodies = ThirdPartySystem.GetSpawnBodies(
-            ThreatMarkerType.Member,
-            spawnProto.GruntsToSpawn);
-        IReadOnlyDictionary<string, int> entityBodies = ThirdPartySystem.GetSpawnBodies(
-            ThreatMarkerType.Entity,
-            spawnProto.EntitiesToSpawn);
+        IReadOnlyDictionary<string, int> leaderBodies = ThreatVoteSelection.GetScaledBodies(
+            spawnProto.LeadersToSpawn,
+            EmptyScaling,
+            0);
+        IReadOnlyDictionary<string, int> gruntBodies = ThreatVoteSelection.GetScaledBodies(
+            spawnProto.GruntsToSpawn,
+            EmptyScaling,
+            0);
+        IReadOnlyDictionary<string, int> entityBodies = ThreatVoteSelection.GetScaledBodies(
+            spawnProto.EntitiesToSpawn,
+            EmptyScaling,
+            0);
         int leaderReq = leaderBodies.Values.Sum();
         int gruntReq = gruntBodies.Values.Sum();
         int entityReq = entityBodies.Values.Sum();
@@ -652,6 +660,12 @@ public sealed partial class ThirdPartySystem : EntitySystem
             return true;
         }
 
+        _threatSystem.AnnounceMarkerShortfall("THIRD PARTY",
+            party.ID,
+            (ThreatMarkerType.Leader, leaderReq, leaderMarkers.Count + unsafeLeaderMarkers.Count),
+            (ThreatMarkerType.Member, gruntReq, gruntMarkers.Count + unsafeGruntMarkers.Count),
+            (ThreatMarkerType.Entity, entityReq, entityMarkers.Count + unsafeEntityMarkers.Count));
+
         if (!ValidateMarkerPool("leader", leaderReq, leaderMarkers, unsafeLeaderMarkers) ||
             !ValidateMarkerPool("member", gruntReq, gruntMarkers, unsafeGruntMarkers) ||
             !ValidateMarkerPool("entity", entityReq, entityMarkers, unsafeEntityMarkers))
@@ -774,17 +788,6 @@ public sealed partial class ThirdPartySystem : EntitySystem
         }
 
         return true;
-    }
-
-    private static IReadOnlyDictionary<string, int> GetSpawnBodies(
-        ThreatMarkerType markerType,
-        IReadOnlyDictionary<string, int> legacyBodies)
-    {
-        return legacyBodies
-            .ToDictionary(
-                body => body.Key,
-                body => Math.Max(0, body.Value),
-                StringComparer.OrdinalIgnoreCase);
     }
 
     private static bool IsOnGrid(TransformComponent transform, EntityUid gridUid)

@@ -13,3 +13,5 @@ au14-threat-vote-option-generic = {$threat}
 au14-threat-vote-round-join-blocked = You were selected for the threat roll. You cannot join as another role while your threat assignment is pending.
 au14-threat-vote-colony-fall-observer-warning = The threat will spawn in roughly {$min} to {$max} minutes. You may look around as an observer, but do not reconnect or join a ghost role, or you will lose your threat roll.
 au14-threat-not-selected-return-to-lobby = "You were not chosen as this round's threat. You have been returned to the lobby and are free to Join-In-Progress (JIP)."
+
+cmu-threat-marker-shortfall-announcement = {$kind} SPAWN SHORTFALL: '{$source}' on planet '{$planet}' has fewer spawn markers than required bodies ({$short}). The round continues; bodies without a marker will not spawn.

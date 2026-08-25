@@ -1,1 +1,0 @@
-cmu-threat-marker-shortfall-announcement = THREAT SPAWN SHORTFALL: threat '{$threat}' on planet '{$planet}' has fewer spawn markers than required bodies ({$short}). The round continues; bodies without a marker will not spawn.

@@ -282,6 +282,31 @@ public sealed partial class ThreatSystem : EntitySystem
         }
     }
 
+    public bool ForceSpawnThreat(ProtoId<ThreatPrototype> threatId, EntityUid fallbackMarker, bool startWinConditions = true)
+    {
+        if (!_prototypeManager.TryIndex(threatId, out ThreatPrototype? threat) ||
+            !_entityManager.TryGetComponent(fallbackMarker, out TransformComponent? transform))
+            return false;
+
+        var assignedJobs = new Dictionary<NetUserId, (ProtoId<JobPrototype>?, EntityUid)>();
+        if (!ExecuteSpawn(threat,
+                transform.MapID,
+                assignedJobs,
+                Array.Empty<NetUserId>(),
+                fallbackMarker: fallbackMarker))
+            return false;
+
+        if (startWinConditions)
+        {
+            StartThreatWinConditions(threat);
+            _auRound.SetSelectedThreat(threat);
+            _auRound.PreselectThirdPartiesForSelectedThreat();
+        }
+
+        _sawmill.Info($"[ThreatSystem] Admin-forced threat '{threat.ID}' spawned on map {transform.MapID} (winConditions={startWinConditions}).");
+        return true;
+    }
+
     internal void SchedulePendingThreatSpawn(ThreatPrototype threat,
         MapId mapId,
         Dictionary<NetUserId, (ProtoId<JobPrototype>?, EntityUid)> assignedJobs,
@@ -319,7 +344,8 @@ public sealed partial class ThreatSystem : EntitySystem
         MapId mapId,
         Dictionary<NetUserId, (ProtoId<JobPrototype>?, EntityUid)> assignedJobs,
         IReadOnlyList<NetUserId>? voteHeldPlayers = null,
-        bool requireObserverForVotePlayers = false)
+        bool requireObserverForVotePlayers = false,
+        EntityUid? fallbackMarker = null)
     {
         string threatId = threat.ID;
         ProtoId<PartySpawnPrototype> partySpawn = threat.RoundStartSpawn;
@@ -449,18 +475,15 @@ public sealed partial class ThreatSystem : EntitySystem
         {
             int playerCount = _playerManager.PlayerCount;
 
-            IReadOnlyDictionary<string, int> leaderBodies = ThreatSystem.GetSpawnBodies(
-                ThreatMarkerType.Leader,
+            IReadOnlyDictionary<string, int> leaderBodies = ThreatVoteSelection.GetScaledBodies(
                 newPartySpawn.LeadersToSpawn,
                 newPartySpawn.Scaling,
                 playerCount);
-            IReadOnlyDictionary<string, int> memberBodies = ThreatSystem.GetSpawnBodies(
-                ThreatMarkerType.Member,
+            IReadOnlyDictionary<string, int> memberBodies = ThreatVoteSelection.GetScaledBodies(
                 newPartySpawn.GruntsToSpawn,
                 newPartySpawn.Scaling,
                 playerCount);
-            IReadOnlyDictionary<string, int> entityBodies = ThreatSystem.GetSpawnBodies(
-                ThreatMarkerType.Entity,
+            IReadOnlyDictionary<string, int> entityBodies = ThreatVoteSelection.GetScaledBodies(
                 newPartySpawn.EntitiesToSpawn,
                 EmptyScaling,
                 playerCount);
@@ -470,6 +493,13 @@ public sealed partial class ThreatSystem : EntitySystem
             List<EntityUid> leaderMarkers = GetSpawnMarkers(ThreatMarkerType.Leader);
             List<EntityUid> memberMarkers = GetSpawnMarkers(ThreatMarkerType.Member);
             List<EntityUid> entityMarkers = GetSpawnMarkers(ThreatMarkerType.Entity);
+            if (fallbackMarker != null)
+            {
+                leaderMarkers = PadMarkerPool(leaderMarkers, leaderReq, fallbackMarker.Value);
+                memberMarkers = PadMarkerPool(memberMarkers, memberReq, fallbackMarker.Value);
+                entityMarkers = PadMarkerPool(entityMarkers, entityReq, fallbackMarker.Value);
+            }
+
             List<EntityUid> originalLeaderMarkers = leaderMarkers.ToList();
             List<EntityUid> originalMemberMarkers = memberMarkers.ToList();
             if (_sawmill.Level <= LogLevel.Debug)
@@ -752,26 +782,24 @@ public sealed partial class ThreatSystem : EntitySystem
         return true;
     }
 
-    private static IReadOnlyDictionary<string, int> GetSpawnBodies(
-        ThreatMarkerType markerType,
-        IReadOnlyDictionary<string, int> legacyBodies,
-        IReadOnlyDictionary<string, JobScaleEntry> legacyScaling,
-        int playerCount)
+    private static List<EntityUid> PadMarkerPool(List<EntityUid> markers, int required, EntityUid fallback)
     {
-        var bodies = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-        foreach ((string bodyId, int staticCount) in legacyBodies)
-        {
-            bodies[bodyId] = legacyScaling.TryGetValue(bodyId, out JobScaleEntry entry)
-                ? JobScaling.CalculateScaledSlots(playerCount, staticCount, entry)
-                : Math.Max(0, staticCount);
-        }
+        if (markers.Count >= required)
+            return markers;
 
-        return bodies;
+        var padded = new List<EntityUid>(markers);
+        while (padded.Count < required)
+            padded.Add(fallback);
+
+        return padded;
     }
 
-    // Salvaged round-start check & partySpawn body counts vs. live ThreatSpawnMarker
-    // counts; short pools get a loud fail-soft announcement and the round continues underfilled.
-    private void AnnounceMarkerShortfall(string threatId,
+    public void AnnounceMarkerShortfall(string source,
+        params (ThreatMarkerType Bucket, int Required, int Markers)[] pools)
+        => AnnounceMarkerShortfall("THREAT", source, pools);
+
+    public void AnnounceMarkerShortfall(string kind,
+        string source,
         params (ThreatMarkerType Bucket, int Required, int Markers)[] pools)
     {
         var shortfalls = new List<string>();
@@ -786,7 +814,8 @@ public sealed partial class ThreatSystem : EntitySystem
 
         _chat.DispatchServerAnnouncement(
             Loc.GetString("cmu-threat-marker-shortfall-announcement",
-                ("threat", threatId),
+                ("kind", kind),
+                ("source", source),
                 ("planet", _auRound.GetSelectedPlanetId() ?? "<unknown>"),
                 ("short", string.Join(", ", shortfalls))),
             Color.Red);

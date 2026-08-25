@@ -25,7 +25,7 @@
     govforinship: true
     opforinship: true
     daycycleenabled: false
-    threats:
+    # threats: # map has no threat spawn markers (at all)
     # - XenoThreat # no threat spawn markers
     # - NeomorphsThreat # no threat spawn markers
     # - abominationsThreatDistress # no xenocf markers
