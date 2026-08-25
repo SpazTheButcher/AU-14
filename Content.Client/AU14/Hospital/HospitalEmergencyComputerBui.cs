@@ -15,6 +15,9 @@ public sealed class HospitalEmergencyComputerBui(EntityUid owner, Enum uiKey) : 
         _window.ApproveLandingButton.OnPressed += _ =>
             SendPredictedMessage(new HospitalEmergencyApproveLandingMsg());
 
+        _window.SkipContractButton.OnPressed += _ =>
+            SendPredictedMessage(new HospitalEmergencySkipContractMsg());
+
         _window.RequestPickupButton.OnPressed += _ =>
             SendPredictedMessage(new HospitalEmergencyRequestPickupMsg());
 

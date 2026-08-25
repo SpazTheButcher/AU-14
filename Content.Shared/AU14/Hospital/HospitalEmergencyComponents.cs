@@ -46,19 +46,19 @@ public sealed partial class HospitalEmergencyComputerComponent : Component
     public int SeverityRewardBonus = 250;
 
     [DataField]
-    public int MissedInjuryPenalty = 100;
+    public int MissedInjuryPenalty = 75;
 
     [DataField]
-    public int VipMissedInjuryPenalty = 1000;
+    public int VipMissedInjuryPenalty = 750;
 
     [DataField]
-    public int PermanentlyDeceasedPenalty = 1000;
+    public int PermanentlyDeceasedPenalty = 750;
 
     [DataField]
     public TimeSpan FirstIncidentDelay = TimeSpan.FromMinutes(3);
 
     [DataField]
-    public TimeSpan IncidentInterval = TimeSpan.FromMinutes(12);
+    public TimeSpan IncidentInterval = TimeSpan.FromSeconds(180);
 
     [DataField]
     public TimeSpan ManualUnloadWindow = TimeSpan.FromSeconds(120);
@@ -231,4 +231,8 @@ public enum HospitalPatientClothingTheme : byte
     LawEnforcement,
     Mining,
     Biohazard,
+    Marines,
+    Upp,
+    Cmb,
+    Nspa,
 }

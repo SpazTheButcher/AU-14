@@ -45,6 +45,7 @@ public sealed partial class HospitalEmergencyComputerWindow : DefaultWindow
             : "Last audit: no payout recorded";
 
         ApproveLandingButton.Disabled = !state.CanApproveLanding;
+        SkipContractButton.Disabled = !state.CanSkipContract;
         RequestPickupButton.Disabled = !state.CanRequestPickup;
         ReleaseShuttleButton.Disabled = !state.CanReleaseShuttle;
     }
