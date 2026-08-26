@@ -26,6 +26,8 @@
     opforinship: true
     daycycleenabled: true
     thirdparties:
+    - CLFCellReinforcementsSurv
+    - DiplomaticAttachesSurv
     - ProdigySurvLarge
     - ProdigySurvMedium
     - ProdigySurvSmall

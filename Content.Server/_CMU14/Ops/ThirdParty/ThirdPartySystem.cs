@@ -4,6 +4,7 @@ using Content.Server.Access.Systems;
 using Content.Server.AU14.Round;
 using Content.Server.AU14.VendorMarker;
 using Content.Server.Chat.Systems;
+using Content.Server._CMU14.Roles;
 using Content.Server._CMU14.Threats;
 using Content.Server.GameTicking;
 using Content.Server.GameTicking.Presets;
@@ -60,6 +61,7 @@ public sealed partial class ThirdPartySystem : EntitySystem
     [Dependency] private IdentitySystem _identity = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private RMCMapSystem _rmcMap = default!;
+    [Dependency] private SurvivorSupplementSystem _survivorSupplement = default!;
     private static readonly ProtoId<JobPrototype> ThirdPartyLeaderJobId = new("AU14JobThirdPartyLeader");
     private static readonly ProtoId<JobPrototype> ThirdPartyMemberJobId = new("AU14JobThirdPartyMember");
     private static readonly ThreatMarkerType[] ThreatMarkerTypes = Enum.GetValues<ThreatMarkerType>();
@@ -762,6 +764,12 @@ public sealed partial class ThirdPartySystem : EntitySystem
 
         // Run neighbor-marking now (only once per spawn operation, using the last used marker)
         MarkNeighborsIfNeeded();
+
+        if (roundStart && party.AnnounceAsSurvivors)
+        {
+            foreach (EntityUid survivor in spawnedLeaders.Concat(spawnedGrunts))
+                _survivorSupplement.ApplyToSurvivor(survivor);
+        }
 
         if (roundStart && assignedJobs != null)
         {

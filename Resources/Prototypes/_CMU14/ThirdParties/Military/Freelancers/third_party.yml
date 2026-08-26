@@ -19,3 +19,17 @@
   maxplayers: 400
   GhostsNeeded: 3
   roundstart: false
+
+- type: thirdParty
+  parent: Freelancers
+  id: FreelancersSurv
+  displayName: Freelancers (Survivors)
+  entrymethod: ground
+  weight: 8
+  GhostsNeeded: 0
+  roundstart: true
+  announcearrival: ''
+  blacklistedgamemodes:
+  - insurgency
+  - forceonforce
+  - colonyfall

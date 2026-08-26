@@ -75,3 +75,17 @@
   maxplayers: 600
   GhostsNeeded: 600
   roundstart: false
+
+- type: thirdParty
+  parent: CLFCellReinforcementsIntel
+  id: CLFCellReinforcementsSurv
+  displayName: CLF Insurgent Cell (Survivors)
+  entrymethod: ground
+  weight: 8
+  GhostsNeeded: 0
+  roundstart: true
+  announcearrival: ''
+  blacklistedgamemodes:
+  - insurgency
+  - forceonforce
+  - colonyfall

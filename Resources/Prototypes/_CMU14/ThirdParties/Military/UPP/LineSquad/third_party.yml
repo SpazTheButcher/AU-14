@@ -44,3 +44,17 @@
   maxplayers: 400
   GhostsNeeded: 2
   roundstart: false
+
+- type: thirdParty
+  parent: UPPLineSquad
+  id: UPPLineSquadSurv
+  displayName: UPP Line Infantry (Survivors)
+  entrymethod: ground
+  weight: 5
+  GhostsNeeded: 0
+  roundstart: true
+  announcearrival: ''
+  blacklistedgamemodes:
+  - insurgency
+  - forceonforce
+  - colonyfall

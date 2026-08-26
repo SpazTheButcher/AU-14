@@ -44,3 +44,17 @@
   maxplayers: 400
   GhostsNeeded: 2
   roundstart: false
+
+- type: thirdParty
+  parent: TWEParamarines
+  id: TWEParamarinesSurv
+  displayName: TWE Royal Paramarines (Survivors)
+  entrymethod: ground
+  weight: 5
+  GhostsNeeded: 0
+  roundstart: true
+  announcearrival: ''
+  blacklistedgamemodes:
+  - insurgency
+  - forceonforce
+  - colonyfall

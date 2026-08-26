@@ -39,6 +39,7 @@
     - TribalsThreatCF
     - ApeThreatCF
     thirdparties:
+    - FreeCompanyRaidersSurv
     - ProdigySurvLarge
     - ProdigySurvMedium
     - ProdigySurvSmall

@@ -26,6 +26,7 @@
     opforinship: true
     daycycleenabled: true
     thirdparties:
+    - TWEParamarinesSurv
     - ProdigySurvLarge
     - ProdigySurvMedium
     - ProdigySurvSmall

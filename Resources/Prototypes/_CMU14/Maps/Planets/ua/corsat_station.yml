@@ -39,6 +39,7 @@
     - TribalsThreatCF
     - ApeThreatCF
     thirdparties:
+    - FreelancersSurv
     - WEYUSurvLarge
     - WEYUSurvMedium
     - WEYUSurvSmall

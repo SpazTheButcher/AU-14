@@ -15,3 +15,16 @@
   maxplayers: 400
   GhostsNeeded: 1
   roundstart: false
+
+- type: thirdParty
+  parent: DiplomaticAttaches
+  id: DiplomaticAttachesSurv
+  displayName: Diplomatic Attaches (Survivors)
+  weight: 5
+  GhostsNeeded: 0
+  roundstart: true
+  announcearrival: ''
+  blacklistedgamemodes:
+  - insurgency
+  - forceonforce
+  - colonyfall
