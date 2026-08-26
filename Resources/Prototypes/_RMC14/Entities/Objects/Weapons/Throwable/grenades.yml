@@ -31,6 +31,7 @@
   abstract: true
   id: RMCM40DPTags
   components:
+  - type: CMUGrenadeDetonationMode
   - type: Tag
     tags:
     - Grenade
@@ -327,6 +328,7 @@
   name: M07 Training Grenade
   description: A harmless reusable version of the 30mm HEDP, used for training. Capable of being loaded into a grenade launcher, or thrown by hand.
   components:
+  - type: CMUGrenadeDetonationMode
   - type: Sprite
     sprite: _RMC14/Objects/Weapons/Grenades/m07training.rsi
   - type: SoundOnTrigger
