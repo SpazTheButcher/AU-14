@@ -12,6 +12,9 @@
   description: A creature of the Mycelial Confluence.
   components:
   - type: CMUPathogenHiveMember
+  - type: NpcFactionMember # overrides the RMCXeno inherited from the xeno mob base
+    factions:
+    - CMU14PathogenWalker
   - type: Language
     spokenLanguages:
     - Pathogen

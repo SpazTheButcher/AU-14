@@ -15,12 +15,12 @@
     - RMC
     - UPP
     - HAZOPS
-    - WEYU
+    - WYPMC
     platoonsOpfor:
     - ProdigySF
     - VAIPO
     - LACN
-    defaultgovfor: WEYU
+    defaultgovfor: WYPMC
     defaultopfor: VAIPO
     govforinship: true
     opforinship: true
@@ -28,17 +28,16 @@
     threats:
     - XenoThreat
     - NeomorphsThreat
-    # - abominationsThreatDistress # no xenocf markers
-    - apethreat
-    # - badBloodClanThreat
+    # - AbominationsThreatDS # no xenocf markers
+    - ApeThreatDS
+    - BadBloodClanThreat
     # - XenoThreatCF # no xenocf markers
     # - NeomorphsThreatCF # no xenocf markers
-    - cultistThreat
-    # - cultistThreatOnMarker # no cultcf markers
-    - wendigoThreat
-    # - abominationsThreat # no xenocf markers
-    - TribalsThreat
-    - apethreatcf
+    - CultistThreatCF
+    - WendigoThreatCF
+    # - AbominationsThreatCF # no xenocf markers
+    - TribalsThreatCF
+    - ApeThreatCF
     thirdparties:
     - WEYUSurvLarge
     - WEYUSurvMedium
@@ -60,3 +59,22 @@
 - type: lorePrimer
   id: AU14PrimerPlanetCorsatStation
   planetText: "Date 2181 - Corsat Station, a Weyland-Yutani operated research and prison station."
+
+- type: gameMap
+  id: aucorsat
+  mapName: Corsat Station
+  mapPath: /Maps/_AU14/corsat.yml
+  mapsBelow:
+  - /Maps/_AU14/corsat_below.yml
+  mapsAbove:
+  - /Maps/_AU14/corsat_above.yml
+  minPlayers: 0
+  maxPlayers: 200
+  maxRandomOffset: 0
+  randomRotation: false
+  stations:
+    aucorsat:
+      stationProto: StandardUNMCWarship
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: 'Corsat Station'

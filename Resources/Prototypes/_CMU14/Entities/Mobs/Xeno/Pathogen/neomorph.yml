@@ -38,6 +38,7 @@
     - CMU14ActionXenoPathogenDigTunnel
     - CMU14ActionXenoPathogenDevolve
     - CMU14ActionXenoPathogenOrderConstruction
+    - CMU14ActionXenoPathogenRegurgitate
   - type: TunnelRenamer
   - type: XenoBurrow
   - type: XenoConstruction

@@ -47,13 +47,13 @@
     speechStyleClass: commanderSpeech
   - type: TacticalMapIcon
     icon:
-      sprite: /Textures/_AU14/Interface/au14govforjobicons.rsi
-      state: govfor_platco
+      sprite: /Textures/_CMU14/Interface/cmugovforblips.rsi
+      state: platco
   roundForceComponents:
     OPFOR:
     - type: TacticalMapIcon
       icon:
-        sprite: /Textures/_AU14/Interface/au14opforjobicons.rsi
+        sprite: /Textures/_CMU14/Interface/cmuopforblips.rsi
         state: platco
     UPP:
     - type: JobPrefix

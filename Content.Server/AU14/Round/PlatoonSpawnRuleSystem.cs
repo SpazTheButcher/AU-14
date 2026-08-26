@@ -256,6 +256,19 @@ public sealed partial class PlatoonSpawnRuleSystem : GameRuleSystem<PlatoonSpawn
                         continue;
                     }
 
+                    if (markerComp.Class == PlatoonMarkerClass.TacticalMap)
+                    {
+                        var tacMapProtoId = shipFaction.Faction switch
+                        {
+                            "govfor" => "CMUTacticalMapTableGovfor",
+                            "opfor" => "CMUTacticalMapTableOpfor",
+                            _ => null,
+                        };
+                        if (tacMapProtoId != null && _prototypeManager.TryIndex(tacMapProtoId, out _))
+                            _entityManager.SpawnEntity(tacMapProtoId, transform.Coordinates);
+                        continue;
+                    }
+
                     // --- GROUNDSIDE OPS SEGREGATED MARKERS ---
                     if (markerComp.Class == PlatoonMarkerClass.GroundsideOpsGovfor)
                     {

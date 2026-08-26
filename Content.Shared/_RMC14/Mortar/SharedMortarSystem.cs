@@ -556,7 +556,7 @@ public abstract partial class SharedMortarSystem : EntitySystem
     }
 
 
-    public void PopupWarning(MapCoordinates coordinates, float range, LocId warning, LocId warningAbove, bool chat = false)
+    public void PopupWarning(MapCoordinates coordinates, float range, LocId warning, LocId warningAbove, bool chat = false, string? direction = null) // CMU14
     {
         foreach (var session in _player.NetworkedSessions)
         {
@@ -573,10 +573,9 @@ public abstract partial class SharedMortarSystem : EntitySystem
             if (distance > range)
                 continue;
 
-            var direction = distanceVec.GetDir().ToString().ToUpperInvariant();
             var msg = distance < 1
                 ? Loc.GetString(warningAbove)
-                : Loc.GetString(warning, ("direction", direction));
+                : Loc.GetString(warning, ("direction", direction ?? distanceVec.GetDir().ToString().ToUpperInvariant())); // CMU14
             _popup.PopupEntity(msg, recipient, recipient, PopupType.LargeCaution);
 
             if (chat)

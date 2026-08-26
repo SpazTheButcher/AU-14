@@ -65,6 +65,9 @@
       behaviors:
       - !type:BurnBodyBehavior { }
   - type: XenoFriendly
+  - type: NpcFactionMember # CMU14: hostile structure, valid sentry/turret target
+    factions:
+    - RMCXeno
   - type: RMCNightVisionVisible
     priority: -1
   - type: Corrodible

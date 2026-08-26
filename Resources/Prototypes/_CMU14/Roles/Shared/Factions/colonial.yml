@@ -18,6 +18,7 @@
 - type: npcFaction
   id: CLF
   name: Colony Liberation Front
+  hidden: true # stealth insurgents
   allianceTarget: true
   hostile:
   - THREAT

@@ -98,5 +98,8 @@
   - type: Corrodible
     isCorrodible: false
   - type: XenoConstruct
+  - type: NpcFactionMember # CMU14: hostile structure, valid sentry/turret target
+    factions:
+    - RMCXeno
   - type: RequireProjectileTarget
   - type: DeletedByWeedKiller

@@ -224,6 +224,9 @@
   placement:
     mode: SnapgridCenter
   components:
+  - type: NpcFactionMember
+    factions:
+    - CMU14PathogenWalker
   - type: InteractionOutline
   - type: Sprite
     sprite: _CMU14/Effects/pathogen_effects.rsi

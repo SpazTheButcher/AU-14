@@ -3,7 +3,7 @@
 # remaining colonists; threat is wiped if every abomination dies
 # (KillAllAbominationsRule, counts disguised mimics).
 - type: threat
-  id: abominationsThreat
+  id: AbominationsThreatCF
   lorePrimer: AU14PrimerThreatAbomination
   roundstartspawns: abominationsParty
   thirdpartyinterval: 9100
@@ -15,6 +15,8 @@
   - KillAllColonistRule
   - KillAllAbominationsRule
   minplayers: 0
+  spawnDelayMin: 1200
+  spawnDelayMax: 2400
 
 - type: partySpawn
   id: abominationsParty
@@ -51,7 +53,7 @@
 # Govfor; threat loses when all abominations die (mimic disguises
 # counted via KillAllAbominationsRule).
 - type: threat
-  id: abominationsThreatDistress
+  id: AbominationsThreatDS
   lorePrimer: AU14PrimerThreatAbomination
   roundstartspawns: abominationsPartyDistress
   whitelistedgamemodes:

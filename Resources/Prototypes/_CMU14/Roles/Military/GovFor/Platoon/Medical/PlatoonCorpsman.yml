@@ -30,13 +30,13 @@
     prefix: au14-job-prefix-govforplatooncorpsman
   - type: TacticalMapIcon
     icon:
-      sprite: /Textures/_AU14/Interface/au14govforjobicons.rsi
-      state: govfor_corpsman
+      sprite: /Textures/_CMU14/Interface/cmugovforblips.rsi
+      state: corpsman
   roundForceComponents:
     OPFOR:
     - type: TacticalMapIcon
       icon:
-        sprite: /Textures/_AU14/Interface/au14opforjobicons.rsi
+        sprite: /Textures/_CMU14/Interface/cmuopforblips.rsi
         state: corpsman
     RMC:
     - type: Skills

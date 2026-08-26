@@ -188755,7 +188755,7 @@ entities:
     - type: Transform
       pos: -8.5,95.5
       parent: 1
-- proto: RMCTacticalMapTable
+- proto: CMUTacticalMapTableGovfor
   entities:
   - uid: 26849
     components:

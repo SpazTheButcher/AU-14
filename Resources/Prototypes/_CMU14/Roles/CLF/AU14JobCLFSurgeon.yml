@@ -7,6 +7,7 @@
   roundComponents:
   - type: NpcFactionMember
     factions:
+    - AUColonist # cover identity
     - CLF
   - type: CLFMember
     statusIcon: CLFFactionMedic
@@ -28,7 +29,7 @@
     mindRole: MindRoleCLFSurgeon
   - type: TacticalMapIcon
     icon:
-      sprite: /Textures/_AU14/Interface/au14colonyjobicons.rsi
+      sprite: /Textures/_CMU14/Interface/cmucolonyblips.rsi
       state: colonist
   - type: ShowMarineIcons
     factions:

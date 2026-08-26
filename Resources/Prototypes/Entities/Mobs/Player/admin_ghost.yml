@@ -127,14 +127,14 @@
   - type: ParalyzeOnPullAttemptImmune
   - type: BypassSkillChecks
   - type: SeeNewPlayers
-  - type: TacticalMapUser
+  - type: TacticalMapUser # CMU14
     marines: true
     xenos: true
     opfor: true
     govfor: true
     clf: true
+    WeYu: true
     liveUpdate: true
-
 
 - type: entity
   abstract: true

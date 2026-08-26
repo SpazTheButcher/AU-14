@@ -1,5 +1,5 @@
 - type: threat
-  id: TribalsThreat
+  id: TribalsThreatCF
   lorePrimer: AU14PrimerThreatTribals
   roundstartspawns: tribalsParty
   blacklistedgamemodes:

@@ -3,7 +3,6 @@ using System.Linq;
 using Content.Server._CMU14.Ops.ThirdParty;
 using Content.Shared._RMC14.Dropship;
 using Content.Shared.AU14.Round;
-using Content.Shared.AU14.Scenario;
 using Content.Shared._CMU14.Threats;
 using Content.Shared.Shuttles.Components;
 using Robust.Shared.EntitySerialization;
@@ -22,7 +21,7 @@ public sealed class RmcErtThirdPartyDropshipMapTest
     {
         (new("/Maps/_AU14/ShuttlesDropships/rmc_ert_clf_shuttle.yml"), 4, 8, 3),
         (new("/Maps/_AU14/ShuttlesDropships/rmc_ert_cmb_shuttle.yml"), 4, 8, 3),
-        (new("/Maps/_AU14/ShuttlesDropships/rmc_ert_pmc_shuttle.yml"), 4, 8, 3),
+        (new("/Maps/_AU14/ShuttlesDropships/rmc_ert_pmc_shuttle.yml"), 1, 10, 3),
         (new("/Maps/_AU14/ShuttlesDropships/rmc_ert_response_shuttle.yml"), 4, 8, 3),
         (new("/Maps/_AU14/ShuttlesDropships/rmc_ert_spp_shuttle.yml"), 4, 8, 3),
         (new("/Maps/_AU14/ShuttlesDropships/rmc_ert_tse_shuttle.yml"), 4, 8, 3),
@@ -58,7 +57,7 @@ public sealed class RmcErtThirdPartyDropshipMapTest
                 Assert.That(mapLoader.TryLoadGrid(mapId, path, out var grid), Is.True, path.ToString());
                 var gridUid = grid!.Value.Owner;
 
-                AssertStandaloneThirdPartyMarkerCounts(
+                AssertThirdPartyMarkerCounts(
                     entities,
                     new[] { gridUid },
                     path,
@@ -89,7 +88,7 @@ public sealed class RmcErtThirdPartyDropshipMapTest
                 Assert.That(grids, Is.Not.Empty, path.ToString());
                 var gridUids = grids.Select(grid => grid.Owner).ToArray();
 
-                AssertStandaloneThirdPartyMarkerCounts(
+                AssertThirdPartyMarkerCounts(
                     entities,
                     gridUids,
                     path,
@@ -103,7 +102,7 @@ public sealed class RmcErtThirdPartyDropshipMapTest
     }
 
     [Test]
-    public async Task RmcAlamoThreatLeaderMarkerLoadsAsScenarioCompatibilityMarker()
+    public async Task RmcAlamoThreatLeaderMarkerLoads()
     {
         await using var pair = await PoolManager.GetServerClient();
         var server = pair.Server;
@@ -112,42 +111,25 @@ public sealed class RmcErtThirdPartyDropshipMapTest
         {
             var entities = server.EntMan;
             var mapLoader = server.System<MapLoaderSystem>();
-            var options = DeserializationOptions.Default with { InitializeMaps = true };
+            var mapSystem = server.System<SharedMapSystem>();
+            mapSystem.CreateMap(out var mapId);
 
             Assert.That(
-                mapLoader.TryLoadMap(new ResPath("/Maps/_RMC14/alamo.yml"), out _, out var grids, options),
+                mapLoader.TryLoadGrid(mapId, new ResPath("/Maps/_RMC14/alamo.yml"), out var grid),
                 Is.True);
-            Assert.That(grids, Is.Not.Empty);
-            var gridUids = grids.Select(grid => grid.Owner).ToArray();
+            var gridUids = new[] { grid!.Value.Owner };
 
-            var scenarioLeaderMarkers = 0;
-            var legacyLeaderMarkers = 0;
-            var markerQuery = entities.EntityQueryEnumerator<ScenarioSpawnMarkerComponent, TransformComponent>();
-            while (markerQuery.MoveNext(out var uid, out var marker, out var transform))
+            var leaderMarkers = 0;
+            var markerQuery = entities.EntityQueryEnumerator<ThreatSpawnMarkerComponent, TransformComponent>();
+            while (markerQuery.MoveNext(out _, out var marker, out var transform))
             {
-                if (!IsOnAnyGrid(transform, gridUids) ||
-                    marker.Kind != SpawnMarkerKind.ThreatMarker ||
-                    !marker.Tags.Contains(ScenarioMarkerTags.ForceHostile) ||
-                    !marker.Tags.Contains(ScenarioMarkerTags.Bucket(ThreatMarkerType.Leader.ToString())) ||
-                    !marker.Tags.Contains(ScenarioMarkerTags.MarkerId(string.Empty)))
-                {
-                    continue;
-                }
-
-                scenarioLeaderMarkers++;
-                if (entities.TryGetComponent(uid, out ThreatSpawnMarkerComponent legacyMarker) &&
-                    legacyMarker.ThreatMarkerType == ThreatMarkerType.Leader &&
-                    !legacyMarker.ThirdParty)
-                {
-                    legacyLeaderMarkers++;
-                }
+                if (IsOnAnyGrid(transform, gridUids) &&
+                    marker.ThreatMarkerType == ThreatMarkerType.Leader &&
+                    !marker.ThirdParty)
+                    leaderMarkers++;
             }
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(scenarioLeaderMarkers, Is.EqualTo(1));
-                Assert.That(legacyLeaderMarkers, Is.EqualTo(1));
-            });
+            Assert.That(leaderMarkers, Is.EqualTo(1));
         });
 
         await pair.CleanReturnAsync();
@@ -235,7 +217,7 @@ public sealed class RmcErtThirdPartyDropshipMapTest
         await pair.CleanReturnAsync();
     }
 
-    private static void AssertStandaloneThirdPartyMarkerCounts(
+    private static void AssertThirdPartyMarkerCounts(
         IEntityManager entities,
         IReadOnlyCollection<EntityUid> gridUids,
         ResPath path,
@@ -246,32 +228,24 @@ public sealed class RmcErtThirdPartyDropshipMapTest
         var leaderMarkers = 0;
         var memberMarkers = 0;
         var entityMarkers = 0;
-        var legacyThirdPartyMarkers = 0;
-        var cooldownMarkers = 0;
         var navigationComputers = 0;
         var thirdPartyNavigationComputers = 0;
 
-        var markerQuery = entities.EntityQueryEnumerator<ScenarioSpawnMarkerComponent, TransformComponent>();
-        while (markerQuery.MoveNext(out var uid, out var marker, out var transform))
+        var markerQuery = entities.EntityQueryEnumerator<ThreatSpawnMarkerComponent, TransformComponent>();
+        while (markerQuery.MoveNext(out _, out var marker, out var transform))
         {
             if (!IsOnAnyGrid(transform, gridUids) ||
-                marker.Kind != SpawnMarkerKind.ThirdPartyMarker ||
-                !marker.Tags.Contains(ScenarioMarkerTags.ForceThirdParty))
+                !marker.ThirdParty)
             {
                 continue;
             }
 
-            if (marker.Tags.Contains(ScenarioMarkerTags.Bucket(ThreatMarkerType.Leader.ToString())))
+            if (marker.ThreatMarkerType == ThreatMarkerType.Leader)
                 leaderMarkers++;
-            if (marker.Tags.Contains(ScenarioMarkerTags.Bucket(ThreatMarkerType.Member.ToString())))
+            if (marker.ThreatMarkerType == ThreatMarkerType.Member)
                 memberMarkers++;
-            if (marker.Tags.Contains(ScenarioMarkerTags.Bucket(ThreatMarkerType.Entity.ToString())))
+            if (marker.ThreatMarkerType == ThreatMarkerType.Entity)
                 entityMarkers++;
-
-            if (entities.HasComponent<ThreatSpawnMarkerComponent>(uid))
-                legacyThirdPartyMarkers++;
-            if (entities.HasComponent<ScenarioSpawnMarkerCooldownComponent>(uid))
-                cooldownMarkers++;
         }
 
         var navigationQuery = entities.EntityQueryEnumerator<DropshipNavigationComputerComponent, TransformComponent>();
@@ -298,8 +272,6 @@ public sealed class RmcErtThirdPartyDropshipMapTest
             Assert.That(entityMarkers, Is.EqualTo(expectedEntities), path.ToString());
             Assert.That(navigationComputers, Is.GreaterThanOrEqualTo(1), path.ToString());
             Assert.That(thirdPartyNavigationComputers, Is.GreaterThanOrEqualTo(1), path.ToString());
-            Assert.That(legacyThirdPartyMarkers, Is.Zero, path.ToString());
-            Assert.That(cooldownMarkers, Is.EqualTo(expectedLeaders + expectedMembers + expectedEntities), path.ToString());
         });
     }
 

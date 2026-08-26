@@ -142656,7 +142656,7 @@ entities:
     - type: Transform
       pos: 102.43997,-86.36128
       parent: 1
-- proto: cultistcfthreatleaderspawnmarker
+- proto: threatleaderspawnmarker
   entities:
   - uid: 10745
     components:
@@ -142664,7 +142664,7 @@ entities:
       rot: -1.5707963267948966 rad
       pos: -54.5,17.5
       parent: 1
-- proto: cultistcfthreatmemberspawnmarker
+- proto: threatmemberspawnmarker
   entities:
   - uid: 10746
     components:
@@ -199033,7 +199033,7 @@ entities:
     - type: Transform
       pos: 13.5,-22.5
       parent: 1
-- proto: RMCTacticalMapTableLarge
+- proto: CMUTacticalMapTableLargeGovfor
   entities:
   - uid: 22886
     components:

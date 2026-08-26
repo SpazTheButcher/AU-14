@@ -1,5 +1,5 @@
 - type: threat
-  id: wendigoThreat
+  id: WendigoThreatCF
   lorePrimer: AU14PrimerThreatWendigo
   roundstartspawns: wendigoParty
   thirdpartyinterval: 9100
@@ -10,6 +10,8 @@
   winconditions:
   - KillAllColonistRule
   - KillAllXenoRule
+  spawnDelayMin: 1200
+  spawnDelayMax: 2400
 
 - type: partySpawn
   id: wendigoParty

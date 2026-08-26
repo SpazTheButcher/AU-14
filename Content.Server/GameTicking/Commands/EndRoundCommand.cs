@@ -1,6 +1,7 @@
 using Robust.Shared.Configuration;
 using Content.Server.Administration;
 using Content.Shared._RMC14.CCVar;
+using Content.Shared.CCVar; // CMU14
 using Content.Shared.Administration;
 using Robust.Shared.Console;
 
@@ -30,6 +31,7 @@ namespace Content.Server.GameTicking.Commands
             //Again I do not trust le admins to remember to turn this off...
             _cfg.SetCVar(RMCCVars.RMCDelayRoundEnd, false);
             //RMC14
+            _cfg.SetCVar(CCVars.HoldRoundEnd, false); // CMU14
 
             ticker.EndRound();
         }

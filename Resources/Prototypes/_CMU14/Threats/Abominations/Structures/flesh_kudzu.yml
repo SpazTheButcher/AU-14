@@ -101,6 +101,9 @@
   - type: UserIFF
     factions:
     - FactionAbomination
+  - type: NpcFactionMember
+    factions:
+    - Abomination
 
 # Spawner for the flesh kudzu. Used by skitter's Spread Kudzu action and
 # by abomination death-on-gib.

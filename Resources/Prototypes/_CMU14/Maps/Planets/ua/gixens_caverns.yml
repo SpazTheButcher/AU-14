@@ -17,7 +17,7 @@
     - RMC
     platoonsOpfor:
     - USCM
-    - WEYU
+    - WYPMC
     - CMBCIU
     - UPP
     defaultgovfor: HAZOPS
@@ -25,23 +25,38 @@
     govforinship: true
     opforinship: true
     daycycleenabled: false
-    threats:
-    - XenoThreat
-    - NeomorphsThreat
-    # - abominationsThreatDistress # no xenocf markers
-    - apethreat
-    # - badBloodClanThreat
+    # threats: # map has no threat spawn markers (at all)
+    # - XenoThreat # no threat spawn markers
+    # - NeomorphsThreat # no threat spawn markers
+    # - AbominationsThreatDS # no xenocf markers
+    # - ApeThreatDS # no threat spawn markers
+    # - BadBloodClanThreat # no threat spawn markers
     # - XenoThreatCF # no xenocf markers
     # - NeomorphsThreatCF # no xenocf markers
-    - cultistThreat
-    # - cultistThreatOnMarker # no cultcf markers
-    - wendigoThreat
-    # - abominationsThreat # no xenocf markers
-    - TribalsThreat
-    - apethreatcf
+    # - CultistThreatCF # no threat spawn markers
+    # - WendigoThreatCF # no threat spawn markers
+    # - AbominationsThreatCF # no xenocf markers
+    # - TribalsThreatCF # no threat spawn markers
+    # - ApeThreatCF # no threat spawn markers
     jobScalingFof: DefaultGovforOpforScale
     jobScalingIns: DefaultInsurgencyScale
 
 - type: lorePrimer
   id: AU14PrimerPlanetGixensCaverns
   planetText: "Date 2181 - Gixens Caverns."
+
+- type: gameMap
+  id: GixensCaverns
+  mapName: Gixens Caverns
+  mapPath: /Maps/_AU14/gixenscaverns.yml
+  minPlayers: 0
+  maxPlayers: 75
+  maxRandomOffset: 0
+  randomRotation: false
+  stations:
+    GixensCaverns:
+      stationProto: StandardUNMCWarship
+      components:
+      - type: StationNameSetup
+        mapNameTemplate: 'GixensCaverns'
+

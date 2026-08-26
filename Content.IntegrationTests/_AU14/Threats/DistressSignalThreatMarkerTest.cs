@@ -20,7 +20,7 @@ namespace Content.IntegrationTests._AU14.Threats;
 public sealed class DistressSignalThreatMarkerTest
 {
     private static readonly ProtoId<ThreatPrototype> XenoThreat = "XenoThreat";
-    private static readonly ProtoId<ThreatPrototype> TribalThreat = "TribalsThreat";
+    private static readonly ProtoId<ThreatPrototype> TribalThreat = "TribalsThreatCF";
     private const string DistressSignalPreset = "DistressSignal";
     private const int MarkerValidationPlayerCount = 100;
 
@@ -250,12 +250,6 @@ public sealed class DistressSignalThreatMarkerTest
                 ThreatMarkerType.Leader => "xenocfthreatleaderspawnmarker",
                 ThreatMarkerType.Member => "xenocfthreatmemberspawnmarker",
                 ThreatMarkerType.Entity => "xenocfthreatentityspawnmarker",
-                _ => throw new ArgumentOutOfRangeException(nameof(markerType), markerType, null),
-            },
-            "cultcfmarker" => markerType switch
-            {
-                ThreatMarkerType.Leader => "cultistcfthreatleaderspawnmarker",
-                ThreatMarkerType.Member => "cultistcfthreatmemberspawnmarker",
                 _ => throw new ArgumentOutOfRangeException(nameof(markerType), markerType, null),
             },
             _ => throw new InvalidOperationException($"Unknown threat marker id '{markerId}' for {markerType}."),

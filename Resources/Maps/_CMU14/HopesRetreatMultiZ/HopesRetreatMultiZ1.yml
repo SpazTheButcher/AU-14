@@ -176279,7 +176279,7 @@ entities:
     - type: Transform
       pos: 65.5,15.5
       parent: 1
-- proto: ScenarioClfCivilianColonistSpawnMarker
+- proto: AU14SpawnPointCivilianColonist
   entities:
   - uid: 20275
     components:

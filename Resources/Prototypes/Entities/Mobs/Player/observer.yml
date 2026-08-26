@@ -91,13 +91,14 @@
       enum.ViewIntelObjectivesUI.Key:
         type: ViewIntelObjectivesBui
         requireInputValidation: false
-  - type: TacticalMapUser
+  - type: TacticalMapUser # CMU14
     actionId: RMCActionOpenTacticalMapGhost
     marines: true
     xenos: true
     opfor: true
     govfor: true
     clf: true
+    WeYu: true
     liveUpdate: true
   - type: ViewIntelObjectives
   - type: VentSight

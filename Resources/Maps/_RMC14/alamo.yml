@@ -1231,7 +1231,7 @@ entities:
       pos: 0.5,10.5
       parent: 2
 
-- proto: scenariormcthreatleaderspawnmarker
+- proto: threatleaderspawnmarker # CMU14
   entities:
   - uid: 185
     components:

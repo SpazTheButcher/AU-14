@@ -869,7 +869,8 @@ public sealed partial class VehicleSupplySystem : EntitySystem
             return;
         }
 
-        if (comp.Ordered.Contains(key))
+        if (comp.Ordered.Contains(key)
+            && !comp.TechGranted.Contains(key)) // CMU14: tech-granted extras bypass the one-use spawn guard
         {
             comp.PendingVehicle = string.Empty;
             comp.PendingVehicleGroup = string.Empty;

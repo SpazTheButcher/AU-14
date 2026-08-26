@@ -698,7 +698,7 @@ entities:
         83:
         - - Pressed
           - DoorBolt
-- proto: scenariothirdpartyentityspawnmarker
+- proto: thirdpartyentityspawnmarker
   entities:
   - uid: 7
     components:
@@ -715,7 +715,7 @@ entities:
     - type: Transform
       pos: 0.5,-1.5
       parent: 2
-- proto: scenariothirdpartyleaderspawnmarker
+- proto: thirdpartyleaderspawnmarker
   entities:
   - uid: 24
     components:
@@ -737,7 +737,7 @@ entities:
     - type: Transform
       pos: 0.5,3.5
       parent: 2
-- proto: scenariothirdpartymemberspawnmarker
+- proto: thirdpartymemberspawnmarker
   entities:
   - uid: 21
     components:

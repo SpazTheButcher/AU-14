@@ -11,7 +11,7 @@
     announcement: "Kutjevo Biolab, a Weyland-Yutani level three biohazard containment and research facility, has gone silent. A response force has been dispatched to investigate the blackout."
     platoonsGovfor:
     - USCM
-    - WEYU
+    - WYPMC
     - RMC
     - CMBCIU
     - HAZOPS
@@ -57,20 +57,39 @@
     threats:
     - XenoThreat
     - NeomorphsThreat
-    # - abominationsThreatDistress # no xenocf markers
-    - apethreat
-    # - badBloodClanThreat
+    # - AbominationsThreatDS # no xenocf markers
+    - ApeThreatDS
+    - BadBloodClanThreat
     # - XenoThreatCF # no xenocf markers
     # - NeomorphsThreatCF # no xenocf markers
-    - cultistThreat
-    # - cultistThreatOnMarker # no cultcf markers
-    - wendigoThreat
-    # - abominationsThreat # no xenocf markers
-    - TribalsThreat
-    - apethreatcf
+    - CultistThreatCF
+    - WendigoThreatCF
+    # - AbominationsThreatCF # no xenocf markers
+    - TribalsThreatCF
+    - ApeThreatCF
     jobScalingFof: DefaultGovforOpforScale
     jobScalingIns: DefaultInsurgencyScale
 
 - type: lorePrimer
   id: AU14PrimerPlanetKutjevo
   planetText: "Date 2181 - Kutjevo Biolab. A level three biohazard containment and research facility operated by the Weyland-Yutani Corporation."
+
+- type: gameMap
+  id: auKutjevo
+  mapName: Kutjevo Biolab
+  allegiance: WeylandYutani
+  mapPath: /Maps/_AU14/kutjevo.yml
+  mapsBelow:
+  - /Maps/_AU14/kutjevo_below.yml
+  mapsAbove:
+  - /Maps/_AU14/kutjevo_above.yml
+  minPlayers: 0
+  maxPlayers: 200
+  maxRandomOffset: 0
+  randomRotation: false
+  stations:
+    kutjevo:
+      stationProto: StandardUNMCWarship
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: 'Kutjevo Biolab'
