@@ -149,10 +149,10 @@ public sealed class MaterialArbitrageTest
 
         // cache the compositions of entities
         // If the entity is refineable (i.e. glass shared can be turned into glass, we take the greater of the two compositions.
-        Dictionary<EntProtoId, Dictionary<string, int>> compositions = new();
+        Dictionary<EntProtoId, Dictionary<ProtoId<MaterialPrototype>, int>> compositions = new();
         foreach (var proto in protoManager.EnumeratePrototypes<EntityPrototype>())
         {
-            Dictionary<string, int>? baseComposition = null;
+            Dictionary<ProtoId<MaterialPrototype>, int>? baseComposition = null;
 
             if (proto.Components.ContainsKey(materialName)
                 && proto.Components.TryGetValue(compositionName, out var compositionReg))
@@ -169,7 +169,7 @@ public sealed class MaterialArbitrageTest
                 continue;
             }
 
-            var composition = new Dictionary<string, int>();
+            var composition = new Dictionary<ProtoId<MaterialPrototype>, int>();
             compositions.Add(proto.ID, composition);
 
             var refinable = (ToolRefinableComponent)refinableReg.Component;
@@ -299,13 +299,13 @@ public sealed class MaterialArbitrageTest
 
         // Finally, lets also check for deconstruction arbitrage.
         // Get ingredients returned when deconstructing an entity
-        Dictionary<string, Dictionary<string, int>> deconstructionMaterials = new();
+        Dictionary<string, Dictionary<ProtoId<MaterialPrototype>, int>> deconstructionMaterials = new();
         foreach (var (id, comp) in constructionRecipes)
         {
             if (comp.DeconstructionNode == null)
                 continue;
 
-            var materials = new Dictionary<string, int>();
+            var materials = new Dictionary<ProtoId<MaterialPrototype>, int>();
             var graph = protoManager.Index<ConstructionGraphPrototype>(comp.Graph);
 
             if (!graph.TryPath(comp.Node, comp.DeconstructionNode, out var path) || path.Length == 0)
@@ -478,7 +478,7 @@ public sealed class MaterialArbitrageTest
         }
 
 #pragma warning disable CS1998
-        async Task<double> GetDeconstructedPrice(Dictionary<string, int> mats)
+        async Task<double> GetDeconstructedPrice(Dictionary<ProtoId<MaterialPrototype>, int> mats)
         {
             double price = 0;
             foreach (var (id, num) in mats)
@@ -491,7 +491,7 @@ public sealed class MaterialArbitrageTest
 #pragma warning restore CS1998
 
 #pragma warning disable CS1998
-        async Task<double> GetChemicalCompositionPrice(Dictionary<string, FixedPoint2> mats)
+        async Task<double> GetChemicalCompositionPrice(Dictionary<ProtoId<ReagentPrototype>, FixedPoint2> mats)
         {
             double price = 0;
             foreach (var (id, num) in mats)

@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Content.Shared.Dataset;
 using Content.Shared.FixedPoint;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 
 namespace Content.Shared.Random.Helpers
@@ -22,8 +23,55 @@ namespace Content.Shared.Random.Helpers
             return Loc.GetString(prototype.Values[index]);
         }
 
+        public static ProtoId<T> Pick<T>(this IWeightedRandomPrototype<T> prototype, System.Random random)
+            where T : class, IPrototype
+        {
+            var picks = prototype.Weights;
+            var sum = picks.Values.Sum();
+            var accumulated = 0f;
+
+            var rand = (float) random.NextDouble() * sum;
+
+            foreach (var (key, weight) in picks)
+            {
+                accumulated += weight;
+
+                if (accumulated >= rand)
+                {
+                    return key;
+                }
+            }
+
+            // Shouldn't happen
+            throw new InvalidOperationException($"Invalid weighted pick for {prototype.ID}!");
+        }
+
         public static string Pick(this IWeightedRandomPrototype prototype, System.Random random)
         {
+            var picks = prototype.Weights;
+            var sum = picks.Values.Sum();
+            var accumulated = 0f;
+
+            var rand = (float) random.NextDouble() * sum;
+
+            foreach (var (key, weight) in picks)
+            {
+                accumulated += weight;
+
+                if (accumulated >= rand)
+                {
+                    return key;
+                }
+            }
+
+            // Shouldn't happen
+            throw new InvalidOperationException($"Invalid weighted pick for {prototype.ID}!");
+        }
+
+        public static ProtoId<T> Pick<T>(this IWeightedRandomPrototype<T> prototype, IRobustRandom? random = null)
+            where T : class, IPrototype
+        {
+            IoCManager.Resolve(ref random);
             var picks = prototype.Weights;
             var sum = picks.Values.Sum();
             var accumulated = 0f;

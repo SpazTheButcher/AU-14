@@ -22,11 +22,11 @@ namespace Content.Shared.Kitchen
         [DataField]
         public string Group = "Other";
 
-        [DataField("reagents", customTypeSerializer:typeof(PrototypeIdDictionarySerializer<FixedPoint2, ReagentPrototype>))]
-        private Dictionary<string, FixedPoint2> _ingsReagents = new();
+        [DataField("reagents")]
+        private Dictionary<ProtoId<ReagentPrototype>, FixedPoint2> _ingsReagents = new();
 
-        [DataField("solids", customTypeSerializer: typeof(PrototypeIdDictionarySerializer<FixedPoint2, EntityPrototype>))]
-        private Dictionary<string, FixedPoint2> _ingsSolids = new ();
+        [DataField("solids")]
+        private Dictionary<EntProtoId, FixedPoint2> _ingsSolids = new ();
 
         [DataField("result", customTypeSerializer: typeof(PrototypeIdSerializer<EntityPrototype>))]
         public string Result { get; private set; } = string.Empty;
@@ -37,8 +37,8 @@ namespace Content.Shared.Kitchen
         public string Name => Loc.GetString(_name);
 
         // TODO Turn this into a ReagentQuantity[]
-        public IReadOnlyDictionary<string, FixedPoint2> IngredientsReagents => _ingsReagents;
-        public IReadOnlyDictionary<string, FixedPoint2> IngredientsSolids => _ingsSolids;
+        public IReadOnlyDictionary<ProtoId<ReagentPrototype>, FixedPoint2> IngredientsReagents => _ingsReagents;
+        public IReadOnlyDictionary<EntProtoId, FixedPoint2> IngredientsSolids => _ingsSolids;
 
         /// <summary>
         /// Is this recipe unavailable in normal circumstances?

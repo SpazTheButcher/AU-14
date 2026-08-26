@@ -2,7 +2,7 @@ using Content.Shared._RMC14.Xenonids;
 using Content.Shared._RMC14.Xenonids.Parasite;
 using Content.Shared._RMC14.Xenonids.Plasma;
 using Content.Shared._CMU14.Xenomorphs.Pathogen.Walker;
-using Content.Shared.Humanoids;
+using Content.Shared.Humanoid;
 using Content.Shared.DoAfter;
 using Content.Shared.Jittering;
 using Content.Shared.Mobs;
