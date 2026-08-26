@@ -1,0 +1,11 @@
+- type: entity
+  parent: CMMobHuman
+  id: CMUBaseMobSpeciesRaiders
+  abstract: true
+  suffix: CMU, Raiders
+  components:
+  - type: GhostTakeOverAvailable
+  - type: NpcFactionMember
+    factions:
+    - CMURaiders
+  - type: RandomHumanoidAppearance

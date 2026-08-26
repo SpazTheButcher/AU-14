@@ -68,3 +68,22 @@
   parent: MILITARY
   id: AUUpp
   name: Union of Progressive Peoples
+
+- type: npcFaction
+  parent: MILITARY
+  id: CMUFreelancers
+  name: Freelancers
+
+- type: npcFaction
+  id: CMURaiders
+  name: Free Company Raiders # Kill and RR
+  hostile:
+  - THREAT
+  - GOVFOR
+  - OPFOR
+  - CLF
+  - AUColonist
+  - AUWeYu
+  - AUUpp
+  - CMUFreelancers
+  - PROVOST

@@ -19,8 +19,6 @@
   GhostsNeeded: 600
   roundstart: false
 
-
-
 - type: partySpawn
   id: CLFReinforcementsSpawnIntelMachineGunner
   leadersToSpawn:
@@ -32,6 +30,44 @@
   id: CLFCellReinforcementsIntelMachineGunner
   announceAsSurvivors: true
   partyspawn: CLFReinforcementsSpawnIntelMachineGunner
+  entrymethod: shuttle
+  dropshippath: /Maps/_AU14/ShuttlesDropships/rmc_ert_clf_shuttle.yml
+  weight: 1
+  minplayers: 0
+  maxplayers: 600
+  GhostsNeeded: 600
+  roundstart: false
+
+- type: partySpawn
+  id: CLFReinforcementsSpawnIntelEngineer
+  leadersToSpawn:
+    CMUIntelThirdPartyCLFEngineerReinforcements: 1
+  scalewithpop: false
+  spawnTogether: true
+
+- type: thirdParty
+  id: CLFCellReinforcementsIntelEngineer
+  announceAsSurvivors: true
+  partyspawn: CLFReinforcementsSpawnIntelEngineer
+  entrymethod: shuttle
+  dropshippath: /Maps/_AU14/ShuttlesDropships/rmc_ert_clf_shuttle.yml
+  weight: 1
+  minplayers: 0
+  maxplayers: 600
+  GhostsNeeded: 600
+  roundstart: false
+
+- type: partySpawn
+  id: CLFReinforcementsSpawnIntelSpecialist
+  leadersToSpawn:
+    CMUIntelThirdPartyCLFSpecialistReinforcements: 1
+  scalewithpop: false
+  spawnTogether: true
+
+- type: thirdParty
+  id: CLFCellReinforcementsIntelSpecialist
+  announceAsSurvivors: true
+  partyspawn: CLFReinforcementsSpawnIntelSpecialist
   entrymethod: shuttle
   dropshippath: /Maps/_AU14/ShuttlesDropships/rmc_ert_clf_shuttle.yml
   weight: 1

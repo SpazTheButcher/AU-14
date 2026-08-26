@@ -91,7 +91,7 @@
   id: AU14GearFORECONMarksman
   equipment:
     id: AU14IDCardFORECONMarksman
-    outerClothing: RMCOuterClothingExternalWebbingBrownFull
+    outerClothing: RMCOuterClothingExternalWebbingForeconSurvivorFill
     jumpsuit: RMCJumpsuitSurvivorMarineDropPouch
     shoes: RMCScoutShoes
     head: RMCBoonieTan
