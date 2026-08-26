@@ -30,7 +30,9 @@ public sealed partial class SharedObjectiveCaptureSystem : EntitySystem
             args.Handled = true;
             return;
         }
-        var userFactions = npcFaction.Factions.Select(f => f.ToString().ToLowerInvariant()).ToList();
+        var userFactions = npcFaction.Factions
+            .Select(f => f.ToString().ToLowerInvariant() switch { "auweyu" => "weyu", var id => id }) // WeYu roles carry the npcFaction id AUWeYu; the objective faction key is weyu
+            .ToList();
         if (!string.IsNullOrEmpty(comp.CurrentController))
         {
             args.Handled = true;
@@ -46,7 +48,7 @@ public sealed partial class SharedObjectiveCaptureSystem : EntitySystem
             return;
         }
         string? allowed = null;
-        foreach (var fac in new[] { "govfor", "opfor", "clf" })
+        foreach (var fac in new[] { "govfor", "opfor", "clf", "weyu" })
         {
             if (userFactions.Contains(fac))
             {

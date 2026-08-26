@@ -34,10 +34,14 @@ public sealed partial class SharedInteractObjectiveSystem : EntitySystem
     {
         if (!TryComp<NpcFactionMemberComponent>(user, out var npcFaction) || npcFaction.Factions.Count == 0)
             return null;
-        foreach (var fac in new[] { "govfor", "opfor", "clf", "scientist" })
-            if (npcFaction.Factions.Any(f => f.ToString().ToLowerInvariant() == fac))
+        // WeYu roles carry the npcFaction id AUWeYu; the objective faction key is weyu
+        var factions = npcFaction.Factions
+            .Select(f => f.ToString().ToLowerInvariant() switch { "auweyu" => "weyu", var id => id })
+            .ToList();
+        foreach (var fac in new[] { "govfor", "opfor", "clf", "weyu" })
+            if (factions.Contains(fac))
                 return fac;
-        return npcFaction.Factions.First().ToString().ToLowerInvariant();
+        return factions.First();
     }
 
     private int GetCurrentInteractions(InteractTrackerComponent tracker, string faction)

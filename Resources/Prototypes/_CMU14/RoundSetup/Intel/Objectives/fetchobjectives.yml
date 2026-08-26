@@ -110,7 +110,7 @@
     factions:
     - opfor
     - govfor
-    - scientist
+    - weyu
     - CLF
     repeating: false
     objectiveLevel: 1
@@ -141,7 +141,7 @@
     factions:
     - opfor
     - govfor
-    - scientist
+    - weyu
     - CLF
     repeating: false
     objectiveLevel: 1
@@ -173,7 +173,7 @@
     factions:
     - opfor
     - govfor
-    - scientist
+    - weyu
     - CLF
     repeating: false
     objectiveLevel: 1
@@ -204,7 +204,7 @@
     factions:
     - opfor
     - govfor
-    - scientist
+    - weyu
     - CLF
     repeating: false
     objectiveLevel: 1
@@ -235,7 +235,7 @@
     factions:
     - opfor
     - govfor
-    - scientist
+    - weyu
     - CLF
     repeating: false
     objectiveLevel: 1

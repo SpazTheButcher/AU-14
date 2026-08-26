@@ -28,7 +28,7 @@
       opfor:
         maxMajorObjectives: 3   # default: 5
         maxMinorObjectives: 5   # default: 10
-      # clf/scientist etc. inherit defaults
+      # clf/weyu etc. inherit defaults
 
 # ├──[ OBJ CONSOLES ]────────────────────────────────────────────────┤
 - type: entity
@@ -71,12 +71,12 @@
 
 - type: entity
   parent: RMCCommunicationsConsoleBase
-  id: ComputerObjectivesScientist
-  name: Scientist Objectives Console
-  description: Used to check progress on scientist objectives
+  id: ComputerObjectivesWeYu
+  name: WeYu Objectives Console
+  description: Used to check progress on WeYu objectives
   components:
   - type: ObjectivesConsole
-    faction: SCIENTIST
+    faction: WeYu
   - type: UserInterface
     interfaces:
       enum.ObjectivesConsoleKey.Key:
