@@ -5,6 +5,8 @@ cmu-xeno-paralyzing-slash-hit = Your strike seizes {$target}'s muscles!
 # Spore Sac
 cmu-xeno-spore-sac-max = You already have too many spore sacs placed.
 cmu-xeno-spore-sac-place-self = You secrete a spore sac.
+cmu-xeno-spore-sac-place-others = {$xeno} secretes a spore sac!
+cmu-xeno-spore-sac-too-far = That tile is too far away!
 cmu-xeno-spore-sac-release = Spore sac quietly releases gas. 
 
 cmu-xeno-spore-cloud-inhale-self = You inhale some weird, musty gas...
@@ -14,6 +16,7 @@ cmu-xeno-spore-cloud-inhale-others = {$target} inhales a cloud of spores!
 cmu-xeno-direct-spore-infect-invalid = That target can't be infected.
 cmu-xeno-direct-spore-infect-dead = Your target is already dead.
 cmu-xeno-direct-spore-infect-already = Your target is already infected.
+cmu-xeno-direct-spore-infect-blocked = Something blocks your spores from taking hold!
 cmu-xeno-direct-spore-infect-hit = You force spores into {$target}!
 
 # Blight Wave
