@@ -14,6 +14,7 @@ using Content.Shared.Body.Part;
 using Content.Shared.Chemistry.Components.SolutionManager;
 using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Chemistry.Reaction;
+using Content.Shared.Chemistry.Reagent;
 using Content.Shared.Construction.EntitySystems;
 using Content.Shared.Database;
 using Content.Shared.DeviceLinking.Events;

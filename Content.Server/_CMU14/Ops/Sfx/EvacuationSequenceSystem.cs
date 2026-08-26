@@ -21,9 +21,9 @@ public sealed partial class EvacuationSequenceSystem : EntitySystem
     [Dependency] private OrbitalCannonSystem _orbitalCannon = default!;
     [Dependency] private ScriptedSoundSystem _scriptedSound = default!;
     [Dependency] private IConfigurationManager _cfg = default!;
-    [Dependency] private readonly SharedMapSystem _map = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly CMUSharedZLevelsSystem _zLevels = default!;
+    [Dependency] private  SharedMapSystem _map = default!;
+    [Dependency] private  IRobustRandom _random = default!;
+    [Dependency] private  CMUSharedZLevelsSystem _zLevels = default!;
 
     private static readonly ProtoId<ScriptedSoundSequencePrototype> SelfDestructSequence = "SelfDestructSequence";
     private static readonly ProtoId<ScriptedSoundSequencePrototype> SelfDestructEngineSequence = "SelfDestructEngineSequence";

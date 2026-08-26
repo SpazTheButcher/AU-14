@@ -3,7 +3,7 @@ using Content.Shared._RMC14.Xenonids.Hive;
 
 namespace Content.Server._CMU14.Xenonids.Hive;
 
-public sealed class CMUBurrowedLarvaSystem : EntitySystem
+public sealed partial class CMUBurrowedLarvaSystem : EntitySystem
 {
     [Dependency] private GameTicker _gameTicker = default!;
     [Dependency] private SharedXenoHiveSystem _hive = default!;

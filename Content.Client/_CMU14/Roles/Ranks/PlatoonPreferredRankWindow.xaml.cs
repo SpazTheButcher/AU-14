@@ -13,10 +13,10 @@ using Content.Client.Lobby.UI;
 
 namespace Content.Client._CMU14.Roles.Ranks;
 
-public sealed class PlatoonRankPreferenceWindow : DefaultWindow
+public sealed partial class PlatoonRankPreferenceWindow : DefaultWindow
 {
-    [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
-    [Dependency] private readonly IResourceCache _resourceCache = default!;
+    [Dependency] private  IPrototypeManager _prototypeManager = default!;
+    [Dependency] private  IResourceCache _resourceCache = default!;
 
     private readonly TabContainer _tabs;
     private readonly Dictionary<string, string?> _selections = new();

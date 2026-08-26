@@ -11,7 +11,7 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Shared._CMU14.Chemistry.Effects;
 
-public sealed class RepairingContactSystem : EntitySystem
+public sealed partial class RepairingContactSystem : EntitySystem
 {
     private static readonly ProtoId<DamageTypePrototype> StructuralType = "Structural";
     private static readonly ProtoId<DamageGroupPrototype> BruteGroup = "Brute";

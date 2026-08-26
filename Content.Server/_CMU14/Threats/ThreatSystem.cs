@@ -426,7 +426,7 @@ public sealed partial class ThreatSystem : EntitySystem
         // --- Spawn entities and collect them for mind assignment ---
         var spawnedLeaders = new List<EntityUid>();
         var spawnedMembers = new List<EntityUid>();
-        _sawmill.Debug($"[DEBUG] Begin spawning threat entities for threat: {threat?.ID ?? "null"}");
+        _sawmill.Debug($"[DEBUG] Begin spawning threat entities for threat: {threat.ID}");
 
         // --- Spawn Together logic ---
         bool spawnTogether = newPartySpawn?.SpawnTogether == true;

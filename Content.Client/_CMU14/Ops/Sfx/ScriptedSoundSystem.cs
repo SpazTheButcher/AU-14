@@ -12,10 +12,10 @@ namespace Content.Client._CMU14.Ops.Sfx;
 
 public sealed partial class ScriptedSoundSystem : EntitySystem
 {
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IPlayerManager _plyMan = default!;
+    [Dependency] private  SharedAudioSystem _audio = default!;
+    [Dependency] private  IConfigurationManager _cfg = default!;
+    [Dependency] private  IGameTiming _timing = default!;
+    [Dependency] private  IPlayerManager _plyMan = default!;
 
     private bool _muted;
     private EntityUid? _lastResyncMap;
