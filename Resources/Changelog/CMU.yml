@@ -10141,5 +10141,140 @@
   id: 657
   time: '2026-08-25T02:46:36.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1864
+- author: ver0098
+  changes:
+  - message: L66A2 GPMG added to TWE Requisitions
+    type: Add
+  id: 658
+  time: '2026-08-25T22:14:22.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1865
+- author: deepdarkdepths
+  changes:
+  - message: Fixed larva and facehuggers being unable to fit under single-entity double
+      doors.
+    type: Fix
+  - message: Laser designator lasers are visible through walls with nightvision.
+    type: Tweak
+  - message: Xenos that try to move while resting will now wake up. No more fat-fingering
+      the rest key during combat and paying the price.
+    type: Tweak
+  - message: Fixed Major Evolution boon not working when queen was out of ovi.
+    type: Fix
+  - message: Made some boons check for hive, to avoid issues when two or more hives
+      exist at the same time.
+    type: Fix
+  - message: Fixed being unable to weed on tiles with ledges or platforms.
+    type: Fix
+  - message: Fixed ghosts not following xenos after they evolve.
+    type: Fix
+  - message: Xenos can now release nested hosts with right click verb. You must target
+      the nest sprite to do this.
+    type: Add
+  id: 659
+  time: '2026-08-25T22:57:01.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1866
+- author: murdocstarsim
+  changes:
+  - message: Lots of SOP / UCMJ changes below.
+    type: Add
+  - message: All junior officers have been executed, not to worry we have now replaced
+      them with staff officers, all mention of junior officers have been removed from
+      SOP.
+    type: Add
+  - message: Blind drops have been altered, there is no limit on how many personnel
+      may drop, however it must be volountary, also we have prohibited Command Staff
+      and Shipside Staff from blind dropping. We didn't particularly like seeing our
+      auxiliarry technicians blind drop...
+    type: Add
+  - message: A primary LZ must now be chosen and defended. Hopefully no more random
+      hijacks...
+    type: Add
+  - message: EO has been granted permission for ship construction and deconstruction
+      of non vital area's to create whatever they wish! EO to Brig, I need a donut
+      dispenser please.
+    type: Add
+  - message: Rank pins are now mandatory under uniform regulations, trooper where
+      is your rank pin!
+    type: Add
+  - message: IO's and EO's are now no longer breaking SOP by deploying before a FOB
+      has been established! Not that anyone noticed...
+    type: Add
+  - message: Department Heads (CMP, CMO, LO) can now deploy to the FOB if they are
+      the only members of their department, you can't hide from the law son...
+    type: Add
+  - message: Provost has bestowed the gift of executions upon Whitelisted Commanders,
+      Commanders may now execute members of the military for breaking capital crimes.
+      Better get in line or risk losing your head!
+    type: Add
+  - message: 6 New capital crimes have been added, most to do with civilians and unlawfully
+      harming them or their property, check your fire!
+    type: Add
+  - message: Transfer of commandership has been simplified. No longer will you argue
+      for twenty minutes over who becomes commander.
+    type: Add
+  - message: DNR's have been added as their own section alongside executions. CMO
+      please DNR me because I can't stand it surrounded by idiots...
+    type: Add
+  - message: Geneva based crime temporarily removed as the new capital crimes serve
+      as a replacement in a much shorter and non 40 paragraph section. Less reading,
+      simplier crimes, more taser beating by MPs!
+    type: Add
+  id: 660
+  time: '2026-08-25T22:57:33.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1853
+- author: deepdarkdepths
+  changes:
+  - message: Crusher is now properly rooted for its entire charge doafter.
+    type: Fix
+  id: 661
+  time: '2026-08-25T23:23:41.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1867
+- author: maertayn
+  changes:
+  - message: Nuked the SCADA-like scenario system (overkill design, drift with legacy
+      systems, and overly complex for its usecase)
+    type: Code
+  - message: CLF no longer show their faction affiliation when you shift+click them
+    type: Fix
+  - message: Facehugger/parasite unable to leap or infect buckled (chairs) players
+    type: Fix
+  - message: Caseless weapons don't eject casings anymore (let me know if I missed
+      some)
+    type: Tweak
+  - message: Neomorph caste (neomorph) can regurgitate now
+    type: Fix
+  - message: Consoles have lost their hard collision, so you can move through them
+      (they blocked Z-transitions)
+    type: Tweak
+  - message: Fixed offset for the upper right weapon slot on GP
+    type: Fix
+  - message: Fixed the firemissions display showing inverted cardinal directions
+    type: Fix
+  - message: Loadout items not spawning if there is no room for them (storage), they
+      drop on the ground
+    type: Fix
+  - message: TacMap table for WeYu (tracks WY PMCs too) and Govfor/Opfor dynamic (vmarker)
+      on Bush
+    type: Add
+  - message: TacMap providing full map vision without having sensors (on Stable Garrison
+      et al.)
+    type: Fix
+  - message: Kill/Eliminate objectives not tracking threats that spawned late (threat
+      vote) or evolutions (WIP)
+    type: Fix
+  - message: Structures like weeds, walls, missing proper npcFaction groupings (sentries
+      now target)
+    type: Fix
+  - message: Merged cluttered spaghetti planet map files into _CMU14/Maps/Planets/<allegiance>/*
+    type: Code
+  - message: Added spawnthreat (manually spawn threat on markers or your location),
+      endroundhold (block going to postround if victory conditions are met, e.g. three
+      spawned threats don't fight to end early) commands
+    type: Admin
+  - message: Fixed the CMU TacMap blips after far too long of having to squint
+    type: Add
+  id: 662
+  time: '2026-08-26T00:14:54.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1868
 Name: CMU
 Order: -1
