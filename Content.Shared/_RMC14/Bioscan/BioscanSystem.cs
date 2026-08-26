@@ -19,7 +19,6 @@ using Robust.Shared.Player;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using AbominationComponent = Content.Shared._CMU14.Threats.Mobs.Abomination.AbominationComponent;
-using AbominationMimicTransformedComponent = Content.Shared._CMU14.Threats.Mobs.Abomination.AbominationMimicTransformedComponent;
 using InsurgencyRuleComponent = Content.Shared._CMU14.Threats.InsurgencyRuleComponent;
 
 namespace Content.Shared._RMC14.Bioscan;
@@ -68,9 +67,12 @@ public sealed partial class BioscanSystem : EntitySystem
     private bool TargetIsMarine(EntityUid uid) => HasComp<MarineComponent>(uid);
     private bool TargetIsThreat(EntityUid uid)
     {
+        // Disguised mimics (AbominationMimicTransformedComponent) are
+        // deliberately NOT counted here: ARES announcing their presence and
+        // location would give the threat away and kill the colony-fall
+        // paranoia. Only natural-form abominations show up on bioscan.
         return HasComp<XenoComponent>(uid)
             || HasComp<AbominationComponent>(uid)
-            || HasComp<AbominationMimicTransformedComponent>(uid)
             || HasComp<YautjaComponent>(uid)
             || HasComp<YautjaAbominationComponent>(uid);
     }
