@@ -49,7 +49,7 @@
   id: CMUJobPMCSynthetic
   name: WY PMC Synthetic
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: SquadPMC
   - type: GhostRole

@@ -48,7 +48,7 @@
   id: CMUJobUPPLineLeader
   name: UPP Line Infantry Squad Leader
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: CMUSquadUPPLine
   - type: GhostRole

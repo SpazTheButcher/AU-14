@@ -47,7 +47,7 @@
   id: CMUJobUPPLineSpecialist
   name: UPP Line Infantry Specialist
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: CMUSquadUPPLine
   - type: GhostRole

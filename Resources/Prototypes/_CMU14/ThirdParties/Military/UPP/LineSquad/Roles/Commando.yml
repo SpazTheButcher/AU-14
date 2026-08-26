@@ -48,7 +48,7 @@
   id: CMUJobUPPLineCommando
   name: UPP Naval Infantry Commando
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: CMUSquadUPPLine
   - type: GhostRole

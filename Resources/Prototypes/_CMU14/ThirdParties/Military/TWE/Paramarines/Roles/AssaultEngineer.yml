@@ -45,7 +45,7 @@
   id: CMUJobParamarineAssaultEngineer
   name: TWE Royal Paramarine Assault Engineer
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: CMUSquadParamarines
   - type: GhostRole

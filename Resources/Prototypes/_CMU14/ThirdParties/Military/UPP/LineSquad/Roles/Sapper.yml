@@ -48,7 +48,7 @@
   id: CMUJobUPPLineSapper
   name: UPP Line Infantry Sapper
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: CMUSquadUPPLine
   - type: GhostRole

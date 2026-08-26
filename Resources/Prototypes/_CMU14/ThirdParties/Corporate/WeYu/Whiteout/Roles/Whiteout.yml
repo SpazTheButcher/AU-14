@@ -48,7 +48,7 @@
   id: CMUJobPMCWhiteout
   name: WY Whiteout Operative
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: SquadPMC
   - type: GhostRole

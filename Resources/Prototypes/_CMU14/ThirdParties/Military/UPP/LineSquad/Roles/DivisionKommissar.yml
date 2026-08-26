@@ -54,7 +54,7 @@
   id: CMUJobUPPDivisionKommissar
   name: UPP Division Kommissar
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: CMUSquadUPPLine
   - type: GhostRole

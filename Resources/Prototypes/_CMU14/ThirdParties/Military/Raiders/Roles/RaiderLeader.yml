@@ -38,7 +38,7 @@
   id: CMUJobRaiderLeader
   name: Free Company Raider Leader
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
   - type: GhostRole
     makeSentient: true

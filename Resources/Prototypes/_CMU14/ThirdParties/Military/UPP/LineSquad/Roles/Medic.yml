@@ -47,7 +47,7 @@
   id: CMUJobUPPLineMedic
   name: UPP Line Infantry Medic
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: CMUSquadUPPLine
   - type: GhostRole

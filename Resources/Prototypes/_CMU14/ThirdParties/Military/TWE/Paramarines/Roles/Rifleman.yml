@@ -43,7 +43,7 @@
   id: CMUJobParamarineRifleman
   name: TWE Royal Paramarine Rifleman
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: CMUSquadParamarines
   - type: GhostRole

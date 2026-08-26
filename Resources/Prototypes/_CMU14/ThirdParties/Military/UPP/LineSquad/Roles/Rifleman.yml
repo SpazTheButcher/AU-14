@@ -46,7 +46,7 @@
   id: CMUJobUPPLineRifleman
   name: UPP Line Infantry Rifleman
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: CMUSquadUPPLine
   - type: GhostRole

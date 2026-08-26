@@ -43,7 +43,7 @@
   id: CMUJobParamarinePilot
   name: TWE Royal Paramarine Pilot
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: CMUSquadParamarines
   - type: GhostRole

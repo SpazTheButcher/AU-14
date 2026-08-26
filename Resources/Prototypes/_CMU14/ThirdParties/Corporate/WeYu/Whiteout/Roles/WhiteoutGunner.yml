@@ -46,7 +46,7 @@
   id: CMUJobPMCWhiteoutGunner
   name: WY Whiteout Smartgunner
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: SquadPMC
   - type: GhostRole

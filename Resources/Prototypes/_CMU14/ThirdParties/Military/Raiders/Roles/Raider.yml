@@ -37,7 +37,7 @@
   id: CMUJobRaider
   name: Free Company Raider
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
   - type: GhostRole
     makeSentient: true

@@ -4,7 +4,7 @@
   abstract: true
   suffix: CMU, Freelancers
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: NpcFactionMember
     factions:
     - CMUFreelancers

@@ -44,7 +44,7 @@
   id: CMUJobParamarineTeamLeader
   name: TWE Royal Paramarine Team Leader
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: CMUSquadParamarines
   - type: GhostRole

@@ -49,7 +49,7 @@
   id: CMUJobParamarineSynthetic
   name: TWE Royal Paramarine Synthetic
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: CMUSquadParamarines
   - type: GhostRole

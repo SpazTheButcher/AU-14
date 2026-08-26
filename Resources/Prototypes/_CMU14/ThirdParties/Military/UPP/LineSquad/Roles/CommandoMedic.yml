@@ -48,7 +48,7 @@
   id: CMUJobUPPLineCommandoMedic
   name: UPP Naval Infantry Commando Medic
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: CMUSquadUPPLine
   - type: GhostRole

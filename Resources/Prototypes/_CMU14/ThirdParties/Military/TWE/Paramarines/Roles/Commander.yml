@@ -44,7 +44,7 @@
   id: CMUJobParamarineCommander
   name: TWE Royal Paramarine Commander
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: CMUSquadParamarines
   - type: GhostRole

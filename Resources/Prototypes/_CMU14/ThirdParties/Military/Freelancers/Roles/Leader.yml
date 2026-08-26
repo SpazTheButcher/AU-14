@@ -38,7 +38,7 @@
   id: CMUJobFreelancerLeader
   name: Freelancer Leader
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
   - type: GhostRole
     makeSentient: true

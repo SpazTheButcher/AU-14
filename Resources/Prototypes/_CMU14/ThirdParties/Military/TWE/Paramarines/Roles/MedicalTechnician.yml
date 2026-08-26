@@ -44,7 +44,7 @@
   id: CMUJobParamarineMedicalTechnician
   name: TWE Royal Paramarine Medical Technician
   components:
-  - type: GhostTakeOverAvailable
+  - type: GhostTakeoverAvailable
   - type: GhostRoleApplySpecial
     squad: CMUSquadParamarines
   - type: GhostRole
