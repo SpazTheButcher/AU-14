@@ -124,6 +124,7 @@
         volume: -3
     angle: 0
     animation: RMCWeaponArcXenoClaw
+    wideAnimationRotation: 90
     # Big base value — guarantees a strong sever push on every hit, since
     # severance scales with Brute (Slash) damage in CMUBodyPartHealthSystem.
     damage:
@@ -154,6 +155,9 @@
     icon:
       sprite: /Textures/_RMC14/Interface/map_blips.rsi
       state: warrior
+  - type: Prying
+    speedModifier: 0.25
+    pryPowered: true
   - type: MovementSpeedModifier
     baseWalkSpeed: 3.45
     baseSprintSpeed: 4.6

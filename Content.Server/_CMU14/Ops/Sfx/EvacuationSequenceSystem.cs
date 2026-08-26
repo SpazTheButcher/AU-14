@@ -46,7 +46,7 @@ public sealed partial class EvacuationSequenceSystem : EntitySystem
     {
         if (!_cfg.GetCVar(CCVars.EnableEvacSfx)) return;
 
-        if (TryComp<EvacuationProgressComponent>(ev.Map, out var progress) && progress.DropShipCrashed)
+        if (TryComp<EvacuationProgressComponent>(ev.Map, out var progress) && progress.SelfDestructAt == null)
             return;
 
         if (!_scriptedSound.TryGetActiveSequence(SelfDestructSequence, ev.Map, out _))
