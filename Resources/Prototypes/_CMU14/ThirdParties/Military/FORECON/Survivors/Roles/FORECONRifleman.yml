@@ -98,7 +98,7 @@
   id: AU14GearFORECONRifleman
   equipment:
     id: AU14IDCardFORECONRifleman
-    outerClothing: RMCOuterClothingExternalWebbingBrownFull
+    outerClothing: RMCOuterClothingExternalWebbingForeconSurvivorFill
     jumpsuit: RMCJumpsuitSurvivorMarineDropPouch
     shoes: CMBootsBlackFilled
     head: ArmorHelmetM10

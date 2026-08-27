@@ -1,0 +1,11 @@
+- type: entity
+  parent: CMMobHuman
+  id: CMUBaseMobSpeciesParamarines
+  abstract: true
+  suffix: CMU, TWE, Paramarines
+  components:
+  - type: GhostTakeoverAvailable
+  - type: NpcFactionMember
+    factions:
+    - CMUTWE
+  - type: RandomHumanoidAppearance

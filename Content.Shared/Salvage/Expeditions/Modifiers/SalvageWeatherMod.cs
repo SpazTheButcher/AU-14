@@ -17,8 +17,8 @@ public sealed partial class SalvageWeatherMod : IPrototype, IBiomeSpecificMod
     public float Cost { get; private set; } = 0f;
 
     /// <inheritdoc/>
-    [DataField("biomes", customTypeSerializer: typeof(PrototypeIdListSerializer<SalvageBiomeModPrototype>))]
-    public List<string>? Biomes { get; private set; } = null;
+    [DataField("biomes")]
+    public List<ProtoId<SalvageBiomeModPrototype>>? Biomes { get; private set; } = null;
 
     /// <summary>
     /// Weather prototype to use on the planet.

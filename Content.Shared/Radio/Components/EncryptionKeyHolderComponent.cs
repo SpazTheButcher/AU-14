@@ -54,7 +54,7 @@ public sealed partial class EncryptionKeyHolderComponent : Component
     /// </summary>
     [ViewVariables]
     [AutoNetworkedField]
-    public HashSet<string> Channels = new();
+    public HashSet<ProtoId<RadioChannelPrototype>> Channels = new();
 
     /// <summary>
     ///     This is the channel that will be used when using the default/department prefix (<see cref="SharedChatSystem.DefaultChannelKey"/>).

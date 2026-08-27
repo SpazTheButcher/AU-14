@@ -7,6 +7,7 @@ using Content.Server.Administration.Logs;
 using Content.Server.GameTicking.Events;
 using Content.Shared.GameTicking; // CMU14: PlayerSpawnCompleteEvent
 using Content.Shared._CMU14.TacticalMap; // CMU14: WeYuMapTracked
+using Content.Shared._CMU14.Xenomorphs.Pathogen; // CMU14: pathogen live tacmap
 using Content.Shared._RMC14.Announce;
 using Content.Shared._RMC14.CCVar;
 using Content.Shared._RMC14.Communications;
@@ -360,6 +361,14 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
                 ent.Comp.Marines = ent.Comp.Opfor = ent.Comp.Govfor = ent.Comp.Clf = ent.Comp.WeYu = false;
                 Dirty(ent);
             }
+
+            // CMU14: pathogens have no ovipositor to earn a live map from; their hive is always live
+            if (HasComp<CMUPathogenHiveMemberComponent>(ent) && !ent.Comp.LiveUpdate)
+            {
+                ent.Comp.LiveUpdate = true;
+                Dirty(ent);
+            }
+
             return;
         }
 

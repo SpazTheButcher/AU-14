@@ -15,19 +15,22 @@
   leadersToSpawn:
     AU14MobTribalLeader: 1
   gruntsToSpawn:
-    AU14MobTribalSpear: 4
-    AU14MobTribalBowman: 3
-    AU14MobTribalShaman: 1
+    AU14MobTribalSpear: 6
+    AU14MobTribalBowman: 5
+    AU14MobTribalShaman: 2
   scaling:
     AU14MobTribalSpear:
       scale: 0.1
       whenToBeginScaling: 45
+      maximum: 10
     AU14MobTribalBowman:
       scale: 0.1
       whenToBeginScaling: 45
+      maximum: 9
     AU14MobTribalShaman:
-      scale: 0.04
+      scale: 0.05
       whenToBeginScaling: 60
+      maximum: 4
   spawnTogether: false
 
 - type: lorePrimer

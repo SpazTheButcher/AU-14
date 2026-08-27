@@ -9,8 +9,6 @@
   burrowedLarvaEnabled: false
   supportedPlanets:
   - SharedPlanetPool
-# - AuPlanetChances #
-# - AUPlanetSorokyne #
 # - AUPlanetLV624 # Green Hell # missing threat spawns, scenario fails
   rules:
   - AuVoteRule
@@ -26,9 +24,9 @@
   requiresGovforVote: true
   supportedPlanets:
 # - CMUPlanetStableGarrisonRedux # Govfor can hunker-down in Garrison; can be rushed by threats
-  - AUPlanetShepherdsPride
+#  - AUPlanetShepherdsPride
   - CMUPlanetHopesRetreat
-  - AUPlanetLV747 # Solaris Gulch
+# - AUPlanetLV747 # Solaris Gulch
 # - AUPlanetLV759 # Hybrisa Metro # missing threat spawns, scenario fails
   - AUPlanetLV327 # Port Nereid
   - AUPlanetSorokyne
@@ -60,9 +58,7 @@
   maxThirdParties: 3
   supportedPlanets:
   - SharedPlanetPool
-  - AUPlanetSorokyne #
-  - AuPlanetChances #
-  - AUPlanetLV624 # Green Hell
+# - AUPlanetLV624 # Green Hell # map lacks medical, dropships - govfor spawns outside base
   rules:
   - AuVoteRule
   - PlatoonSpawn
@@ -90,7 +86,6 @@
   - AUPlanetCorsatStation
   - AUPlanetSorokyne
   - AUPlanetTrijent
-  - AUPlanetLV624 # Green Hell
   rules:
   - AuVoteRule
   - PlatoonSpawn

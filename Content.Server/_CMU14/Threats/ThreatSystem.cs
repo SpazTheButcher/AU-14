@@ -426,7 +426,7 @@ public sealed partial class ThreatSystem : EntitySystem
         // --- Spawn entities and collect them for mind assignment ---
         var spawnedLeaders = new List<EntityUid>();
         var spawnedMembers = new List<EntityUid>();
-        _sawmill.Debug($"[DEBUG] Begin spawning threat entities for threat: {threat?.ID ?? "null"}");
+        _sawmill.Debug($"[DEBUG] Begin spawning threat entities for threat: {threat.ID}");
 
         // --- Spawn Together logic ---
         bool spawnTogether = newPartySpawn?.SpawnTogether == true;
@@ -663,7 +663,9 @@ public sealed partial class ThreatSystem : EntitySystem
                 List<NetUserId> eligibleHeldPlayers = GetEligibleVoteHeldPlayers(voteHeldPlayers,
                     requireObserverForVotePlayers);
                 int missingVoteBodies = eligibleHeldPlayers.Count - spawnedLeaders.Count - spawnedMembers.Count;
-                int extraMembers = SpawnExtraVoteMemberBodies(missingVoteBodies);
+                int extraMembers = threat.SpawnExtraVoteMembers
+                    ? SpawnExtraVoteMemberBodies(missingVoteBodies)
+                    : 0;
                 if (extraMembers > 0)
                 {
                     _sawmill.Info($"[ThreatSystem] Spawned {extraMembers} extra voted threat member body/bodies for '{threatId}' so held voters can enter the round.");
@@ -715,11 +717,15 @@ public sealed partial class ThreatSystem : EntitySystem
 
                     _sawmill.Info($"[ThreatSystem] Player {session.Name} ({playerId
                     }) returning to lobby as there was no threat mob available for them.");
+                    _chat.DispatchServerMessage(session, Loc.GetString("au14-threat-not-selected-return-to-lobby"));
                     _ticker.Respawn(session);
                 }
 
                 AddGhostRolesForUnassigned(spawnedLeaders, assignedLeaders, ThreatLeaderJobId);
                 AddGhostRolesForUnassigned(spawnedMembers, assignedMembers, ThreatMemberJobId);
+
+                if (spawnedLeaders.Count - assignedLeaders + spawnedMembers.Count - assignedMembers > 0)
+                    _threatVote.NotifyThreatSeatOpened();
 
                 _sawmill.Debug($"[DEBUG] Voted threat assigned {assignedLeaders} leader(s), {assignedMembers
                 } member(s), exposed {

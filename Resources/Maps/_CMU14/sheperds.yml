@@ -59569,6 +59569,13 @@ entities:
     - type: Transform
       pos: 50.5,-111.5
       parent: 1
+- proto: AU14AnalyzerMachineWeYu
+  entities:
+  - uid: 354487
+    components:
+    - type: Transform
+      pos: 71.5,-145.5
+      parent: 1
 - proto: AU14BeltHolsterPistolBlack
   entities:
   - uid: 344167
@@ -257184,7 +257191,7 @@ entities:
       containers:
         board: !type:Container
           ents: []
-- proto: ComputerObjectivesScientist
+- proto: ComputerObjectivesWeYu
   entities:
   - uid: 171
     components:

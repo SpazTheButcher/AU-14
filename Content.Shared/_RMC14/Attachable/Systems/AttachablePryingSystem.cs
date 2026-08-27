@@ -30,7 +30,7 @@ public sealed partial class AttachablePryingSystem : EntitySystem
                 var tool = EnsureComp<ToolComponent>(args.Holder);
 #pragma warning disable RA0002
                 prying.SpeedModifier = 0.5f;
-                tool.Qualities.Add("Prying", _prototype);
+                tool.Qualities.Add("Prying");
                 tool.UseSound = new SoundPathSpecifier("/Audio/Items/crowbar.ogg");
 #pragma warning restore RA0002
 

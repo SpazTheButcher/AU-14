@@ -26,6 +26,8 @@
     opforinship: true
     daycycleenabled: true
     thirdparties:
+    - WYExecutivesSurv
+    - DiplomaticAttachesSurv
     - WEYUSurvLarge
     - WEYUSurvMedium
     - WEYUSurvSmall

@@ -31,8 +31,8 @@ public sealed partial class EmitterComponent : Component
     [DataField("boltType", customTypeSerializer: typeof(PrototypeIdSerializer<EntityPrototype>))]
     public string BoltType = "EmitterBolt";
 
-    [DataField("selectableTypes", customTypeSerializer: typeof(PrototypeIdListSerializer<EntityPrototype>))]
-    public List<string> SelectableTypes = new();
+    [DataField("selectableTypes")]
+    public List<EntProtoId> SelectableTypes = new();
 
     /// <summary>
     /// The current amount of power being used.
@@ -97,8 +97,8 @@ public sealed partial class EmitterComponent : Component
     /// <summary>
     /// Map of signal ports to entity prototype IDs of the entity that will be fired.
     /// </summary>
-    [DataField("setTypePorts", customTypeSerializer: typeof(PrototypeIdDictionarySerializer<string, SinkPortPrototype>))]
-    public Dictionary<string, string> SetTypePorts = new();
+    [DataField("setTypePorts")]
+    public Dictionary<ProtoId<SinkPortPrototype>, string> SetTypePorts = new();
 }
 
 [NetSerializable, Serializable]

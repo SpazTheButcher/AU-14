@@ -26,6 +26,8 @@
     opforinship: true
     daycycleenabled: false
     thirdparties:
+    - WYExecutivesSurv
+    - FreeCompanyRaidersSurv
     - ProdigySurvLarge
     - ProdigySurvMedium
     - ProdigySurvSmall

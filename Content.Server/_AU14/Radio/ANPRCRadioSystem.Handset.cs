@@ -196,7 +196,7 @@ public sealed partial class ANPRCRadioSystem
         if (TryComp(user.Owner, out WearingHeadsetComponent? headset) &&
             TryComp(headset.Headset, out EncryptionKeyHolderComponent? keys))
         {
-            headsetChannels = keys.Channels;
+            headsetChannels = [.. keys.Channels];
         }
 
         var wanted = new HashSet<string>();

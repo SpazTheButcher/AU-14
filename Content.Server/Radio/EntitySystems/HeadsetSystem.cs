@@ -47,7 +47,7 @@ public sealed partial class HeadsetSystem : SharedHeadsetSystem
         if (keyHolder.Channels.Count == 0)
             RemComp<ActiveRadioComponent>(uid);
         else
-            EnsureComp<ActiveRadioComponent>(uid).Channels = new(keyHolder.Channels);
+            EnsureComp<ActiveRadioComponent>(uid).Channels = [.. keyHolder.Channels];
     }
 
     private void OnSpeak(EntityUid uid, WearingHeadsetComponent component, EntitySpokeEvent args)

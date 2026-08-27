@@ -56,6 +56,7 @@
   equipment:
     back: AU14SatchelCMBShotgun
     ears: AU14CMBHeadsetOnlyCMB
+    pocket1: RMCPouchShotgunLargeBuckshot
   inhand:
   - RMCWeaponShotgunHG3712
 

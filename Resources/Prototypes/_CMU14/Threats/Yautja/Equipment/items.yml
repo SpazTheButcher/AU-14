@@ -1,27 +1,3 @@
-- type: radioChannel
-  id: CMUYautja
-  name: chat-radio-cmu-yautja
-  keycode: "ŷ"
-  frequency: 1541
-  color: "#b85440"
-  longRange: true
-
-- type: radioChannel
-  id: CMUYautjaOverseer
-  name: chat-radio-cmu-yautja-overseer
-  keycode: "Ŷ"
-  frequency: 1542
-  color: "#d4a85b"
-  longRange: true
-
-- type: radioChannel
-  id: CMUYautjaBadBlood
-  name: chat-radio-cmu-yautja-badblood
-  keycode: "ƀ"
-  frequency: 1543
-  color: "#c44343"
-  longRange: true
-
 - type: entity
   parent: EncryptionKey
   id: CMUYautjaEncryptionKey
@@ -38,22 +14,22 @@
     - state: crypt_rusted
     - state: synd_label
 
-- type: entity
-  parent: EncryptionKey
-  id: CMUYautjaOverseerEncryptionKey
-  name: Yautja overseer encryption key
-  description: An alien cipher chip tuned to hunter and overseer channels.
-  suffix: Yautja
-  components:
-  - type: EncryptionKey
-    channels:
-    - CMUYautja
-    - CMUYautjaOverseer
-    defaultChannel: CMUYautjaOverseer
-  - type: Sprite
-    layers:
-    - state: crypt_gold
-    - state: cap_label
+# - type: entity
+#   parent: EncryptionKey
+#   id: CMUYautjaOverseerEncryptionKey
+#   name: Yautja overseer encryption key
+#   description: An alien cipher chip tuned to hunter and overseer channels.
+#   suffix: Yautja
+#   components:
+#   - type: EncryptionKey
+#     channels:
+#     - CMUYautja
+#     - CMUYautjaOverseer
+#     defaultChannel: CMUYautjaOverseer
+#   - type: Sprite
+#     layers:
+#     - state: crypt_gold
+#     - state: cap_label
 
 - type: entity
   parent: EncryptionKey
@@ -92,16 +68,16 @@
     blockMelee: false
     blockThrow: false
 
-- type: entity
-  parent: CMUYautjaCommunicator
-  id: CMUYautjaOverseerCommunicator
-  name: overseer communicator
-  suffix: Yautja, Overseer
-  components:
-  - type: ContainerFill
-    containers:
-      key_slots:
-      - CMUYautjaOverseerEncryptionKey
+# - type: entity
+#   parent: CMUYautjaCommunicator
+#   id: CMUYautjaOverseerCommunicator
+#   name: overseer communicator
+#   suffix: Yautja, Overseer
+#   components:
+#   - type: ContainerFill
+#     containers:
+#       key_slots:
+#       - CMUYautjaOverseerEncryptionKey
 
 - type: entity
   parent: CMUYautjaCommunicator
@@ -444,3 +420,33 @@
   - type: YautjaTechItem
     blockPickup: false
     blockUse: false
+
+- type: entity
+  parent: CMFoodBase
+  id: CMUYautjaFieldRation
+  name: preserved hunting ration
+  description: Strips of dried meat packed in waxy alien leaves. It smells aggressively of spice.
+  components:
+  - type: Sprite
+    sprite: Objects/Consumable/Food/meat.rsi
+    state: plain
+  - type: Item
+    size: Tiny
+  - type: Food
+  - type: SolutionContainerManager
+    solutions:
+      food:
+        maxVol: 25
+        reagents:
+        - ReagentId: Nutriment
+          Quantity: 25
+
+- type: entity
+  parent: CMCanteenBase
+  id: CMUYautjaHuntingCanteen
+  name: hunting canteen
+  description: A lacquered alien gourd sealed with resin. The water inside tastes faintly of copper.
+  components:
+  - type: Sprite
+    state: canteen
+    color: "#b85440"

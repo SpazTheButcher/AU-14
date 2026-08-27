@@ -18,6 +18,8 @@
       RMCSkillFireman: 2
       RMCSkillMeleeWeapons: 1
       RMCSkillPolice: 2
+      RMCSkillMedical: 2
+      RMCSkillSurgery: 1
   - type: JobPrefix
     prefix: cmu-job-prefix-provost-enforcer-medic
 

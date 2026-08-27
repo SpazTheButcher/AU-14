@@ -26,6 +26,7 @@
     opforinship: true
     daycycleenabled: true
     thirdparties:
+    - DiplomaticAttachesSurv
     - ICRCReliefParty
     - USArmyTank
     - WYHT

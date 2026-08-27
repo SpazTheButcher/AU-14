@@ -14,8 +14,8 @@ namespace Content.Shared.Radio.Components;
 
 public sealed partial class EncryptionKeyComponent : Component
 {
-    [DataField("channels", customTypeSerializer: typeof(PrototypeIdHashSetSerializer<RadioChannelPrototype>)), AutoNetworkedField]
-    public HashSet<string> Channels = new();
+    [DataField("channels"), AutoNetworkedField]
+    public HashSet<ProtoId<RadioChannelPrototype>> Channels = new();
 
     /// <summary>
     ///     This is the channel that will be used when using the default/department prefix (<see cref="SharedChatSystem.DefaultChannelKey"/>).

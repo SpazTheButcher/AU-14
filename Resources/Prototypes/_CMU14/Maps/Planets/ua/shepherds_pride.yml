@@ -26,6 +26,7 @@
     opforinship: true
     daycycleenabled: true
     thirdparties:
+    - FreelancersSurv
     - USArmy
     - USArmyAlt
     - USArmyAlt2

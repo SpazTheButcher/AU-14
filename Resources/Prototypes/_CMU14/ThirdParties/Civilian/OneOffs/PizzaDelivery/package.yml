@@ -82,6 +82,7 @@
     back: AU14SlingSatchelBlueFilledPizza
   inhand:
   - RMCBoxPizzaGalaxyMystery
+  - RMCRadioHandheldColonyOff
 
 - type: entity
   parent: AU14SlingSatchelBlue

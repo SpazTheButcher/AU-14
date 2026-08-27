@@ -158,7 +158,7 @@
 - type: radioChannel
   id: radioProvost
   name: chat-radio-provost
-  keycode: "0"
+  keycode: "1"
   frequency: 1863
   color: "#5b96d4"
   longRange: true
@@ -326,7 +326,7 @@
 - type: radioChannel
   id: PART
   name: chat-radio-part
-  keycode: "1"
+  keycode: "8"
   frequency: 5571
   color: "#92969A"
   longRange: true
@@ -356,3 +356,45 @@
   color: "#3d82b8"
   longRange: true
   tower: true
+
+# ├──[ Abominations ]────────────────────────────────────────────────┤
+- type: radioChannel
+  id: Abomination # Spider/Grunt/Skitter/Mimic
+  name: chat-radio-abomination
+  keycode: "g"
+  frequency: 428
+  color: "#6b8f3a"
+  longRange: true
+
+- type: radioChannel
+  id: AbominationMimic # (Disguised) Mimic-only
+  name: chat-radio-abomination-mimic
+  keycode: "e"
+  frequency: 427
+  color: "#a63636"
+  longRange: true
+
+# ├──[ Yautja ]──────────────────────────────────────────────────────┤
+- type: radioChannel
+  id: CMUYautja
+  name: chat-radio-cmu-yautja
+  keycode: "9"
+  frequency: 1541
+  color: "#b85440"
+  longRange: true
+
+# - type: radioChannel
+#   id: CMUYautjaOverseer
+#   name: chat-radio-cmu-yautja-overseer
+#   keycode: "Ŷ"
+#   frequency: 1542
+#   color: "#d4a85b"
+#   longRange: true
+
+- type: radioChannel
+  id: CMUYautjaBadBlood
+  name: chat-radio-cmu-yautja-badblood
+  keycode: "0"
+  frequency: 1543
+  color: "#c44343"
+  longRange: true

@@ -352,3 +352,28 @@
   components:
   - type: PresetIdCard
     job: AU14JobGOVFORWorkingJoe
+
+- type: entity
+  parent: AU14IDCardGOVFOR
+  id: CMUIDCardGOVFORAdjutantDress
+  name: high command adjutant ID card
+  components:
+  - type: PresetIdCard
+    job: CMUJobGOVFORAdjutantDress
+
+- type: entity
+  parent: CMIDCardGold
+  categories: [ HideSpawnMenu ]
+  id: CMUIDCardGOVFORBrigadierGeneral
+  name: brigadier general ID card
+  components:
+  - type: PresetIdCard
+    job: CMUJobGOVFORBrigadierGeneral
+
+- type: entity
+  parent: AU14IDCardGOVFOR
+  id: CMUIDCardGOVFORVipEscort
+  name: VIP escort detail ID card
+  components:
+  - type: PresetIdCard
+    job: CMUJobGOVFORVipEscort

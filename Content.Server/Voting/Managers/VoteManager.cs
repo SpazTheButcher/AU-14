@@ -472,11 +472,10 @@ namespace Content.Server.Voting.Managers
             return options.CarryoverKey ?? options.Title;
         }
 
-        // CMU14: show the halved effective value and the raw banked carryover, e.g. "Option [+12/24]"
+        // CMU14: show the halved effective value and the raw banked carryover, e.g. "Option [+12(25)]"
         private static string GetCarryoverOptionText(string text, int carryoverVotes, int effectiveVotes)
-        {
-            return carryoverVotes > 0 ? $"{text} [+{effectiveVotes}/{carryoverVotes}]" : text;
-        }
+            // return carryoverVotes > 0 ? $"{text} [+{effectiveVotes}]" : text; // [+12]
+            => carryoverVotes > 0 ? $"{text} [+{effectiveVotes}({carryoverVotes})]" : text; // [+12(25)]
 
         private int GetCarryoverVotes(string? carryoverKey, string optionKey)
         {

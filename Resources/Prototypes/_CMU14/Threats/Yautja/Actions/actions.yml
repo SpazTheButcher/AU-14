@@ -52,6 +52,24 @@
 
 - type: entity
   parent: CMUYautjaActionBase
+  id: CMUActionYautjaRaiseThrall
+  components:
+  - type: Action
+    icon:
+      sprite: _CMU14/Yautja/bracer.rsi
+      state: icon
+    useDelay: 120
+  - type: TargetAction
+    range: 2
+    checkCanAccess: false
+  - type: EntityTargetAction
+    targetCheckCanInteract: false
+    event: !type:Content.Shared._CMU14.Yautja.YautjaRaiseThrallActionEvent
+  - type: ActionInRangeUnobstructed
+    range: 2
+
+- type: entity
+  parent: CMUYautjaActionBase
   id: CMUActionYautjaOpenBracerMenu
   components:
   - type: Action
@@ -117,6 +135,34 @@
     useDelay: 1
   - type: InstantAction
     event: !type:Content.Shared._CMU14.Yautja.YautjaCreateStabilisingCrystalActionEvent
+  - type: YautjaPowerAction
+    cost: 0
+
+- type: entity
+  parent: CMUYautjaActionBase
+  id: CMUActionYautjaCreateFieldRation
+  components:
+  - type: Action
+    icon:
+      sprite: Objects/Consumable/Food/meat.rsi
+      state: plain
+    useDelay: 1
+  - type: InstantAction
+    event: !type:Content.Shared._CMU14.Yautja.YautjaCreateFieldRationActionEvent
+  - type: YautjaPowerAction
+    cost: 0
+
+- type: entity
+  parent: CMUYautjaActionBase
+  id: CMUActionYautjaCreateHuntingCanteen
+  components:
+  - type: Action
+    icon:
+      sprite: _RMC14/Objects/Consumable/Drinks/canteen.rsi
+      state: canteen
+    useDelay: 1
+  - type: InstantAction
+    event: !type:Content.Shared._CMU14.Yautja.YautjaCreateHuntingCanteenActionEvent
   - type: YautjaPowerAction
     cost: 0
 

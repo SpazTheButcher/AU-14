@@ -49,12 +49,9 @@ public abstract partial class SharedXenoWeedsSystem : EntitySystem
 {
     [Dependency] private AreaSystem _area = default!;
     [Dependency] private SharedAppearanceSystem _appearance = default!;
-    [Dependency] private IConfigurationManager _config = default!;
     [Dependency] private SharedContainerSystem _container = default!;
     [Dependency] private DamageableSystem _damageable = default!;
     [Dependency] private SharedDirectionalAttackBlockSystem _directionBlocker = default!;
-    [Dependency] private EntityWhitelistSystem _entityWhitelist = default!;
-    [Dependency] private SharedGameTicker _gameTicker = default!;
     [Dependency] private SharedXenoHiveSystem _hive = default!;
     [Dependency] private SharedMapSystem _mapSystem = default!;
     [Dependency] private MovementSpeedModifierSystem _movementSpeed = default!;
@@ -67,11 +64,9 @@ public abstract partial class SharedXenoWeedsSystem : EntitySystem
     [Dependency] private ITileDefinitionManager _tile = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
-    [Dependency] private EntityManager _entities = default!;
-    [Dependency] private SharedXenoAnnounceSystem _xenoAnnounce = default!;
     [Dependency] private WeedboundWallSystem _weedboundWall = default!;
     [Dependency] private DesignerNodeBindingSystem _designerBinding = default!;
-    [Dependency] private readonly TagSystem _tags = default!;
+    [Dependency] private TagSystem _tags = default!;
 
     private static readonly ProtoId<TagPrototype> PlatformTag = "Platform";
 

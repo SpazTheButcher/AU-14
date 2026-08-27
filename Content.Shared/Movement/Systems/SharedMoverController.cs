@@ -4,6 +4,7 @@ using Content.Shared.ActionBlocker;
 using Content.Shared.CCVar;
 using Content.Shared.Friction;
 using Content.Shared.Gravity;
+using Content.Shared.Ghost; // CMU14
 using Content.Shared.Inventory;
 using Content.Shared.Maps;
 using Content.Shared.Mobs.Systems;
@@ -61,6 +62,7 @@ public abstract partial class SharedMoverController : VirtualController
     protected EntityQuery<PullableComponent> PullableQuery;
     protected EntityQuery<TransformComponent> XformQuery;
     protected EntityQuery<CMUTileMovementComponent> TileMovementQuery;
+    protected EntityQuery<GhostComponent> GhostQuery; // CMU14
 
     private static readonly ProtoId<TagPrototype> FootstepSoundTag = "FootstepSound";
 
@@ -98,7 +100,8 @@ public abstract partial class SharedMoverController : VirtualController
         FootstepModifierQuery = GetEntityQuery<FootstepModifierComponent>();
         MapGridQuery = GetEntityQuery<MapGridComponent>();
         MapQuery = GetEntityQuery<MapComponent>();
-        TileMovementQuery = GetEntityQuery<CMUTileMovementComponent>();
+        TileMovementQuery = GetEntityQuery<CMUTileMovementComponent>(); // CMU14
+        GhostQuery = GetEntityQuery<GhostComponent>(); // CMU14
 
         SubscribeLocalEvent<MovementSpeedModifierComponent, TileFrictionEvent>(OnTileFriction);
 
@@ -177,7 +180,7 @@ public abstract partial class SharedMoverController : VirtualController
             relaySource = relayTarget.Source;
 
         // If we're not the target of a relay then handle lerp data.
-        if (relaySource == null)
+        if (relaySource == null) // CMU14: Tile Movement
         {
             // Tile movement needs the relative data to be current every tick, not just after a LerpTarget delay,
             // since a slide can carry us across a grid boundary mid-tile.
@@ -230,7 +233,9 @@ public abstract partial class SharedMoverController : VirtualController
         ContentTileDefinition? tileDef = null;
 
         // Try doing tile movement instead of the usual analog movement, if this entity has it enabled.
-        if (TileMovementQuery.TryComp(uid, out var tileMovement))
+        if (TileMovementQuery.TryComp(uid, out var tileMovement) // CMU14 Statement
+            && !GhostQuery.HasComponent(uid)
+            && !_container.IsEntityInContainer(uid))
         {
             if (!weightless && !inAirHelpless)
             {
@@ -678,11 +683,14 @@ public abstract partial class SharedMoverController : VirtualController
             args.Modifier *= ent.Comp.BaseFriction;
     }
 
+    //
     // Tile movement.
     // Uses a physics-based implementation: rather than teleporting between tiles, we set velocity towards the
     // center of the destination tile and let the normal physics/collision solver carry us there (or stop us
     // early if something's in the way). This gives smooth, collidable movement while still snapping to tiles.
+    //
 
+    // CMU14 Method: Tile Movement
     /// <summary>
     /// Runs one tick of tile-based movement on the given inputs.
     /// </summary>
@@ -755,12 +763,24 @@ public abstract partial class SharedMoverController : VirtualController
             }
 
             // If we're sliding...
-            if (tileMovement.SlideActive)
+            if (tileMovement.SlideActive) // CMU14 Tile Movement
             {
                 var movementSpeed = GetEntityMoveSpeed(uid, inputMover.Sprinting);
 
+                if (tileMovement.Origin.EntityId != targetTransform.ParentUid)
+                {
+                    var previousButtons = tileMovement.CurrentSlideMoveButtons;
+                    var previousInitialKeyDownTime = tileMovement.MovementKeyInitialDownTime;
+                    InitializeSlideToTarget(
+                        physicsUid,
+                        tileMovement,
+                        targetTransform.LocalPosition + GetRemainingSlideLocal(tileMovement, targetTransform, inputMover),
+                        previousButtons);
+                    tileMovement.MovementKeyInitialDownTime = previousInitialKeyDownTime;
+                    UpdateSlide(physicsUid, physicsUid, tileMovement, inputMover);
+                }
                 // Check whether we should end the slide.
-                if (CheckForSlideEnd(
+                else if (CheckForSlideEnd(
                     StripWalk(inputMover.HeldMoveButtons),
                     targetTransform,
                     tileMovement,
@@ -789,18 +809,6 @@ public abstract partial class SharedMoverController : VirtualController
                         ForceSnapToTile(uid, inputMover);
                         tileMovement.FailureSlideActive = false;
                     }
-                }
-                // Special case: tile movement takes us between two fully adjacent grids seamlessly.
-                // Since we perform tile movement in local coordinates, stop and start the movement
-                // again to realign to new grid.
-                else if (tileMovement.Origin.EntityId != targetTransform.ParentUid)
-                {
-                    var previousButtons = tileMovement.CurrentSlideMoveButtons;
-                    var previousInitialKeyDownTime = tileMovement.MovementKeyInitialDownTime;
-                    InitializeSlideToCenter(physicsUid, tileMovement);
-                    tileMovement.CurrentSlideMoveButtons = previousButtons;
-                    tileMovement.MovementKeyInitialDownTime = previousInitialKeyDownTime;
-                    UpdateSlide(physicsUid, physicsUid, tileMovement, inputMover);
                 }
                 // Otherwise, continue slide.
                 else
@@ -834,6 +842,7 @@ public abstract partial class SharedMoverController : VirtualController
         return true;
     }
 
+    // CMU14 Method: Tile Movement
     private bool CheckForSlideEnd(
         MoveButtons pressedButtons,
         TransformComponent transform,
@@ -862,6 +871,7 @@ public abstract partial class SharedMoverController : VirtualController
         return reachedDestination || (stoppedPressing && (minDurationPassed || noProgress)) || hardDurationLimitPassed;
     }
 
+    // CMU14 Method: Tile Movement
     /// <summary>
     /// Initializes a slide, setting destination and other variables needed to start a slide to the given
     /// position (which is a local coordinate relative to the parent of the given uid).
@@ -886,6 +896,30 @@ public abstract partial class SharedMoverController : VirtualController
         tileMovement.CurrentSlideMoveButtons = heldMoveButtons;
     }
 
+    // CMU14 Method: Tile Movement
+    /// <summary>
+    /// Displacement still left on the active slide, expressed in the local space of the entity's current parent,
+    /// so a slide survives its parent changing mid-slide (grid seam or z-level transition). Falls back to the
+    /// held direction when the parent the slide started on no longer exists.
+    /// </summary>
+    private Vector2 GetRemainingSlideLocal(
+        CMUTileMovementComponent tileMovement,
+        TransformComponent transform,
+        InputMoverComponent inputMover)
+    {
+        if (!TerminatingOrDeleted(tileMovement.Origin.EntityId)
+            && XformQuery.TryComp(tileMovement.Origin.EntityId, out var originXform))
+        {
+            var destWorld = Vector2.Transform(tileMovement.Destination, _transform.GetWorldMatrix(originXform));
+            return Vector2.Transform(
+                destWorld - _transform.GetWorldPosition(transform),
+                _transform.GetInvWorldMatrix(transform.ParentUid));
+        }
+
+        var offset = DirVecForButtons(inputMover.HeldMoveButtons);
+        return inputMover.TargetRelativeRotation.RotateVec(offset);
+    }
+
     /// <summary>
     /// Initializes a slide, setting destination and other variables needed to start a slide to the center of the
     /// tile the entity is currently on.
@@ -898,6 +932,7 @@ public abstract partial class SharedMoverController : VirtualController
         InitializeSlideToTarget(uid, tileMovement, SnapCoordinatesToTile(localPosition), MoveButtons.None);
     }
 
+    // CMU14 Method: Tile Movement
     /// <summary>
     /// Initializes a slide, setting destination and other variables needed to move in the direction currently given by
     /// the InputMoverComponent.
@@ -915,6 +950,7 @@ public abstract partial class SharedMoverController : VirtualController
         InitializeSlideToTarget(uid, tileMovement, localPosition + offset, StripWalk(inputMover.HeldMoveButtons));
     }
 
+    // CMU14 Method: Tile Movement
     /// <summary>
     /// Updates the velocity of the current physics-based tile movement slide on the given entity.
     /// </summary>
@@ -963,6 +999,7 @@ public abstract partial class SharedMoverController : VirtualController
         }
     }
 
+    // CMU14 Method: Tile Movement
     /// <summary>
     /// Sets values on a CMUTileMovementComponent designating that the slide has ended and sets it velocity to zero.
     /// </summary>
