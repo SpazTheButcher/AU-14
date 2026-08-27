@@ -1,9 +1,10 @@
 # Bad Blood Clan — dishonored Yautja hunters. Distress Signal only.
-# Base: 3 at 40 players. Scales at 1:20 (one hunter per 20 players above 40).
+# Base: 1 leader + 3 grunts. Scales at 1:20 (one extra grunt per 20 players above 40).
 - type: threat
   id: BadBloodClanThreat
   lorePrimer: AU14PrimerThreatBadBlood
   roundstartspawns: badBloodClanParty
+  spawnExtraVoteMembers: false
   whitelistedgamemodes:
   - DistressSignal
   blacklistedgamemodes:
@@ -19,11 +20,11 @@
   leadersToSpawn:
     CMUMobYautjaBadBloodLeader: 1
   gruntsToSpawn:
-    CMUMobYautjaBadBloodGrunt: 4
+    CMUMobYautjaBadBloodGrunt: 3
   scaling:
     CMUMobYautjaBadBloodGrunt:
       scale: 0.05
-      whenToBeginScaling: 50
+      whenToBeginScaling: 40
   spawnTogether: true
 
 - type: lorePrimer

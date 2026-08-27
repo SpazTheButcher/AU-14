@@ -663,7 +663,9 @@ public sealed partial class ThreatSystem : EntitySystem
                 List<NetUserId> eligibleHeldPlayers = GetEligibleVoteHeldPlayers(voteHeldPlayers,
                     requireObserverForVotePlayers);
                 int missingVoteBodies = eligibleHeldPlayers.Count - spawnedLeaders.Count - spawnedMembers.Count;
-                int extraMembers = SpawnExtraVoteMemberBodies(missingVoteBodies);
+                int extraMembers = threat.SpawnExtraVoteMembers
+                    ? SpawnExtraVoteMemberBodies(missingVoteBodies)
+                    : 0;
                 if (extraMembers > 0)
                 {
                     _sawmill.Info($"[ThreatSystem] Spawned {extraMembers} extra voted threat member body/bodies for '{threatId}' so held voters can enter the round.");

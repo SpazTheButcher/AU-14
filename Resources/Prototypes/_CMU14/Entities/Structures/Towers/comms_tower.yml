@@ -59,7 +59,7 @@
     - radioOpforJTAC
     - radioOpforMILP
     - CMUYautja
-    - CMUYautjaOverseer
+#   - CMUYautjaOverseer
     - CMUYautjaBadBlood
     - radioVAI
     - CCASOF
@@ -120,7 +120,7 @@
     - UPPSOF
     - PART
     - CMUYautja
-    - CMUYautjaOverseer
+#   - CMUYautjaOverseer
     - CMUYautjaBadBlood
 
 # ├──[ COLONY COMMS ]────────────────────────────────────────────────┤
