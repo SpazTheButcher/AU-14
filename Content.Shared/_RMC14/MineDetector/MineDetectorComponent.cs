@@ -22,8 +22,8 @@ public sealed partial class MineDetectorComponent : Component, IDetectorComponen
     [DataField, AutoNetworkedField] public bool Short;
 
     // You can edit the motion detector ranges here:
-    [DataField, AutoNetworkedField] public int ShortRange = 3;
-    [DataField, AutoNetworkedField] public int LongRange = 7;
+    [DataField, AutoNetworkedField] public int ShortRange = 4;
+    [DataField, AutoNetworkedField] public int LongRange = 9;
 
     [DataField, AutoNetworkedField] public TimeSpan ShortRefresh = TimeSpan.FromSeconds(1);
 
