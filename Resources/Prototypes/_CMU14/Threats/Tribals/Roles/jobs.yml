@@ -12,16 +12,19 @@
   roundComponents:
   - type: Skills
     skills:
-      RMCSkillCqc: 2
+      RMCSkillCqc: 4
       RMCSkillFireman: 1
-      RMCSkillEndurance: 1
+      RMCSkillEndurance: 4
+      RMCSkillPolice: 1
   - type: JobPrefix
     prefix: au14-job-prefix-tribal-leader
   - type: Language
     spokenLanguages:
     - Arcturian
+    - English
     understoodLanguages:
     - Arcturian
+    - English
     currentLanguage: Arcturian
     defaultLanguage: Arcturian
 
@@ -45,15 +48,18 @@
   roundComponents:
   - type: Skills
     skills:
-      RMCSkillCqc: 1
+      RMCSkillCqc: 3
       RMCSkillFireman: 1
+      RMCSkillEndurance: 4
   - type: JobPrefix
     prefix: au14-job-prefix-tribal-spear
   - type: Language
     spokenLanguages:
     - Arcturian
+    - English
     understoodLanguages:
     - Arcturian
+    - English
     currentLanguage: Arcturian
     defaultLanguage: Arcturian
   name: au14-job-name-tribal-spear
@@ -77,14 +83,19 @@
   roundComponents:
   - type: Skills
     skills:
+      RMCSkillCqc: 1
       RMCSkillFirearms: 1
+      RMCSkillEndurance: 4
+      RMCSkillFireman: 1
   - type: JobPrefix
     prefix: au14-job-prefix-tribal-bowman
   - type: Language
     spokenLanguages:
     - Arcturian
+    - English
     understoodLanguages:
     - Arcturian
+    - English
     currentLanguage: Arcturian
     defaultLanguage: Arcturian
   name: au14-job-name-tribal-bowman
@@ -109,15 +120,19 @@
   - type: Skills
     skills:
       RMCSkillMedical: 3
+      RMCSkillEndurance: 3
       RMCSkillSurgery: 2
-      RMCSkillCqc: 1
+      RMCSkillCqc: 2
+      RMCSkillFireman: 2
   - type: JobPrefix
     prefix: au14-job-prefix-tribal-shaman
   - type: Language
     spokenLanguages:
     - Arcturian
+    - English
     understoodLanguages:
     - Arcturian
+    - English
     currentLanguage: Arcturian
     defaultLanguage: Arcturian
   name: au14-job-name-tribal-shaman
