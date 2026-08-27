@@ -1,4 +1,6 @@
+using Content.Server._RMC14.Trigger;
 using Content.Server.Explosion.EntitySystems;
+using Content.Shared.Explosion;
 using Content.Shared.Explosion.Components;
 using Content.Shared.Popups;
 using Content.Shared.Tag;
@@ -46,7 +48,13 @@ public sealed class CMUGrenadeDetonationSystem : EntitySystem
 
         // True hard collision plus throw-end/ground fallback.
         SubscribeLocalEvent<CMUGrenadeDetonationModeComponent, ThrowDoHitEvent>(OnThrowDoHit);
-        SubscribeLocalEvent<CMUGrenadeDetonationModeComponent, StopThrowEvent>(OnStopThrow);
+        SubscribeLocalEvent<CMUGrenadeDetonationModeComponent, StopThrowEvent>(OnStopThrow,
+            after: [typeof(RMCTriggerSystem)]);
+
+        // Apply reduced payload properties only to the current Impact-mode trigger.
+        SubscribeLocalEvent<CMUGrenadeDetonationModeComponent, GetExplosionTriggerPropertiesEvent>(OnGetExplosionProperties);
+        SubscribeLocalEvent<CMUGrenadeDetonationModeComponent, GetProjectileGrenadePayloadEvent>(OnGetProjectilePayload);
+        SubscribeLocalEvent<CMUGrenadeDetonationModeComponent, GetSpawnOnTriggerPrototypeEvent>(OnGetSpawnPayload);
 
         // Always clear CMU runtime state after any trigger path.
         SubscribeLocalEvent<CMUGrenadeDetonationModeComponent, TriggerEvent>(OnTriggered);
@@ -295,6 +303,52 @@ public sealed class CMUGrenadeDetonationSystem : EntitySystem
     {
         ent.Comp.Armed = false;
         ent.Comp.ArmedBy = null;
+    }
+
+    private void OnGetExplosionProperties(
+        Entity<CMUGrenadeDetonationModeComponent> ent,
+        ref GetExplosionTriggerPropertiesEvent args)
+    {
+        if (!IsImpactPayload(ent))
+            return;
+
+        var multiplier = GetImpactPayloadMultiplier(ent.Comp);
+        args.TotalIntensity *= multiplier;
+        args.MaxIntensity *= multiplier;
+    }
+
+    private void OnGetProjectilePayload(
+        Entity<CMUGrenadeDetonationModeComponent> ent,
+        ref GetProjectileGrenadePayloadEvent args)
+    {
+        if (!IsImpactPayload(ent))
+            return;
+
+        var multiplier = GetImpactPayloadMultiplier(ent.Comp);
+        args.DamageMultiplier *= multiplier;
+
+        if (args.Count > 0)
+            args.Count = Math.Max(1, (int) MathF.Floor(args.Count * multiplier));
+    }
+
+    private void OnGetSpawnPayload(
+        Entity<CMUGrenadeDetonationModeComponent> ent,
+        ref GetSpawnOnTriggerPrototypeEvent args)
+    {
+        if (!IsImpactPayload(ent) || ent.Comp.ImpactSpawn is not { } impactSpawn)
+            return;
+
+        args.Prototype = impactSpawn;
+    }
+
+    private bool IsImpactPayload(Entity<CMUGrenadeDetonationModeComponent> ent)
+    {
+        return IsM40Eligible(ent) && ent.Comp.Mode == CMUGrenadeDetonationMode.Impact;
+    }
+
+    private static float GetImpactPayloadMultiplier(CMUGrenadeDetonationModeComponent component)
+    {
+        return Math.Clamp(component.ImpactPayloadMultiplier, 0f, 1f);
     }
 
     /// <summary>
