@@ -6,6 +6,7 @@ using Content.Server.Voting;
 using Content.Server.Voting.Managers;
 using Content.Shared._CMU14.Threats;
 using Content.Shared._RMC14.Rules;
+using Content.Shared.Ghost;
 using Content.Shared.Preferences;
 using Content.Shared.Roles;
 using Robust.Server.Player;
@@ -35,6 +36,7 @@ public sealed partial class ThreatVoteSystem : EntitySystem
     private static readonly TimeSpan VoteDuration = TimeSpan.FromSeconds(30);
     private const string VoteTitleLocId = "au14-threat-vote-title";
     private readonly HashSet<NetUserId> _roundJoinBlockedPlayers = new();
+    private readonly List<NetUserId> _releasedThreatLosers = new();
 
     private PreparedThreatVote? _prepared;
     private ISawmill? _sawmill;
@@ -52,6 +54,7 @@ public sealed partial class ThreatVoteSystem : EntitySystem
 
         _prepared = null;
         ClearRoundJoinBlocks();
+        _releasedThreatLosers.Clear();
     }
 
     public bool IsRoundJoinBlocked(NetUserId playerId) => _roundJoinBlockedPlayers.Contains(playerId);
@@ -289,18 +292,24 @@ public sealed partial class ThreatVoteSystem : EntitySystem
         _auRound.SetSelectedThreat(selected);
         _auRound.PreselectThirdPartiesForSelectedThreat();
 
-        MoveHeldPlayersToObservers(prepared.HeldPlayers, selected);
+        List<NetUserId> heldForSpawn = prepared.HeldPlayers;
+        if (_prototype.TryIndex(selected.RoundStartSpawn, out PartySpawnPrototype? spawn))
+            heldForSpawn = TrimHeldPlayersToSeats(prepared.HeldPlayers,
+                assignedJobs,
+                ThreatVoteSelection.CalculateBodyCount(spawn, _player.PlayerCount));
+
+        MoveHeldPlayersToObservers(heldForSpawn, selected);
 
         try
         {
             Sawmill.Debug($"[ThreatVoteSystem] Spawning voted threat '{selected.ID}'.");
-            _threat.SpawnThreatFromVote(selected, prepared.MapId, assignedJobs, prepared.HeldPlayers);
+            _threat.SpawnThreatFromVote(selected, prepared.MapId, assignedJobs, heldForSpawn);
         }
         catch (Exception threatEx)
         {
             Sawmill.Error($"[ThreatVoteSystem] SpawnThreatFromVote threw: {threatEx}");
             ThreatSystem.RemoveThreatJobAssignments(assignedJobs);
-            ReleaseHeldPlayersToLobby(prepared.HeldPlayers, selected.ID, "threat spawn threw");
+            ReleaseHeldPlayersToLobby(heldForSpawn, selected.ID, "threat spawn threw");
 
             return;
         }
@@ -320,8 +329,7 @@ public sealed partial class ThreatVoteSystem : EntitySystem
 
     private void MoveHeldPlayersToObservers(IReadOnlyCollection<NetUserId> heldPlayers, ThreatPrototype selected)
     {
-        bool isColonyFall = string.Equals(_auRound.SelectedPreset?.ID, "ColonyFall",
-            StringComparison.OrdinalIgnoreCase);
+        bool isColonyFall = IsColonyFall();
         int minMinutes = Math.Max(1, (int)Math.Round(selected.SpawnDelayMin / 60.0));
         int maxMinutes = Math.Max(minMinutes, (int)Math.Round(selected.SpawnDelayMax / 60.0));
 
@@ -340,6 +348,76 @@ public sealed partial class ThreatVoteSystem : EntitySystem
                         ("max", maxMinutes)));
             }
         }
+    }
+
+    private bool IsColonyFall()
+        => string.Equals(_auRound.SelectedPreset?.ID, "ColonyFall", StringComparison.OrdinalIgnoreCase);
+
+    internal void NotifyThreatSeatOpened()
+    {
+        foreach (NetUserId playerId in _releasedThreatLosers)
+        {
+            if (!_player.TryGetSessionById(playerId, out ICommonSession? session)
+                || session.Status == SessionStatus.Disconnected)
+                continue;
+
+            if (session.Status == SessionStatus.InGame
+                && !HasComp<GhostComponent>(session.AttachedEntity))
+                continue;
+
+            _chat.DispatchServerMessage(session, Loc.GetString("au14-threat-vote-seat-opened"));
+        }
+    }
+
+    private List<NetUserId> TrimHeldPlayersToSeats(IReadOnlyList<NetUserId> heldPlayers,
+        Dictionary<NetUserId, (ProtoId<JobPrototype>?, EntityUid)> assignedJobs,
+        ThreatVoteBodyCount seats)
+    {
+        List<ThreatVoteAssignment> rolls = heldPlayers
+            .Select(player => new ThreatVoteAssignment(player,
+                assignedJobs.TryGetValue(player, out (ProtoId<JobPrototype>?, EntityUid) assigned)
+                && assigned.Item1 == ThreatVoteSelection.ThreatLeaderJobId
+                    ? ThreatVoteSelection.ThreatLeaderJobId
+                    : ThreatVoteSelection.ThreatMemberJobId))
+            .ToList();
+        _random.Shuffle(rolls);
+
+        List<ThreatVoteAssignment> winners = ThreatVoteSelection.BuildSpawnAssignments(rolls,
+            seats.Leaders,
+            seats.Members);
+        HashSet<NetUserId> winnerIds = winners
+            .Select(winner => winner.Player)
+            .ToHashSet();
+        List<NetUserId> losers = heldPlayers
+            .Where(player => !winnerIds.Contains(player))
+            .ToList();
+
+        _releasedThreatLosers.Clear();
+        _releasedThreatLosers.AddRange(losers);
+
+        UnblockRoundJoinsForPlayers(losers);
+        ThreatSystem.RemoveThreatJobAssignments(assignedJobs, winnerIds);
+
+        foreach (ThreatVoteAssignment winner in winners)
+            if (assignedJobs.TryGetValue(winner.Player, out (ProtoId<JobPrototype>?, EntityUid) assigned))
+                assignedJobs[winner.Player] = (winner.Job, assigned.Item2);
+
+        foreach (NetUserId playerId in losers)
+        {
+            if (!_player.TryGetSessionById(playerId, out ICommonSession? session)
+                || session.Status == SessionStatus.Disconnected)
+                continue;
+
+            _ticker.Respawn(session);
+            _chat.DispatchServerMessage(session, Loc.GetString("au14-threat-not-selected-return-to-lobby"));
+        }
+
+        Sawmill.Info($"[ThreatVoteSystem] Seat roll at vote finish: winners={winnerIds.Count}/{seats.Total
+        }, released={losers.Count} back to the round.");
+
+        return winners
+            .Select(winner => winner.Player)
+            .ToList();
     }
 
     private void ReleaseHeldPlayersToLobby(IReadOnlyCollection<NetUserId> heldPlayers,

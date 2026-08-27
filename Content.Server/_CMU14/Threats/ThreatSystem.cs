@@ -717,11 +717,15 @@ public sealed partial class ThreatSystem : EntitySystem
 
                     _sawmill.Info($"[ThreatSystem] Player {session.Name} ({playerId
                     }) returning to lobby as there was no threat mob available for them.");
+                    _chat.DispatchServerMessage(session, Loc.GetString("au14-threat-not-selected-return-to-lobby"));
                     _ticker.Respawn(session);
                 }
 
                 AddGhostRolesForUnassigned(spawnedLeaders, assignedLeaders, ThreatLeaderJobId);
                 AddGhostRolesForUnassigned(spawnedMembers, assignedMembers, ThreatMemberJobId);
+
+                if (spawnedLeaders.Count - assignedLeaders + spawnedMembers.Count - assignedMembers > 0)
+                    _threatVote.NotifyThreatSeatOpened();
 
                 _sawmill.Debug($"[DEBUG] Voted threat assigned {assignedLeaders} leader(s), {assignedMembers
                 } member(s), exposed {

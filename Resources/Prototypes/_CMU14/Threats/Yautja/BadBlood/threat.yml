@@ -4,7 +4,6 @@
   id: BadBloodClanThreat
   lorePrimer: AU14PrimerThreatBadBlood
   roundstartspawns: badBloodClanParty
-  spawnExtraVoteMembers: false
   whitelistedgamemodes:
   - DistressSignal
   blacklistedgamemodes:
