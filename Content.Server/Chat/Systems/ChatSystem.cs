@@ -92,6 +92,7 @@ public sealed partial class ChatSystem : SharedChatSystem
     private bool _loocEnabled = true;
     private bool _deadLoocEnabled;
     private bool _critLoocEnabled;
+    private bool _critWhisperEnabled; // CMU14
     private bool _DeadchatEnabled; // RMC14
     private readonly bool _adminLoocEnabled = true;
 
@@ -102,6 +103,7 @@ public sealed partial class ChatSystem : SharedChatSystem
         Subs.CVar(_configurationManager, CCVars.LoocEnabled, OnLoocEnabledChanged, true);
         Subs.CVar(_configurationManager, CCVars.DeadLoocEnabled, OnDeadLoocEnabledChanged, true);
         Subs.CVar(_configurationManager, CCVars.CritLoocEnabled, OnCritLoocEnabledChanged, true);
+        Subs.CVar(_configurationManager, CCVars.CritWhisper, OnCritWhisperEnabledChanged, true); // CMU14
         Subs.CVar(_configurationManager, RMCCVars.RMCDeadChatEnabled, OnDeadChatEnabledChanged, true); // RMC14
 
         SubscribeLocalEvent<GameRunLevelChangedEvent>(OnGameChange);
@@ -134,6 +136,9 @@ public sealed partial class ChatSystem : SharedChatSystem
         _chatManager.DispatchServerAnnouncement(
             Loc.GetString(val ? "chat-manager-crit-looc-chat-enabled-message" : "chat-manager-crit-looc-chat-disabled-message"));
     }
+
+    // CMU14 method
+    private void OnCritWhisperEnabledChanged(bool val) => _critWhisperEnabled = val;
 
     // RMC14
     private void OnDeadChatEnabledChanged(bool val)
@@ -261,6 +266,17 @@ public sealed partial class ChatSystem : SharedChatSystem
         {
             desiredType = InGameICChatType.Whisper;
             checkRadioPrefix = false;
+        }
+
+        if (desiredType == InGameICChatType.Speak // CMU14: CM13 parity, crit players whisper instead of speaking
+            && _critWhisperEnabled
+            && _mobStateSystem.IsCritical(source))
+        {
+            desiredType = InGameICChatType.Whisper;
+            checkRadioPrefix = false;
+            // reuse the radio matcher to strip any prefix (;, :h, .h) so it doesn't leak into the whisper
+            TryProccessRadioMessage(source, message, out var strippedText, out _, quiet: true);
+            message = strippedText;
         }
 
         bool shouldCapitalize = (desiredType != InGameICChatType.Emote);
