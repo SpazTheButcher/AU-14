@@ -1,3 +1,4 @@
+using System.Linq;
 using Content.Server.Chat;
 using Content.Server.Chat.Systems;
 using Content.Server.Polymorph.Systems;
@@ -124,8 +125,14 @@ public sealed partial class AbominationInfectionSystem : EntitySystem
     private void OnBodyPartSevered(ref BodyPartSeveredEvent args)
     {
         if (!TryComp<AbominationInfectionComponent>(args.Body, out var infection)
-                || args.Part != infection.AnchoredPart
-                || _timing.CurTime - infection.InfectedAt >= infection.AmputationWindow)
+            || _timing.CurTime - infection.InfectedAt >= infection.AmputationWindow)
+            return;
+
+        // GetBodyPartChildren includes the severed part itself, so this cures
+        // both a direct hit and the chain case — a hand anchor dies with the
+        // arm it hangs from, whichever way that arm comes off
+        if (infection.AnchoredPart is not { } anchored
+            || !_body.GetBodyPartChildren(args.Part).Any(p => p.Id == anchored))
             return;
 
         RemComp<AbominationInfectionComponent>(args.Body);
@@ -199,16 +206,20 @@ public sealed partial class AbominationInfectionSystem : EntitySystem
     }
 
     /// <summary>
-    ///     Head and torso can't be anchored, and they can't be severed. Animal
-    ///     hosts may have no Arm/Leg parts at all; they get no anchor and rely
-    ///     on the counteragent (or just die).
+    ///     Head and torso can't be anchored, and they can't be severed. Hands
+    ///     and feet are included — surgical amputation only takes whole limbs,
+    ///     but knives and brute damage can take the extremity alone, and a
+    ///     severed arm carries its hand (and the anchor) with it. Animal
+    ///     hosts may have none of these parts at all; they get no anchor and
+    ///     rely on the counteragent (or just die).
     /// </summary>
     private EntityUid? PickAnchorPart(EntityUid target)
     {
         List<EntityUid> limbs = new();
         foreach (var (partUid, part) in _body.GetBodyChildren(target))
         {
-            if (part.PartType is BodyPartType.Arm or BodyPartType.Leg)
+            if (part.PartType is BodyPartType.Arm or BodyPartType.Hand
+                or BodyPartType.Leg or BodyPartType.Foot)
                 limbs.Add(partUid);
         }
 
