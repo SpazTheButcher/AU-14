@@ -44,7 +44,7 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: Kudzu
-    growthTickChance: 0.1
+    growthTickChance: 0.2
     spreadChance: 0.4
     damageRecovery:
       types:
@@ -66,7 +66,9 @@
     heatDamage:
       types:
         Heat: 15
-  # Slashes/pierces anyone standing on it - except abominations.
+  # Slashes/pierces anyone standing on it - except abominations. Mimics in
+  # disguise only carry AbominationMimicTransformed (the polymorph drops
+  # Abomination), so the tracker component whitelists them too.
   - type: DamageContacts
     damage:
       types:
@@ -76,6 +78,7 @@
     ignoreWhitelist:
       components:
       - Abomination
+      - AbominationMimicTransformed
   - type: SpeedModifierContacts
     walkSpeedModifier: 0.7
     sprintSpeedModifier: 0.7
@@ -83,6 +86,7 @@
       components:
       - IgnoreKudzu
       - Abomination
+      - AbominationMimicTransformed
   # Periodic sob/gasp + heal-abominations-in-contact tick. Server-side.
   # Heal values doubled from the original tuning so tendons are a real
   # rally point for the threat to retreat to.

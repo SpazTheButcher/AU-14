@@ -1,3 +1,4 @@
+using Content.Server.GameTicking;
 using Content.Server.Polymorph.Systems;
 using Content.Shared._RMC14.Language.Components;
 using Content.Server._RMC14.Language.Systems;
@@ -6,13 +7,16 @@ using Content.Shared._RMC14.Synth;
 using Content.Shared._RMC14.Weapons.Ranged.IFF;
 using Content.Shared.DoAfter;
 using Content.Shared.GameTicking;
+using Content.Shared.Ghost;
 using Content.Shared.Humanoid;
+using Content.Shared.Mind;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.NPC.Components;
 using Content.Shared.NPC.Prototypes;
 using Content.Shared.Polymorph;
 using Content.Shared.Popups;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Player;
 using AbominationAppearanceSnapshot = Content.Shared._CMU14.Threats.Mobs.Abomination.AbominationAppearanceSnapshot;
 using AbominationAssimilateActionEvent
     = Content.Shared._CMU14.Threats.Mobs.Abomination.AbominationAssimilateActionEvent;
@@ -30,7 +34,10 @@ namespace Content.Server._CMU14.Threats.Mobs.Abomination;
 public sealed partial class AbominationAssimilateSystem : EntitySystem
 {
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private SharedGhostSystem _ghostSystem = default!;
+    [Dependency] private SharedMindSystem _mind = default!;
     [Dependency] private MobStateSystem _mobState = default!;
+    [Dependency] private MetaDataSystem _metaData = default!;
     [Dependency] private PolymorphSystem _polymorph = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private IPrototypeManager _proto = default!;
@@ -138,6 +145,8 @@ public sealed partial class AbominationAssimilateSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString("abomination-assimilate-complete", ("target", Name(target))),
             target, mimic);
 
+        GhostVictimPlayer(target);
+
         // Humanoid victims become mimics; animal victims become spiders.
         ProtoId<PolymorphPrototype> polymorphId = isHumanoid
             ? HumanoidTurnPolymorph
@@ -151,6 +160,27 @@ public sealed partial class AbominationAssimilateSystem : EntitySystem
         var newMimicComp = EnsureComp<AbominationMimicComponent>(newUid);
         newMimicComp.AssimilatedPool = new(GatherCurrentPool());
         Dirty(newUid, newMimicComp);
+    }
+
+    /// <summary>
+    ///     Move the assimilation victim's player to a no-return observer ghost
+    ///     so the polymorphed body raffles instead of forcing the mimic role on
+    ///     them. No return-to-body: the body belongs to the raffle now.
+    /// </summary>
+    private void GhostVictimPlayer(EntityUid victim)
+    {
+        if (!TryComp<ActorComponent>(victim, out var actor)
+                || !_mind.TryGetMind(actor.PlayerSession, out var mindId, out var mind))
+            return;
+
+        var ghost = Spawn(GameTicker.ObserverPrototypeName, Transform(victim).Coordinates);
+        if (!string.IsNullOrWhiteSpace(mind.CharacterName))
+            _metaData.SetEntityName(ghost, mind.CharacterName);
+
+        _mind.TransferTo(mindId, ghost, mind: mind);
+        _ghostSystem.SetCanReturnToBody((ghost, Comp<GhostComponent>(ghost)), false);
+
+        _popup.PopupEntity(Loc.GetString("abomination-assimilate-victim-ghosted"), ghost, ghost);
     }
 
     private bool CanAssimilate(EntityUid mimic, EntityUid target, out string reason)

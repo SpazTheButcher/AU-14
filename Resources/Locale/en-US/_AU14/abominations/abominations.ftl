@@ -26,3 +26,4 @@ au14-job-name-abomination-mimic = Mimic Abomination
 
 chat-radio-abomination = ABOM
 chat-radio-abomination-mimic = MIMIC
+abomination-assimilate-victim-ghosted = Your body is no longer yours. You watch, bodiless, as it stands up wearing your face.
