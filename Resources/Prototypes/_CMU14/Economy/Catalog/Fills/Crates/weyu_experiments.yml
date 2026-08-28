@@ -124,4 +124,16 @@
       - id: AU14DrugDealerDrugBottle
       - id: AU14DrugDealerDrugBottle
       weight: 5
-      
+
+- type: entity
+  id: AU14CrateSecureWeYuCounteragent
+  parent: AU14CrateSecureWeYuXenoEggs
+  name: secure We-Yu crate
+  suffix: AU14, Counteragent
+  components:
+  - type: StorageFill
+    contents:
+      - id: AU14AbominationCounteragentSyringe
+        amount: 4
+      - id: RMCTentUNMCStandardMedicalFolded
+      - id: AU14TentBigFoldedSurgical

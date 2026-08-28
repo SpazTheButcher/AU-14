@@ -72,6 +72,8 @@ public sealed partial class AbominationMimicSystem : EntitySystem
     [Dependency] private SharedUserInterfaceSystem _ui = default!;
     public static readonly ProtoId<PolymorphPrototype> DisguisePolymorph = "AbominationMimicDisguise";
     public static readonly EntProtoId RevertAction = "ActionAbominationMimicRevert";
+    public static readonly EntProtoId DrawVenomAction = "ActionAbominationMimicDrawVenom";
+    public static readonly EntProtoId VenomSyringe = "AU14AbominationVenomSyringe";
     public static readonly ProtoId<EmotePrototype> ScreamEmote = "Scream";
     public const string AbominationRadioChannel = "Abomination";
 
@@ -79,6 +81,7 @@ public sealed partial class AbominationMimicSystem : EntitySystem
     {
         SubscribeLocalEvent<AbominationMimicComponent, AbominationMimicTransformActionEvent>(OnTransformAction);
         SubscribeLocalEvent<AbominationMimicTransformedComponent, AbominationMimicRevertActionEvent>(OnRevertAction);
+        SubscribeLocalEvent<AbominationMimicTransformedComponent, AbominationMimicDrawVenomActionEvent>(OnDrawVenom);
         SubscribeLocalEvent<AbominationMimicTransformedComponent, MobStateChangedEvent>(OnDisguisedMobStateChanged);
 
         // Last-ditch revert if the disguise is being deleted/gibbed before
@@ -263,6 +266,7 @@ public sealed partial class AbominationMimicSystem : EntitySystem
         HealToFull(disguisedUid);
 
         _actions.AddAction(disguisedUid, RevertAction);
+        _actions.AddAction(disguisedUid, DrawVenomAction);
 
         return disguisedUid;
     }
@@ -281,6 +285,17 @@ public sealed partial class AbominationMimicSystem : EntitySystem
 
         args.Handled = true;
         BeginRevert(ent.Owner);
+    }
+
+    private void OnDrawVenom(Entity<AbominationMimicTransformedComponent> ent,
+        ref AbominationMimicDrawVenomActionEvent args)
+    {
+        if (args.Handled)
+            return;
+
+        args.Handled = true;
+        Spawn(VenomSyringe, Transform(ent).Coordinates);
+        _popup.PopupClient(Loc.GetString("abomination-mimic-draw-venom"), ent, ent);
     }
 
     private void OnDisguisedMobStateChanged(Entity<AbominationMimicTransformedComponent> ent,

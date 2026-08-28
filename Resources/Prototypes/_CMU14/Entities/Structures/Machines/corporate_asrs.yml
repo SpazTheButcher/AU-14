@@ -54,6 +54,8 @@
       #  crate: CMUCrateXRF
       - cost: 2500
         crate: CMUCrateSecureWYRandomExp
+      - cost: 9500
+        crate: AU14CrateSecureWeYuCounteragent
       - cost: 350
         crate: CMUCrateBiosuitWYTSS
       - cost: 1500

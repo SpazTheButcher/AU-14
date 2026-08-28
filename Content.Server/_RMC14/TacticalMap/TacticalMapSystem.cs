@@ -6,7 +6,8 @@ using Content.Server._RMC14.Rules;
 using Content.Server.Administration.Logs;
 using Content.Server.GameTicking.Events;
 using Content.Shared.GameTicking; // CMU14: PlayerSpawnCompleteEvent
-using Content.Shared._CMU14.TacticalMap; // CMU14: WeYuMapTracked
+using Content.Shared._CMU14.TacticalMap; // CMU14: WeYuMapTracked, AbominationMapTracked
+using Content.Shared._CMU14.Threats.Mobs.Abomination; // CMU14: abomination tacmap channel
 using Content.Shared._CMU14.Xenomorphs.Pathogen; // CMU14: pathogen live tacmap
 using Content.Shared._RMC14.Announce;
 using Content.Shared._RMC14.CCVar;
@@ -93,6 +94,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
     private EntityQuery<GovforMapTrackedComponent> _govforMapTrackedQuery;
     private EntityQuery<ClfMapTrackedComponent> _clfMapTrackedQuery;
     private EntityQuery<WeYuMapTrackedComponent> _weyuMapTrackedQuery; // CMU14
+    private EntityQuery<AbominationMapTrackedComponent> _abominationMapTrackedQuery; // CMU14
     private EntityQuery<VehicleInteriorOccupantComponent> _vehicleOccupantQuery;
 
     private readonly HashSet<Entity<TacticalMapTrackedComponent>> _toInit = new();
@@ -125,6 +127,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
         _govforMapTrackedQuery = GetEntityQuery<GovforMapTrackedComponent>();
         _clfMapTrackedQuery = GetEntityQuery<ClfMapTrackedComponent>();
         _weyuMapTrackedQuery = GetEntityQuery<WeYuMapTrackedComponent>(); // CMU14
+        _abominationMapTrackedQuery = GetEntityQuery<AbominationMapTrackedComponent>(); // CMU14
         _vehicleOccupantQuery = GetEntityQuery<VehicleInteriorOccupantComponent>();
 
         SubscribeLocalEvent<VehicleInteriorComponent, MoveEvent>(OnVehicleMove);
@@ -137,6 +140,8 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
         SubscribeLocalEvent<TacticalMapUserComponent, ComponentStartup>(OnUserStartup);
         SubscribeLocalEvent<TacticalMapUserComponent, RoleAddedEvent>(OnUserFactionChanged);
         SubscribeLocalEvent<TacticalMapUserComponent, MindAddedMessage>(OnUserFactionChanged);
+        // CMU14: mimic disguises polymorph after TacticalMapUser startup already ran faction sync
+        SubscribeLocalEvent<AbominationMimicTransformedComponent, ComponentStartup>(OnAbominationMimicStartup);
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawnComplete);
 
         SubscribeLocalEvent<TacticalMapComputerComponent, ComponentStartup>(OnComputerStartup);
@@ -269,6 +274,13 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
         SyncTrackedFaction(ent.Owner);
     }
 
+    // CMU14: disguise polymorph runs before mimic tracker exists, re-sync once in place
+    private void OnAbominationMimicStartup(Entity<AbominationMimicTransformedComponent> ent, ref ComponentStartup args)
+    {
+        if (TryComp<TacticalMapUserComponent>(ent, out var user))
+            SyncUserFactionFlags((ent.Owner, user));
+    }
+
     // Swap MarineMapTracked for the correct faction-specific tracked component based on
     // MarineComponent.Faction. Otherwise opfor/govfor/clf humans land in map.MarineBlips
     // because base.yml ships with MarineMapTracked for every humanoid.
@@ -329,6 +341,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
                 oldMap.GovforBlips.Remove(uid.Id);
                 oldMap.ClfBlips.Remove(uid.Id);
                 oldMap.WeYuBlips.Remove(uid.Id); // CMU14
+                oldMap.AbominationBlips.Remove(uid.Id); // CMU14
                 oldMap.MapDirty = true;
             }
             UpdateTracked((uid, active));
@@ -345,8 +358,9 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
         if (HasComp<GhostComponent>(ent))
         {
             var changed = !ent.Comp.Marines || !ent.Comp.Xenos || !ent.Comp.Opfor
-                || !ent.Comp.Govfor || !ent.Comp.Clf || !ent.Comp.WeYu || !ent.Comp.LiveUpdate;
+                || !ent.Comp.Govfor || !ent.Comp.Clf || !ent.Comp.WeYu || !ent.Comp.Abomination || !ent.Comp.LiveUpdate;
             ent.Comp.Marines = ent.Comp.Xenos = ent.Comp.Opfor = ent.Comp.Govfor = ent.Comp.Clf = ent.Comp.WeYu = true;
+            ent.Comp.Abomination = true; // CMU14
             ent.Comp.LiveUpdate = true;
             if (changed)
                 Dirty(ent);
@@ -365,6 +379,22 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
             // CMU14: pathogens have no ovipositor to earn a live map from; their hive is always live
             if (HasComp<CMUPathogenHiveMemberComponent>(ent) && !ent.Comp.LiveUpdate)
             {
+                ent.Comp.LiveUpdate = true;
+                Dirty(ent);
+            }
+
+            return;
+        }
+
+        // CMU14: abominations see their own channel only — flesh forms and disguised mimics
+        if (HasComp<AbominationComponent>(ent) || HasComp<AbominationMimicTransformedComponent>(ent))
+        {
+            if (!ent.Comp.Abomination || ent.Comp.Marines || ent.Comp.Xenos || ent.Comp.Opfor
+                || ent.Comp.Govfor || ent.Comp.Clf || ent.Comp.WeYu || !ent.Comp.LiveUpdate)
+            {
+                ent.Comp.Abomination = true;
+                ent.Comp.Marines = ent.Comp.Xenos = ent.Comp.Opfor = ent.Comp.Govfor = ent.Comp.Clf = ent.Comp.WeYu = false;
+                // no ovipositor to earn live update from (flesh map always live)
                 ent.Comp.LiveUpdate = true;
                 Dirty(ent);
             }
@@ -1364,6 +1394,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
         tacticalMap.GovforBlips.Remove(tracked.Owner.Id);
         tacticalMap.ClfBlips.Remove(tracked.Owner.Id);
         tacticalMap.WeYuBlips.Remove(tracked.Owner.Id); // CMU14
+        tacticalMap.AbominationBlips.Remove(tracked.Owner.Id); // CMU14
         tacticalMap.MapDirty = true;
         tracked.Comp.Map = null;
     }
@@ -1474,6 +1505,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
                         map.GovforBlips.Remove(ent.Owner.Id);
                         map.ClfBlips.Remove(ent.Owner.Id);
                         map.WeYuBlips.Remove(ent.Owner.Id); // CMU14
+                        map.AbominationBlips.Remove(ent.Owner.Id); // CMU14
                         map.MapDirty = true;
                     }
                 }
@@ -1486,6 +1518,7 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
                     curMap.GovforBlips.Remove(ent.Owner.Id);
                     curMap.ClfBlips.Remove(ent.Owner.Id);
                     curMap.WeYuBlips.Remove(ent.Owner.Id); // CMU14
+                    curMap.AbominationBlips.Remove(ent.Owner.Id); // CMU14
                     curMap.MapDirty = true;
                 }
 
@@ -1600,6 +1633,15 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
         if (!placed && _weyuMapTrackedQuery.HasComp(ent))
         {
             tacticalMap.WeYuBlips[ent.Owner.Id] = blip;
+            tacticalMap.MapDirty = true;
+            placed = true;
+        }
+
+        // CMU14: Abomination bucket. Aboms aren't hive members or humans, so without
+        // this they'd fall through to the Marine map via the ultimate fallback
+        if (!placed && _abominationMapTrackedQuery.HasComp(ent))
+        {
+            tacticalMap.AbominationBlips[ent.Owner.Id] = blip;
             tacticalMap.MapDirty = true;
             placed = true;
         }
@@ -1897,6 +1939,9 @@ public sealed partial class TacticalMapSystem : SharedTacticalMapSystem // CMU14
             lines.WeYuLines = map.WeYuLines;
             labels.WeYuLabels = map.WeYuLabels;
         }
+
+        if (user.Comp.Abomination) // CMU14: abom channel, no drawn snapshot
+            user.Comp.AbominationBlips = map.AbominationBlips;
 
 #if DEBUG
         Logger.GetSawmill("tacmap").Debug($"Marine blips: {map.MarineBlips.Count}");

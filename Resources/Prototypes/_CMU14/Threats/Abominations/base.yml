@@ -155,6 +155,17 @@
     icon:
       sprite: /Textures/_RMC14/Interface/map_blips.rsi
       state: warrior
+  # Faction tacmap. Blips land in the Abomination-only bucket (never on
+  # marine or xeno maps). Disguised mimics re-sync onto the abom channel via
+  # AbominationMimicTransformed (see TacticalMapSystem).
+  - type: TacticalMapTracked
+  - type: AbominationMapTracked
+  - type: TacticalMapUser
+    actionId: ActionAbominationOpenTacticalMap
+  - type: UserInterface
+    interfaces:
+      enum.TacticalMapUserUi.Key:
+        type: TacticalMapUserBui
   - type: Prying
     speedModifier: 0.25
     pryPowered: true

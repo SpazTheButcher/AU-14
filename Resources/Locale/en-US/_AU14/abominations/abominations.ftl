@@ -26,3 +26,10 @@ au14-job-name-abomination-mimic = Mimic Abomination
 
 chat-radio-abomination = ABOM
 chat-radio-abomination-mimic = MIMIC
+abomination-assimilate-victim-ghosted = Your body is no longer yours. You watch, bodiless, as it stands up wearing your face.
+abomination-infection-cured-amputation = The crawling heat under your skin gutters out... Whatever was growing there went with the limb.
+abomination-infection-cured-counteragent = Something cold floods your veins, and the crawling heat inside you dies.
+reagent-name-abomination-counteragent = experimental counteragent
+reagent-desc-abomination-counteragent = A pale, opaque research fluid of Weyland-Yutani origin. Purges an active abomination infection outright. The sure thing, at a price.
+reagent-effect-guidebook-cure-abomination-infection = Cures [color=#a83a55]abomination infection[/color].
+abomination-mimic-draw-venom = A syringe of clotted, dark fluid slips free of your borrowed skin.
