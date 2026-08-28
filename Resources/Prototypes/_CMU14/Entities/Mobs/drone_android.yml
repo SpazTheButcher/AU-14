@@ -29,8 +29,8 @@
     canUseGuns: true
     removeComponents: CMUDroneAndroidRemoveComponents
     generation: cmu-species-drone-android-generation
-    critThreshold: 74
-    deadThreshold: 80
+    critThreshold: 175
+    deadThreshold: 180
     repairTime: 5
     selfRepairTime: 9999
     hideGeneration: true
@@ -39,7 +39,7 @@
   - type: MeleeWeapon
     damage:
       types:
-        Blunt: 10
+        Blunt: 25
   - type: RMCInnateSlowdown
     slowdown: 1.15
   - type: NoClothingSlowdown
