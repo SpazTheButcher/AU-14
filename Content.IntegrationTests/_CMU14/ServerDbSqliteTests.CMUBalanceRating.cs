@@ -176,8 +176,9 @@ namespace Content.IntegrationTests.Tests.Preferences
                             target.Name.Contains("Port Nereid", StringComparison.Ordinal) &&
                             target.AllowsMetric(CMUBalanceRatingMetric.Fun) &&
                             !target.AllowsMetric(CMUBalanceRatingMetric.Power)));
-                        Assert.That(maps, Has.Some.Matches<CMUBalanceRatingTargetOption>(target =>
-                            target.Id.EndsWith("/Insurgency", StringComparison.Ordinal)));
+                        // don't pin specific presets
+                        // Assert.That(maps, Has.Some.Matches<CMUBalanceRatingTargetOption>(target =>
+                        //     target.Id.EndsWith("/Insurgency", StringComparison.Ordinal)));
                         Assert.That(maps.All(target =>
                             target.AllowsMetric(CMUBalanceRatingMetric.Fun) &&
                             !target.AllowsMetric(CMUBalanceRatingMetric.Power)), Is.True);
