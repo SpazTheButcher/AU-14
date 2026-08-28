@@ -1,6 +1,7 @@
 using System.Linq;
 using Content.Shared._CMU14.Yautja;
 using Content.Shared._RMC14.CCVar;
+using Content.Shared._RMC14.Dropship; // CMU14
 using Content.Shared._RMC14.Roles;
 using Content.Shared._RMC14.Rules;
 using Content.Shared._RMC14.Xenonids.Announce;
@@ -75,6 +76,7 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
     private TimeSpan _evolutionAccumulatePointsBefore;
     private TimeSpan _evolveSameCasteCooldown;
     private TimeSpan _earlyEvoBoostBefore;
+    private bool _marinesLanded; // CMU14
 
     private readonly HashSet<EntityUid> _climbable = new();
     private readonly HashSet<EntityUid> _doors = new();
@@ -89,6 +91,8 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
         _mobStateQuery = GetEntityQuery<MobStateComponent>();
 
         SubscribeLocalEvent<MarinesLandedChangedEvent>(OnMarinesLandedChanged);
+        SubscribeLocalEvent<DropshipLandedOnPlanetEvent>(OnDropshipLandedOnPlanet); // CMU14
+        SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestartCleanup); // CMU14
         SubscribeLocalEvent<HiveComponent, XenoHiveQueenChangedEvent>(OnHiveQueenChanged);
 
         SubscribeLocalEvent<XenoDevolveComponent, XenoOpenDevolveActionEvent>(OnXenoOpenDevolveAction);
@@ -439,6 +443,26 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
                 _ui.SetUiState(uid, XenoEvolutionUIKey.Key, buiState);
             }
         }
+    }
+
+    // CMU14 event: classic rule raises MarinesLandedChangedEvent itself; track it ourselves otherwise
+    private void OnDropshipLandedOnPlanet(ref DropshipLandedOnPlanetEvent ev)
+    {
+        if (_net.IsClient || _marinesLanded)
+            return;
+
+        var rules = EntityQueryEnumerator<ActiveGameRuleComponent, CMDistressSignalRuleComponent>();
+        if (rules.MoveNext(out _, out _))
+            return;
+
+        _marinesLanded = true;
+        var landedEv = new MarinesLandedChangedEvent(true);
+        RaiseLocalEvent(ref landedEv);
+    }
+
+    private void OnRoundRestartCleanup(RoundRestartCleanupEvent ev) // CMU14
+    {
+        _marinesLanded = false;
     }
 
     private void OnHiveQueenChanged(Entity<HiveComponent> ent, ref XenoHiveQueenChangedEvent ev)
@@ -802,7 +826,7 @@ public sealed partial class XenoEvolutionSystem : EntitySystem
             return distress.MarinesLanded;
         }
 
-        return false;
+        return _marinesLanded; // CMU14
     }
 
     private bool HiveHasLivingQueen(EntityUid xeno)

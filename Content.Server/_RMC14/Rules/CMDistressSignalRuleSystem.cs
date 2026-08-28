@@ -168,6 +168,9 @@ public sealed partial class CMDistressSignalRuleSystem : GameRuleSystem<CMDistre
     [Dependency] private ISerializationManager _serialization = default!;
     [Dependency] private XenoMaturingSystem _maturing = default!;
     [Dependency] private CMUSharedZLevelsSystem _zLevels = default!;
+    [Dependency] private AuRoundSystem _auRound = default!; // CMU14
+
+    private const string DistressSignalPreset = "DistressSignal"; // CMU14
 
     private readonly HashSet<string> _operationNames = new();
     private readonly HashSet<string> _operationPrefixes = new();
@@ -208,6 +211,8 @@ public sealed partial class CMDistressSignalRuleSystem : GameRuleSystem<CMDistre
 
     [ViewVariables]
     private RMCPlanet? SelectedPlanetMap { get; set; }
+
+    private string? _cmuPlanetMapName; // CMU14
 
     [ViewVariables]
     public string? SelectedPlanetMapName => SelectedPlanetMap?.Proto.Name;
@@ -855,6 +860,13 @@ public sealed partial class CMDistressSignalRuleSystem : GameRuleSystem<CMDistre
         ev.Handled = TryEndActiveDistressRound(
             DistressSignalRuleResult.MinorXenoVictory,
             "cmu-distress-signal-minorxenovictory-no-hijack");
+
+        if (ev.Handled || // CMU14
+            (GameTicker.CurrentPreset?.ID ?? GameTicker.Preset?.ID ?? _auRound.SelectedPreset?.ID) != DistressSignalPreset)
+            return;
+
+        GameTicker.EndRound(Loc.GetString("cmu-distress-signal-minorxenovictory-no-hijack")); // CMU14
+        ev.Handled = true;
     }
 
     private void OnDropshipHijackStart(ref DropshipHijackStartEvent ev)
