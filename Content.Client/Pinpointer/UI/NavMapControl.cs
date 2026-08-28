@@ -67,6 +67,10 @@ public partial class NavMapControl : MapGridControl
     protected float ThinWallThickness = 0.165f;
     protected float ThinDoorThickness = 0.30f;
 
+    // Clyde has a fixed primitive batch capacity. Large colony maps can exceed
+    // it when every wall segment is submitted in a single draw call.
+    private const int MaxPrimitiveVerticesPerDraw = 2048;
+
     // Local variables
     private float _updateTimer = 1.0f;
     private Dictionary<Color, Color> _sRGBLookUp = new();
@@ -365,7 +369,7 @@ public partial class NavMapControl : MapGridControl
         // Draw map lines
         if (TileLines.Any())
         {
-            var lines = new ValueList<Vector2>(TileLines.Count * 2);
+            var lines = new ValueList<Vector2>(Math.Min(TileLines.Count * 2, MaxPrimitiveVerticesPerDraw));
 
             foreach (var (o, t) in TileLines)
             {
@@ -374,16 +378,18 @@ public partial class NavMapControl : MapGridControl
 
                 lines.Add(origin);
                 lines.Add(terminus);
+
+                if (lines.Count >= MaxPrimitiveVerticesPerDraw)
+                    DrawLineBatch(handle, ref lines, wallsRGB);
             }
 
-            if (lines.Count > 0)
-                handle.DrawPrimitives(DrawPrimitiveTopology.LineList, lines.Span, wallsRGB);
+            DrawLineBatch(handle, ref lines, wallsRGB);
         }
 
         // Draw map rects
         if (TileRects.Any())
         {
-            var rects = new ValueList<Vector2>(TileRects.Count * 8);
+            var rects = new ValueList<Vector2>(Math.Min(TileRects.Count * 8, MaxPrimitiveVerticesPerDraw));
 
             foreach (var (lt, rb) in TileRects)
             {
@@ -401,10 +407,12 @@ public partial class NavMapControl : MapGridControl
                 rects.Add(leftBottom);
                 rects.Add(leftBottom);
                 rects.Add(leftTop);
+
+                if (rects.Count >= MaxPrimitiveVerticesPerDraw)
+                    DrawLineBatch(handle, ref rects, wallsRGB);
             }
 
-            if (rects.Count > 0)
-                handle.DrawPrimitives(DrawPrimitiveTopology.LineList, rects.Span, wallsRGB);
+            DrawLineBatch(handle, ref rects, wallsRGB);
         }
 
         // Invoke post wall drawing action
@@ -474,6 +482,18 @@ public partial class NavMapControl : MapGridControl
                 handle.DrawString(font, position - textDimensions / 2, beacon.Text, beacon.Color);
             }
         }
+    }
+
+    private static void DrawLineBatch(
+        DrawingHandleScreen handle,
+        ref ValueList<Vector2> vertices,
+        Color color)
+    {
+        if (vertices.Count == 0)
+            return;
+
+        handle.DrawPrimitives(DrawPrimitiveTopology.LineList, vertices.Span, color);
+        vertices.Clear();
     }
 
     protected override void FrameUpdate(FrameEventArgs args)
