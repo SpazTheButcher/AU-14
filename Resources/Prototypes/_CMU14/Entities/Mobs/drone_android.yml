@@ -17,6 +17,7 @@
     - type: ActiveRadio
     - type: CMUDroneAndroid
   - type: addComponents
+    components:
     - type: PyroWhitelist
     - type: ScoutWhitelist
     - type: DemoSpecWhitelist
