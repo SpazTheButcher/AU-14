@@ -102,6 +102,8 @@
     emoteCooldown: 8
     hiddenFromChatWindow: true
   - type: MotionDetectorTracked
+  - type: DropshipHijacker
+    HijackDoAfterSeconds: 15
 
 - type: entity
   parent: CMUMobYautja
