@@ -87,4 +87,8 @@ public sealed partial class TacticalMapComponent : Component // CMU14 Class: Cus
     public List<TacticalMapLine> WeYuLines = new();
     [DataField]
     public Dictionary<Vector2i, string> WeYuLabels = new();
+
+    // Abominations
+    [DataField]
+    public Dictionary<int, TacticalMapBlip> AbominationBlips = new();
 }

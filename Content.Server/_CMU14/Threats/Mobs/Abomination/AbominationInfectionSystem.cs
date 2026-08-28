@@ -1,9 +1,13 @@
 using Content.Server.Chat;
 using Content.Server.Chat.Systems;
 using Content.Server.Polymorph.Systems;
+using Content.Shared._CMU14.Medical.Anatomy.BodyParts.Events;
 using Content.Shared._RMC14.Synth;
+using Content.Shared.Body.Part;
+using Content.Shared.Body.Systems;
 using Content.Shared.Damage;
 using Content.Shared.EntityEffects;
+using Content.Shared.Popups;
 using Content.Shared.Humanoid;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Systems;
@@ -20,6 +24,7 @@ using AbominationInfectionComponent = Content.Shared._CMU14.Threats.Mobs.Abomina
 using AbominationMimicTransformedComponent
     = Content.Shared._CMU14.Threats.Mobs.Abomination.AbominationMimicTransformedComponent;
 using CauseAbominationInfection = Content.Shared._CMU14.Threats.Mobs.Abomination.Reagents.CauseAbominationInfection;
+using CureAbominationInfection = Content.Shared._CMU14.Threats.Mobs.Abomination.Reagents.CureAbominationInfection;
 
 namespace Content.Server._CMU14.Threats.Mobs.Abomination;
 
@@ -35,10 +40,12 @@ namespace Content.Server._CMU14.Threats.Mobs.Abomination;
 public sealed partial class AbominationInfectionSystem : EntitySystem
 {
     [Dependency] private AbominationAssimilateSystem _assimilate = default!;
+    [Dependency] private SharedBodySystem _body = default!;
     [Dependency] private DamageableSystem _damageable = default!;
     [Dependency] private EmoteOnDamageSystem _emoteOnDamage = default!;
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private PolymorphSystem _polymorph = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
@@ -53,6 +60,8 @@ public sealed partial class AbominationInfectionSystem : EntitySystem
         SubscribeLocalEvent<AbominationComponent, MeleeHitEvent>(OnAbominationMeleeHit);
         SubscribeLocalEvent<AbominationInfectionComponent, MobStateChangedEvent>(OnInfectedMobStateChanged);
         SubscribeLocalEvent<ExecuteEntityEffectEvent<CauseAbominationInfection>>(OnExecuteCauseInfection);
+        SubscribeLocalEvent<ExecuteEntityEffectEvent<CureAbominationInfection>>(OnExecuteCureInfection);
+        SubscribeLocalEvent<BodyPartSeveredEvent>(OnBodyPartSevered);
     }
 
     public override void Update(float frameTime)
@@ -82,14 +91,13 @@ public sealed partial class AbominationInfectionSystem : EntitySystem
 
                 if (removedScream)
                     _emoteOnDamage.AddEmote(uid, HumanScreamEmote, emoteOnDamage);
+
+                if (now - infection.InfectedAt >= infection.AmputationWindow)
+                {
+                    infection.TickDamage.DamageDict["Poison"] += infection.PostWindowTickDamageGain;
+                    Dirty(uid, infection);
+                }
             }
-
-            // Silent auto-cure: survive long enough and the marker burns out.
-            if (now - infection.InfectedAt < infection.CureAfter)
-                continue;
-
-            if (!_mobState.IsDead(uid))
-                RemComp<AbominationInfectionComponent>(uid);
         }
     }
 
@@ -101,6 +109,27 @@ public sealed partial class AbominationInfectionSystem : EntitySystem
             return;
 
         ApplyInfection(target);
+    }
+
+    private void OnExecuteCureInfection(ref ExecuteEntityEffectEvent<CureAbominationInfection> args)
+    {
+        EntityUid target = args.Args.TargetEntity;
+
+        if (!RemComp<AbominationInfectionComponent>(target))
+            return;
+
+        _popup.PopupEntity(Loc.GetString("abomination-infection-cured-counteragent"), target, target);
+    }
+
+    private void OnBodyPartSevered(ref BodyPartSeveredEvent args)
+    {
+        if (!TryComp<AbominationInfectionComponent>(args.Body, out var infection)
+                || args.Part != infection.AnchoredPart
+                || _timing.CurTime - infection.InfectedAt >= infection.AmputationWindow)
+            return;
+
+        RemComp<AbominationInfectionComponent>(args.Body);
+        _popup.PopupEntity(Loc.GetString("abomination-infection-cured-amputation"), args.Body, args.Body);
     }
 
     private void OnAbominationMeleeHit(Entity<AbominationComponent> abomination, ref MeleeHitEvent args)
@@ -156,15 +185,34 @@ public sealed partial class AbominationInfectionSystem : EntitySystem
         infection.InfectedAt = now;
         infection.NextTickAt = now; // apply the first silent poison tick immediately
 
-        // Flat poison — kills an unassisted host in ~3 minutes. RMC humans die
-        // at 275 total damage (crit at 200), so 9 Poison every 6 s crosses the
+        // Flat poison until the amputation window closes (then it ramps, see
+        // Update) — kills an unassisted host in ~3 minutes. RMC humans die at
+        // 275 total damage (crit at 200), so 9 Poison every 6 s crosses the
         // death threshold on the 31st tick at t = 180 s. Crit hits earlier,
         // at ~2:10.
         // Must be the damage *type* "Poison" — "Toxin" is a damage *group*
         // (Poison + Radiation) and DamageableSystem only applies per-type keys.
         infection.TickDamage = new();
         infection.TickDamage.DamageDict["Poison"] = 9;
+        infection.AnchoredPart = PickAnchorPart(target);
         Dirty(target, infection);
+    }
+
+    /// <summary>
+    ///     Head and torso can't be anchored, and they can't be severed. Animal
+    ///     hosts may have no Arm/Leg parts at all; they get no anchor and rely
+    ///     on the counteragent (or just die).
+    /// </summary>
+    private EntityUid? PickAnchorPart(EntityUid target)
+    {
+        List<EntityUid> limbs = new();
+        foreach (var (partUid, part) in _body.GetBodyChildren(target))
+        {
+            if (part.PartType is BodyPartType.Arm or BodyPartType.Leg)
+                limbs.Add(partUid);
+        }
+
+        return limbs.Count == 0 ? null : _random.Pick(limbs);
     }
 
     /// <summary>

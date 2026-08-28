@@ -225,3 +225,34 @@
     useDelay: 1
   - type: InstantAction
     event: !type:Content.Shared._CMU14.Threats.Mobs.Abomination.AbominationMimicRevertActionEvent
+
+# --- Tactical map ---
+
+- type: entity
+  parent: ActionAbominationBase
+  id: ActionAbominationOpenTacticalMap
+  name: Open Tactical Map
+  description: See the positions of your fellow abominations.
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    icon:
+      sprite: _RMC14/Structures/Machines/map_table.rsi
+      state: maptable
+  - type: InstantAction
+    event: !type:OpenTacticalMapActionEvent
+
+- type: entity
+  parent: ActionAbominationBase
+  id: ActionAbominationMimicDrawVenom
+  name: Secrete Clotted Syringe
+  description: Draw a syringe of your own essence. Indistinguishable from a normal injection.
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    icon:
+      sprite: Objects/Specific/Chemistry/syringe.rsi
+      state: syringe_base0
+    useDelay: 120
+  - type: InstantAction
+    event: !type:AbominationMimicDrawVenomActionEvent
