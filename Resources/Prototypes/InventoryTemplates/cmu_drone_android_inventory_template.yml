@@ -111,16 +111,6 @@
       - type: AllowSuitStorage
       displayName: Suit Storage
       
-    - name: id
-      slotTexture: id
-      fullTextureName: template_small
-      slotFlags: IDCARD
-      slotGroup: SecondHotbar
-      stripTime: 6
-      uiWindowPos: 2,1
-      strippingWindowPos: 2,4
-#      dependsOn: jumpsuit
-      displayName: ID
       
     - name: belt
       slotTexture: belt
