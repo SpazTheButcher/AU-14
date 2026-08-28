@@ -42,10 +42,17 @@
           AU14AbominationFleshKudzuSource:
             min: 1
             max: 1
+  - type: MotionDetectorTracked
+  - type: TacticalMapTracked
+  - type: AbominationMapTracked
+  - type: TacticalMapIcon
+    icon:
+      sprite: /Textures/_RMC14/Interface/map_blips.rsi
+      state: pylon
   # Spawning is GLOBAL — see AbominationNestSpawnSystem. Every tick the
   # server picks one random nest in the world and spawns one non-mimic
-  # caste at it. Base cadence is 360s with one nest; each extra placed
-  # nest speeds the global rate by 5%.
+  # caste at it. Base cadence is 240s with one nest; each extra placed
+  # nest shaves 5s off the interval, floored at 60s.
   - type: AbominationFleshNest
   - type: UserIFF
     factions:

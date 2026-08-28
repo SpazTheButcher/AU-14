@@ -108,6 +108,7 @@ public abstract partial class SharedTacticalMapSystem : EntitySystem // CMU14 Cl
             ent.Comp.Govfor = true;
             ent.Comp.Clf = true;
             ent.Comp.WeYu = true; // CMU14
+            ent.Comp.Abomination = true; // CMU14
             ent.Comp.LiveUpdate = true;
         }
 

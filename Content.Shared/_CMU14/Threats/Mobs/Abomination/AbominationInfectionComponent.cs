@@ -9,18 +9,39 @@ namespace Content.Shared._CMU14.Threats.Mobs.Abomination;
 ///     with abomination venom). There are no visible symptoms — no cough, no
 ///     jitter, no vomit, no drunkenness, no scream — so neither the host nor
 ///     anyone around them can tell they carry it. The infection still works
-///     quietly: a flat poison tick drains the host until they die, and any
+///     quietly: a poison tick drains the host until they die, and any
 ///     death while infected reclaims the body as an abomination (seeding flesh
-///     kudzu at the corpse). Survive long enough and the infection burns out
-///     on its own. The horror is the not knowing — the colony falls to its own
-///     paranoia.
+///     kudzu at the corpse). The flesh roots in one limb — severing that limb
+///     while the infection is still local cures it (the limb is destroyed,
+///     prosthetic or nothing); past that window it goes systemic, the poison
+///     ramps past what anti-toxin can hold, and only the WY counteragent
+///     still cures. There is no free timeout.
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState, AutoGenerateComponentPause]
 public sealed partial class AbominationInfectionComponent : Component
 {
-    /// <summary>How long until the infection is automatically cured if the host is still alive.</summary>
+    /// <summary>
+    ///     Body part the flesh is anchored to. Which limb is hidden from the
+    ///     host and from medbay — amputation inside the window is a dice roll.
+    ///     Null when the host has no severable limbs (animals).
+    /// </summary>
+    [DataField]
+    public EntityUid? AnchoredPart;
+
+    /// <summary>
+    ///     How long after infection the flesh stays local. Severing
+    ///     <see cref="AnchoredPart" /> inside this window cures; afterwards the
+    ///     infection is systemic and the poison starts ramping.
+    /// </summary>
     [DataField, AutoNetworkedField]
-    public TimeSpan CureAfter = TimeSpan.FromMinutes(15);
+    public TimeSpan AmputationWindow = TimeSpan.FromMinutes(4);
+
+    /// <summary>
+    ///     Poison added to every tick after the amputation window closes —
+    ///     anti-toxin can buy time but can no longer keep up.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public int PostWindowTickDamageGain = 2;
 
     [DataField(customTypeSerializer: typeof(TimeOffsetSerializer)), AutoNetworkedField, AutoPausedField]
     public TimeSpan InfectedAt;
