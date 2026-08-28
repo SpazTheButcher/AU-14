@@ -215,7 +215,7 @@ public sealed partial class CMDistressSignalRuleSystem : GameRuleSystem<CMDistre
     private string? _cmuPlanetMapName; // CMU14
 
     [ViewVariables]
-    public string? SelectedPlanetMapName => SelectedPlanetMap?.Proto.Name;
+    public string? SelectedPlanetMapName => SelectedPlanetMap?.Proto.Name ?? _cmuPlanetMapName; // CMU14
 
     [ViewVariables]
     public string? OperationName { get; private set; }
@@ -820,6 +820,7 @@ public sealed partial class CMDistressSignalRuleSystem : GameRuleSystem<CMDistre
     {
 
         _config.SetCVar(CCVars.GameDisallowLateJoins, false);
+        _cmuPlanetMapName = null; // CMU14
 
         if (!_autoBalance)
             return;
@@ -1749,6 +1750,14 @@ public sealed partial class CMDistressSignalRuleSystem : GameRuleSystem<CMDistre
     {
         OperationName = customname;
         _usingCustomOperationName = true;
+    }
+
+    // CMU14 method: rule-less presets (e.g. CMU DistressSignal) feed planet/operation names in for
+    // the tactical map and marine announcements; reuses the classic generator, honoring admin-custom names
+    public void SetCmuRoundInfo(string? planetMapName)
+    {
+        _cmuPlanetMapName = planetMapName;
+        OperationName = GetRandomOperationName();
     }
 
     private void StartPlanetVote()
