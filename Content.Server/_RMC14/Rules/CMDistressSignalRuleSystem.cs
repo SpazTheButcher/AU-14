@@ -133,6 +133,7 @@ public sealed partial class CMDistressSignalRuleSystem : GameRuleSystem<CMDistre
     [Dependency] private MarineAnnounceSystem _marineAnnounce = default!;
     [Dependency] private MindSystem _mind = default!;
     [Dependency] private MobStateSystem _mobState = default!;
+    [Dependency] private IGameMapManager _gameMap = default!; // CMU14: warship name for ARES announcements
     [Dependency] private IPlayerManager _player = default!;
     [Dependency] private PlayTimeTrackingSystem _playTime = default!;
     [Dependency] private IServerPreferencesManager _prefsManager = default!;
@@ -1694,7 +1695,8 @@ public sealed partial class CMDistressSignalRuleSystem : GameRuleSystem<CMDistre
                 component.StartARESAnnouncements &&
                 SelectedPlanetMap.Value.Comp.Announcement is { } announcement)
             {
-                _marineAnnounce.AnnounceARESStaging(default, announcement, announcement: "rmc-announcement-ares-map");
+                _marineAnnounce.AnnounceARESStaging(default, announcement, announcement: "rmc-announcement-ares-map",
+                    ship: GetWarshipName(_gameMap.GetSelectedMap())); // CMU14
             }
         }
 
@@ -1758,6 +1760,25 @@ public sealed partial class CMDistressSignalRuleSystem : GameRuleSystem<CMDistre
     {
         _cmuPlanetMapName = planetMapName;
         OperationName = GetRandomOperationName();
+    }
+
+    // CMU14 method: display name of a warship gameMap, from its station's mapNameTemplate
+    // (what StationNameSetup names the ship), falling back to the prototype's mapName
+    public string? GetWarshipName(GameMapPrototype? map)
+    {
+        if (map == null)
+            return null;
+
+        foreach (var station in map.Stations.Values)
+        {
+            foreach (var entry in station.StationComponentOverrides.Values)
+            {
+                if (entry.Component is StationNameSetupComponent setup)
+                    return setup.StationNameTemplate;
+            }
+        }
+
+        return map.MapName;
     }
 
     private void StartPlanetVote()
