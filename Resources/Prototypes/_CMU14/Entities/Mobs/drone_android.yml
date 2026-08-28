@@ -16,14 +16,12 @@
     - type: IntrinsicRadioTransmitter
     - type: ActiveRadio
     - type: CMUDroneAndroid
-  - type: addComponents
-    components:
     - type: PyroWhitelist
     - type: ScoutWhitelist
     - type: DemoSpecWhitelist
     - type: SharpSpecWhitelist
     - type: SniperWhitelist
-  - type: Inventory
+    - type: Inventory
     templateId: cmuDroneAndroid
   - type: HumanoidAppearance
     species: DroneAndroid
