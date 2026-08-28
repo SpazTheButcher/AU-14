@@ -90,6 +90,9 @@ public sealed partial class AbominationInfectionSystem : EntitySystem
 
                 _damageable.TryChangeDamage(uid, infection.TickDamage, true);
 
+                if (!HasComp<AbominationInfectionComponent>(uid))
+                    continue;
+
                 if (removedScream)
                     _emoteOnDamage.AddEmote(uid, HumanScreamEmote, emoteOnDamage);
 
@@ -267,5 +270,7 @@ public sealed partial class AbominationInfectionSystem : EntitySystem
             polymorphId = TurnIntoSpider;
 
         _polymorph.PolymorphEntity(ent.Owner, polymorphId);
+
+        RemComp<AbominationInfectionComponent>(ent.Owner);
     }
 }
