@@ -3,7 +3,7 @@
   alias:
   - colonyfall
   name: Colony Fall
-  showInVote: true
+# showInVote: true # DS-only
   maxPlayers: 60
   description: Live in an offworld colony as it falls into chaos.
   burrowedLarvaEnabled: false
@@ -47,7 +47,7 @@
   alias:
   - insurgency
   name: Insurgency
-  showInVote: true
+# showInVote: true # DS-only
   description: Insurgency mode
   minPlayers: 35
   burrowedLarvaEnabled: false
