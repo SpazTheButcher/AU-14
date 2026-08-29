@@ -30,6 +30,7 @@ using Content.Shared._RMC14.TacticalMap;
 using Content.Shared.Examine;
 using Content.Shared.IdentityManagement;
 using Content.Shared._RMC14.Synth;
+using Content.Shared._RMC14.Weapons.Ranged.Whitelist;
 using Content.Shared.Mind;
 using Content.Shared.Whitelist;
 using Content.Shared._RMC14.Pulling;
@@ -106,6 +107,7 @@ public sealed partial class CMUPathogenWalkerSystem : EntitySystem
         }
 
         RemComp<CMUOrganBlindnessComponent>(target);
+        RemComp<ScoutWhitelistComponent>(target);
         if (TryComp<CMUEyeDamageContributionComponent>(target, out var eyeTracker))
         {
             if (TryComp<BlindableComponent>(target, out var blindable))

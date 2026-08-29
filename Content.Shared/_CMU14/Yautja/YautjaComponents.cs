@@ -348,17 +348,19 @@ public sealed partial class YautjaBracerComponent : Component, IClothingSlots
     [DataField]
     public ProtoId<ExplosionPrototype> SelfDestructExplosion = "RMCOB";
     [DataField]
-    public float SelfDestructTotalIntensity = 2450;
+    public float SelfDestructTotalIntensity = 14000;
     [DataField]
-    public float SelfDestructIntensitySlope = 10;
+    public float SelfDestructIntensitySlope = 16;
     [DataField]
-    public float SelfDestructMaxIntensity = 98;
+    public float SelfDestructMaxIntensity = 150;
     [DataField]
-    public int SelfDestructMaxTileBreak = 3;
+    public int SelfDestructMaxTileBreak = 5;
     [DataField]
     public TimeSpan SelfDestructWarningEvery = TimeSpan.FromSeconds(1);
     [DataField]
     public float SelfDestructGibSplatModifier = 5f;
+    [DataField]
+    public float SelfDestructGibRadius = 3.5f;
     [DataField]
     public float SelfDestructEquipmentDestroyRadius = 2f;
 
