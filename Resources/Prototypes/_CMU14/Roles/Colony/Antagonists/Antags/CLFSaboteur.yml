@@ -65,7 +65,10 @@
   id: CMUSatchelCLF
   suffix: CLF Saboteur
   components:
+  - type: IgnoreContentsSize
+    items:
+      sizes:
+      - Huge
   - type: Storage
-    maxItemSize: Huge
     grid:
     - 0,0,19,3
