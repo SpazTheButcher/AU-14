@@ -10405,5 +10405,68 @@
   id: 666
   time: '2026-08-28T14:21:30.0000000+00:00'
   url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1876
+- author: maertayn
+  changes:
+  - message: Update planet brief announcement to show the correct warship (dynamic)
+    type: Tweak
+  - message: Yautja bracer overload/self-destruct can gib within 4-tiles and the explosion
+      blast is more dangerous/capable
+    type: Tweak
+  - message: Hijack permitted for Skitter & Yautjas
+    type: Fix
+  - message: Abom infection tweaks, can now appear in hands/feet as well as arms/legs
+    type: Tweak
+  - message: Show abom flesh infection's limb location on the health scanner, severing
+      a limb can cure if you're quick - be too late and the scanner will say it's
+      systemic (only cured by antidote/counteragent)
+    type: Add
+  - message: Govfor/Opfor HM receive the JTAC headset to communicate with air (for
+      evacs)
+    type: Add
+  - message: Specialist weapons are now locked to their class behind whitelists (requires
+      pamphlets to obtain) - SMAW not included (yet?)
+    type: Add
+  - message: Sprinter/popper sprites & pathogen mob stances raised so pheromone auras
+      are more visible (WIP)
+    type: Fix
+  - message: Pathogen walker unable to interact with backpacks (their scout cloak)
+    type: Fix
+  - message: Delete planet-bound xenos/neomorphs during Hijack
+    type: Fix
+  - message: Crit recovery healing (no resting requirement) for xenomorphs
+    type: Add
+  - message: Show build ghosts/purple markers for Overmind (when in eye)
+    type: Fix
+  - message: Drone bull evolution
+    type: Fix
+  id: 667
+  time: '2026-08-29T05:29:48.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1879
+- author: Operator
+  changes:
+  - message: Grenade Detonation Modes [Impact+Timed]
+    type: Add
+  - message: Gave all 30mm grenade types the GrenadeDetonationMode tag, allowing all
+      30mm base types [starting with HEDP] to toggle between an impact mode and explosive
+      mode.
+    type: Tweak
+  id: 668
+  time: '2026-08-29T05:30:14.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1869
+- author: ararajdadasdasda
+  changes:
+  - message: weapon specialist whitelists to drone
+    type: Add
+  id: 669
+  time: '2026-08-29T06:24:13.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1875
+- author: maertayn
+  changes:
+  - message: Strip friendly IFF from yautja thralls, abom mimics, pathogen walkers
+      default items - can still pickup another id card receive friendly IFF
+    type: Fix
+  id: 670
+  time: '2026-08-29T07:25:33.0000000+00:00'
+  url: https://github.com/AU-14/ColonialMarinesUniverse/pull/1880
 Name: CMU
 Order: -1
