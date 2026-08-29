@@ -103,7 +103,7 @@
     hiddenFromChatWindow: true
   - type: MotionDetectorTracked
   - type: DropshipHijacker
-    HijackDoAfterSeconds: 15
+    hijackDoAfterSeconds: 15
 
 - type: entity
   parent: CMUMobYautja

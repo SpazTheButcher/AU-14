@@ -46,4 +46,4 @@
     baseWalkSpeed: 2.76
     baseSprintSpeed: 4.83
   - type: DropshipHijacker
-    HijackDoAfterSeconds: 30
+    hijackDoAfterSeconds: 30
