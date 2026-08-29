@@ -88,6 +88,7 @@ public sealed partial class YautjaThrallSystem : EntitySystem
         SubscribeLocalEvent<YautjaThrallComponent, ComponentRemove>(OnThrallRemoved);
         SubscribeLocalEvent<YautjaThrallComponent, TakeGhostRoleEvent>(OnThrallTakeGhostRole);
         SubscribeLocalEvent<YautjaThrallComponent, IsEquippingTargetAttemptEvent>(OnThrallEquipAttempt);
+        SubscribeLocalEvent<MobStateChangedEvent>(OnMobStateChanged);
         SubscribeLocalEvent<YautjaHivebrokenXenoComponent, RefreshNameModifiersEvent>(OnHivebrokenRefreshName);
 
         SubscribeLocalEvent<YautjaBracerComponent, YautjaLinkThrallBracerActionEvent>(OnLinkThrallBracer);
@@ -223,6 +224,29 @@ public sealed partial class YautjaThrallSystem : EntitySystem
 
         if (args.Kind == YautjaMarkKind.Thrall)
             ReleaseThrall(args.Target, thrall, args.Hunter);
+    }
+
+    private void OnMobStateChanged(MobStateChangedEvent args)
+    {
+        if (args.NewMobState != MobState.Dead)
+            return;
+
+        var master = args.Target;
+        var raised = new List<EntityUid>();
+        var query = EntityQueryEnumerator<YautjaThrallComponent>();
+        while (query.MoveNext(out var uid, out var comp))
+        {
+            if (comp.Master == master && comp.RaisedByBracer != null)
+                raised.Add(uid);
+        }
+
+        foreach (var uid in raised)
+        {
+            _mob.ChangeMobState(uid, MobState.Dead, origin: master);
+            RemCompDeferred<YautjaThrallComponent>(uid);
+            _adminLog.Add(LogType.Action, LogImpact.High,
+                $"{ToPrettyString(master):master} died; raised thrall {ToPrettyString(uid):thrall} is unbound and dies");
+        }
     }
 
     private void OnThrallRemoved(Entity<YautjaThrallComponent> ent, ref ComponentRemove args)
@@ -549,6 +573,12 @@ public sealed partial class YautjaThrallSystem : EntitySystem
             return;
         }
 
+        if (ent.Comp.MaxRaiseThrall > 0 && CountAliveThralls(ent.Owner) >= ent.Comp.MaxRaiseThrall)
+        {
+            _popup.PopupEntity(Loc.GetString("cmu-yautja-thrall-raise-limit"), user, user, PopupType.SmallCaution);
+            return;
+        }
+
         if (!_power.HasPowerPopup(user, ent.Comp.RaiseThrallCost))
             return;
 
@@ -562,6 +592,13 @@ public sealed partial class YautjaThrallSystem : EntitySystem
 
         MakeThrall(user, target, "Raised from the dead");
 
+        if (TryComp(target, out YautjaThrallComponent? raisedComp))
+        {
+            raisedComp.Raised = true;
+            raisedComp.RaisedByBracer = ent.Owner;
+            Dirty(target, raisedComp);
+        }
+
         if (TryComp(target, out HumanoidAppearanceComponent? humanoid)
             && !HasComp<YautjaComponent>(target))
         {
@@ -569,14 +606,11 @@ public sealed partial class YautjaThrallSystem : EntitySystem
             {
                 thrallComp.OriginalSkinColor = humanoid.SkinColor;
                 thrallComp.OriginalEyeColor = humanoid.EyeColor;
-                thrallComp.Raised = true;
             }
 
             _humanoid.SetSkinColor(target, Color.FromHex("#8f9a8b"), true, false, humanoid);
             humanoid.EyeColor = Color.FromHex("#b8d94a");
             Dirty(target, humanoid);
-            if (TryComp(target, out YautjaThrallComponent? raised))
-                Dirty(target, raised);
 
             foreach (var slot in StrippedOnRaiseSlots)
             {
@@ -908,6 +942,19 @@ public sealed partial class YautjaThrallSystem : EntitySystem
             RemComp<YautjaHivebrokenXenoComponent>(target);
 
         _nameModifier.RefreshNameModifiers(target);
+    }
+
+    private int CountAliveThralls(EntityUid bracer)
+    {
+        var count = 0;
+        var query = EntityQueryEnumerator<YautjaThrallComponent>();
+        while (query.MoveNext(out var uid, out var comp))
+        {
+            if (comp.RaisedByBracer == bracer && !_mob.IsDead(uid))
+                count++;
+        }
+
+        return count;
     }
 
     private bool TryFindThrall(EntityUid master, out Entity<YautjaThrallComponent> thrall)

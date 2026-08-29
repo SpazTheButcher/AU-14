@@ -19,7 +19,7 @@
   alias:
   - distresssignal
   name: Distress Signal
-  showInVote: true
+# showInVote: true # Ins-Only
   description: Investigate a mysterious distress signal as government forces.
   requiresGovforVote: true
   supportedPlanets:
@@ -47,7 +47,7 @@
   alias:
   - insurgency
   name: Insurgency
-# showInVote: true # DS-only
+  showInVote: true
   description: Insurgency mode
   minPlayers: 35
   burrowedLarvaEnabled: false

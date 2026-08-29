@@ -871,6 +871,13 @@ public sealed partial class SquadLeaderTrackerSystem : EntitySystem
             // If the tracker is tracking an entity, point towards the target.
             if (tracker.Target != null)
             {
+                if (TerminatingOrDeleted(tracker.Target.Value)) // CMU14: target can die while tracked
+                {
+                    tracker.Target = null;
+                    Dirty(uid, tracker);
+                    continue;
+                }
+
                 if (_squadMemberQuery.TryComp(tracker.Target, out var targetSquad) && targetSquad.Squad != null)
                     targetSquadName = Name(targetSquad.Squad.Value);
 

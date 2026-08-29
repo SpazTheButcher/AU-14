@@ -209,6 +209,9 @@ public sealed partial class YautjaBracerComponent : Component, IClothingSlots
     };
 
     [DataField]
+    public int MaxRaiseThrall;
+
+    [DataField]
     public EntProtoId OpenBracerMenuActionId = "CMUActionYautjaOpenBracerMenu";
     [ViewVariables]
     public EntityUid? OpenBracerMenuAction;
@@ -576,6 +579,9 @@ public sealed partial class YautjaThrallComponent : Component
 
     [DataField, AutoNetworkedField]
     public bool Raised;
+
+    [DataField, AutoNetworkedField]
+    public EntityUid? RaisedByBracer;
 
     // Raised thralls wear the corruption on their skin; kept to restore on release.
     public Color? OriginalSkinColor;
