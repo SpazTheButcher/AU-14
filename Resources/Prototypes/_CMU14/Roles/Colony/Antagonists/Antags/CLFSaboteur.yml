@@ -43,7 +43,7 @@
 - type: startingGear
   id: CMUGearCLFSaboteur
   equipment:
-    back: CMSatchel
+    back: CMUSatchelCLF
     pocket1: CMHandsLatex
     pocket2: CMMultitool
   storage:
@@ -59,3 +59,13 @@
     - AU14IEDLarge
     - AU14IED
     - AU14IED
+
+- type: entity
+  parent: CMSatchel
+  id: CMUSatchelCLF
+  suffix: CLF Saboteur
+  components:
+  - type: Storage
+    maxItemSize: Huge
+    grid:
+    - 0,0,19,3
