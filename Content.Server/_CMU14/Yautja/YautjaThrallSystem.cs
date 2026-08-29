@@ -1,6 +1,7 @@
 using Content.Server.Chat.Managers;
 using Content.Server._CMU14.Language;
 using Content.Server._CMU14.Round.Objectives;
+using Content.Server._CMU14.Weapons.Ranged;
 using Content.Server.Electrocution;
 using Content.Server.Ghost.Roles.Components;
 using Content.Shared._CMU14.Yautja;
@@ -55,6 +56,7 @@ public sealed partial class YautjaThrallSystem : EntitySystem
     [Dependency] private ElectrocutionSystem _electrocution = default!;
     [Dependency] private NpcFactionSystem _faction = default!;
     [Dependency] private GunIFFSystem _iff = default!;
+    [Dependency] private CMUHostileIFFSystem _hostileIFF = default!;
     [Dependency] private SharedXenoHiveSystem _hive = default!;
     [Dependency] private SharedXenoAnnounceSystem _xenoAnnounce = default!;
     [Dependency] private InventorySystem _inventory = default!;
@@ -782,7 +784,7 @@ public sealed partial class YautjaThrallSystem : EntitySystem
 
     private void SetHivebrokenIffFaction(EntityUid target, YautjaHivebreakerComponent hivebreaker)
     {
-        _iff.ClearUserFactions(target);
+        _hostileIFF.StripIFF(target);
         _iff.AddUserFaction(target, hivebreaker.ThrallIffFaction);
     }
 
