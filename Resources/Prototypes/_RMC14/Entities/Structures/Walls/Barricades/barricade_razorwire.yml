@@ -28,7 +28,6 @@
       collection: FootstepBarbedWire
       params:
         volume: 8
-  - type: SpiderWebObject #This makes people get slowed when walking over it
   - type: MeleeSound
     soundGroups:
       Brute:
