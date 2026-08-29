@@ -82,7 +82,8 @@ public sealed class CMUHijackExtrasSystem : EntitySystem
 
     private void OnDropshipHijackStart(ref DropshipHijackStartEvent ev)
     {
-        if (ev.IsHumanHijack || HasActiveDistressRule())
+        if (ev.HijackerType is DropshipHijackerType.Human or DropshipHijackerType.Other
+            || HasActiveDistressRule())
             return;
 
         // Classic rule deletes planet-bound xenos here; mirror it so stranded neomorphs can't
@@ -128,6 +129,9 @@ public sealed class CMUHijackExtrasSystem : EntitySystem
 
             xenoAmount++;
         }
+
+        if (ev.HijackerType == DropshipHijackerType.Pathogen)
+            return;
 
         var shipMapIds = new HashSet<MapId>();
         var almayerQuery = EntityQueryEnumerator<AlmayerComponent, TransformComponent>();
