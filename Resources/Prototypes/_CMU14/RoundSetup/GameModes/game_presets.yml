@@ -3,8 +3,8 @@
   alias:
   - colonyfall
   name: Colony Fall
-# showInVote: true # DS-only
-  maxPlayers: 60
+  showInVote: true
+  maxPlayers: 30
   description: Live in an offworld colony as it falls into chaos.
   burrowedLarvaEnabled: false
   supportedPlanets:
@@ -24,7 +24,7 @@
   requiresGovforVote: true
   supportedPlanets:
 # - CMUPlanetStableGarrisonRedux # Govfor can hunker-down in Garrison; can be rushed by threats
-#  - AUPlanetShepherdsPride
+# - AUPlanetShepherdsPride # lot of forests/chokes
   - CMUPlanetHopesRetreat
 # - AUPlanetLV747 # Solaris Gulch
 # - AUPlanetLV759 # Hybrisa Metro # missing threat spawns, scenario fails
