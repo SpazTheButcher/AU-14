@@ -19,6 +19,15 @@
         sound: "/Audio/Ambience/Antag/headrev_start.ogg"
       components:
       - type: Fugitive
+      - type: ColonyBounty
+        bounty: 1550
+        reason: Fugitive from justice
+        recordNamePrefix: "Fugitive: "
+        attachToOwnRecord: true
+        includePrints: true
+        includeDna: true
+        deadCounts: false
+        capturedFaxPaper: AUPaperFugitiveCaptured
       mindRoles:
       - MindRoleFugitive
       startingGear: AU14GearFugitive

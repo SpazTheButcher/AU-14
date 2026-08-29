@@ -1,3 +1,4 @@
+using System.Numerics; // CMU14
 using Content.Server._RMC14.NPC.Components;
 using Content.Server.DoAfter;
 using Content.Server.Interaction;

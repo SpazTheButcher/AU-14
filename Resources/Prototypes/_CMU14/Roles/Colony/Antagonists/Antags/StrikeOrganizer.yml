@@ -44,15 +44,25 @@
   id: AU14GearStrikeOrganizer
   equipment:
     back: AU14StrikeOrganizerBackpack
+    pocket1: CMUStrikePetition
 
 - type: entity
-  parent: RMCBackpackRTO
+  parent: Paper
+  id: CMUStrikePetition
+  name: strike petition
+  description: A petition demanding better conditions and pay. Use it in hand to sign.
+  components:
+  - type: StrikePetition
+    goal: 12
+
+- type: entity
+  parent: RMCBackpackRTO # TODO: verify against NewComms
   id: AU14StrikeOrganizerBackpack
   name: organizer's radio pack
-  description: A radio telephone pack carried by a labor organize.
+  description: A radio telephone pack carried by a labor organizer.
   components:
   - type: StorageFill
     contents:
     - id: RMCMegaphone
     - id: RMCSpaceCash1000
-      amount: 2
+      amount: 4

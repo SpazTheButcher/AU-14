@@ -24,6 +24,13 @@
         canUseGuns: true
         hideGeneration: true
         useHumanHealthIcons: true
+      - type: ColonyBounty
+        bounty: 2800
+        reason: Defective Equipment
+        recordName: Runaway Synthetic
+        cuffedCounts: false
+        capturedFaxPaper: AUPaperRunawaySynthDead
+        capturedFaxExtraRecipient: Colony Administrator
       - type: Skills
         skills:
           RMCSkillCqc: 4

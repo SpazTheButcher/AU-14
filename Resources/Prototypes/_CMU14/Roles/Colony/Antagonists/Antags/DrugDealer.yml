@@ -20,6 +20,13 @@
       startingGear: AU14GearDrugDealer
       components:
       - type: DrugDealer
+      - type: ColonyBounty
+        bounty: 1225
+        reason: Distribution of controlled substances - wanted alive for prosecution
+        recordName: Narcotics Dealer (Unknown)
+        includePrints: true
+        deadCounts: false
+        capturedFaxPaper: CMUPaperColonyAntagCaptured
       mindRoles:
       - MindRoleDrugDealer
 
@@ -54,12 +61,12 @@
   - type: StorageFill
     contents:
     - id: Joint
-      amount: 3
+      amount: 7
     - id: AU14DrugDealerDrugBottle
-      amount: 4
+      amount: 5
     - id: AU14PillBottleSpaceDrugs
-      amount: 3
+      amount: 6
     - id: RMCSyringeDrugs
-      amount: 2
+      amount: 3
     - id: AU14PillBottleRMCPsilocybin
-      amount: 2
+      amount: 4

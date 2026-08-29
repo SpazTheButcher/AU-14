@@ -19,6 +19,12 @@
         sound: "/Audio/Ambience/Antag/headrev_start.ogg"
       components:
       - type: SerialKiller
+      - type: ColonyBounty
+        bounty: 2250
+        reason: Wanted for multiple homicides - suspect at large
+        recordName: Serial Killer (Unknown)
+        includePrints: true
+        capturedFaxPaper: AUPaperSerialKillerCaptured
       mindRoles:
       - MindRoleSerialKiller
 

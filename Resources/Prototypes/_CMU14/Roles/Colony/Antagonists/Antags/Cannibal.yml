@@ -16,6 +16,7 @@
         text: cannibal-role-greeting
         color: DarkRed
         sound: "/Audio/Ambience/Antag/headrev_start.ogg"
+      startingGear: AU14GearCannibal
       components:
       - type: Cannibal
       mindRoles:
@@ -37,3 +38,8 @@
   name: roles-antag-cannibal-name
   setPreference: true
   objective: roles-antag-cannibal-objective
+
+- type: startingGear
+  id: AU14GearCannibal
+  equipment:
+    pocket1: KitchenKnife

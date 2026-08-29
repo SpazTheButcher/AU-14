@@ -27,6 +27,11 @@
       startingGear: AU14GearCLFVeteran
       components:
       - type: CLFVeteran
+      - type: ColonyBounty
+        bounty: 1450
+        reason: Known CLF insurgent - armed and dangerous
+        recordName: CLF Veteran (Unknown)
+        capturedFaxPaper: AUPaperCLFVeteranCaptured
       - type: Skills
         skills:
           RMCSkillFirearms: 3
