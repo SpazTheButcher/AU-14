@@ -133,6 +133,7 @@
   - type: YautjaBracer
     enableRecall: false
     enableRaiseThrall: true
+    maxRaiseThrall: 3
     cloakDuration: 8
     cloakCooldown: 30
     cloakWarningBefore: 3
