@@ -1,0 +1,9 @@
+- type: entity
+  parent: BaseGameRule
+  id: SubvertedSynth
+  components:
+  - type: SubvertedSynthRule
+  - type: AntagSelection
+    selectionTime: PostPlayerSpawn
+    definitions:
+    - prefRoles: [ CLFSubvertedSynthRole ]
