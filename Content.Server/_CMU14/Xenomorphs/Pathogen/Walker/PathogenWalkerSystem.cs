@@ -26,6 +26,7 @@ using Content.Server.Radio.Components;
 using Content.Server.Ghost.Roles.Components;
 using Robust.Shared.Player;
 using Content.Server.Mind;
+using Content.Server._CMU14.Weapons.Ranged;
 using Content.Shared._RMC14.TacticalMap;
 using Content.Shared.Examine;
 using Content.Shared.IdentityManagement;
@@ -60,6 +61,7 @@ public sealed partial class CMUPathogenWalkerSystem : EntitySystem
     [Dependency] private  ISharedPlayerManager _player = default!;
     [Dependency] private  MindSystem _mind = default!;
     [Dependency] private  BlindableSystem _blindable = default!;
+    [Dependency] private CMUHostileIFFSystem _hostileIFF = default!;
 
     private static readonly ProtoId<NpcFactionPrototype> WalkerFaction = "CMU14PathogenWalker";
     private static readonly ProtoId<DamageGroupPrototype> BruteGroup = "Brute";
@@ -116,6 +118,7 @@ public sealed partial class CMUPathogenWalkerSystem : EntitySystem
         }
 
         _faction.AddFaction(target, WalkerFaction);
+        _hostileIFF.StripIFF(target);
         _language.SetExclusiveLanguage(target, "Pathogen");
 
         EnsureComp<IntrinsicRadioReceiverComponent>(target);
