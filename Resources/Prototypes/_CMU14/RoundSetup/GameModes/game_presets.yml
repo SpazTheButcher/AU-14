@@ -4,7 +4,7 @@
   - colonyfall
   name: Colony Fall
   showInVote: true
-  maxPlayers: 30
+  maxPlayers: 35
   description: Live in an offworld colony as it falls into chaos.
   burrowedLarvaEnabled: false
   supportedPlanets:
@@ -49,7 +49,7 @@
   name: Insurgency
   showInVote: true
   description: Insurgency mode
-  minPlayers: 35
+  minPlayers: 30
   burrowedLarvaEnabled: false
   requiresGovforVote: true
   thirdPartyAutoSpawn: true
