@@ -195,11 +195,14 @@ public sealed partial class DropshipSystem : SharedDropshipSystem
                 }
 
                 _alertLevelSystem.Set(RMCAlertLevels.Red, _dropshipId, false, false);
-                _marineAnnounce.AnnounceToMarines(Loc.GetString("rmc-announcement-unidentified-lifesigns",
-                    ("name", dropshipName),
-                    ("count", xenoCount)),
-                    dropship.UnidentifledlifesignsSound,
-                    faction: victimFaction);
+
+                // CMU14: (opt-in) only shuttles whose nav computer declares a faction announce
+                if (victimFaction != null)
+                    _marineAnnounce.AnnounceToMarines(Loc.GetString("rmc-announcement-unidentified-lifesigns",
+                        ("name", dropshipName),
+                        ("count", xenoCount)),
+                        dropship.UnidentifledlifesignsSound,
+                        faction: victimFaction);
             }
         }
     }
