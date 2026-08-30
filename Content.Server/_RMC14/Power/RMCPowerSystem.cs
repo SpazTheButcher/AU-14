@@ -311,9 +311,9 @@ public sealed partial class RMCPowerSystem : SharedRMCPowerSystem
             }
 
             // CMU14: receivers whose grid was already mid-deletion get skipped by OnReceiverRemove and stay stale in these sets
-            if (areaPower.EquipmentReceivers.RemoveWhere(TerminatingOrDeleted) > 0
-                    || areaPower.LightingReceivers.RemoveWhere(TerminatingOrDeleted) > 0
-                    || areaPower.EnvironmentReceivers.RemoveWhere(TerminatingOrDeleted) > 0)
+            if (areaPower.EquipmentReceivers.RemoveWhere(e => TerminatingOrDeleted(e)) > 0
+                    || areaPower.LightingReceivers.RemoveWhere(e => TerminatingOrDeleted(e)) > 0
+                    || areaPower.EnvironmentReceivers.RemoveWhere(e => TerminatingOrDeleted(e)) > 0)
                 Dirty(uid, areaPower);
 
             if (_toRemove.Count > 0)

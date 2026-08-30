@@ -575,7 +575,7 @@ public sealed partial class YautjaThrallComponent : Component
 {
 
     [DataField, AutoNetworkedField]
-    public EntityUid Master;
+    public EntityUid? Master;
 
     [DataField, AutoNetworkedField]
     public bool Raised;

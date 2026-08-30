@@ -1193,10 +1193,11 @@ public sealed partial class YautjaThrallSystem : EntitySystem
         receiver = default;
         if (!CanUseThrallBracer(bracer, user)
                 || !TryComp(user, out YautjaThrallComponent? thrall)
-                || Deleted(thrall.Master))
+                || thrall.Master is not { } master
+                || Deleted(master))
             return false;
 
-        receiver = thrall.Master;
+        receiver = master;
         return true;
     }
 

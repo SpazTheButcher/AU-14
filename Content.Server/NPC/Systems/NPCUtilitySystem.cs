@@ -1,5 +1,5 @@
 using System.Linq;
-using Content.Server._CMU14.NPC; // CMU14
+using Content.Server._CMU14.Weapons.Ranged; // CMU14
 using Content.Server._RMC14.NPC;
 using Content.Server.Fluids.EntitySystems;
 using Content.Server.Hands.Systems;
