@@ -89,6 +89,7 @@ public sealed partial class YautjaThrallSystem : EntitySystem
         SubscribeLocalEvent<YautjaThrallComponent, TakeGhostRoleEvent>(OnThrallTakeGhostRole);
         SubscribeLocalEvent<YautjaThrallComponent, IsEquippingTargetAttemptEvent>(OnThrallEquipAttempt);
         SubscribeLocalEvent<MobStateChangedEvent>(OnMobStateChanged);
+        SubscribeLocalEvent<YautjaComponent, EntityTerminatingEvent>(OnMasterTerminating);
         SubscribeLocalEvent<YautjaHivebrokenXenoComponent, RefreshNameModifiersEvent>(OnHivebrokenRefreshName);
 
         SubscribeLocalEvent<YautjaBracerComponent, YautjaLinkThrallBracerActionEvent>(OnLinkThrallBracer);
@@ -246,6 +247,19 @@ public sealed partial class YautjaThrallSystem : EntitySystem
             RemCompDeferred<YautjaThrallComponent>(uid);
             _adminLog.Add(LogType.Action, LogImpact.High,
                 $"{ToPrettyString(master):master} died; raised thrall {ToPrettyString(uid):thrall} is unbound and dies");
+        }
+    }
+
+    private void OnMasterTerminating(EntityUid uid, YautjaComponent comp, ref EntityTerminatingEvent args)
+    {
+        var query = EntityQueryEnumerator<YautjaThrallComponent>();
+        while (query.MoveNext(out var thrallId, out var thrall))
+        {
+            if (thrall.Master != uid)
+                continue;
+
+            thrall.Master = null;
+            ClearThrallLinks(thrallId, thrall);
         }
     }
 

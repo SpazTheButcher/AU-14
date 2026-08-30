@@ -1077,9 +1077,11 @@
   suffix: Yautja, Filled
   components:
   - type: Storage
-    maxItemSize: Small
     grid:
-    - 0,0,7,1
+    - 0,0,15,1
+    whitelist:
+      components:
+      - YautjaMedicalItem
   - type: StorageFill
     contents:
     - id: CMUYautjaAdvancedBruisePack

@@ -1245,12 +1245,6 @@ public sealed partial class YautjaTrophyComponent : Component
     public YautjaTrophyKind Kind;
 
     [DataField, AutoNetworkedField]
-    public EntityUid? Source;
-
-    [DataField, AutoNetworkedField]
-    public EntityUid? Hunter;
-
-    [DataField, AutoNetworkedField]
     public string SourceName = string.Empty;
 
     [DataField, AutoNetworkedField]
