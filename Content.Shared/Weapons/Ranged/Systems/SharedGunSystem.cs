@@ -30,6 +30,7 @@ using Content.Shared.Hands;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Popups;
 using Content.Shared.Projectiles;
+using Content.Shared.Stacks; // CMU14
 using Content.Shared.Stunnable;
 using Content.Shared.Tag;
 using Content.Shared.Throwing;
@@ -1099,7 +1100,11 @@ public abstract partial class SharedGunSystem : EntitySystem
         }
 
         if (TryComp<CartridgeAmmoComponent>(entity, out var spent) && spent.Spent) // CMU14
+        {
             EnsureComp<CMUSpentCasingComponent>(entity).EjectedAt = Timing.CurTime;
+            // CMU14: spent casings must not stack with or split into live cartridges (infinite ammo laundering)
+            RemComp<StackComponent>(entity);
+        }
     }
 
     public IShootable EnsureShootable(EntityUid uid) // RMC14
