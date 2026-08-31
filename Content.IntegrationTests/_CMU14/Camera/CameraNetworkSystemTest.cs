@@ -62,6 +62,86 @@ public sealed class CameraNetworkSystemTest
     }
 
     [Test]
+    public async Task StaticSeedResolvesToOneRoundScopedNetworkEntity()
+    {
+        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
+        try
+        {
+            await LoadPrototypes(server);
+            await server.WaitAssertion(() =>
+            {
+                var entMan = server.EntMan;
+                var networks = entMan.System<CameraNetworkSystem>();
+                var first = networks.ResolveNetwork(NetworkA);
+                var second = networks.ResolveNetwork(NetworkA);
+                var identity = entMan.GetComponent<CameraNetworkIdentityComponent>(first);
+
+                Assert.Multiple(() =>
+                {
+                    Assert.That(second, Is.EqualTo(first));
+                    Assert.That(identity.Seed, Is.EqualTo((ProtoId<CameraNetworkPrototype>) NetworkA));
+                    Assert.That(identity.Runtime, Is.False);
+                    Assert.That(identity.DisplayName, Is.Not.Empty);
+                });
+            });
+        }
+        finally
+        {
+            server.Dispose();
+        }
+    }
+
+    [Test]
+    public async Task RuntimeNetworkAndSourceOwnedGrantUseCanonicalIdentity()
+    {
+        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
+        try
+        {
+            await LoadPrototypes(server);
+            await server.WaitAssertion(() =>
+            {
+                var entMan = server.EntMan;
+                var networks = entMan.System<CameraNetworkSystem>();
+                var receiver = entMan.SpawnEntity("CMUTestCameraDynamicReceiver", MapCoordinates.Nullspace);
+                var camera = entMan.SpawnEntity("CMUTestCameraStandardA", MapCoordinates.Nullspace);
+                var source = entMan.SpawnEntity(null, MapCoordinates.Nullspace);
+                var runtime = networks.CreateNetwork("Runtime test", source);
+
+                try
+                {
+                    Assert.That(networks.AddNetwork(camera, runtime), Is.True);
+                    Assert.That(networks.GrantNetwork(receiver, runtime, source), Is.True);
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(networks.GetEffectiveNetworkEntities(receiver), Does.Contain(runtime));
+                        Assert.That(networks.GetAccessibleCameras(
+                            (receiver, entMan.GetComponent<CameraNetworkReceiverComponent>(receiver))),
+                            Does.Contain(camera));
+                    });
+
+                    entMan.DeleteEntity(source);
+
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(networks.GetEffectiveNetworkEntities(receiver), Does.Not.Contain(runtime));
+                        Assert.That(networks.CanAccess(receiver, camera), Is.False);
+                    });
+                }
+                finally
+                {
+                    entMan.DeleteEntity(runtime);
+                    entMan.DeleteEntity(receiver);
+                    entMan.DeleteEntity(camera);
+                }
+            });
+        }
+        finally
+        {
+            server.Dispose();
+        }
+    }
+
+    [Test]
     public void RmcEditorContractCarriesOpaqueIdsRevisionMembershipAndErrors()
     {
         var runtime = (ProtoId<CameraNetworkPrototype>) "CMURuntimeCameraNetwork10N1";

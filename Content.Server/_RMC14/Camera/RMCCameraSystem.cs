@@ -18,6 +18,7 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
     private static readonly TimeSpan ViewerValidationInterval = TimeSpan.FromSeconds(0.5);
 
     [Dependency] private CameraNetworkSystem _cameraNetworks = default!;
+    [Dependency] private CameraSessionSystem _cameraSessions = default!;
     [Dependency] private IConfigurationManager _configuration = default!;
     [Dependency] private IPrototypeManager _prototypeManager = default!;
     [Dependency] private IGameTiming _serverTiming = default!;
@@ -233,6 +234,9 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
             if (!_actorQuery.TryComp(watcher, out var actor))
                 continue;
 
+            if (_cameraSessions.TryGetSession(actor.PlayerSession, ent.Owner, out var session))
+                _cameraSessions.SelectCamera(session.Id, ent.Comp.CurrentCamera);
+
             RMCCameraWatcherComponent? watcherComp = null;
             if (old != null && TryComp(watcher, out watcherComp))
                 RemoveOverrides((watcher, watcherComp, actor));
@@ -315,7 +319,31 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
     protected override void OnComputerUiClosed(Entity<RMCCameraComputerComponent> computer, EntityUid actor)
     {
         if (TryComp(actor, out RMCCameraWatcherComponent? watcher) && _actorQuery.TryComp(actor, out var actorComponent))
+        {
             RemoveOverrides((actor, watcher, actorComponent));
+            _cameraSessions.CloseSession(actorComponent.PlayerSession, computer.Owner);
+        }
+    }
+
+    protected override void OnComputerUiOpened(Entity<RMCCameraComputerComponent> computer, EntityUid actor)
+    {
+        if (!_actorQuery.TryComp(actor, out var actorComponent))
+            return;
+
+        var capabilities = CameraSessionCapabilities.Browse | CameraSessionCapabilities.LiveView;
+        if (_configuration.GetCVar(CCVars.CMUCameraMapEnabled))
+            capabilities |= CameraSessionCapabilities.Map;
+        if (_configuration.GetCVar(CCVars.CMUCameraEditorEnabled))
+            capabilities |= CameraSessionCapabilities.Edit;
+
+        var session = _cameraSessions.OpenSession(
+            actorComponent.PlayerSession,
+            actor,
+            computer.Owner,
+            capabilities,
+            shadow: true);
+        if (session != null && computer.Comp.CurrentCamera is { } selected)
+            _cameraSessions.SelectCamera(session.Id, selected);
     }
 
     protected override bool CanUseComputer(Entity<RMCCameraComputerComponent> computer, EntityUid actor)

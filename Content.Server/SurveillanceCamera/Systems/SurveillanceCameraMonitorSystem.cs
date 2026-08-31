@@ -21,6 +21,7 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
 
     [Dependency] private AccessReaderSystem _accessReader = default!;
     [Dependency] private CameraNetworkSystem _cameraNetworks = default!;
+    [Dependency] private CameraSessionSystem _cameraSessions = default!;
     [Dependency] private IConfigurationManager _configuration = default!;
     [Dependency] private IPrototypeManager _prototypeManager = default!;
     [Dependency] private SurveillanceCameraSystem _surveillanceCameras = default!;
@@ -181,6 +182,22 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
             return;
 
         monitor.Viewers.Add(player);
+        if (TryComp(player, out ActorComponent? actor))
+        {
+            var capabilities = CameraSessionCapabilities.Browse | CameraSessionCapabilities.LiveView;
+            if (_configuration.GetCVar(CCVars.CMUCameraMapEnabled))
+                capabilities |= CameraSessionCapabilities.Map;
+
+            var session = _cameraSessions.OpenSession(
+                actor.PlayerSession,
+                player,
+                uid,
+                capabilities,
+                shadow: true);
+            if (session != null && monitor.ActiveCamera is { } selected)
+                _cameraSessions.SelectCamera(session.Id, selected);
+        }
+
         if (monitor.ActiveCamera is { } camera)
             _surveillanceCameras.AddActiveViewer(camera, player, uid);
 
@@ -193,6 +210,9 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
             return;
 
         monitor.Viewers.Remove(player);
+        if (TryComp(player, out ActorComponent? actor))
+            _cameraSessions.CloseSession(actor.PlayerSession, uid);
+
         if (monitor.ActiveCamera is { } camera)
             _surveillanceCameras.RemoveActiveViewer(camera, player);
     }
@@ -203,6 +223,15 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
             return;
 
         _surveillanceCameras.RemoveActiveViewers(camera, monitor.Viewers, uid);
+        foreach (var viewer in monitor.Viewers)
+        {
+            if (TryComp(viewer, out ActorComponent? actor)
+                && _cameraSessions.TryGetSession(actor.PlayerSession, uid, out var session))
+            {
+                _cameraSessions.SelectCamera(session.Id, null);
+            }
+        }
+
         monitor.ActiveCamera = null;
         RemComp<ActiveSurveillanceCameraMonitorComponent>(uid);
         UpdateUserInterface(uid, monitor);
@@ -225,6 +254,15 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
             _surveillanceCameras.AddActiveViewers(camera, monitor.Comp.Viewers, monitor.Owner);
 
         monitor.Comp.ActiveCamera = camera;
+        foreach (var viewer in monitor.Comp.Viewers)
+        {
+            if (TryComp(viewer, out ActorComponent? actor)
+                && _cameraSessions.TryGetSession(actor.PlayerSession, monitor.Owner, out var session))
+            {
+                _cameraSessions.SelectCamera(session.Id, camera);
+            }
+        }
+
         EnsureComp<ActiveSurveillanceCameraMonitorComponent>(monitor.Owner);
         return true;
     }

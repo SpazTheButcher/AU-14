@@ -137,7 +137,12 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
         watcher.Computer = null;
         Dirty(actor, watcher);
 
+        OnComputerUiOpened(ent, actor);
         Refresh(ent, null);
+    }
+
+    protected virtual void OnComputerUiOpened(Entity<RMCCameraComputerComponent> computer, EntityUid actor)
+    {
     }
 
     private void OnComputerBuiClosed(Entity<RMCCameraComputerComponent> ent, ref BoundUIClosedEvent args)

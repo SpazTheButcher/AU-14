@@ -1,0 +1,320 @@
+using System.Linq;
+using Content.Shared.Access.Systems;
+using Content.Shared.Camera;
+using Content.Shared.GameTicking;
+using Robust.Server.GameObjects;
+using Robust.Shared.Enums;
+using Robust.Shared.Player;
+using Robust.Shared.Timing;
+
+namespace Content.Server.Camera;
+
+/// <summary>
+/// Owns viewer-private camera state. A receiver describes authorization; a
+/// session describes one player's cursor, selection, capabilities, and live
+/// view lease for that receiver.
+/// </summary>
+public sealed class CameraSessionSystem : EntitySystem
+{
+    private static readonly TimeSpan ValidationInterval = TimeSpan.FromSeconds(0.5);
+    private const int MaximumAuthorizedCameras = 4096;
+
+    [Dependency] private readonly AccessReaderSystem _accessReader = default!;
+    [Dependency] private readonly CameraNetworkSystem _networks = default!;
+    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private readonly ViewSubscriberSystem _viewSubscriber = default!;
+
+    private readonly Dictionary<uint, CameraViewerSession> _sessions = [];
+    private readonly Dictionary<(ICommonSession Viewer, EntityUid Receiver), uint> _sessionByKey = [];
+    private readonly Dictionary<ICommonSession, HashSet<uint>> _sessionsByViewer = [];
+    private readonly Dictionary<EntityUid, HashSet<uint>> _sessionsByReceiver = [];
+    private readonly Dictionary<EntityUid, HashSet<uint>> _sessionsBySelectedCamera = [];
+
+    private TimeSpan _nextValidation;
+    private uint _nextSessionId = 1;
+
+    public int ShadowParityFailures { get; private set; }
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        SubscribeLocalEvent<CameraNetworkReceiverComponent, CameraReceiverChangedEvent>(OnReceiverChanged);
+        SubscribeLocalEvent<EntityTerminatingEvent>(OnEntityTerminating);
+        SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
+    }
+
+    public override void Update(float frameTime)
+    {
+        base.Update(frameTime);
+
+        if (_timing.CurTime < _nextValidation)
+            return;
+
+        _nextValidation = _timing.CurTime + ValidationInterval;
+        foreach (var (id, session) in _sessions.ToArray())
+        {
+            if (!Validate(session.Viewer, session.Actor, session.Receiver))
+                CloseSession(id);
+        }
+    }
+
+    public CameraViewerSession? OpenSession(
+        ICommonSession viewer,
+        EntityUid actor,
+        EntityUid receiver,
+        CameraSessionCapabilities capabilities,
+        bool shadow)
+    {
+        if (!Validate(viewer, actor, receiver)
+            || !TryComp(receiver, out CameraNetworkReceiverComponent? receiverComponent))
+        {
+            return null;
+        }
+
+        var key = (viewer, receiver);
+        if (_sessionByKey.TryGetValue(key, out var existingId))
+        {
+            var existing = _sessions[existingId];
+            existing.Capabilities = capabilities;
+            existing.Shadow = shadow;
+            RefreshAuthorization(existing, receiverComponent);
+            CaptureDirectoryRevisions(existing);
+            return existing;
+        }
+
+        var authorized = _networks.GetAccessibleCameras((receiver, receiverComponent));
+        if (authorized.Count > MaximumAuthorizedCameras)
+            authorized = authorized.Take(MaximumAuthorizedCameras).ToHashSet();
+
+        var session = new CameraViewerSession(
+            _nextSessionId++,
+            viewer,
+            actor,
+            receiver,
+            capabilities,
+            authorized,
+            shadow);
+
+        _sessions.Add(session.Id, session);
+        _sessionByKey.Add(key, session.Id);
+        AddIndex(_sessionsByViewer, viewer, session.Id);
+        AddIndex(_sessionsByReceiver, receiver, session.Id);
+        CaptureDirectoryRevisions(session);
+
+        // Shadow mode deliberately computes the same ECS projection twice via
+        // the public directory boundary. Any divergence indicates that a future
+        // compatibility adapter stopped reflecting the canonical facts.
+        if (shadow && !_networks.GetAccessibleCameras((receiver, receiverComponent)).SetEquals(authorized))
+        {
+            ShadowParityFailures++;
+            Log.Error($"Camera directory shadow mismatch for receiver {ToPrettyString(receiver)}.");
+        }
+
+        return session;
+    }
+
+    public bool TryGetSession(ICommonSession viewer, EntityUid receiver, out CameraViewerSession session)
+    {
+        if (_sessionByKey.TryGetValue((viewer, receiver), out var id)
+            && _sessions.TryGetValue(id, out var found))
+        {
+            session = found;
+            return true;
+        }
+
+        session = default!;
+        return false;
+    }
+
+    public bool SelectCamera(uint sessionId, EntityUid? camera)
+    {
+        if (!_sessions.TryGetValue(sessionId, out var session)
+            || !Validate(session.Viewer, session.Actor, session.Receiver)
+            || (session.Capabilities & CameraSessionCapabilities.LiveView) == 0)
+        {
+            return false;
+        }
+
+        if (camera is { } selected
+            && (TerminatingOrDeleted(selected)
+                || Paused(selected)
+                || !session.AuthorizedCameras.Contains(selected)
+                || !_networks.CanAccess(session.Receiver, selected)))
+        {
+            return false;
+        }
+
+        SetSelection(session, camera);
+        return true;
+    }
+
+    public void CloseSession(ICommonSession viewer, EntityUid receiver)
+    {
+        if (_sessionByKey.TryGetValue((viewer, receiver), out var id))
+            CloseSession(id);
+    }
+
+    private void CloseSession(uint id)
+    {
+        if (!_sessions.Remove(id, out var session))
+            return;
+
+        SetSelection(session, null);
+        _sessionByKey.Remove((session.Viewer, session.Receiver));
+        RemoveIndex(_sessionsByViewer, session.Viewer, id);
+        RemoveIndex(_sessionsByReceiver, session.Receiver, id);
+    }
+
+    private void OnReceiverChanged(Entity<CameraNetworkReceiverComponent> receiver, ref CameraReceiverChangedEvent args)
+    {
+        if (!_sessionsByReceiver.TryGetValue(receiver.Owner, out var ids))
+            return;
+
+        foreach (var id in ids.ToArray())
+        {
+            if (_sessions.TryGetValue(id, out var session))
+                RefreshAuthorization(session, receiver.Comp);
+                CaptureDirectoryRevisions(session);
+        }
+    }
+
+    private void RefreshAuthorization(CameraViewerSession session, CameraNetworkReceiverComponent receiver)
+    {
+        var authorized = _networks.GetAccessibleCameras((session.Receiver, receiver));
+        if (authorized.Count > MaximumAuthorizedCameras)
+            authorized = authorized.Take(MaximumAuthorizedCameras).ToHashSet();
+
+        session.AuthorizedCameras = authorized;
+        session.Revision++;
+        if (session.SelectedCamera is { } selected && !authorized.Contains(selected))
+            SetSelection(session, null);
+    }
+
+    private void CaptureDirectoryRevisions(CameraViewerSession session)
+    {
+        session.AuthorizationSnapshotRevision = _networks.AuthorizationRevision;
+        session.DirectorySnapshotRevision = _networks.DirectoryRevision;
+        session.MarkerSnapshotRevision = _networks.MarkerRevision;
+    }
+
+    private void SetSelection(CameraViewerSession session, EntityUid? camera)
+    {
+        if (session.SelectedCamera is { } previous)
+        {
+            RemoveIndex(_sessionsBySelectedCamera, previous, session.Id);
+            if (!session.Shadow)
+                _viewSubscriber.RemoveViewSubscriber(previous, session.Viewer);
+        }
+
+        session.SelectedCamera = camera;
+        session.Revision++;
+
+        if (camera is not { } selected)
+            return;
+
+        AddIndex(_sessionsBySelectedCamera, selected, session.Id);
+        if (!session.Shadow)
+            _viewSubscriber.AddViewSubscriber(selected, session.Viewer);
+    }
+
+    private void OnEntityTerminating(ref EntityTerminatingEvent args)
+    {
+        var entity = args.Entity.Owner;
+
+        if (_sessionsByReceiver.TryGetValue(entity, out var receiverSessions))
+        {
+            foreach (var id in receiverSessions.ToArray())
+                CloseSession(id);
+        }
+
+        if (_sessionsBySelectedCamera.TryGetValue(entity, out var selectedSessions))
+        {
+            foreach (var id in selectedSessions.ToArray())
+            {
+                if (_sessions.TryGetValue(id, out var session))
+                    SetSelection(session, null);
+            }
+        }
+
+        if (TryComp(entity, out ActorComponent? actor)
+            && _sessionsByViewer.TryGetValue(actor.PlayerSession, out var viewerSessions))
+        {
+            foreach (var id in viewerSessions.ToArray())
+                CloseSession(id);
+        }
+    }
+
+    private void OnRoundRestart(RoundRestartCleanupEvent args)
+    {
+        foreach (var id in _sessions.Keys.ToArray())
+            CloseSession(id);
+
+        _sessions.Clear();
+        _sessionByKey.Clear();
+        _sessionsByViewer.Clear();
+        _sessionsByReceiver.Clear();
+        _sessionsBySelectedCamera.Clear();
+        _nextSessionId = 1;
+        ShadowParityFailures = 0;
+    }
+
+    private bool Validate(ICommonSession viewer, EntityUid actor, EntityUid receiver)
+    {
+        return viewer.Status is not (SessionStatus.Disconnected or SessionStatus.Zombie)
+            && viewer.AttachedEntity == actor
+            && !TerminatingOrDeleted(actor)
+            && !TerminatingOrDeleted(receiver)
+            && TryComp(actor, out ActorComponent? actorComponent)
+            && ReferenceEquals(actorComponent.PlayerSession, viewer)
+            && HasComp<CameraNetworkReceiverComponent>(receiver)
+            && _accessReader.IsAllowed(actor, receiver);
+    }
+
+    private static void AddIndex<TKey>(Dictionary<TKey, HashSet<uint>> index, TKey key, uint id)
+        where TKey : notnull
+    {
+        if (!index.TryGetValue(key, out var ids))
+        {
+            ids = [];
+            index.Add(key, ids);
+        }
+
+        ids.Add(id);
+    }
+
+    private static void RemoveIndex<TKey>(Dictionary<TKey, HashSet<uint>> index, TKey key, uint id)
+        where TKey : notnull
+    {
+        if (!index.TryGetValue(key, out var ids))
+            return;
+
+        ids.Remove(id);
+        if (ids.Count == 0)
+            index.Remove(key);
+    }
+}
+
+public sealed class CameraViewerSession(
+    uint id,
+    ICommonSession viewer,
+    EntityUid actor,
+    EntityUid receiver,
+    CameraSessionCapabilities capabilities,
+    HashSet<EntityUid> authorizedCameras,
+    bool shadow)
+{
+    public uint Id { get; } = id;
+    public ICommonSession Viewer { get; } = viewer;
+    public EntityUid Actor { get; } = actor;
+    public EntityUid Receiver { get; } = receiver;
+    public CameraSessionCapabilities Capabilities { get; internal set; } = capabilities;
+    public HashSet<EntityUid> AuthorizedCameras { get; internal set; } = authorizedCameras;
+    public EntityUid? SelectedCamera { get; internal set; }
+    public ulong Revision { get; internal set; } = 1;
+    public ulong AuthorizationSnapshotRevision { get; internal set; }
+    public ulong DirectorySnapshotRevision { get; internal set; }
+    public ulong MarkerSnapshotRevision { get; internal set; }
+    public int Cursor { get; internal set; }
+    public bool Shadow { get; internal set; } = shadow;
+}

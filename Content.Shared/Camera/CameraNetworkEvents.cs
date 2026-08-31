@@ -17,3 +17,13 @@ public record struct CameraNetworkGrantRequestEvent(
     ProtoId<CameraNetworkPrototype> Network,
     EntityUid Source,
     bool Grant);
+
+[Flags]
+public enum CameraSessionCapabilities : byte
+{
+    None = 0,
+    Browse = 1 << 0,
+    LiveView = 1 << 1,
+    Map = 1 << 2,
+    Edit = 1 << 3,
+}
