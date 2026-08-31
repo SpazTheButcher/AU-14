@@ -71,13 +71,12 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
 
     private static readonly ProtoId<ToolQualityPrototype> WeldingQuality = "Welding";
     private static readonly ProtoId<TagPrototype> WallTag = "Wall";
-    private const string WarningSignPrototype = "CMUHolographicWarningSign";
+    private static readonly EntProtoId WarningSignPrototype = "CMUHolographicWarningSign";
     private static readonly EntProtoId CrashExplosion = "CMUDropshipCrashM15Explosion";
     private static readonly TimeSpan ImpactAdoptionGuardTime = TimeSpan.FromSeconds(1);
     private static readonly TimeSpan ImpactAdoptionCheckInterval = TimeSpan.FromMilliseconds(250);
     private static readonly TimeSpan HullInitializationScanInterval = TimeSpan.FromMilliseconds(250);
     private const byte HullInitializationFollowupScans = 4;
-    private const float XenoAcidProjectileDamageMultiplier = 4f;
     private readonly Dictionary<EntityUid, PendingImpactAdoption> _pendingImpactAdoptions = new();
     private readonly Dictionary<EntityUid, HullExplosionDamageState> _hullExplosionDamage = new();
     private readonly HashSet<EntityUid> _emptyFlightObstructions = new();
@@ -157,6 +156,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         integrity.Integrity = Math.Clamp(integrity.Integrity, 0f, integrity.MaxIntegrity);
         if (TryComp(grid, out DropshipComponent? dropship))
             integrity.Wrecked |= dropship.Crashed;
+        integrity.FlightState = ResolveFlightState(grid, integrity);
 
         Dirty(grid, integrity);
         MarkInitialHull(grid);
@@ -219,8 +219,12 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
 
     private void OnBeforeHullDamageChanged(Entity<DropshipHullComponent> ent, ref BeforeDamageChangedEvent args)
     {
-        if (args.Source is { } source && HasComp<XenoAcidProjectileComponent>(source))
-            args.Damage *= XenoAcidProjectileDamageMultiplier;
+        if (args.Source is { } source &&
+            HasComp<XenoAcidProjectileComponent>(source) &&
+            TryGetDropship(ent.Owner, out var dropship))
+        {
+            args.Damage *= dropship.Comp.XenoAcidProjectileDamageMultiplier;
+        }
     }
 
     /// <summary>
@@ -240,7 +244,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         }
 
         var multiplier = HasComp<XenoAcidProjectileComponent>(args.Projectile)
-            ? XenoAcidProjectileDamageMultiplier
+            ? dropship.Comp.XenoAcidProjectileDamageMultiplier
             : 1f;
         var amount = args.Damage.GetTotal().Float() * multiplier;
         if (amount > 0f)
@@ -371,10 +375,14 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             return 0f;
         }
 
-        var orderedObstructions = obstructions
-            .Where(obstruction => !TerminatingOrDeleted(obstruction))
-            .OrderBy(obstruction => obstruction.Id)
-            .ToArray();
+        // Swept-motion callers supply geometric contact order as a list.
+        // Preserve it so damage is resolved front-to-back; unordered callers
+        // retain a stable entity-id fallback for deterministic replays.
+        var activeObstructions = obstructions
+            .Where(obstruction => !TerminatingOrDeleted(obstruction));
+        var orderedObstructions = obstructions is IReadOnlyList<EntityUid>
+            ? activeObstructions.ToArray()
+            : activeObstructions.OrderBy(obstruction => obstruction.Id).ToArray();
         GunshipFlightImpactsMetric.Inc();
         GunshipImpactContactsMetric.Observe(orderedObstructions.Length);
         var remainingSpeed = speed;
@@ -839,6 +847,13 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         var query = EntityQueryEnumerator<DropshipIntegrityComponent>();
         while (query.MoveNext(out var uid, out var integrity))
         {
+            var flightState = ResolveFlightState(uid, integrity);
+            if (integrity.FlightState != flightState)
+            {
+                integrity.FlightState = flightState;
+                Dirty(uid, integrity);
+            }
+
             if (integrity.HullInitializationScansRemaining > 0 &&
                 _timing.CurTime >= integrity.NextHullInitializationScan)
             {
@@ -1213,16 +1228,29 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
 
     private bool CanRepairDropship(EntityUid dropship)
     {
+        if (!TryComp(dropship, out DropshipIntegrityComponent? integrity))
+            return false;
+
+        var state = ResolveFlightState(dropship, integrity);
+        if (integrity.FlightState != state)
+        {
+            integrity.FlightState = state;
+            Dirty(dropship, integrity);
+        }
+
+        return DropshipRepairEligibility.CanRepair(integrity.FlightState);
+    }
+
+    private DropshipFlightState ResolveFlightState(EntityUid dropship, DropshipIntegrityComponent integrity)
+    {
         var hovering = TryComp(dropship, out DropshipTacticalHoverComponent? hover);
         var ftlActive = TryComp(dropship, out FTLComponent? ftl) &&
                         ftl.State is FTLState.Starting or FTLState.Travelling or FTLState.Arriving;
-        TryComp(dropship, out DropshipIntegrityComponent? integrity);
-        var state = DropshipRepairEligibility.ResolveState(
+        return DropshipRepairEligibility.ResolveState(
             hovering,
             hover?.AltitudeTransitionAt != null,
             ftlActive,
-            integrity?.Crashing == true,
-            integrity?.Wrecked == true);
-        return DropshipRepairEligibility.CanRepair(state);
+            integrity.Crashing,
+            integrity.Wrecked);
     }
 }

@@ -224,9 +224,9 @@ public sealed partial class GunshipManeuveringCameraSystem : EntitySystem
         var rear = mode == GunshipManeuveringCamera.Rear;
         var label = mode switch
         {
-            GunshipManeuveringCamera.Rear => "REAR CAMERA",
-            GunshipManeuveringCamera.Lower => "LOWER CAMERA  -1 Z",
-            GunshipManeuveringCamera.Upper => "UPPER CAMERA  +1 Z",
+            GunshipManeuveringCamera.Rear => Loc.GetString("cmu-gunship-view-rear-camera"),
+            GunshipManeuveringCamera.Lower => Loc.GetString("cmu-gunship-view-lower-camera-level"),
+            GunshipManeuveringCamera.Upper => Loc.GetString("cmu-gunship-view-upper-camera-level"),
             _ => string.Empty,
         };
         _panel = AddPanel(parent,

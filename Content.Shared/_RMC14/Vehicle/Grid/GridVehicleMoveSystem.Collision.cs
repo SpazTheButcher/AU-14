@@ -119,7 +119,43 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         {
             hits.Add(hit.Owner);
         }
-        hits.Sort(static (left, right) => left.Id.CompareTo(right.Id));
+        var movementStart = transform.GetWorldPosition(uid);
+        var movementHalfExtents = aabb.Size * 0.5f;
+        hits.Sort((left, right) =>
+        {
+            var leftBounds = lookup.GetWorldAABB(left);
+            var rightBounds = lookup.GetWorldAABB(right);
+            var leftTime = ImpactEnergySolver.GetSweptAabbContactTime(
+                movementStart,
+                tx.Position,
+                movementHalfExtents,
+                leftBounds);
+            var rightTime = ImpactEnergySolver.GetSweptAabbContactTime(
+                movementStart,
+                tx.Position,
+                movementHalfExtents,
+                rightBounds);
+            var order = leftTime.CompareTo(rightTime);
+            if (order != 0)
+                return order;
+
+            var leftOrder = ImpactEnergySolver.GetContactOrder(movementStart, tx.Position, leftBounds.Center);
+            var rightOrder = ImpactEnergySolver.GetContactOrder(movementStart, tx.Position, rightBounds.Center);
+            order = leftOrder.CompareTo(rightOrder);
+            if (order != 0)
+                return order;
+            order = leftBounds.Left.CompareTo(rightBounds.Left);
+            if (order != 0)
+                return order;
+            order = leftBounds.Bottom.CompareTo(rightBounds.Bottom);
+            if (order != 0)
+                return order;
+            order = leftBounds.Right.CompareTo(rightBounds.Right);
+            if (order != 0)
+                return order;
+            order = leftBounds.Top.CompareTo(rightBounds.Top);
+            return order != 0 ? order : left.Id.CompareTo(right.Id);
+        });
         var playedCollisionSound = false;
         var mobHits = new ValueList<EntityUid>(0);
 

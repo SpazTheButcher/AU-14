@@ -1,8 +1,6 @@
-using System.Numerics;
 using Content.Shared._CMU14.Dropship.TacticalLand;
 using Content.Shared.Shuttles.Components;
 using Content.Shared.Shuttles.Systems;
-using Robust.Client.Graphics;
 using Robust.Client.Player;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
@@ -50,32 +48,32 @@ public sealed partial class GunshipPilotHudControlsSystem : EntitySystem
 
         _nextStatusUpdate = _timing.CurTime + TimeSpan.FromMilliseconds(100);
 
-        _bar!.SetViewMode(hud.RearView ? "REAR CAMERA" : hud.ViewOffset switch
+        _bar!.SetViewMode(hud.RearView ? Loc.GetString("cmu-gunship-view-rear-camera") : hud.ViewOffset switch
         {
-            > 0 => "UPPER CAMERA",
-            < 0 => "LOWER CAMERA",
-            _ => "PILOT VIEW",
+            > 0 => Loc.GetString("cmu-gunship-view-upper-camera"),
+            < 0 => Loc.GetString("cmu-gunship-view-lower-camera"),
+            _ => Loc.GetString("cmu-gunship-view-pilot"),
         });
 
         if (hud.FlightControlsAvailable)
         {
-            _bar.SetFlightStatus("--", "TACTICAL HOVER");
+            _bar.SetFlightStatus("--", Loc.GetString("cmu-gunship-stage-tactical-hover"));
             return;
         }
 
         if (!TryComp(dropship, out FTLComponent? ftl))
         {
-            _bar.SetFlightStatus("--", "READY");
+            _bar.SetFlightStatus("--", Loc.GetString("cmu-gunship-stage-ready"));
             return;
         }
 
         var stage = ftl.State switch
         {
-            FTLState.Starting => "LAUNCHING",
-            FTLState.Travelling => "TRANSIT",
-            FTLState.Arriving => "FINAL APPROACH",
-            FTLState.Cooldown => "REFUELING",
-            _ => "READY",
+            FTLState.Starting => Loc.GetString("cmu-gunship-stage-launching"),
+            FTLState.Travelling => Loc.GetString("cmu-gunship-stage-transit"),
+            FTLState.Arriving => Loc.GetString("cmu-gunship-stage-final-approach"),
+            FTLState.Cooldown => Loc.GetString("cmu-gunship-stage-refueling"),
+            _ => Loc.GetString("cmu-gunship-stage-ready"),
         };
         var phaseRemaining = Math.Max(0, (ftl.StateTime.End - _timing.CurTime).TotalSeconds);
         var destinationRemaining = ftl.State switch
@@ -89,7 +87,7 @@ public sealed partial class GunshipPilotHudControlsSystem : EntitySystem
         };
         var eta = destinationRemaining < 0
             ? "--"
-            : $"T-{Math.Ceiling(destinationRemaining):0}s";
+            : Loc.GetString("cmu-gunship-eta-countdown", ("seconds", Math.Ceiling(destinationRemaining)));
         _bar.SetFlightStatus(eta, stage);
     }
 
@@ -125,102 +123,5 @@ public sealed partial class GunshipPilotHudControlsSystem : EntitySystem
         _bar = null;
         _parent = null;
         _nextStatusUpdate = TimeSpan.Zero;
-    }
-}
-
-public sealed class GunshipPilotTopBar : PanelContainer
-{
-    private static readonly Color HudColor = new(0.25f, 0.88f, 1f, 0.98f);
-    private readonly Label _viewMode;
-    private readonly Label _eta;
-    private readonly Label _stage;
-    private string? _lastEta;
-    private string? _lastStage;
-
-    public GunshipPilotTopBar(Action openNavigation)
-    {
-        MinSize = new Vector2(680f, 62f);
-        PanelOverride = new StyleBoxFlat(new Color(0.01f, 0.035f, 0.045f, 0.90f))
-        {
-            BorderColor = new Color(0.25f, 0.88f, 1f, 0.75f),
-            BorderThickness = new Thickness(1f),
-            ContentMarginLeftOverride = 8f,
-            ContentMarginRightOverride = 8f,
-            ContentMarginTopOverride = 6f,
-            ContentMarginBottomOverride = 6f,
-        };
-
-        var row = new BoxContainer
-        {
-            Orientation = BoxContainer.LayoutOrientation.Horizontal,
-            SeparationOverride = 12,
-            HorizontalExpand = true,
-            VerticalExpand = true,
-        };
-        AddChild(row);
-
-        var navigation = new Button
-        {
-            Text = "Open Navigation Controls",
-            MinSize = new Vector2(210f, 40f),
-            VerticalAlignment = VAlignment.Center,
-        };
-        navigation.OnPressed += _ => openNavigation();
-        row.AddChild(navigation);
-
-        _viewMode = new Label
-        {
-            Text = "PILOT VIEW",
-            MinSize = new Vector2(190f, 0f),
-            FontColorOverride = HudColor,
-            HorizontalAlignment = HAlignment.Center,
-            VerticalAlignment = VAlignment.Center,
-        };
-        row.AddChild(_viewMode);
-
-        var status = new BoxContainer
-        {
-            Orientation = BoxContainer.LayoutOrientation.Vertical,
-            MinSize = new Vector2(230f, 0f),
-            VerticalAlignment = VAlignment.Center,
-        };
-        row.AddChild(status);
-
-        _eta = new Label
-        {
-            Text = "ETA --",
-            FontColorOverride = HudColor,
-            HorizontalAlignment = HAlignment.Left,
-        };
-        status.AddChild(_eta);
-
-        _stage = new Label
-        {
-            Text = "STAGE READY",
-            FontColorOverride = HudColor,
-            HorizontalAlignment = HAlignment.Left,
-        };
-        status.AddChild(_stage);
-    }
-
-    public void SetViewMode(string mode)
-    {
-        if (_viewMode.Text != mode)
-            _viewMode.Text = mode;
-    }
-
-    public void SetFlightStatus(string eta, string stage)
-    {
-        if (_lastEta != eta)
-        {
-            _lastEta = eta;
-            _eta.Text = $"ETA {eta}";
-        }
-
-        if (_lastStage != stage)
-        {
-            _lastStage = stage;
-            _stage.Text = $"STAGE {stage}";
-        }
     }
 }

@@ -32,6 +32,7 @@ using Prometheus;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Player;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Spawners;
 using Robust.Shared.Timing;
 
@@ -68,12 +69,26 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
     private static readonly Gauge GunshipHudWearersMetric = Metrics.CreateGauge(
         "cmu_gunship_hud_wearers",
         "Players currently tracked by the event-driven gunship HUD updater.");
+    private static readonly Counter GunshipHudStateUpdatesMetric = Metrics.CreateCounter(
+        "cmu_gunship_hud_state_updates_total",
+        "Dirty network-state updates emitted by the gunship HUD updater.");
+    private static readonly Histogram GunshipCollisionCandidatesMetric = Metrics.CreateHistogram(
+        "cmu_gunship_collision_candidates",
+        "Broadphase candidates considered by one gunship fixed step.",
+        new HistogramConfiguration { Buckets = Histogram.ExponentialBuckets(1, 2, 12) });
+    private static readonly Counter GunshipCollisionNarrowphaseChecksMetric = Metrics.CreateCounter(
+        "cmu_gunship_collision_narrowphase_checks_total",
+        "Gunship hull-to-fixture narrowphase checks performed.");
+    private static readonly Histogram GunshipFlightUpdateDurationMetric = Metrics.CreateHistogram(
+        "cmu_gunship_flight_update_seconds",
+        "Server time spent updating gunship pilots and free-flight simulation.",
+        new HistogramConfiguration { Buckets = Histogram.ExponentialBuckets(0.00001, 2, 15) });
 
     private static readonly SoundSpecifier WarningSound =
         new SoundPathSpecifier("/Audio/_RMC14/Dropship/dropship_incoming.ogg");
 
-    private const string EyePrototype = "CMUDropshipPilotEye";
-    private const string WarningSignPrototype = "CMUHolographicWarningSign";
+    private static readonly EntProtoId EyePrototype = "CMUDropshipPilotEye";
+    private static readonly EntProtoId WarningSignPrototype = "CMUHolographicWarningSign";
     private static readonly Vector2i ThirdPartyFootprint = new(7, 13);
     private const int LandingZoneExclusionRadius = 2;
     private const int TacticalHoverMapOffset = 1;
@@ -112,13 +127,13 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
         if (HasComp<DropshipTacticalLandSessionComponent>(ent))
         {
-            _popup.PopupEntity("This navigation console is already designating a tactical hover.", ent, pilot, PopupType.MediumCaution);
+            _popup.PopupEntity(Loc.GetString("cmu-tactical-land-session-active"), ent, pilot, PopupType.MediumCaution);
             return;
         }
 
         if (!CanDesignateTacticalLanding(ent))
         {
-            _popup.PopupEntity("This navigation console cannot designate tactical landings.", ent, pilot, PopupType.MediumCaution);
+            _popup.PopupEntity(Loc.GetString("cmu-tactical-land-console-unavailable"), ent, pilot, PopupType.MediumCaution);
             return;
         }
 
@@ -131,14 +146,14 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
         if (TryComp(gridUid, out FTLComponent? ftl) && ftl.State != FTLState.Cooldown && ftl.State != FTLState.Available)
         {
-            _popup.PopupEntity("Cannot designate a tactical landing while the dropship is in flight.", ent, pilot, PopupType.MediumCaution);
+            _popup.PopupEntity(Loc.GetString("cmu-tactical-land-dropship-in-flight"), ent, pilot, PopupType.MediumCaution);
             return;
         }
 
         var spawnCoords = FindInitialEyeCoordinates(ent, pilot, gridUid, dropship);
         if (spawnCoords is null)
         {
-            _popup.PopupEntity("No suitable ground map detected for a tactical landing.", ent, pilot, PopupType.MediumCaution);
+            _popup.PopupEntity(Loc.GetString("cmu-tactical-land-no-ground-map"), ent, pilot, PopupType.MediumCaution);
             return;
         }
 
@@ -173,7 +188,7 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         _mover.SetRelay(pilot, eye);
 
         PushUiState(ent, pilot);
-        _popup.PopupEntity("Designating tactical landing site. Move to choose, rotate or adjust altitude, then confirm.", ent, pilot, PopupType.Medium);
+        _popup.PopupEntity(Loc.GetString("cmu-tactical-land-designating"), ent, pilot, PopupType.Medium);
     }
 
     protected override void OnTacticalLandConfirm(Entity<DropshipNavigationComputerComponent> ent, ref DropshipNavigationTacticalLandConfirmMsg args)
@@ -187,7 +202,7 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
         if (!CanDesignateTacticalLanding(ent))
         {
-            _popup.PopupEntity("This navigation console cannot designate tactical landings.", ent, args.Actor, PopupType.MediumCaution);
+            _popup.PopupEntity(Loc.GetString("cmu-tactical-land-console-unavailable"), ent, args.Actor, PopupType.MediumCaution);
             EndSession(ent, session);
             return;
         }
@@ -202,9 +217,9 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
         if (!TryComp(eye, out DropshipPilotEyeComponent? pilotEye) || !pilotEye.ClearForLanding)
         {
-            _popup.PopupEntity(tacticalHover
-                ? "Hover site obstructed. Clear the highlighted tiles before committing."
-                : "Landing site obstructed. Clear the highlighted tiles before committing.",
+            _popup.PopupEntity(Loc.GetString(tacticalHover
+                    ? "cmu-tactical-land-hover-site-obstructed"
+                    : "cmu-tactical-land-site-obstructed"),
                 ent,
                 args.Actor,
                 PopupType.MediumCaution);
@@ -344,7 +359,8 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
     private void OnTacticalHoverShutdown(Entity<DropshipTacticalHoverComponent> ent, ref ComponentShutdown args)
     {
         CleanupHoverEffects(ent);
-        RaiseLocalEvent(new DropshipTacticalHoverEndedEvent(ent.Owner));
+        var hoverEnded = new DropshipTacticalHoverEndedEvent(ent.Owner);
+        RaiseLocalEvent(ref hoverEnded);
     }
 
     public override void Update(float frameTime)
@@ -597,8 +613,12 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
 
         if (!_zLevels.TryMapOffset(map, offset, out _, out var targetMap))
         {
-            var direction = offset > 0 ? "higher" : "lower";
-            _popup.PopupEntity($"No {direction} tactical hover level is available.", ent, pilot, PopupType.MediumCaution);
+            _popup.PopupEntity(Loc.GetString(offset > 0
+                    ? "cmu-tactical-land-no-higher-level"
+                    : "cmu-tactical-land-no-lower-level"),
+                ent,
+                pilot,
+                PopupType.MediumCaution);
             PushUiState(ent, pilot);
             return;
         }
@@ -614,7 +634,9 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
         }
 
         PushUiState(ent, pilot);
-        _popup.PopupEntity(offset > 0 ? "Tactical hover view moved up one level." : "Tactical hover view moved down one level.", ent, pilot);
+        _popup.PopupEntity(Loc.GetString(offset > 0
+            ? "cmu-tactical-land-view-moved-up"
+            : "cmu-tactical-land-view-moved-down"), ent, pilot);
     }
 
     private void StartTacticalHover(Entity<EphemeralDropshipDestinationComponent> ent, EntityUid dropshipGrid)

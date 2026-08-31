@@ -101,6 +101,12 @@ public sealed partial class DropshipTacticalHoverComponent : Component
     public readonly HashSet<EntityUid> FlightTerrainCandidates = new();
 
     /// <summary>
+    /// Broadphase candidates reduced to entities with hard blocking fixtures.
+    /// Reusing this set prevents fixture inspection for every sampled hull tile.
+    /// </summary>
+    public readonly HashSet<EntityUid> FlightHardTerrainCandidates = new();
+
+    /// <summary>
     /// Last broadphase-query count for one collision probe. Retained for
     /// diagnostics and enforced by <see cref="GunshipSpatialQueryBudget"/>.
     /// </summary>
@@ -171,7 +177,5 @@ public sealed partial class DropshipTacticalHoverDownwashComponent : Component
 /// <summary>
 /// Raised after a dropship leaves tactical hover so hover-only equipment can clean itself up.
 /// </summary>
-public sealed class DropshipTacticalHoverEndedEvent(EntityUid dropship) : EntityEventArgs
-{
-    public readonly EntityUid Dropship = dropship;
-}
+[ByRefEvent]
+public readonly record struct DropshipTacticalHoverEndedEvent(EntityUid Dropship);

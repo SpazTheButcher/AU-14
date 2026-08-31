@@ -164,7 +164,7 @@ public sealed partial class DropshipNavigationBui : BoundUserInterface
         {
             var hoverStatus = new DropshipButton
             {
-                Text = "Tactical hover active - select another destination",
+                Text = Loc.GetString("cmu-tactical-land-hover-active"),
                 Disabled = true,
                 BorderColor = Color.FromHex("#4E6B8E"),
                 BorderThickness = new Thickness(1),
@@ -196,7 +196,7 @@ public sealed partial class DropshipNavigationBui : BoundUserInterface
         {
             var tacticalButton = new DropshipButton
             {
-                Text = "Tactical Land",
+                Text = Loc.GetString("cmu-tactical-land-button"),
                 Disabled = false,
                 BorderColor = Color.FromHex("#2A6D2A"),
                 BorderThickness = new Thickness(1),
@@ -234,7 +234,9 @@ public sealed partial class DropshipNavigationBui : BoundUserInterface
         _tacticalLandActive = true;
         _tacticalHoverActive = false;
 
-        SetFlightHeader(tactical.TacticalHover ? "Tactical Hover" : "Tactical Landing");
+        SetFlightHeader(Loc.GetString(tactical.TacticalHover
+            ? "cmu-tactical-land-header-hover"
+            : "cmu-tactical-land-header-landing"));
 
         _window.DestinationsContainer.Visible = true;
         _window.ProgressBarContainer.Visible = false;
@@ -248,9 +250,9 @@ public sealed partial class DropshipNavigationBui : BoundUserInterface
         {
             Text = tactical.ClearForLanding
                 ? tactical.TacticalHover
-                    ? "WASD to position - hover point clear"
-                    : "WASD to position - landing point clear"
-                : "WASD to position - red = obstructed",
+                    ? Loc.GetString("cmu-tactical-land-hover-point-clear")
+                    : Loc.GetString("cmu-tactical-land-point-clear")
+                : Loc.GetString("cmu-tactical-land-point-obstructed"),
             Disabled = true,
             BorderColor = tactical.ClearForLanding ? Color.FromHex("#2A6D2A") : Color.FromHex("#7A2A2A"),
             BorderThickness = new Thickness(1),
@@ -259,7 +261,7 @@ public sealed partial class DropshipNavigationBui : BoundUserInterface
 
         var upButton = new DropshipButton
         {
-            Text = "Ascend Z-Level",
+            Text = Loc.GetString("cmu-tactical-land-ascend-level"),
             Disabled = !tactical.CanMoveUp,
             BorderColor = Color.FromHex("#4E6B8E"),
             BorderThickness = new Thickness(1),
@@ -270,7 +272,7 @@ public sealed partial class DropshipNavigationBui : BoundUserInterface
 
         var downButton = new DropshipButton
         {
-            Text = "Descend Z-Level",
+            Text = Loc.GetString("cmu-tactical-land-descend-level"),
             Disabled = !tactical.CanMoveDown,
             BorderColor = Color.FromHex("#4E6B8E"),
             BorderThickness = new Thickness(1),
@@ -287,7 +289,7 @@ public sealed partial class DropshipNavigationBui : BoundUserInterface
 
         var rotateCounterClockwise = new DropshipButton
         {
-            Text = "Rotate Left",
+            Text = Loc.GetString("cmu-tactical-land-rotate-left"),
             BorderColor = Color.FromHex("#4E6B8E"),
             BorderThickness = new Thickness(1),
             HorizontalExpand = true,
@@ -298,7 +300,7 @@ public sealed partial class DropshipNavigationBui : BoundUserInterface
 
         var heading = new DropshipButton
         {
-            Text = $"Heading: {tactical.RotationDegrees}°",
+            Text = Loc.GetString("cmu-tactical-land-heading", ("degrees", tactical.RotationDegrees)),
             Disabled = true,
             BorderColor = Color.FromHex("#4E6B8E"),
             BorderThickness = new Thickness(1),
@@ -308,7 +310,7 @@ public sealed partial class DropshipNavigationBui : BoundUserInterface
 
         var rotateClockwise = new DropshipButton
         {
-            Text = "Rotate Right",
+            Text = Loc.GetString("cmu-tactical-land-rotate-right"),
             BorderColor = Color.FromHex("#4E6B8E"),
             BorderThickness = new Thickness(1),
             HorizontalExpand = true,
@@ -319,7 +321,9 @@ public sealed partial class DropshipNavigationBui : BoundUserInterface
 
         _window.DestinationsContainer.AddChild(rotationContainer);
 
-        _window.LaunchButton.Text = tactical.TacticalHover ? "Hover" : "Land";
+        _window.LaunchButton.Text = Loc.GetString(tactical.TacticalHover
+            ? "cmu-tactical-land-confirm-hover"
+            : "cmu-tactical-land-confirm-land");
         _window.LaunchButton.Button.Disabled = !tactical.ClearForLanding;
         _window.CancelButton.Text = "Cancel";
         _window.CancelButton.Button.Disabled = false;

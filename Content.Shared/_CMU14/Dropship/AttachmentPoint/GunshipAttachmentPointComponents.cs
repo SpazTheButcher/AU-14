@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
 
 namespace Content.Shared._CMU14.Dropship.AttachmentPoint;
 
@@ -11,7 +12,7 @@ namespace Content.Shared._CMU14.Dropship.AttachmentPoint;
 public sealed partial class GunshipHardpointAttachmentPointComponent : Component
 {
     [DataField]
-    public HashSet<string> AllowedAttachments = new()
+    public HashSet<EntProtoId> AllowedAttachments = new()
     {
         "RMCDropshipAttachmentDoorGun",
         "CMUDropshipAttachmentDoorGunM2C",
@@ -26,7 +27,7 @@ public sealed partial class GunshipHardpointAttachmentPointComponent : Component
 public sealed partial class GunshipUtilityAttachmentPointComponent : Component
 {
     [DataField]
-    public HashSet<string> AllowedAttachments = new()
+    public HashSet<EntProtoId> AllowedAttachments = new()
     {
         "CMUDropshipAttachmentEEXRappelSystem",
         "RMCDropshipAttachmentLaunchBay",

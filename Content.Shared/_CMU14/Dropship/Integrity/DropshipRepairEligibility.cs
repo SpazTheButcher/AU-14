@@ -1,5 +1,9 @@
+using System;
+using Robust.Shared.Serialization;
+
 namespace Content.Shared._CMU14.Dropship.Integrity;
 
+[Serializable, NetSerializable]
 public enum DropshipFlightState : byte
 {
     Landed,
