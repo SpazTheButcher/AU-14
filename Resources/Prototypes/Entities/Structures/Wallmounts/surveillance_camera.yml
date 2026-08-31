@@ -106,6 +106,7 @@
     - type: CameraNetworkMember
       networks: []
       sourceKinds: Standard
+    - type: CameraMapMarker
     - type: SurveillanceCamera
       setupAvailableNetworks:
         - SurveillanceCameraEngineering

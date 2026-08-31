@@ -409615,7 +409615,7 @@ entities:
       rot: 3.141592653589793 rad
       pos: 150.5,-93.5
       parent: 1
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraCommand
   entities:
   - uid: 55052
     components:
@@ -409623,7 +409623,7 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 92.5,-88.5
       parent: 1
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraEngineering
   entities:
   - uid: 55053
     components:
@@ -409637,7 +409637,7 @@ entities:
       rot: 3.141592653589793 rad
       pos: 71.5,-135.5
       parent: 1
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraGeneral
   entities:
   - uid: 55055
     components:
@@ -409651,7 +409651,7 @@ entities:
       rot: 3.141592653589793 rad
       pos: 100.5,-56.5
       parent: 1
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraMedical
   entities:
   - uid: 55057
     components:
@@ -409665,7 +409665,7 @@ entities:
       rot: 3.141592653589793 rad
       pos: 66.5,-61.5
       parent: 1
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraSecurity
   entities:
   - uid: 55059
     components:
@@ -409707,7 +409707,7 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 16.5,-88.5
       parent: 1
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraService
   entities:
   - uid: 55066
     components:
@@ -409721,7 +409721,7 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 120.5,-73.5
       parent: 1
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraSupply
   entities:
   - uid: 55068
     components:
@@ -410290,7 +410290,7 @@ entities:
     - type: Transform
       pos: -85.5,-70.5
       parent: 1
-- proto: CMUMonitorCameraColonyCMB
+- proto: WallmountTelevision
   entities:
   - uid: 55130
     components:

@@ -10355,7 +10355,7 @@ entities:
       rot: -1.5707963267948966 rad
       pos: 27.5,-14.5
       parent: 104
-- proto: CMUMonitorCameraColonyCMB
+- proto: ComputerSurveillanceWirelessCameraMonitor
   entities:
   - uid: 1127
     components:
@@ -13101,7 +13101,7 @@ entities:
     - type: Transform
       pos: 27.5,-13.5
       parent: 104
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraGeneral
   entities:
   - uid: 85
     components:
@@ -13110,7 +13110,7 @@ entities:
       parent: 104
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - CMUSurveillanceCameraColonyCMB
+      - SurveillanceCameraGeneral
       nameSet: True
       id: Bar
   - uid: 1144
@@ -13121,7 +13121,7 @@ entities:
       parent: 104
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - CMUSurveillanceCameraColonyCMB
+      - SurveillanceCameraGeneral
       nameSet: True
       id: Dock
   - uid: 1185
@@ -13132,7 +13132,7 @@ entities:
       parent: 104
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - CMUSurveillanceCameraColonyCMB
+      - SurveillanceCameraGeneral
       nameSet: True
       id: Surveillance Shack
   - uid: 1268
@@ -13149,7 +13149,7 @@ entities:
       parent: 104
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - CMUSurveillanceCameraColonyCMB
+      - SurveillanceCameraGeneral
       nameSet: True
       id: Medbay
   - uid: 1270
@@ -13160,7 +13160,7 @@ entities:
       parent: 104
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - CMUSurveillanceCameraColonyCMB
+      - SurveillanceCameraGeneral
       nameSet: True
       id: Chem and Bombs
   - uid: 1272
@@ -13177,7 +13177,7 @@ entities:
       parent: 104
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - CMUSurveillanceCameraColonyCMB
+      - SurveillanceCameraGeneral
       nameSet: True
       id: Entrance
   - uid: 1320
@@ -13844,7 +13844,7 @@ entities:
     - type: Transform
       pos: -0.5,14.5
       parent: 104
-- proto: CMUMonitorCameraColonyCMB
+- proto: WallmountTelevision
   entities:
   - uid: 977
     components:

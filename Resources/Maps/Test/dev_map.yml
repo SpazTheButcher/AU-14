@@ -9326,14 +9326,14 @@ entities:
     - type: Transform
       pos: 50.5,57.5
       parent: 1
-- proto: CMUMonitorCameraColonyCMB
+- proto: ComputerSurveillanceCameraMonitor
   entities:
   - uid: 2612
     components:
     - type: Transform
       pos: 48.5,57.5
       parent: 1
-- proto: CMUMonitorCameraColonyCMB
+- proto: ComputerSurveillanceWirelessCameraMonitor
   entities:
   - uid: 2627
     components:
@@ -15753,7 +15753,7 @@ entities:
     - type: Transform
       pos: 1.5,1.5
       parent: 2709
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraGeneral
   entities:
   - uid: 2674
     components:
@@ -15784,7 +15784,7 @@ entities:
       rot: -1.5707963267948966 rad
       pos: 0.5,1.5
       parent: 2709
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraMedical
   entities:
   - uid: 2673
     components:
@@ -15813,7 +15813,7 @@ entities:
     - type: Transform
       pos: 49.5,65.5
       parent: 1
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraScience
   entities:
   - uid: 2675
     components:

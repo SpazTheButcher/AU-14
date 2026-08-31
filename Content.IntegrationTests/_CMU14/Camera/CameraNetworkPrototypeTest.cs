@@ -7,6 +7,7 @@ using Content.Server.Wires;
 using Content.Server.SurveillanceCamera;
 using Content.Shared._RMC14.Camera;
 using Content.Shared.Camera;
+using Content.Shared.Construction.Prototypes;
 using Content.Shared.Wires;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
@@ -49,6 +50,7 @@ public sealed class CameraNetworkPrototypeTest
         "RMCMonitorCameraLandingZone",
         "RMCMonitorCameraNormandy",
         "RMCSurveillanceCameraAlmayer",
+        "RMCTelevision",
     };
 
     [Test]
@@ -101,8 +103,12 @@ public sealed class CameraNetworkPrototypeTest
             AssertMember(prototypes, factory, "RMCMonitorCameraAlamo", ["RMCMonitorCameraAlamo"], CameraSourceKinds.Rmc, true);
             AssertMember(prototypes, factory, "RMCMonitorCameraNormandy", ["RMCMonitorCameraNormandy"], CameraSourceKinds.Rmc, true);
             AssertMember(prototypes, factory, "RMCMonitorCameraLandingZone", ["RMCMonitorCameraLandingZone"], CameraSourceKinds.Rmc, false);
+            AssertMember(prototypes, factory, "RMCCameraBroadcasting", ["RMCTelevision"], CameraSourceKinds.Rmc, false);
             AssertReceiver(prototypes, factory, "CMComputerDropshipCamerasAlamo", ["RMCMonitorCameraAlamo"], CameraSourceKinds.Rmc);
             AssertReceiver(prototypes, factory, "RMCComputerDropshipCamerasNormandy", ["RMCMonitorCameraNormandy"], CameraSourceKinds.Rmc);
+            AssertReceiver(prototypes, factory, "RMCTelevision", ["RMCTelevision"], CameraSourceKinds.Rmc);
+            AssertReceiver(prototypes, factory, "RMCTelevisionWallMount", ["RMCTelevision"], CameraSourceKinds.Rmc);
+            AssertMember(prototypes, factory, "SurveillanceCameraConstructed", [], CameraSourceKinds.Standard, true);
             AssertMember(prototypes, factory, "CMUSurveillanceCameraColonyCMB", ["CMUSurveillanceCameraColonyCMB"], CameraSourceKinds.Rmc, true);
             AssertMember(prototypes, factory, "CMUSurveillanceCameraColonyGOVFOR", ["CMUSurveillanceCameraColonyGOVFOR"], CameraSourceKinds.Rmc, true);
             AssertMember(prototypes, factory, "CMUSurveillanceCameraColonyWEYU", ["CMUSurveillanceCameraColonyWEYU"], CameraSourceKinds.Rmc, true);
@@ -132,13 +138,40 @@ public sealed class CameraNetworkPrototypeTest
                 "RMCFlareCAS",
                 "RMCAirFlareCAS",
                 "RMCLaserDesignatorTarget",
-                "RMCTelevision",
-                "RMCTelevisionWallMount",
-                "RMCCameraBroadcasting",
             })
             {
                 AssertNoCameraNetworkComponents(prototypes, factory, id);
             }
+            });
+        }
+        finally
+        {
+            server.Dispose();
+        }
+    }
+
+    [Test]
+    public async Task RestoredConstructionGraphsProduceGenericEquipment()
+    {
+        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
+        try
+        {
+            await server.WaitAssertion(() =>
+            {
+                var prototypes = server.ResolveDependency<IPrototypeManager>();
+
+                Assert.Multiple(() =>
+                {
+                    Assert.That(prototypes.Index<ConstructionGraphPrototype>("SurveillanceCamera")
+                            .Nodes["camera"].Entity.GetId(null, null, new(server.EntMan)),
+                        Is.EqualTo("SurveillanceCameraConstructed"));
+                    Assert.That(prototypes.Index<ConstructionGraphPrototype>("WallmountTelescreen")
+                            .Nodes["Telescreen"].Entity.GetId(null, null, new(server.EntMan)),
+                        Is.EqualTo("WallmountTelescreen"));
+                    Assert.That(prototypes.Index<ConstructionGraphPrototype>("WallmountTelevision")
+                            .Nodes["Television"].Entity.GetId(null, null, new(server.EntMan)),
+                        Is.EqualTo("WallmountTelevision"));
+                });
             });
         }
         finally
@@ -372,9 +405,6 @@ public sealed class CameraNetworkPrototypeTest
                     "RMCFlareCAS",
                     "RMCAirFlareCAS",
                     "RMCLaserDesignatorTarget",
-                    "RMCTelevision",
-                    "RMCTelevisionWallMount",
-                    "RMCCameraBroadcasting",
                 })
                 {
                     var prototype = prototypes.Index<EntityPrototype>(id);

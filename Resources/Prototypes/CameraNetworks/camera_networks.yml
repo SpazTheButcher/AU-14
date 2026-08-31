@@ -80,3 +80,7 @@
   id: RMCSurveillanceCameraAlmayer
   name: camera-network-rmc-surveillance-camera-almayer
   configurable: true
+
+- type: cameraNetwork
+  id: RMCTelevision
+  name: rmc-television-title

@@ -30,6 +30,20 @@
     activeLoad: 300
     channel: Equipment
   - type: Appearance
+  - type: ActivatableUI
+    key: enum.RMCCameraUiKey.Key
+  - type: ActivatableUIRequiresPower
+  - type: UserInterface
+    interfaces:
+      enum.RMCCameraUiKey.Key:
+        type: RMCCameraBui
+  - type: RMCCameraComputer
+    protoIds:
+    - RMCTelevision
+    title: rmc-television-title
+  - type: CameraNetworkReceiver
+    networks: [RMCTelevision]
+    supportedSources: Rmc
   - type: Machine
     board: RMCCircuitboardTelevision
 
@@ -75,5 +89,19 @@
     activeLoad: 300
     channel: Equipment
   - type: Appearance
+  - type: ActivatableUI
+    key: enum.RMCCameraUiKey.Key
+  - type: ActivatableUIRequiresPower
+  - type: UserInterface
+    interfaces:
+      enum.RMCCameraUiKey.Key:
+        type: RMCCameraBui
+  - type: RMCCameraComputer
+    protoIds:
+    - RMCTelevision
+    title: rmc-television-title
+  - type: CameraNetworkReceiver
+    networks: [RMCTelevision]
+    supportedSources: Rmc
   - type: Machine
     board: RMCCircuitboardTelevision

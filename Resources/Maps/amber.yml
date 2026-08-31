@@ -69771,7 +69771,7 @@ entities:
       rot: -1.5707963267948966 rad
       pos: -27.5,-5.5
       parent: 2
-- proto: CMUMonitorCameraColonyCMB
+- proto: ComputerSurveillanceCameraMonitor
   entities:
   - uid: 1272
     components:
@@ -69798,7 +69798,7 @@ entities:
       rot: -1.5707963267948966 rad
       pos: 29.5,-39.5
       parent: 2
-- proto: CMUMonitorCameraColonyCMB
+- proto: ComputerTelevision
   entities:
   - uid: 1297
     components:
@@ -139067,7 +139067,7 @@ entities:
     - type: Transform
       pos: -27.5,-8.5
       parent: 2
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraCommand
   entities:
   - uid: 2990
     components:
@@ -139250,7 +139250,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       id: AI - Station Side Airlock
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraEngineering
   entities:
   - uid: 7872
     components:
@@ -139339,7 +139339,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       id: Atmos Burn Chamber
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraGeneral
   entities:
   - uid: 526
     components:
@@ -139617,7 +139617,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       id: West Atrium - West
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraMedical
   entities:
   - uid: 11147
     components:
@@ -139767,7 +139767,7 @@ entities:
     - type: Transform
       pos: 11.5,-19.5
       parent: 2
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraScience
   entities:
   - uid: 8310
     components:
@@ -139822,7 +139822,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       id: Artifact Scanner
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraSecurity
   entities:
   - uid: 672
     components:
@@ -139908,7 +139908,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - CMUSurveillanceCameraColonyCMB
+      - SurveillanceCameraSecurity
       nameSet: True
       id: Genpop - Dorms
   - uid: 24599
@@ -139927,10 +139927,10 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - CMUSurveillanceCameraColonyCMB
+      - SurveillanceCameraSecurity
       nameSet: True
       id: Genpop - Visitation
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraService
   entities:
   - uid: 11307
     components:
@@ -139947,7 +139947,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       id: Janitor
-- proto: CMUSurveillanceCameraColonyCMB
+- proto: SurveillanceCameraSupply
   entities:
   - uid: 1280
     components:
@@ -143945,7 +143945,7 @@ entities:
     - type: Transform
       pos: -4.9067645,-23.261517
       parent: 2
-- proto: CMUMonitorCameraColonyCMB
+- proto: WallmountTelevision
   entities:
   - uid: 4761
     components:
