@@ -34,6 +34,7 @@ using Content.Shared.Tools;
 using Content.Shared.Tools.Systems;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Configuration;
+using Prometheus;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Physics.Components;
@@ -82,6 +83,13 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
     private readonly HashSet<EntityUid> _emptyFlightObstructions = new();
     private readonly List<EntityUid> _finishedImpactAdoptions = new();
     private bool _gunshipOverhaulEnabled;
+    private static readonly Counter GunshipFlightImpactsMetric = Metrics.CreateCounter(
+        "cmu_gunship_flight_impacts_total",
+        "Gunship free-flight collision batches processed.");
+    private static readonly Histogram GunshipImpactContactsMetric = Metrics.CreateHistogram(
+        "cmu_gunship_impact_contacts",
+        "Simultaneous obstruction contacts in a gunship impact batch.",
+        new HistogramConfiguration { Buckets = Histogram.LinearBuckets(0, 1, 12) });
 
     public override void Initialize()
     {
@@ -367,6 +375,8 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             .Where(obstruction => !TerminatingOrDeleted(obstruction))
             .OrderBy(obstruction => obstruction.Id)
             .ToArray();
+        GunshipFlightImpactsMetric.Inc();
+        GunshipImpactContactsMetric.Observe(orderedObstructions.Length);
         var remainingSpeed = speed;
         var removedEveryObstruction = true;
         var removedAnyObstruction = false;
@@ -1203,9 +1213,16 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
 
     private bool CanRepairDropship(EntityUid dropship)
     {
-        var hovering = HasComp<DropshipTacticalHoverComponent>(dropship);
+        var hovering = TryComp(dropship, out DropshipTacticalHoverComponent? hover);
         var ftlActive = TryComp(dropship, out FTLComponent? ftl) &&
                         ftl.State is FTLState.Starting or FTLState.Travelling or FTLState.Arriving;
-        return DropshipRepairEligibility.CanRepair(hovering, ftlActive);
+        TryComp(dropship, out DropshipIntegrityComponent? integrity);
+        var state = DropshipRepairEligibility.ResolveState(
+            hovering,
+            hover?.AltitudeTransitionAt != null,
+            ftlActive,
+            integrity?.Crashing == true,
+            integrity?.Wrecked == true);
+        return DropshipRepairEligibility.CanRepair(state);
     }
 }

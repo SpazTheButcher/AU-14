@@ -28,6 +28,7 @@ using Content.Shared.UserInterface;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Configuration;
+using Prometheus;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Player;
@@ -60,6 +61,13 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
     private TimeSpan _nextFootprintTick;
     private int _destinationRevision;
     private bool _gunshipOverhaulEnabled;
+    private static readonly Histogram GunshipCollisionSpatialQueriesMetric = Metrics.CreateHistogram(
+        "cmu_gunship_collision_spatial_queries",
+        "Broadphase queries consumed by one gunship collision probe.",
+        new HistogramConfiguration { Buckets = Histogram.LinearBuckets(0, 1, 3) });
+    private static readonly Gauge GunshipHudWearersMetric = Metrics.CreateGauge(
+        "cmu_gunship_hud_wearers",
+        "Players currently tracked by the event-driven gunship HUD updater.");
 
     private static readonly SoundSpecifier WarningSound =
         new SoundPathSpecifier("/Audio/_RMC14/Dropship/dropship_incoming.ogg");

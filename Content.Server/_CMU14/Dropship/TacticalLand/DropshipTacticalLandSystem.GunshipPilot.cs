@@ -1103,6 +1103,7 @@ public sealed partial class DropshipTacticalLandSystem
                 flightTerrainCandidates,
                 LookupFlags.Static | LookupFlags.Dynamic);
             collisionHover.LastFlightCollisionSpatialQueries = queryBudget.Used;
+            GunshipCollisionSpatialQueriesMetric.Observe(queryBudget.Used);
         }
 
         foreach (var rotatedCenter in GetRotatedGunshipFootprintCenters(dropship, targetRotation, boundaryOnly))
@@ -1984,6 +1985,7 @@ public sealed partial class DropshipTacticalLandSystem
         wearers.Clear();
         foreach (var wearer in _gunshipHudWearers)
             wearers.Add(wearer);
+        GunshipHudWearersMetric.Set(wearers.Count);
 
         foreach (var wearer in wearers)
         {
