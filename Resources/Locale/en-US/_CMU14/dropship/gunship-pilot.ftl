@@ -1,0 +1,16 @@
+ui-options-header-cmu-gunship = CMU Gunship Controls
+ui-options-function-cmu-gunship-forward = Move gunship forward
+ui-options-function-cmu-gunship-back = Move gunship backward
+ui-options-function-cmu-gunship-left = Strafe gunship left
+ui-options-function-cmu-gunship-right = Strafe gunship right
+ui-options-function-cmu-gunship-rotate-left = Rotate gunship left
+ui-options-function-cmu-gunship-rotate-right = Rotate gunship right
+ui-options-function-cmu-gunship-ascend = Ascend one flight level
+ui-options-function-cmu-gunship-descend = Descend one flight level
+ui-options-function-cmu-gunship-view-up = Toggle exterior camera above
+ui-options-function-cmu-gunship-view-down = Toggle exterior camera below
+ui-options-function-cmu-gunship-rear-view = Toggle rear camera
+ui-options-function-cmu-gunship-increase-thrust = Increase thrust
+ui-options-function-cmu-gunship-decrease-thrust = Decrease thrust
+ui-options-function-cmu-gunship-cycle-camera = Cycle maneuvering camera
+ui-options-function-cmu-gunship-toggle-panning = Toggle pilot camera panning
