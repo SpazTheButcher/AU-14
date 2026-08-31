@@ -133,6 +133,15 @@ public sealed partial class DropshipIntegritySystem
                 continue;
 
             args.Handled = true;
+            if (!CanRepairDropship(integrity.Owner))
+            {
+                _popup.PopupEntity("The dropship must be landed before its systems can be repaired.",
+                    target,
+                    args.User,
+                    PopupType.SmallCaution);
+                return true;
+            }
+
             if (IsRepairerInsideDropship(args.User, integrity.Owner))
             {
                 _popup.PopupEntity("You must be outside the dropship to repair it.", target, args.User, PopupType.SmallCaution);
@@ -187,6 +196,7 @@ public sealed partial class DropshipIntegritySystem
         integrity.Comp.RepairingMalfunctions.Remove(args.Malfunction);
         if (args.Cancelled || args.Handled || args.Used is not { } used ||
             integrity.Comp.Wrecked || integrity.Comp.Crashing ||
+            !CanRepairDropship(integrity.Owner) ||
             IsRepairerInsideDropship(args.User, integrity.Owner) ||
             !integrity.Comp.ActiveMalfunctions.Contains(args.Malfunction))
         {

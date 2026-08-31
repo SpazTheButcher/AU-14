@@ -102,6 +102,21 @@ public sealed class GridVehicleMotionSimulatorTest
             Is.EqualTo(expected));
     }
 
+    [TestCase(10f, 4f, 9.165151f)]
+    [TestCase(10f, 10f, 0f)]
+    [TestCase(3f, 5f, 0f)]
+    [TestCase(-10f, 4f, 9.165151f)]
+    public void RemainingImpactSpeedConservesSquaredSpeedBudget(
+        float availableSpeed,
+        float requiredSpeed,
+        float expected)
+    {
+        var remaining = GridVehicleMotionSimulator.GetRemainingImpactSpeed(availableSpeed, requiredSpeed);
+
+        Assert.That(remaining, Is.EqualTo(expected).Within(0.0001f));
+        Assert.That(remaining, Is.GreaterThanOrEqualTo(0f));
+    }
+
     [Test]
     public void PoweredDemolitionChassisProvidesAudibleFeedbackByDefault()
     {

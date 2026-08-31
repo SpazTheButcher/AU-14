@@ -104,6 +104,16 @@ public static class GridVehicleMotionSimulator
                Math.Clamp(plowPerformance, 0f, 1f);
     }
 
+    /// <summary>
+    /// Removes an impact cost from a squared-speed energy budget.
+    /// </summary>
+    public static float GetRemainingImpactSpeed(float availableSpeed, float requiredSpeed)
+    {
+        var available = MathF.Abs(availableSpeed);
+        var required = MathF.Max(0f, requiredSpeed);
+        return MathF.Sqrt(MathF.Max(0f, available * available - required * required));
+    }
+
     public static float StepPushSpeed(
         float currentSpeed,
         float maxSpeed,

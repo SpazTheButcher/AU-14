@@ -1033,8 +1033,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             return;
         }
 
-        if (HasComp<DropshipTacticalHoverComponent>(integrity.Owner) ||
-            TryComp(integrity.Owner, out FTLComponent? ftl) && ftl.State is FTLState.Starting or FTLState.Travelling or FTLState.Arriving)
+        if (!CanRepairDropship(integrity.Owner))
         {
             _popup.PopupEntity("The dropship must be landed before its hull can be repaired.", target, args.User, PopupType.SmallCaution);
             return;
@@ -1084,7 +1083,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
     {
         if (args.Cancelled || args.Handled || args.Used is not { } tool ||
             !TryGetDropship(target.Owner, out var integrity) || integrity.Comp.Wrecked || integrity.Comp.Crashing ||
-            HasComp<DropshipTacticalHoverComponent>(integrity.Owner) ||
+            !CanRepairDropship(integrity.Owner) ||
             IsRepairerInsideDropship(args.User, integrity.Owner) ||
             !_repairable.UseFuel(tool, args.User, integrity.Comp.RepairFuel))
         {
@@ -1118,5 +1117,13 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
     private bool IsRepairerInsideDropship(EntityUid user, EntityUid dropship)
     {
         return TryComp(user, out TransformComponent? xform) && xform.GridUid == dropship;
+    }
+
+    private bool CanRepairDropship(EntityUid dropship)
+    {
+        var hovering = HasComp<DropshipTacticalHoverComponent>(dropship);
+        var ftlActive = TryComp(dropship, out FTLComponent? ftl) &&
+                        ftl.State is FTLState.Starting or FTLState.Travelling or FTLState.Arriving;
+        return DropshipRepairEligibility.CanRepair(hovering, ftlActive);
     }
 }

@@ -900,7 +900,7 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
                 : HeavySmashResult.Destroyed;
         }
 
-        var rawDamage = MathF.Max(structureDamageMultiplier, poweredRawDamage);
+        var rawDamage = availableRawDamage;
         if (query.HasRemovalThreshold)
         {
             var requiredRawDamage = query.RequiredSpeed * query.RequiredSpeed * structureDamageMultiplier;
@@ -911,7 +911,9 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
             var physicalImpactCanDestroy = query.CanDestroy && impactRawDamage >= requiredRawDamage;
             SetRemainingSmashSpeed(
                 mover,
-                physicalImpactCanDestroy ? impactSpeed - query.RequiredSpeed : 0f);
+                physicalImpactCanDestroy
+                    ? GridVehicleMotionSimulator.GetRemainingImpactSpeed(impactSpeed, query.RequiredSpeed)
+                    : 0f);
         }
         else
         {
@@ -1490,7 +1492,9 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
 
             if (query.CanDestroy)
             {
-                SetRemainingSmashSpeed(mover, impactSpeed - query.RequiredSpeed);
+                SetRemainingSmashSpeed(
+                    mover,
+                    GridVehicleMotionSimulator.GetRemainingImpactSpeed(impactSpeed, query.RequiredSpeed));
                 Dirty(vehicle, mover);
             }
             else
