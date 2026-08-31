@@ -100,7 +100,9 @@ public sealed class CameraNetworkSystem : EntitySystem
         _receivers.Clear();
         _runtimeGrants.Clear();
         _grantsBySource.Clear();
-        _seedNetworks.Clear();
+        // Seed identities are entities and remain valid until the round entity flush.
+        // Keep this lookup intact until their shutdown events remove the entries so
+        // other round-cleanup subscribers cannot manufacture duplicate identities.
         _pendingMarkerReceivers.Clear();
         _mobileMarkerUpdates.Clear();
         _legacyMembers.Clear();
@@ -543,6 +545,38 @@ public sealed class CameraNetworkSystem : EntitySystem
             });
     }
 
+    public bool SetMemberNetworkEntities(EntityUid member, IEnumerable<EntityUid> networks)
+    {
+        if (!TryComp(member, out CameraNetworkMemberComponent? component))
+            return false;
+
+        var identities = networks.ToHashSet();
+        if (identities.Any(network => !HasComp<CameraNetworkIdentityComponent>(network)))
+            return false;
+
+        var seeded = new HashSet<ProtoId<CameraNetworkPrototype>>();
+        var runtime = new HashSet<EntityUid>();
+        foreach (var network in identities)
+        {
+            if (TryGetNetworkSeed(network, out var seed))
+                seeded.Add(seed);
+            else
+                runtime.Add(network);
+        }
+
+        if (component.Networks.SetEquals(seeded) && component.RuntimeNetworks.SetEquals(runtime))
+            return false;
+
+        var affected = GetMemberNetworkEntities(component);
+        affected.UnionWith(identities);
+        UnindexMember(member, GetMemberNetworkEntities(component));
+        component.Networks = seeded;
+        component.RuntimeNetworks = runtime;
+        IndexMember(member, identities);
+        NotifyReceivers(affected, member);
+        return true;
+    }
+
     public bool SetMemberNetworksBatch(
         IReadOnlyDictionary<EntityUid, IReadOnlyCollection<ProtoId<CameraNetworkPrototype>>> updates)
     {
@@ -607,6 +641,38 @@ public sealed class CameraNetworkSystem : EntitySystem
 
         var oldEffective = GetEffectiveNetworkEntities(receiver, component);
         component.Networks = updated;
+        var newEffective = GetEffectiveNetworkEntities(receiver, component);
+        UpdateReceiverIndex(receiver, oldEffective, newEffective);
+        if (!oldEffective.SetEquals(newEffective))
+            NotifyAuthorizationChanged(receiver);
+        return true;
+    }
+
+    public bool SetReceiverNetworkEntities(EntityUid receiver, IEnumerable<EntityUid> networks)
+    {
+        if (!TryComp(receiver, out CameraNetworkReceiverComponent? component))
+            return false;
+
+        var identities = networks.ToHashSet();
+        if (identities.Any(network => !HasComp<CameraNetworkIdentityComponent>(network)))
+            return false;
+
+        var seeded = new HashSet<ProtoId<CameraNetworkPrototype>>();
+        var runtime = new HashSet<EntityUid>();
+        foreach (var network in identities)
+        {
+            if (TryGetNetworkSeed(network, out var seed))
+                seeded.Add(seed);
+            else
+                runtime.Add(network);
+        }
+
+        if (component.Networks.SetEquals(seeded) && component.RuntimeNetworks.SetEquals(runtime))
+            return false;
+
+        var oldEffective = GetEffectiveNetworkEntities(receiver, component);
+        component.Networks = seeded;
+        component.RuntimeNetworks = runtime;
         var newEffective = GetEffectiveNetworkEntities(receiver, component);
         UpdateReceiverIndex(receiver, oldEffective, newEffective);
         if (!oldEffective.SetEquals(newEffective))

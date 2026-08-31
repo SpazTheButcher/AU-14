@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Content.Shared._RMC14.Areas;
 using Content.Shared._RMC14.Dropship.Weapon;
 using Content.Shared.GameTicking;
+using Content.Shared.SurveillanceCamera;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
@@ -39,6 +40,8 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
                 subs.Event<RMCCameraNextBuiMsg>(OnComputerNextBuiMsg);
                 subs.Event<RMCCameraRefreshSubnetsBuiMsg>(OnComputerRefreshSubnetsBuiMsg);
                 subs.Event<RMCCameraNetworkBuiMsg>(OnComputerNetworkBuiMsg);
+                subs.Event<RMCCameraSessionNetworkBuiMsg>(OnComputerSessionNetworkBuiMsg);
+                subs.Event<CameraSessionResyncMessage>(OnComputerSessionResyncBuiMsg);
                 subs.Event<RMCCameraDisconnectBuiMsg>(OnComputerDisconnectBuiMsg);
                 subs.Event<RMCCameraNetworkEditorCreateBuiMsg>(OnEditorCreateBuiMsg);
                 subs.Event<RMCCameraNetworkEditorRenameBuiMsg>(OnEditorRenameBuiMsg);
@@ -196,7 +199,7 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
             return;
         }
 
-        if (!TrySelectCamera(ent, cameraUid))
+        if (!TrySelectCameraFor(ent, args.Actor, cameraUid))
             RefreshRejectedSelection(ent);
     }
 
@@ -205,19 +208,7 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
         if (!TryUseComputer(ent, args.Actor))
             return;
 
-        var index = 0;
-        if (ent.Comp.CurrentCamera is { } old &&
-            TryGetNetEntity(old, out var netCamera))
-        {
-            index = ent.Comp.CameraIds.IndexOf(netCamera.Value) - 1;
-            if (index < 0 || index >= ent.Comp.CameraIds.Count)
-                index = ent.Comp.CameraIds.Count - 1;
-        }
-
-        if (index >= 0 &&
-            index < ent.Comp.CameraIds.Count &&
-            TryGetEntity(ent.Comp.CameraIds[index], out var camera) && camera is { } cameraUid)
-            TrySelectCamera(ent, cameraUid);
+        SelectRelativeCamera(ent, args.Actor, -1);
     }
 
     private void OnComputerNextBuiMsg(Entity<RMCCameraComputerComponent> ent, ref RMCCameraNextBuiMsg args)
@@ -225,19 +216,7 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
         if (!TryUseComputer(ent, args.Actor))
             return;
 
-        var index = 0;
-        if (ent.Comp.CurrentCamera is { } old &&
-            TryGetNetEntity(old, out var netCamera))
-        {
-            index = ent.Comp.CameraIds.IndexOf(netCamera.Value) + 1;
-            if (index < 0 || index >= ent.Comp.CameraIds.Count)
-                index = 0;
-        }
-
-        if (index >= 0 &&
-            index < ent.Comp.CameraIds.Count &&
-            TryGetEntity(ent.Comp.CameraIds[index], out var camera) && camera is { } cameraUid)
-            TrySelectCamera(ent, cameraUid);
+        SelectRelativeCamera(ent, args.Actor, 1);
     }
 
     private void OnComputerRefreshSubnetsBuiMsg(Entity<RMCCameraComputerComponent> ent, ref RMCCameraRefreshSubnetsBuiMsg args)
@@ -245,12 +224,7 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
         if (_timing.ApplyingState || !TryUseComputer(ent, args.Actor))
             return;
 
-        var old = ent.Comp.CurrentCamera;
-        RebuildComputerCameras(ent.Owner, ent.Comp);
-        if (old is { } current && !ent.Comp.CameraIds.Contains(GetNetEntity(current)))
-            ent.Comp.CurrentCamera = null;
-
-        Refresh(ent, old);
+        RefreshFor(ent, args.Actor);
     }
 
     private void OnComputerNetworkBuiMsg(Entity<RMCCameraComputerComponent> ent, ref RMCCameraNetworkBuiMsg args)
@@ -265,14 +239,44 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
     {
     }
 
+    private void OnComputerSessionNetworkBuiMsg(
+        Entity<RMCCameraComputerComponent> computer,
+        ref RMCCameraSessionNetworkBuiMsg args)
+    {
+        if (_timing.ApplyingState || !TryUseComputer(computer, args.Actor))
+            return;
+
+        OnSessionNetworkBuiMsg(computer, args);
+    }
+
+    protected virtual void OnSessionNetworkBuiMsg(
+        Entity<RMCCameraComputerComponent> computer,
+        RMCCameraSessionNetworkBuiMsg args)
+    {
+    }
+
+    private void OnComputerSessionResyncBuiMsg(
+        Entity<RMCCameraComputerComponent> computer,
+        ref CameraSessionResyncMessage args)
+    {
+        if (_timing.ApplyingState || !TryUseComputer(computer, args.Actor))
+            return;
+
+        OnSessionResyncBuiMsg(computer, args);
+    }
+
+    protected virtual void OnSessionResyncBuiMsg(
+        Entity<RMCCameraComputerComponent> computer,
+        CameraSessionResyncMessage args)
+    {
+    }
+
     private void OnComputerDisconnectBuiMsg(Entity<RMCCameraComputerComponent> ent, ref RMCCameraDisconnectBuiMsg args)
     {
         if (_timing.ApplyingState || !TryUseComputer(ent, args.Actor))
             return;
 
-        var old = ent.Comp.CurrentCamera;
-        ent.Comp.CurrentCamera = null;
-        Refresh(ent, old);
+        DisconnectFor(ent, args.Actor);
     }
 
     private void OnEditorCreateBuiMsg(
@@ -354,6 +358,46 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
     {
     }
 
+    protected virtual void RefreshFor(Entity<RMCCameraComputerComponent> computer, EntityUid actor)
+    {
+        var old = computer.Comp.CurrentCamera;
+        RebuildComputerCameras(computer.Owner, computer.Comp);
+        if (old is { } current && !computer.Comp.CameraIds.Contains(GetNetEntity(current)))
+            computer.Comp.CurrentCamera = null;
+
+        Refresh(computer, old);
+    }
+
+    protected virtual void DisconnectFor(Entity<RMCCameraComputerComponent> computer, EntityUid actor)
+    {
+        var old = computer.Comp.CurrentCamera;
+        computer.Comp.CurrentCamera = null;
+        Refresh(computer, old);
+    }
+
+    protected virtual void SelectRelativeCamera(
+        Entity<RMCCameraComputerComponent> computer,
+        EntityUid actor,
+        int offset)
+    {
+        var index = 0;
+        if (computer.Comp.CurrentCamera is { } old && TryGetNetEntity(old, out var netCamera))
+        {
+            index = computer.Comp.CameraIds.IndexOf(netCamera.Value) + offset;
+            if (index < 0)
+                index = computer.Comp.CameraIds.Count - 1;
+            else if (index >= computer.Comp.CameraIds.Count)
+                index = 0;
+        }
+
+        if (index >= 0 &&
+            index < computer.Comp.CameraIds.Count &&
+            TryGetEntity(computer.Comp.CameraIds[index], out var camera) && camera is { } cameraUid)
+        {
+            TrySelectCameraFor(computer, actor, cameraUid);
+        }
+    }
+
     public virtual bool TrySelectCamera(Entity<RMCCameraComputerComponent> computer, EntityUid camera)
     {
         if (!computer.Comp.CameraIds.Contains(GetNetEntity(camera)))
@@ -363,6 +407,14 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
         computer.Comp.CurrentCamera = camera;
         Refresh(computer, old);
         return true;
+    }
+
+    public virtual bool TrySelectCameraFor(
+        Entity<RMCCameraComputerComponent> computer,
+        EntityUid actor,
+        EntityUid camera)
+    {
+        return TrySelectCamera(computer, camera);
     }
 
     protected virtual void OnWatcherRemoved(Entity<RMCCameraWatcherComponent> watcher)

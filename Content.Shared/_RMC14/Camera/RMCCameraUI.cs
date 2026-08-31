@@ -50,4 +50,19 @@ public sealed class RMCCameraNetworkBuiMsg(ProtoId<CameraNetworkPrototype> netwo
 }
 
 [Serializable, NetSerializable]
+public sealed class RMCCameraSessionNetworkBuiMsg(NetEntity network) : BoundUserInterfaceMessage
+{
+    public NetEntity Network { get; } = network;
+}
+
+[Serializable, NetSerializable]
+public sealed class RMCCameraEditorStateBuiMsg(
+    bool enabled,
+    RMCCameraNetworkEditorUiState state) : BoundUserInterfaceMessage
+{
+    public bool Enabled { get; } = enabled;
+    public RMCCameraNetworkEditorUiState State { get; } = state;
+}
+
+[Serializable, NetSerializable]
 public sealed class RMCCameraDisconnectBuiMsg : BoundUserInterfaceMessage;

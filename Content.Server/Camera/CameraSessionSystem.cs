@@ -445,4 +445,5 @@ public sealed class CameraViewerSession(
     public bool Shadow { get; internal set; } = shadow;
     public ulong LastSentRevision { get; internal set; }
     public ulong LastSentMarkerRevision { get; internal set; }
+    public EntityUid? LastSentGeometryNetwork { get; internal set; }
 }

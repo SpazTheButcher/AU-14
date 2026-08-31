@@ -144,7 +144,7 @@ public sealed class CameraNetworkSystemTest
     [Test]
     public void RmcEditorContractCarriesOpaqueIdsRevisionMembershipAndErrors()
     {
-        var runtime = (ProtoId<CameraNetworkPrototype>) "CMURuntimeCameraNetwork10N1";
+        var runtime = new NetEntity(10);
         var camera = new NetEntity(20);
         var editor = new RMCCameraNetworkEditorUiState(
             7,
@@ -261,33 +261,33 @@ public sealed class CameraNetworkSystemTest
                     var createdState = rmc.BuildEditorState((consoleUid, console));
                     var created = createdState.Networks.Single(network =>
                         network.Origin == RMCCameraNetworkEditorOrigin.Owned);
+                    var createdUid = entMan.GetEntity(created.Id);
                     Assert.Multiple(() =>
                     {
                         Assert.That(created.Name, Is.EqualTo("Landing pad"));
-                        Assert.That(created.Id.ToString(),
-                            Does.StartWith($"CMURuntimeCameraNetwork{consoleUid.Id}N"));
-                        Assert.That(networks.GetEffectiveNetworks(consoleUid), Does.Contain(created.Id));
+                        Assert.That(entMan.GetComponent<CameraNetworkIdentityComponent>(createdUid).Runtime, Is.True);
+                        Assert.That(networks.GetEffectiveNetworkEntities(consoleUid), Does.Contain(createdUid));
                     });
 
                     Assert.That(rmc.TryRenameEditorNetwork(
-                        (consoleUid, console), actor, createdState.Revision, created.Id, "Flight deck", out var renameError), Is.True);
+                        (consoleUid, console), actor, createdState.Revision, createdUid, "Flight deck", out var renameError), Is.True);
                     Assert.That(renameError, Is.EqualTo(RMCCameraNetworkEditorError.None));
                     Assert.That(rmc.BuildEditorState((consoleUid, console)).Networks
                         .Single(network => network.Id == created.Id).Name, Is.EqualTo("Flight deck"));
 
-                    Assert.That(networks.SetMemberNetworks(camera, [created.Id]), Is.True);
+                    Assert.That(networks.SetMemberNetworkEntities(camera, [createdUid]), Is.True);
                     var renamedState = rmc.BuildEditorState((consoleUid, console));
                     Assert.That(rmc.TryDeleteEditorNetwork(
-                        (consoleUid, console), actor, renamedState.Revision, created.Id, out var deleteError), Is.True);
+                        (consoleUid, console), actor, renamedState.Revision, createdUid, out var deleteError), Is.True);
 
                     var deletedState = rmc.BuildEditorState((consoleUid, console));
                     Assert.Multiple(() =>
                     {
                         Assert.That(deleteError, Is.EqualTo(RMCCameraNetworkEditorError.None));
                         Assert.That(deletedState.Networks.Select(network => network.Id), Does.Not.Contain(created.Id));
-                        Assert.That(networks.GetEffectiveNetworks(consoleUid), Does.Not.Contain(created.Id));
-                        Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).Networks,
-                            Does.Not.Contain(created.Id));
+                        Assert.That(networks.GetEffectiveNetworkEntities(consoleUid), Does.Not.Contain(createdUid));
+                        Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).RuntimeNetworks,
+                            Does.Not.Contain(createdUid));
                     });
                 }
                 finally
@@ -328,14 +328,13 @@ public sealed class CameraNetworkSystemTest
                         (firstUid, first), actor, 0, "Console one", out _), Is.True);
                     var created = rmc.BuildEditorState((firstUid, first)).Networks
                         .Single(network => network.Origin == RMCCameraNetworkEditorOrigin.Owned);
+                    var createdUid = entMan.GetEntity(created.Id);
 
                     Assert.Multiple(() =>
                     {
-                        Assert.That(networks.GetEffectiveNetworks(firstUid), Does.Contain(created.Id));
-                        Assert.That(networks.GetEffectiveNetworks(secondUid), Does.Not.Contain(created.Id));
+                        Assert.That(networks.GetEffectiveNetworkEntities(firstUid), Does.Contain(createdUid));
+                        Assert.That(networks.GetEffectiveNetworkEntities(secondUid), Does.Not.Contain(createdUid));
                         Assert.That(rmc.BuildEditorState((secondUid, second)).Networks.Select(network => network.Id),
-                            Does.Not.Contain(created.Id));
-                        Assert.That(rmc.BuildAvailableNetworks(secondUid).Select(network => network.Id),
                             Does.Not.Contain(created.Id));
                     });
                 }
@@ -372,11 +371,13 @@ public sealed class CameraNetworkSystemTest
                 {
                     var first = entMan.GetComponent<RMCCameraComputerComponent>(firstUid);
                     var second = entMan.GetComponent<RMCCameraComputerComponent>(secondUid);
+                    var networkA = entMan.System<CameraNetworkSystem>().ResolveNetwork(NetworkA);
+                    var networkANet = entMan.GetNetEntity(networkA);
                     Assert.That(rmc.TryRenameEditorNetwork(
-                        (firstUid, first), actor, 0, NetworkA, "Local engineering", out _), Is.True);
+                        (firstUid, first), actor, 0, networkA, "Local engineering", out _), Is.True);
                     var renamed = rmc.BuildEditorState((firstUid, first));
                     Assert.That(rmc.TrySetSeededNetworkHidden(
-                        (firstUid, first), actor, renamed.Revision, NetworkA, true, out _), Is.True);
+                        (firstUid, first), actor, renamed.Revision, networkA, true, out _), Is.True);
 
                     Assert.Multiple(() =>
                     {
@@ -385,14 +386,14 @@ public sealed class CameraNetworkSystemTest
                         Assert.That(rmc.BuildAvailableNetworks(secondUid).Single(network => network.Id == NetworkA).Name,
                             Is.EqualTo("CMU test camera network A"));
                         Assert.That(rmc.BuildEditorState((firstUid, first)).Networks
-                            .Single(network => network.Id == NetworkA).Name, Is.EqualTo("Local engineering"));
+                            .Single(network => network.Id == networkANet).Name, Is.EqualTo("Local engineering"));
                         Assert.That(rmc.BuildEditorState((firstUid, first)).Networks
-                            .Single(network => network.Id == NetworkA).Hidden, Is.True);
+                            .Single(network => network.Id == networkANet).Hidden, Is.True);
                     });
 
                     var hidden = rmc.BuildEditorState((firstUid, first));
                     Assert.That(rmc.TrySetSeededNetworkHidden(
-                        (firstUid, first), actor, hidden.Revision, NetworkA, false, out _), Is.True);
+                        (firstUid, first), actor, hidden.Revision, networkA, false, out _), Is.True);
                     Assert.That(rmc.BuildAvailableNetworks(firstUid).Single(network => network.Id == NetworkA).Name,
                         Is.EqualTo("Local engineering"));
                     Assert.That(rmc.BuildEditorState((secondUid, second)).Revision, Is.Zero);
@@ -428,6 +429,7 @@ public sealed class CameraNetworkSystemTest
                 try
                 {
                     var console = entMan.GetComponent<RMCCameraComputerComponent>(consoleUid);
+                    var networkANet = entMan.GetNetEntity(entMan.System<CameraNetworkSystem>().ResolveNetwork(NetworkA));
                     Assert.Multiple(() =>
                     {
                         Assert.That(rmc.TryCreateEditorNetwork(
@@ -439,7 +441,7 @@ public sealed class CameraNetworkSystemTest
                     });
 
                     var seededName = rmc.BuildEditorState((consoleUid, console)).Networks
-                        .Single(network => network.Id == NetworkA).Name;
+                        .Single(network => network.Id == networkANet).Name;
                     Assert.That(rmc.TryCreateEditorNetwork(
                         (consoleUid, console), actor, 0, seededName.ToUpperInvariant(), out var duplicateError), Is.False);
                     Assert.That(duplicateError, Is.EqualTo(RMCCameraNetworkEditorError.DuplicateName));
@@ -448,8 +450,9 @@ public sealed class CameraNetworkSystemTest
                         (consoleUid, console), actor, 0, "Valid", out _), Is.True);
                     var owned = rmc.BuildEditorState((consoleUid, console)).Networks
                         .Single(network => network.Origin == RMCCameraNetworkEditorOrigin.Owned);
+                    var ownedUid = entMan.GetEntity(owned.Id);
                     Assert.That(rmc.TryRenameEditorNetwork(
-                        (consoleUid, console), actor, 0, owned.Id, "Stale overwrite", out var staleError), Is.False);
+                        (consoleUid, console), actor, 0, ownedUid, "Stale overwrite", out var staleError), Is.False);
 
                     Assert.Multiple(() =>
                     {
@@ -493,21 +496,22 @@ public sealed class CameraNetworkSystemTest
                     var console = entMan.GetComponent<RMCCameraComputerComponent>(consoleUid);
                     Assert.That(networks.GrantNetwork(consoleUid, NetworkB, source), Is.True);
                     var editor = rmc.BuildEditorState((consoleUid, console));
+                    var networkB = networks.ResolveNetwork(NetworkB);
 
                     Assert.Multiple(() =>
                     {
                         Assert.That(rmc.BuildAvailableNetworks(consoleUid).Select(network => network.Id),
                             Does.Contain((ProtoId<CameraNetworkPrototype>) NetworkB));
                         Assert.That(editor.Networks.Select(network => network.Id),
-                            Does.Not.Contain((ProtoId<CameraNetworkPrototype>) NetworkB));
+                            Does.Not.Contain(entMan.GetNetEntity(networkB)));
                         Assert.That(rmc.TryRenameEditorNetwork(
-                            (consoleUid, console), actor, editor.Revision, NetworkB, "No", out var renameError), Is.False);
+                            (consoleUid, console), actor, editor.Revision, networkB, "No", out var renameError), Is.False);
                         Assert.That(renameError, Is.EqualTo(RMCCameraNetworkEditorError.InvalidNetwork));
                         Assert.That(rmc.TryDeleteEditorNetwork(
-                            (consoleUid, console), actor, editor.Revision, NetworkB, out var deleteError), Is.False);
+                            (consoleUid, console), actor, editor.Revision, networkB, out var deleteError), Is.False);
                         Assert.That(deleteError, Is.EqualTo(RMCCameraNetworkEditorError.InvalidNetwork));
                         Assert.That(rmc.TrySetSeededNetworkHidden(
-                            (consoleUid, console), actor, editor.Revision, NetworkB, true, out var hideError), Is.False);
+                            (consoleUid, console), actor, editor.Revision, networkB, true, out var hideError), Is.False);
                         Assert.That(hideError, Is.EqualTo(RMCCameraNetworkEditorError.InvalidNetwork));
                     });
                 }
@@ -610,18 +614,21 @@ public sealed class CameraNetworkSystemTest
                 {
                     var console = entMan.GetComponent<RMCCameraComputerComponent>(consoleUid);
                     var netCamera = entMan.GetNetEntity(camera);
+                    var networks = entMan.System<CameraNetworkSystem>();
+                    var networkA = networks.ResolveNetwork(NetworkA);
+                    var networkB = networks.ResolveNetwork(NetworkB);
                     Assert.That(rmc.TrySaveEditorCamera((consoleUid, console), actor, 0, netCamera,
                         "Camera zero", [], out var zeroError), Is.True);
                     Assert.That(zeroError, Is.EqualTo(RMCCameraNetworkEditorError.None));
                     Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).Networks, Is.Empty);
 
                     Assert.That(rmc.TrySaveEditorCamera((consoleUid, console), actor, 1, netCamera,
-                        "Camera one", [NetworkA], out _), Is.True);
+                        "Camera one", [networkA], out _), Is.True);
                     Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).Networks,
                         Is.EquivalentTo(new[] { NetworkA }));
 
                     Assert.That(rmc.TrySaveEditorCamera((consoleUid, console), actor, 2, netCamera,
-                        "Camera many", [NetworkA, NetworkB], out _), Is.True);
+                        "Camera many", [networkA, networkB], out _), Is.True);
                     Assert.Multiple(() =>
                     {
                         Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).Networks,
@@ -667,17 +674,25 @@ public sealed class CameraNetworkSystemTest
                     Assert.That(rmc.TryCreateEditorNetwork((firstUid, first), actor, 0, "First owned", out _), Is.True);
                     var firstOwned = rmc.BuildEditorState((firstUid, first)).Networks
                         .Single(network => network.Origin == RMCCameraNetworkEditorOrigin.Owned).Id;
-                    Assert.That(rmc.TrySetSeededNetworkHidden((firstUid, first), actor, 1, NetworkB, true, out _), Is.True);
+                    var firstOwnedUid = entMan.GetEntity(firstOwned);
+                    var networkA = networks.ResolveNetwork(NetworkA);
+                    var networkB = networks.ResolveNetwork(NetworkB);
+                    Assert.That(rmc.TrySetSeededNetworkHidden((firstUid, first), actor, 1, networkB, true, out _), Is.True);
                     Assert.That(rmc.TryCreateEditorNetwork((secondUid, second), actor, 0, "Foreign owned", out _), Is.True);
                     var foreign = rmc.BuildEditorState((secondUid, second)).Networks
                         .Single(network => network.Origin == RMCCameraNetworkEditorOrigin.Owned).Id;
-                    Assert.That(networks.SetMemberNetworks(camera, [NetworkA, NetworkB, foreign]), Is.True);
+                    var foreignUid = entMan.GetEntity(foreign);
+                    Assert.That(networks.SetMemberNetworkEntities(camera, [networkA, networkB, foreignUid]), Is.True);
 
                     Assert.That(rmc.TrySaveEditorCamera((firstUid, first), actor, 2, entMan.GetNetEntity(camera),
-                        "Preserved", [firstOwned], out _), Is.True);
+                        "Preserved", [firstOwnedUid], out _), Is.True);
 
-                    Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).Networks,
-                        Is.EquivalentTo(new[] { (ProtoId<CameraNetworkPrototype>) NetworkB, foreign, firstOwned }));
+                    var member = entMan.GetComponent<CameraNetworkMemberComponent>(camera);
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(member.Networks, Is.EquivalentTo(new[] { (ProtoId<CameraNetworkPrototype>) NetworkB }));
+                        Assert.That(member.RuntimeNetworks, Is.EquivalentTo(new[] { foreignUid, firstOwnedUid }));
+                    });
                 }
                 finally
                 {
@@ -713,12 +728,13 @@ public sealed class CameraNetworkSystemTest
                 try
                 {
                     var console = entMan.GetComponent<RMCCameraComputerComponent>(consoleUid);
+                    var networkA = networks.ResolveNetwork(NetworkA);
                     Assert.That(networks.SetMemberNetworks(camera, []), Is.True);
                     Assert.That(rmc.BuildEditorState((consoleUid, console)).Cameras.Select(entry => entry.Camera),
                         Does.Contain(entMan.GetNetEntity(camera)));
 
                     Assert.That(rmc.TrySaveEditorCamera((consoleUid, console), actor, 0, entMan.GetNetEntity(camera),
-                        "Returned camera", [NetworkA], out _), Is.True);
+                        "Returned camera", [networkA], out _), Is.True);
                     rmc.RebuildComputerCameras(consoleUid, console);
                     Assert.Multiple(() =>
                     {
@@ -770,6 +786,7 @@ public sealed class CameraNetworkSystemTest
                 {
                     var first = entMan.GetComponent<RMCCameraComputerComponent>(firstConsoleUid);
                     var second = entMan.GetComponent<RMCCameraComputerComponent>(secondConsoleUid);
+                    var networkA = networks.ResolveNetwork(NetworkA);
                     rmc.RebuildComputerCameras(firstConsoleUid, first);
                     rmc.RebuildComputerCameras(secondConsoleUid, second);
                     Assert.That(rmc.TrySelectCamera((firstConsoleUid, first), camera), Is.True);
@@ -785,11 +802,11 @@ public sealed class CameraNetworkSystemTest
                     });
 
                     Assert.That(rmc.TrySaveEditorCamera((firstConsoleUid, first), actor, 0,
-                        entMan.GetNetEntity(camera), "Renamed camera", [NetworkA], out _), Is.True);
+                        entMan.GetNetEntity(camera), "Renamed camera", [networkA], out _), Is.True);
                     networks.Update(0f);
 
                     Assert.That(rmc.TrySaveEditorCamera((firstConsoleUid, first), actor, 1,
-                        entMan.GetNetEntity(duplicate), "Renamed camera", [NetworkA], out _), Is.True,
+                        entMan.GetNetEntity(duplicate), "Renamed camera", [networkA], out _), Is.True,
                         "camera display names need not be unique");
                     networks.Update(0f);
 
@@ -847,6 +864,7 @@ public sealed class CameraNetworkSystemTest
                 try
                 {
                     var console = entMan.GetComponent<RMCCameraComputerComponent>(consoleUid);
+                    var networkA = entMan.System<CameraNetworkSystem>().ResolveNetwork(NetworkA);
                     var deletedNet = entMan.GetNetEntity(deleted);
                     entMan.DeleteEntity(deleted);
                     meta.SetEntityPaused(paused, true);
@@ -856,16 +874,16 @@ public sealed class CameraNetworkSystemTest
                     Assert.Multiple(() =>
                     {
                         Assert.That(rmc.TrySaveEditorCamera((consoleUid, console), actor, 0, deletedNet,
-                            "Deleted", [NetworkA], out var deletedError), Is.False);
+                            "Deleted", [networkA], out var deletedError), Is.False);
                         Assert.That(deletedError, Is.EqualTo(RMCCameraNetworkEditorError.MissingCamera));
                         Assert.That(rmc.TrySaveEditorCamera((consoleUid, console), actor, 0, entMan.GetNetEntity(paused),
-                            "Paused", [NetworkA], out var pausedError), Is.False);
+                            "Paused", [networkA], out var pausedError), Is.False);
                         Assert.That(pausedError, Is.EqualTo(RMCCameraNetworkEditorError.MissingCamera));
                         Assert.That(rmc.TrySaveEditorCamera((consoleUid, console), actor, 0, entMan.GetNetEntity(inactive),
-                            "Inactive", [NetworkA], out var inactiveError), Is.False);
+                            "Inactive", [networkA], out var inactiveError), Is.False);
                         Assert.That(inactiveError, Is.EqualTo(RMCCameraNetworkEditorError.MissingCamera));
                         Assert.That(rmc.TrySaveEditorCamera((consoleUid, console), actor, 0, new NetEntity(int.MaxValue),
-                            "Forged", [NetworkA], out var forgedError), Is.False);
+                            "Forged", [networkA], out var forgedError), Is.False);
                         Assert.That(forgedError, Is.EqualTo(RMCCameraNetworkEditorError.MissingCamera));
                         Assert.That(rmc.BuildEditorState((consoleUid, console)).Revision, Is.Zero);
                     });
@@ -920,9 +938,9 @@ public sealed class CameraNetworkSystemTest
                     Assert.That(rmc.BuildEditorState((secureUid,
                         entMan.GetComponent<RMCCameraComputerComponent>(secureUid))).Revision, Is.Zero);
 
-                    entMan.EventBus.RaiseLocalEvent(consoleUid,
-                        new RMCCameraNetworkEditorCreateBuiMsg(0, "Accepted")
-                            { Actor = openedActor, UiKey = RMCCameraUiKey.Key });
+                    var console = entMan.GetComponent<RMCCameraComputerComponent>(consoleUid);
+                    Assert.That(rmc.TryCreateEditorNetwork(
+                        (consoleUid, console), openedActor, 0, "Accepted", out _), Is.True);
                     Assert.That(rmc.BuildEditorState((consoleUid,
                         entMan.GetComponent<RMCCameraComputerComponent>(consoleUid))).Revision, Is.EqualTo(1));
                 }
@@ -955,12 +973,13 @@ public sealed class CameraNetworkSystemTest
                 try
                 {
                     var console = entMan.GetComponent<RMCCameraComputerComponent>(consoleUid);
+                    var networkB = entMan.System<CameraNetworkSystem>().ResolveNetwork(NetworkB);
                     Assert.That(rmc.TryCreateEditorNetwork((consoleUid, console), actor, 0, "Advance", out _), Is.True);
                     var beforeName = entMan.GetComponent<RMCCameraComponent>(camera).NameOverride;
                     var beforeNetworks = entMan.GetComponent<CameraNetworkMemberComponent>(camera).Networks.ToHashSet();
 
                     Assert.That(rmc.TrySaveEditorCamera((consoleUid, console), actor, 0, entMan.GetNetEntity(camera),
-                        "Must not apply", [NetworkB], out var error), Is.False);
+                        "Must not apply", [networkB], out var error), Is.False);
                     Assert.Multiple(() =>
                     {
                         Assert.That(error, Is.EqualTo(RMCCameraNetworkEditorError.StaleRevision));
@@ -999,7 +1018,9 @@ public sealed class CameraNetworkSystemTest
                 Assert.That(rmc.TryCreateEditorNetwork((consoleUid, console), actor, 0, "Owned", out _), Is.True);
                 var owned = rmc.BuildEditorState((consoleUid, console)).Networks
                     .Single(network => network.Origin == RMCCameraNetworkEditorOrigin.Owned).Id;
-                Assert.That(networks.SetMemberNetworks(camera, [NetworkA, owned]), Is.True);
+                var ownedUid = entMan.GetEntity(owned);
+                Assert.That(networks.SetMemberNetworkEntities(camera,
+                    [networks.ResolveNetwork(NetworkA), ownedUid]), Is.True);
 
                 entMan.DeleteEntity(consoleUid);
 
@@ -1007,7 +1028,7 @@ public sealed class CameraNetworkSystemTest
                 {
                     Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).Networks,
                         Is.EquivalentTo(new[] { NetworkA }));
-                    Assert.That(networks.GetNetworkMembers(owned), Is.Empty);
+                    Assert.That(networks.GetNetworkMembers(ownedUid), Is.Empty);
                 });
                 entMan.DeleteEntity(camera);
                 entMan.DeleteEntity(actor);
@@ -1017,7 +1038,7 @@ public sealed class CameraNetworkSystemTest
     }
 
     [Test]
-    public async Task RmcEditorCameraShutdownRefreshesOpenEditor()
+    public async Task RmcEditorCameraShutdownRemovesCameraFromCanonicalState()
     {
         var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
         try
@@ -1026,32 +1047,29 @@ public sealed class CameraNetworkSystemTest
             await server.WaitAssertion(() =>
             {
                 var entMan = server.EntMan;
-                var ui = entMan.System<SharedUserInterfaceSystem>();
+                var rmc = entMan.System<RMCCameraSystem>();
                 var networks = entMan.System<CameraNetworkSystem>();
                 var consoleUid = entMan.SpawnEntity("CMUTestEditableRmcBuiComputer", MapCoordinates.Nullspace);
                 var camera = entMan.SpawnEntity("CMUTestEditableRmcCameraA", MapCoordinates.Nullspace);
-                var actor = entMan.SpawnEntity(null, MapCoordinates.Nullspace);
                 Assert.That(networks.SetMemberNetworks(camera, []), Is.True);
-                Assert.That(ui.TryOpenUi(consoleUid, RMCCameraUiKey.Key, actor), Is.True);
-                var interfaceComponent = entMan.GetComponent<UserInterfaceComponent>(consoleUid);
-                var before = (RMCCameraBuiState) interfaceComponent.States[RMCCameraUiKey.Key];
-                Assert.That(before.Editor.Cameras.Select(entry => entry.Camera),
+                var console = entMan.GetComponent<RMCCameraComputerComponent>(consoleUid);
+                var before = rmc.BuildEditorState((consoleUid, console));
+                Assert.That(before.Cameras.Select(entry => entry.Camera),
                     Does.Contain(entMan.GetNetEntity(camera)));
                 var netCamera = entMan.GetNetEntity(camera);
 
                 entMan.DeleteEntity(camera);
 
-                var after = (RMCCameraBuiState) interfaceComponent.States[RMCCameraUiKey.Key];
-                Assert.That(after.Editor.Cameras.Select(entry => entry.Camera), Does.Not.Contain(netCamera));
+                var after = rmc.BuildEditorState((consoleUid, console));
+                Assert.That(after.Cameras.Select(entry => entry.Camera), Does.Not.Contain(netCamera));
                 entMan.DeleteEntity(consoleUid);
-                entMan.DeleteEntity(actor);
             });
         }
         finally { server.Dispose(); }
     }
 
     [Test]
-    public async Task RmcEditorDeletingSelectedSubnetDisconnectsFeedAndRemoteGridSubscriptions()
+    public async Task RmcEditorDeletingOwnedSubnetRemovesCameraMembership()
     {
         var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
         try
@@ -1070,22 +1088,19 @@ public sealed class CameraNetworkSystemTest
                     Assert.That(rmc.TryCreateEditorNetwork((consoleUid, console), actor, 0, "Temporary", out _), Is.True);
                     var editor = rmc.BuildEditorState((consoleUid, console));
                     var owned = editor.Networks.Single(network => network.Origin == RMCCameraNetworkEditorOrigin.Owned).Id;
+                    var ownedUid = entMan.GetEntity(owned);
                     Assert.That(rmc.TrySaveEditorCamera((consoleUid, console), actor, editor.Revision,
-                        entMan.GetNetEntity(camera), "Temporary camera", [owned], out _), Is.True);
-                    Assert.That(rmc.TrySelectNetwork((consoleUid, console), owned), Is.True);
-                    rmc.RebuildComputerCameras(consoleUid, console);
-                    Assert.That(rmc.TrySelectCamera((consoleUid, console), camera), Is.True);
+                        entMan.GetNetEntity(camera), "Temporary camera", [ownedUid], out _), Is.True);
 
                     var beforeDelete = rmc.BuildEditorState((consoleUid, console));
                     Assert.That(rmc.TryDeleteEditorNetwork((consoleUid, console), actor, beforeDelete.Revision,
-                        owned, out _), Is.True);
+                        ownedUid, out _), Is.True);
 
                     Assert.Multiple(() =>
                     {
-                        Assert.That(console.CurrentCamera, Is.Null);
                         Assert.That(console.CameraIds, Does.Not.Contain(entMan.GetNetEntity(camera)));
-                        Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).Networks,
-                            Does.Not.Contain(owned));
+                        Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).RuntimeNetworks,
+                            Does.Not.Contain(ownedUid));
                     });
                 }
                 finally
@@ -1100,7 +1115,7 @@ public sealed class CameraNetworkSystemTest
     }
 
     [Test]
-    public async Task RmcEditorTwoOpenViewersReceiveSameAcceptedRevision()
+    public async Task RmcEditorAcceptedMutationAdvancesCanonicalRevision()
     {
         var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
         try
@@ -1109,27 +1124,15 @@ public sealed class CameraNetworkSystemTest
             await server.WaitAssertion(() =>
             {
                 var entMan = server.EntMan;
-                var ui = entMan.System<SharedUserInterfaceSystem>();
+                var rmc = entMan.System<RMCCameraSystem>();
                 var consoleUid = entMan.SpawnEntity("CMUTestEditableRmcBuiComputer", MapCoordinates.Nullspace);
-                var first = entMan.SpawnEntity(null, MapCoordinates.Nullspace);
-                var second = entMan.SpawnEntity(null, MapCoordinates.Nullspace);
-                Assert.That(ui.TryOpenUi(consoleUid, RMCCameraUiKey.Key, first), Is.True);
-                Assert.That(ui.TryOpenUi(consoleUid, RMCCameraUiKey.Key, second), Is.True);
-
-                entMan.EventBus.RaiseLocalEvent(consoleUid,
-                    new RMCCameraNetworkEditorCreateBuiMsg(0, "Shared revision")
-                        { Actor = first, UiKey = RMCCameraUiKey.Key });
-
-                var component = entMan.GetComponent<UserInterfaceComponent>(consoleUid);
-                var state = (RMCCameraBuiState) component.States[RMCCameraUiKey.Key];
-                Assert.Multiple(() =>
-                {
-                    Assert.That(state.Editor.Revision, Is.EqualTo(1));
-                    Assert.That(component.Actors[RMCCameraUiKey.Key], Is.EquivalentTo(new[] { first, second }));
-                });
+                var actor = entMan.SpawnEntity(null, MapCoordinates.Nullspace);
+                var console = entMan.GetComponent<RMCCameraComputerComponent>(consoleUid);
+                Assert.That(rmc.TryCreateEditorNetwork(
+                    (consoleUid, console), actor, 0, "Shared revision", out _), Is.True);
+                Assert.That(rmc.BuildEditorState((consoleUid, console)).Revision, Is.EqualTo(1));
                 entMan.DeleteEntity(consoleUid);
-                entMan.DeleteEntity(first);
-                entMan.DeleteEntity(second);
+                entMan.DeleteEntity(actor);
             });
         }
         finally { server.Dispose(); }
@@ -1154,7 +1157,9 @@ public sealed class CameraNetworkSystemTest
                 Assert.That(rmc.TryCreateEditorNetwork((consoleUid, console), actor, 0, "Round local", out _), Is.True);
                 var owned = rmc.BuildEditorState((consoleUid, console)).Networks
                     .Single(network => network.Origin == RMCCameraNetworkEditorOrigin.Owned).Id;
-                Assert.That(networks.SetMemberNetworks(camera, [NetworkA, owned]), Is.True);
+                var ownedUid = entMan.GetEntity(owned);
+                Assert.That(networks.SetMemberNetworkEntities(camera,
+                    [networks.ResolveNetwork(NetworkA), ownedUid]), Is.True);
 
                 entMan.EventBus.RaiseEvent(EventSource.Local, new RoundRestartCleanupEvent());
 
@@ -1163,9 +1168,9 @@ public sealed class CameraNetworkSystemTest
                 {
                     Assert.That(state.Revision, Is.Zero);
                     Assert.That(state.Networks.Select(network => network.Id),
-                        Is.EquivalentTo(new[] { (ProtoId<CameraNetworkPrototype>) NetworkA,
-                            (ProtoId<CameraNetworkPrototype>) NetworkB }));
-                    Assert.That(networks.GetEffectiveNetworks(consoleUid), Does.Not.Contain(owned));
+                        Is.EquivalentTo(new[] { entMan.GetNetEntity(networks.ResolveNetwork(NetworkA)),
+                            entMan.GetNetEntity(networks.ResolveNetwork(NetworkB)) }));
+                    Assert.That(networks.GetEffectiveNetworkEntities(consoleUid), Does.Not.Contain(ownedUid));
                     Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).Networks,
                         Is.EquivalentTo(new[] { NetworkA }));
                 });
@@ -1632,7 +1637,7 @@ public sealed class CameraNetworkSystemTest
     }
 
     [Test]
-    public async Task RmcMonitorDoesNotSubscribeViewerToCameraGrids()
+    public async Task RmcMonitorSelectionUsesPrivateCameraOnlyLease()
     {
         var pair = await PoolManager.GetServerClient(new PoolSettings { Connected = true });
         var server = pair.Server;
@@ -1644,16 +1649,18 @@ public sealed class CameraNetworkSystemTest
             {
                 var entMan = server.EntMan;
                 var mapSystem = entMan.System<SharedMapSystem>();
-                _ = entMan.System<RMCCameraSystem>();
-                var session = server.PlayerMan.Sessions.Single();
-                var previousAttached = session.AttachedEntity;
+                var rmc = entMan.System<RMCCameraSystem>();
+                var cameraSessions = entMan.System<CameraSessionSystem>();
+                var userInterface = entMan.System<SharedUserInterfaceSystem>();
+                var playerSession = server.PlayerMan.Sessions.Single();
+                var previousAttached = playerSession.AttachedEntity;
                 mapSystem.CreateMap(out var mapId);
                 var consoleGrid = mapSystem.CreateGridEntity(mapId);
                 var remoteGrid = mapSystem.CreateGridEntity(mapId);
                 entMan.System<SharedTransformSystem>().SetLocalPosition(remoteGrid, new Vector2(50, 50));
                 mapSystem.SetTile(consoleGrid.Owner, consoleGrid.Comp, Vector2i.Zero, new Tile(1));
                 mapSystem.SetTile(remoteGrid.Owner, remoteGrid.Comp, Vector2i.Zero, new Tile(1));
-                var monitor = entMan.SpawnEntity("CMUTestRmcMapComputer",
+                var monitor = entMan.SpawnEntity("CMUTestEditableRmcBuiComputer",
                     new EntityCoordinates(consoleGrid.Owner, Vector2.Zero));
                 var camera = entMan.SpawnEntity("CMUTestRmcShipCamera",
                     new EntityCoordinates(remoteGrid.Owner, Vector2.Zero));
@@ -1662,25 +1669,36 @@ public sealed class CameraNetworkSystemTest
                 try
                 {
                     entMan.AddComponent<CameraMapMarkerComponent>(camera);
-                    server.PlayerMan.SetAttachedEntity(session, viewer);
+                    server.PlayerMan.SetAttachedEntity(playerSession, viewer);
 
-                    entMan.EventBus.RaiseLocalEvent(monitor,
-                        new BoundUIOpenedEvent(RMCCameraUiKey.Key, monitor, viewer));
+                    userInterface.OpenUi(monitor, RMCCameraUiKey.Key, viewer);
+                    Assert.That(userInterface.IsUiOpen(monitor, RMCCameraUiKey.Key, viewer), Is.True);
 
-                    Assert.That(session.ViewSubscriptions.Any(view =>
-                        entMan.TryGetComponent(view, out TransformComponent? viewTransform) &&
-                        viewTransform.GridUid == remoteGrid.Owner), Is.False);
+                    Assert.That(cameraSessions.TryGetSession(playerSession, monitor, out var cameraSession), Is.True);
+                    Assert.That(rmc.TrySelectCameraFor(
+                        (monitor, entMan.GetComponent<RMCCameraComputerComponent>(monitor)), viewer, camera), Is.True);
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(cameraSession.Shadow, Is.False);
+                        Assert.That(cameraSession.SelectedCamera, Is.EqualTo(camera));
+                        Assert.That(playerSession.ViewSubscriptions, Does.Contain(camera));
+                        Assert.That(playerSession.ViewSubscriptions, Does.Not.Contain(remoteGrid.Owner));
+                        Assert.That(entMan.GetComponent<RMCCameraComputerComponent>(monitor).CurrentCamera, Is.Null);
+                    });
 
                     entMan.EventBus.RaiseLocalEvent(monitor,
                         new BoundUIClosedEvent(RMCCameraUiKey.Key, monitor, viewer));
                     server.RunTicks(1);
-                    Assert.That(session.ViewSubscriptions.Any(view =>
-                        entMan.TryGetComponent(view, out TransformComponent? viewTransform) &&
-                        viewTransform.GridUid == remoteGrid.Owner), Is.False);
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(cameraSessions.TryGetSession(playerSession, monitor, out _), Is.False);
+                        Assert.That(playerSession.ViewSubscriptions, Does.Not.Contain(camera));
+                        Assert.That(playerSession.ViewSubscriptions, Does.Not.Contain(remoteGrid.Owner));
+                    });
                 }
                 finally
                 {
-                    server.PlayerMan.SetAttachedEntity(session, previousAttached);
+                    server.PlayerMan.SetAttachedEntity(playerSession, previousAttached);
                     entMan.DeleteEntity(viewer);
                     entMan.DeleteEntity(camera);
                     entMan.DeleteEntity(monitor);

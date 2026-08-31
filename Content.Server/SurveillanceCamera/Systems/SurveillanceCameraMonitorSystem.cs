@@ -347,7 +347,8 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
     private void SendGeometry(EntityUid uid, EntityUid actor, CameraViewerSession session)
     {
         if ((session.Capabilities & CameraSessionCapabilities.Map) == 0
-            || session.LastSentMarkerRevision == _cameraNetworks.MarkerRevision)
+            || session.LastSentMarkerRevision == _cameraNetworks.MarkerRevision
+            && session.LastSentGeometryNetwork == session.ActiveNetwork)
         {
             return;
         }
@@ -361,6 +362,7 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
                 BuildGeometry(session)),
             actor);
         session.LastSentMarkerRevision = _cameraNetworks.MarkerRevision;
+        session.LastSentGeometryNetwork = session.ActiveNetwork;
     }
 
     private void UpdateViewer(EntityUid uid, EntityUid actor)
