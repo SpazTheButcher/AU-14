@@ -1,14 +1,11 @@
 using System.Numerics;
-using Content.Server.Pinpointer;
 using Content.Server.Power.Components;
 using Content.Server.SurveillanceCamera;
 using Content.Shared.Camera;
 using Content.Shared._RMC14.Camera;
+using Content.Shared.GameTicking;
 using Content.Shared.Power;
-using Robust.Server.GameObjects;
 using Robust.Shared.Map;
-using Robust.Shared.Map.Components;
-using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using System.Linq;
@@ -20,22 +17,19 @@ public sealed class CameraNetworkSystem : EntitySystem
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
-    [Dependency] private readonly NavMapSystem _navMap = default!;
-    [Dependency] private readonly ViewSubscriberSystem _viewSubscriber = default!;
 
-    private readonly Dictionary<ProtoId<CameraNetworkPrototype>, HashSet<EntityUid>> _members = [];
-    private readonly Dictionary<ProtoId<CameraNetworkPrototype>, HashSet<EntityUid>> _receivers = [];
+    private readonly Dictionary<EntityUid, HashSet<EntityUid>> _members = [];
+    private readonly Dictionary<EntityUid, HashSet<EntityUid>> _receivers = [];
     private readonly Dictionary<EntityUid,
-        Dictionary<ProtoId<CameraNetworkPrototype>, HashSet<EntityUid>>> _runtimeGrants = [];
-    private readonly Dictionary<EntityUid, HashSet<(EntityUid Receiver, ProtoId<CameraNetworkPrototype> Network)>>
+        Dictionary<EntityUid, HashSet<EntityUid>>> _runtimeGrants = [];
+    private readonly Dictionary<EntityUid, HashSet<(EntityUid Receiver, EntityUid Network)>>
         _grantsBySource = [];
-    private readonly Dictionary<EntityUid, EntityUid> _pendingMarkerReceivers = [];
-    private readonly Dictionary<EntityUid, TimeSpan> _mobileMarkerUpdates = [];
-    private readonly HashSet<EntityUid> _legacyMembers = [];
-    private readonly HashSet<EntityUid> _legacyReceivers = [];
-    private readonly Dictionary<(EntityUid Receiver, EntityUid Viewer), MapViewSubscription> _mapViewSubscriptions = [];
-    private readonly Dictionary<(EntityUid Grid, ICommonSession Session), MapGridViewSubscription>
-        _mapGridViewSubscriptions = [];
+    private readonly Dictionary<ProtoId<CameraNetworkPrototype>, EntityUid> _seedNetworks = [];
+    private readonly Dictionary<EntityUid, PendingMarkerChange> _pendingMarkerReceivers = [];
+    private readonly Dictionary<EntityUid, PendingMobileMarkerChange> _mobileMarkerUpdates = [];
+    private bool _seedNetworksInitialized;
+
+    public ulong MarkerRevision { get; private set; }
 
     public override void Initialize()
     {
@@ -43,45 +37,102 @@ public sealed class CameraNetworkSystem : EntitySystem
 
         SubscribeLocalEvent<CameraNetworkMemberComponent, ComponentStartup>(OnMemberStartup);
         SubscribeLocalEvent<CameraNetworkMemberComponent, ComponentShutdown>(OnMemberShutdown);
+        SubscribeLocalEvent<CameraNetworkMemberComponent, EntityRenamedEvent>(OnMemberRenamed);
+        SubscribeLocalEvent<CameraNetworkMemberComponent, PowerChangedEvent>(OnMemberPowerChanged);
+        SubscribeLocalEvent<CameraNetworkMemberComponent, EntityPausedEvent>(OnMemberPaused);
+        SubscribeLocalEvent<CameraNetworkMemberComponent, EntityUnpausedEvent>(OnMemberUnpaused);
         SubscribeLocalEvent<CameraNetworkReceiverComponent, ComponentStartup>(OnReceiverStartup);
         SubscribeLocalEvent<CameraNetworkReceiverComponent, ComponentShutdown>(OnReceiverShutdown);
         SubscribeLocalEvent<CameraNetworkReceiverComponent, CameraNetworkGrantRequestEvent>(OnGrantRequest);
-        SubscribeLocalEvent<RMCCameraComponent, RMCLegacyCameraMapInitEvent>(OnLegacyCameraMapInit);
-        SubscribeLocalEvent<RMCCameraComputerComponent, RMCLegacyCameraComputerMapInitEvent>(OnLegacyComputerMapInit);
-        SubscribeLocalEvent<RMCCameraComponent, RMCLegacyCameraIdChangedEvent>(OnLegacyCameraIdChanged);
+        SubscribeLocalEvent<CameraNetworkIdentityComponent, ComponentShutdown>(OnNetworkShutdown);
         SubscribeLocalEvent<CameraMapMarkerComponent, ComponentStartup>(OnMarkerStartup);
         SubscribeLocalEvent<CameraMapMarkerComponent, ComponentShutdown>(OnMarkerShutdown);
         SubscribeLocalEvent<CameraMapMarkerComponent, MoveEvent>(OnMarkerMove);
-        SubscribeLocalEvent<CameraMapMarkerComponent, EntityRenamedEvent>(OnMarkerRenamed);
-        SubscribeLocalEvent<CameraMapMarkerComponent, PowerChangedEvent>(OnMarkerPowerChanged);
-        SubscribeLocalEvent<CameraMapMarkerComponent, EntityPausedEvent>(OnMarkerPaused);
-        SubscribeLocalEvent<CameraMapMarkerComponent, EntityUnpausedEvent>(OnMarkerUnpaused);
         SubscribeLocalEvent<EntityTerminatingEvent>(OnEntityTerminating);
+        SubscribeLocalEvent<PrototypesReloadedEventArgs>(OnPrototypesReloaded);
+        SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
+    }
+
+    private void OnPrototypesReloaded(PrototypesReloadedEventArgs args)
+    {
+        if (args.WasModified<CameraNetworkPrototype>())
+            EnsureSeedNetworks();
+    }
+
+    private void EnsureSeedNetworks()
+    {
+        foreach (var prototype in _prototypeManager.EnumeratePrototypes<CameraNetworkPrototype>())
+        {
+            ResolveNetwork(prototype.ID);
+        }
     }
 
     private void OnMemberStartup(Entity<CameraNetworkMemberComponent> ent, ref ComponentStartup args)
     {
-        IndexMember(ent.Owner, ent.Comp.Networks);
-        NotifyReceivers(ent.Comp.Networks, ent.Owner);
+        var networks = GetMemberNetworkEntities(ent.Comp);
+        IndexMember(ent.Owner, networks);
+        NotifyReceivers(networks, ent.Owner);
     }
 
     private void OnMemberShutdown(Entity<CameraNetworkMemberComponent> ent, ref ComponentShutdown args)
     {
-        UnindexMember(ent.Owner, ent.Comp.Networks);
-        NotifyReceivers(ent.Comp.Networks, ent.Owner);
+        var networks = GetMemberNetworkEntities(ent.Comp);
+        UnindexMember(ent.Owner, networks);
+        NotifyReceivers(networks, ent.Owner);
+    }
+
+    private void OnMemberRenamed(Entity<CameraNetworkMemberComponent> ent, ref EntityRenamedEvent args)
+    {
+        QueueMemberDirectoryChange(ent);
+    }
+
+    private void OnMemberPowerChanged(Entity<CameraNetworkMemberComponent> ent, ref PowerChangedEvent args)
+    {
+        QueueMemberDirectoryChange(ent);
+    }
+
+    private void OnMemberPaused(Entity<CameraNetworkMemberComponent> ent, ref EntityPausedEvent args)
+    {
+        QueueMemberDirectoryChange(ent);
+    }
+
+    private void OnMemberUnpaused(Entity<CameraNetworkMemberComponent> ent, ref EntityUnpausedEvent args)
+    {
+        QueueMemberDirectoryChange(ent);
     }
 
     private void OnReceiverStartup(Entity<CameraNetworkReceiverComponent> ent, ref ComponentStartup args)
     {
-        IndexReceiver(ent.Owner, GetEffectiveNetworks(ent.Owner, ent.Comp));
+        IndexReceiver(ent.Owner, GetEffectiveNetworkEntities(ent.Owner, ent.Comp));
     }
 
     private void OnReceiverShutdown(Entity<CameraNetworkReceiverComponent> ent, ref ComponentShutdown args)
     {
         _pendingMarkerReceivers.Remove(ent.Owner);
-        ClearMapViewSubscriptions(ent.Owner);
-        UnindexReceiver(ent.Owner, GetEffectiveNetworks(ent.Owner, ent.Comp));
+        UnindexReceiver(ent.Owner, GetEffectiveNetworkEntities(ent.Owner, ent.Comp));
         CleanupReceiverGrants(ent.Owner);
+    }
+
+    private void OnNetworkShutdown(Entity<CameraNetworkIdentityComponent> ent, ref ComponentShutdown args)
+    {
+        if (ent.Comp.Seed is { } seed && _seedNetworks.GetValueOrDefault(seed) == ent.Owner)
+            _seedNetworks.Remove(seed);
+
+        RemoveNetworkIdentity(ent.Owner);
+    }
+
+    private void OnRoundRestart(RoundRestartCleanupEvent args)
+    {
+        _members.Clear();
+        _receivers.Clear();
+        _runtimeGrants.Clear();
+        _grantsBySource.Clear();
+        // Seed identities are entities and remain valid until the round entity flush.
+        // Keep this lookup intact until their shutdown events remove the entries so
+        // other round-cleanup subscribers cannot manufacture duplicate identities.
+        _pendingMarkerReceivers.Clear();
+        _mobileMarkerUpdates.Clear();
+        MarkerRevision = 0;
     }
 
     private void OnGrantRequest(Entity<CameraNetworkReceiverComponent> ent, ref CameraNetworkGrantRequestEvent args)
@@ -92,60 +143,6 @@ public sealed class CameraNetworkSystem : EntitySystem
             RevokeNetwork(ent.Owner, args.Network, args.Source);
     }
 
-    private void OnLegacyCameraMapInit(Entity<RMCCameraComponent> ent, ref RMCLegacyCameraMapInitEvent args)
-    {
-        if (HasComp<CameraNetworkMemberComponent>(ent))
-            return;
-
-        var member = EnsureComp<CameraNetworkMemberComponent>(ent);
-        member.SourceKinds = CameraSourceKinds.Rmc;
-        SetMemberNetworks(ent, ValidateLegacyNetworks(ent.Owner, ent.Comp.Id));
-        _legacyMembers.Add(ent.Owner);
-    }
-
-    private void OnLegacyComputerMapInit(Entity<RMCCameraComputerComponent> ent, ref RMCLegacyCameraComputerMapInitEvent args)
-    {
-        if (HasComp<CameraNetworkReceiverComponent>(ent))
-            return;
-
-        var receiver = EnsureComp<CameraNetworkReceiverComponent>(ent);
-        receiver.SupportedSources = CameraSourceKinds.Rmc;
-        SetReceiverNetworks(ent, ValidateLegacyNetworks(ent.Owner, ent.Comp.ProtoIds));
-        _legacyReceivers.Add(ent.Owner);
-    }
-
-    private void OnLegacyCameraIdChanged(Entity<RMCCameraComponent> ent, ref RMCLegacyCameraIdChangedEvent args)
-    {
-        if (!_legacyMembers.Contains(ent.Owner) || !TryComp(ent, out CameraNetworkMemberComponent? member))
-            return;
-
-        SetMemberNetworks(ent, ValidateLegacyNetworks(ent.Owner, args.NewId));
-    }
-
-    private HashSet<ProtoId<CameraNetworkPrototype>> ValidateLegacyNetworks(
-        EntityUid entity,
-        IEnumerable<EntProtoId> legacyIds)
-    {
-        var networks = new HashSet<ProtoId<CameraNetworkPrototype>>();
-        foreach (var legacyId in legacyIds)
-        {
-            if (_prototypeManager.HasIndex<CameraNetworkPrototype>(legacyId))
-            {
-                networks.Add(new ProtoId<CameraNetworkPrototype>(legacyId.Id));
-                continue;
-            }
-
-            Log.Warning($"RMC camera prototype '{MetaData(entity).EntityPrototype?.ID ?? "unknown"}' has invalid legacy camera network '{legacyId}'.");
-        }
-
-        return networks;
-    }
-
-    private HashSet<ProtoId<CameraNetworkPrototype>> ValidateLegacyNetworks(EntityUid entity, EntProtoId? legacyId)
-    {
-        return legacyId == null ? [] : ValidateLegacyNetworks(entity, [legacyId.Value]);
-    }
-
     private void OnMarkerStartup(Entity<CameraMapMarkerComponent> ent, ref ComponentStartup args)
     {
         QueueMarkerChange(ent);
@@ -154,30 +151,10 @@ public sealed class CameraNetworkSystem : EntitySystem
     private void OnMarkerShutdown(Entity<CameraMapMarkerComponent> ent, ref ComponentShutdown args)
     {
         _mobileMarkerUpdates.Remove(ent.Owner);
-        QueueMarkerChange(ent);
+        QueueAffectedReceivers(ent.Owner);
     }
 
     private void OnMarkerMove(Entity<CameraMapMarkerComponent> ent, ref MoveEvent args)
-    {
-        QueueMarkerChange(ent);
-    }
-
-    private void OnMarkerRenamed(Entity<CameraMapMarkerComponent> ent, ref EntityRenamedEvent args)
-    {
-        QueueMarkerChange(ent);
-    }
-
-    private void OnMarkerPowerChanged(Entity<CameraMapMarkerComponent> ent, ref PowerChangedEvent args)
-    {
-        QueueMarkerChange(ent);
-    }
-
-    private void OnMarkerPaused(Entity<CameraMapMarkerComponent> ent, ref EntityPausedEvent args)
-    {
-        QueueMarkerChange(ent);
-    }
-
-    private void OnMarkerUnpaused(Entity<CameraMapMarkerComponent> ent, ref EntityUnpausedEvent args)
     {
         QueueMarkerChange(ent);
     }
@@ -186,53 +163,138 @@ public sealed class CameraNetworkSystem : EntitySystem
     {
         base.Update(frameTime);
 
-        foreach (var (marker, due) in _mobileMarkerUpdates.ToArray())
+        if (!_seedNetworksInitialized)
         {
-            if (due > _timing.CurTime)
+            EnsureSeedNetworks();
+            _seedNetworksInitialized = true;
+        }
+
+        foreach (var (marker, pending) in _mobileMarkerUpdates.ToArray())
+        {
+            if (pending.Due > _timing.CurTime)
                 continue;
 
             _mobileMarkerUpdates.Remove(marker);
-            QueueAffectedReceivers(marker);
+            QueueAffectedReceivers(marker, pending.DirectoryChanged);
         }
 
         var pendingMarkerReceivers = _pendingMarkerReceivers.ToArray();
         // Preserve marker changes queued synchronously by receiver event handlers for the next update.
         _pendingMarkerReceivers.Clear();
 
-        foreach (var (receiver, marker) in pendingMarkerReceivers)
-            NotifyReceiver(receiver, marker, CameraReceiverChangeKind.Marker);
+        foreach (var (receiver, pending) in pendingMarkerReceivers)
+        {
+            NotifyReceiver(
+                receiver,
+                pending.Marker,
+                pending.DirectoryChanged
+                    ? CameraReceiverChangeKind.Directory
+                    : CameraReceiverChangeKind.Marker);
+        }
     }
 
     private void OnEntityTerminating(ref EntityTerminatingEvent args)
     {
         var entity = args.Entity.Owner;
-        _legacyMembers.Remove(entity);
-        _legacyReceivers.Remove(entity);
         _pendingMarkerReceivers.Remove(entity);
-        ClearMapViewSubscriptions(entity);
-        ClearMapViewSubscriptionsForViewer(entity);
         CleanupSourceGrants(entity);
 
         if (TryComp(entity, out CameraNetworkReceiverComponent? receiver))
         {
-            UnindexReceiver(entity, GetEffectiveNetworks(entity, receiver));
+            UnindexReceiver(entity, GetEffectiveNetworkEntities(entity, receiver));
             CleanupReceiverGrants(entity);
         }
+    }
+
+    /// <summary>
+    /// Resolves a static YAML seed to the single logical network entity for this round.
+    /// </summary>
+    public EntityUid ResolveNetwork(ProtoId<CameraNetworkPrototype> seed)
+    {
+        if (_seedNetworks.TryGetValue(seed, out var existing) && !TerminatingOrDeleted(existing))
+            return existing;
+
+        var prototype = _prototypeManager.Index<CameraNetworkPrototype>(seed);
+        var network = Spawn(null, MapCoordinates.Nullspace);
+        var identity = AddComp<CameraNetworkIdentityComponent>(network);
+        identity.Seed = seed;
+        identity.DisplayName = Loc.GetString(prototype.Name);
+        identity.Runtime = false;
+        _seedNetworks[seed] = network;
+        return network;
+    }
+
+    public EntityUid CreateNetwork(string displayName, EntityUid? owner = null)
+    {
+        var network = Spawn(null, MapCoordinates.Nullspace);
+        var identity = AddComp<CameraNetworkIdentityComponent>(network);
+        identity.DisplayName = displayName.Trim();
+        identity.CreatedBy = owner;
+        identity.Runtime = true;
+        return network;
+    }
+
+    public bool DeleteNetwork(EntityUid network)
+    {
+        if (!TryComp(network, out CameraNetworkIdentityComponent? identity) || !identity.Runtime)
+            return false;
+
+        QueueDel(network);
+        return true;
+    }
+
+    public bool TryGetNetworkSeed(EntityUid network, out ProtoId<CameraNetworkPrototype> seed)
+    {
+        if (TryComp(network, out CameraNetworkIdentityComponent? identity) && identity.Seed is { } value)
+        {
+            seed = value;
+            return true;
+        }
+
+        seed = default;
+        return false;
+    }
+
+    public HashSet<EntityUid> GetEffectiveNetworkEntities(EntityUid receiver)
+    {
+        return TryComp(receiver, out CameraNetworkReceiverComponent? component)
+            ? GetEffectiveNetworkEntities(receiver, component)
+            : [];
+    }
+
+    private HashSet<EntityUid> GetMemberNetworkEntities(CameraNetworkMemberComponent component)
+    {
+        var networks = component.Networks.Select(ResolveNetwork).ToHashSet();
+        networks.UnionWith(component.RuntimeNetworks.Where(Exists));
+        return networks;
+    }
+
+    private HashSet<EntityUid> GetReceiverBaseNetworkEntities(CameraNetworkReceiverComponent component)
+    {
+        var networks = component.Networks.Select(ResolveNetwork).ToHashSet();
+        networks.UnionWith(component.RuntimeNetworks.Where(Exists));
+        return networks;
     }
 
     public HashSet<EntityUid> GetAccessibleCameras(Entity<CameraNetworkReceiverComponent> receiver)
     {
         var cameras = new HashSet<EntityUid>();
+        var effectiveNetworks = GetEffectiveNetworkEntities(receiver.Owner, receiver.Comp);
 
-        foreach (var network in GetEffectiveNetworks(receiver.Owner, receiver.Comp))
+        foreach (var network in effectiveNetworks)
         {
             if (!_members.TryGetValue(network, out var members))
                 continue;
 
             foreach (var member in members)
             {
-                if (CanAccess(receiver.Owner, member))
-                    cameras.Add(member);
+                if (!TryComp(member, out CameraNetworkMemberComponent? memberComponent) ||
+                    (receiver.Comp.SupportedSources & memberComponent.SourceKinds) == CameraSourceKinds.None)
+                {
+                    continue;
+                }
+
+                cameras.Add(member);
             }
         }
 
@@ -266,12 +328,6 @@ public sealed class CameraNetworkSystem : EntitySystem
 
             if (!grouped.TryGetValue(grid.Value, out var markers))
             {
-                // Colony and standalone maps are not necessarily registered as station grids,
-                // so NavMapSystem never sees StationGridAddedEvent for them. Generate the
-                // geometry lazily when an accessible camera exposes such a grid in the UI.
-                if (TryComp<MapGridComponent>(grid.Value, out var mapGrid))
-                    _navMap.EnsureNavMapIfMissing((grid.Value, mapGrid));
-
                 markers = [];
                 grouped.Add(grid.Value, markers);
             }
@@ -309,122 +365,6 @@ public sealed class CameraNetworkSystem : EntitySystem
             : Name(camera);
     }
 
-    public void SyncMapViewSubscriptions(EntityUid receiver, EntityUid viewer, CameraMapUiState state)
-    {
-        if (!TryComp(viewer, out ActorComponent? actor))
-        {
-            ClearMapViewSubscriptions(receiver, viewer);
-            return;
-        }
-
-        var key = (receiver, viewer);
-        if (_mapViewSubscriptions.TryGetValue(key, out var existing) && existing.Session != actor.PlayerSession)
-        {
-            ReleaseMapViewSubscription(existing);
-            existing = null;
-        }
-
-        var desired = new HashSet<EntityUid>();
-        foreach (var gridData in state.Grids)
-        {
-            if (state.ConsoleGrid == gridData.Grid)
-                continue;
-
-            if (TryGetEntity(gridData.Grid, out var grid) && grid is { } gridUid && !TerminatingOrDeleted(gridUid))
-                desired.Add(gridUid);
-        }
-
-        existing ??= new MapViewSubscription(actor.PlayerSession);
-
-        foreach (var grid in existing.Grids.Except(desired).ToArray())
-        {
-            existing.Grids.Remove(grid);
-            ReleaseMapGrid(grid, existing.Session);
-        }
-
-        foreach (var grid in desired.Except(existing.Grids))
-        {
-            existing.Grids.Add(grid);
-            AcquireMapGrid(grid, existing.Session);
-        }
-
-        if (existing.Grids.Count == 0)
-            _mapViewSubscriptions.Remove(key);
-        else
-            _mapViewSubscriptions[key] = existing;
-    }
-
-    public void ClearMapViewSubscriptions(EntityUid receiver, EntityUid viewer)
-    {
-        var key = (receiver, viewer);
-        if (_mapViewSubscriptions.Remove(key, out var subscription))
-            ReleaseMapViewSubscription(subscription);
-    }
-
-    public void ClearMapViewSubscriptions(EntityUid receiver)
-    {
-        foreach (var (key, subscription) in _mapViewSubscriptions.ToArray())
-        {
-            if (key.Receiver != receiver)
-                continue;
-
-            _mapViewSubscriptions.Remove(key);
-            ReleaseMapViewSubscription(subscription);
-        }
-    }
-
-    public void ClearMapViewSubscriptionsForViewer(EntityUid viewer)
-    {
-        foreach (var (key, subscription) in _mapViewSubscriptions.ToArray())
-        {
-            if (key.Viewer != viewer)
-                continue;
-
-            _mapViewSubscriptions.Remove(key);
-            ReleaseMapViewSubscription(subscription);
-        }
-    }
-
-    private void AcquireMapGrid(EntityUid grid, ICommonSession session)
-    {
-        var key = (grid, session);
-        if (_mapGridViewSubscriptions.TryGetValue(key, out var subscription))
-        {
-            subscription.Count++;
-            return;
-        }
-
-        // ViewSubscriberSystem stores a global set rather than source-aware
-        // subscriptions. Use our own view entity so closing a camera UI can
-        // never remove a subscription owned by another feature.
-        var view = Spawn(null, new EntityCoordinates(grid, Vector2.Zero));
-        _mapGridViewSubscriptions[key] = new MapGridViewSubscription(view);
-        _viewSubscriber.AddViewSubscriber(view, session);
-    }
-
-    private void ReleaseMapGrid(EntityUid grid, ICommonSession session)
-    {
-        var key = (grid, session);
-        if (!_mapGridViewSubscriptions.TryGetValue(key, out var subscription))
-            return;
-
-        if (subscription.Count > 1)
-        {
-            subscription.Count--;
-            return;
-        }
-
-        _mapGridViewSubscriptions.Remove(key);
-        _viewSubscriber.RemoveViewSubscriber(subscription.View, session);
-        QueueDel(subscription.View);
-    }
-
-    private void ReleaseMapViewSubscription(MapViewSubscription subscription)
-    {
-        foreach (var grid in subscription.Grids)
-            ReleaseMapGrid(grid, subscription.Session);
-    }
-
     public bool CanAccess(EntityUid receiver, EntityUid camera)
     {
         if (!TryComp(receiver, out CameraNetworkReceiverComponent? receiverComponent)
@@ -434,18 +374,31 @@ public sealed class CameraNetworkSystem : EntitySystem
             return false;
         }
 
-        foreach (var network in GetEffectiveNetworks(receiver, receiverComponent))
+        foreach (var network in memberComponent.Networks.Select(ResolveNetwork))
         {
             // ComponentShutdown leaves the component readable while its lifecycle
             // callback runs. The index is therefore the authoritative indicator
             // that this source is still a live member of the logical network.
-            if (memberComponent.Networks.Contains(network)
+            if (HasEffectiveNetwork(receiver, receiverComponent, network)
+                && _members.TryGetValue(network, out var members)
+                && members.Contains(camera))
+                return true;
+        }
+
+        foreach (var network in memberComponent.RuntimeNetworks)
+        {
+            if (HasEffectiveNetwork(receiver, receiverComponent, network)
                 && _members.TryGetValue(network, out var members)
                 && members.Contains(camera))
                 return true;
         }
 
         return false;
+    }
+
+    public bool IsMemberOfNetwork(EntityUid member, EntityUid network)
+    {
+        return _members.TryGetValue(network, out var members) && members.Contains(member);
     }
 
     public bool SetMapVisibility(EntityUid camera, bool visible)
@@ -474,8 +427,9 @@ public sealed class CameraNetworkSystem : EntitySystem
             return false;
         }
 
-        IndexMember(member, [network]);
-        NotifyReceivers([network], member);
+        var identity = ResolveNetwork(network);
+        IndexMember(member, [identity]);
+        NotifyReceivers([identity], member);
         return true;
     }
 
@@ -483,6 +437,34 @@ public sealed class CameraNetworkSystem : EntitySystem
     {
         if (!TryComp(member, out CameraNetworkMemberComponent? component)
             || !component.Networks.Remove(network))
+        {
+            return false;
+        }
+
+        var identity = ResolveNetwork(network);
+        UnindexMember(member, [identity]);
+        NotifyReceivers([identity], member);
+        return true;
+    }
+
+    public bool AddNetwork(EntityUid member, EntityUid network)
+    {
+        if (!HasComp<CameraNetworkIdentityComponent>(network)
+            || !TryComp(member, out CameraNetworkMemberComponent? component)
+            || !component.RuntimeNetworks.Add(network))
+        {
+            return false;
+        }
+
+        IndexMember(member, [network]);
+        NotifyReceivers([network], member);
+        return true;
+    }
+
+    public bool RemoveNetwork(EntityUid member, EntityUid network)
+    {
+        if (!TryComp(member, out CameraNetworkMemberComponent? component)
+            || !component.RuntimeNetworks.Remove(network))
         {
             return false;
         }
@@ -501,6 +483,38 @@ public sealed class CameraNetworkSystem : EntitySystem
             });
     }
 
+    public bool SetMemberNetworkEntities(EntityUid member, IEnumerable<EntityUid> networks)
+    {
+        if (!TryComp(member, out CameraNetworkMemberComponent? component))
+            return false;
+
+        var identities = networks.ToHashSet();
+        if (identities.Any(network => !HasComp<CameraNetworkIdentityComponent>(network)))
+            return false;
+
+        var seeded = new HashSet<ProtoId<CameraNetworkPrototype>>();
+        var runtime = new HashSet<EntityUid>();
+        foreach (var network in identities)
+        {
+            if (TryGetNetworkSeed(network, out var seed))
+                seeded.Add(seed);
+            else
+                runtime.Add(network);
+        }
+
+        if (component.Networks.SetEquals(seeded) && component.RuntimeNetworks.SetEquals(runtime))
+            return false;
+
+        var affected = GetMemberNetworkEntities(component);
+        affected.UnionWith(identities);
+        UnindexMember(member, GetMemberNetworkEntities(component));
+        component.Networks = seeded;
+        component.RuntimeNetworks = runtime;
+        IndexMember(member, identities);
+        NotifyReceivers(affected, member);
+        return true;
+    }
+
     public bool SetMemberNetworksBatch(
         IReadOnlyDictionary<EntityUid, IReadOnlyCollection<ProtoId<CameraNetworkPrototype>>> updates)
     {
@@ -508,7 +522,7 @@ public sealed class CameraNetworkSystem : EntitySystem
             EntityUid Member,
             CameraNetworkMemberComponent Component,
             HashSet<ProtoId<CameraNetworkPrototype>> Updated)>();
-        var affected = new HashSet<ProtoId<CameraNetworkPrototype>>();
+        var affected = new HashSet<EntityUid>();
 
         foreach (var (member, networks) in updates)
         {
@@ -519,8 +533,8 @@ public sealed class CameraNetworkSystem : EntitySystem
             if (component.Networks.SetEquals(updated))
                 continue;
 
-            affected.UnionWith(component.Networks);
-            affected.UnionWith(updated);
+            affected.UnionWith(component.Networks.Select(ResolveNetwork));
+            affected.UnionWith(updated.Select(ResolveNetwork));
             changed.Add((member, component, updated));
         }
 
@@ -528,12 +542,12 @@ public sealed class CameraNetworkSystem : EntitySystem
             return false;
 
         foreach (var (member, component, _) in changed)
-            UnindexMember(member, component.Networks);
+            UnindexMember(member, GetMemberNetworkEntities(component));
 
         foreach (var (member, component, updated) in changed)
         {
             component.Networks = updated;
-            IndexMember(member, component.Networks);
+            IndexMember(member, GetMemberNetworkEntities(component));
         }
 
         NotifyReceivers(affected, changed.Count == 1 ? changed[0].Member : null);
@@ -541,6 +555,13 @@ public sealed class CameraNetworkSystem : EntitySystem
     }
 
     public IReadOnlyCollection<EntityUid> GetNetworkMembers(ProtoId<CameraNetworkPrototype> network)
+    {
+        return _members.TryGetValue(ResolveNetwork(network), out var members)
+            ? members.ToArray()
+            : Array.Empty<EntityUid>();
+    }
+
+    public IReadOnlyCollection<EntityUid> GetNetworkMembers(EntityUid network)
     {
         return _members.TryGetValue(network, out var members)
             ? members.ToArray()
@@ -556,28 +577,99 @@ public sealed class CameraNetworkSystem : EntitySystem
         if (component.Networks.SetEquals(updated))
             return false;
 
-        var oldEffective = GetEffectiveNetworks(receiver, component);
+        var oldEffective = GetEffectiveNetworkEntities(receiver, component);
         component.Networks = updated;
-        var newEffective = GetEffectiveNetworks(receiver, component);
+        var newEffective = GetEffectiveNetworkEntities(receiver, component);
         UpdateReceiverIndex(receiver, oldEffective, newEffective);
         if (!oldEffective.SetEquals(newEffective))
             NotifyAuthorizationChanged(receiver);
         return true;
     }
 
-    public HashSet<ProtoId<CameraNetworkPrototype>> GetEffectiveNetworks(EntityUid receiver)
-    {
-        return TryComp(receiver, out CameraNetworkReceiverComponent? component)
-            ? GetEffectiveNetworks(receiver, component)
-            : [];
-    }
-
-    public bool GrantNetwork(EntityUid receiver, ProtoId<CameraNetworkPrototype> network, EntityUid source)
+    public bool SetReceiverNetworkEntities(EntityUid receiver, IEnumerable<EntityUid> networks)
     {
         if (!TryComp(receiver, out CameraNetworkReceiverComponent? component))
             return false;
 
-        var effectiveNetworks = GetEffectiveNetworks(receiver, component);
+        var identities = networks.ToHashSet();
+        if (identities.Any(network => !HasComp<CameraNetworkIdentityComponent>(network)))
+            return false;
+
+        var seeded = new HashSet<ProtoId<CameraNetworkPrototype>>();
+        var runtime = new HashSet<EntityUid>();
+        foreach (var network in identities)
+        {
+            if (TryGetNetworkSeed(network, out var seed))
+                seeded.Add(seed);
+            else
+                runtime.Add(network);
+        }
+
+        if (component.Networks.SetEquals(seeded) && component.RuntimeNetworks.SetEquals(runtime))
+            return false;
+
+        var oldEffective = GetEffectiveNetworkEntities(receiver, component);
+        component.Networks = seeded;
+        component.RuntimeNetworks = runtime;
+        var newEffective = GetEffectiveNetworkEntities(receiver, component);
+        UpdateReceiverIndex(receiver, oldEffective, newEffective);
+        if (!oldEffective.SetEquals(newEffective))
+            NotifyAuthorizationChanged(receiver);
+        return true;
+    }
+
+    public bool AddReceiverNetwork(EntityUid receiver, EntityUid network)
+    {
+        if (!HasComp<CameraNetworkIdentityComponent>(network)
+            || !TryComp(receiver, out CameraNetworkReceiverComponent? component)
+            || !component.RuntimeNetworks.Add(network))
+        {
+            return false;
+        }
+
+        IndexReceiver(receiver, [network]);
+        NotifyAuthorizationChanged(receiver);
+        return true;
+    }
+
+    public bool RemoveReceiverNetwork(EntityUid receiver, EntityUid network)
+    {
+        if (!TryComp(receiver, out CameraNetworkReceiverComponent? component)
+            || !component.RuntimeNetworks.Remove(network))
+        {
+            return false;
+        }
+
+        if (!_runtimeGrants.TryGetValue(receiver, out var grants) || !grants.ContainsKey(network))
+            UnindexReceiver(receiver, [network]);
+        NotifyAuthorizationChanged(receiver);
+        return true;
+    }
+
+    public HashSet<ProtoId<CameraNetworkPrototype>> GetEffectiveNetworks(EntityUid receiver)
+    {
+        var networks = new HashSet<ProtoId<CameraNetworkPrototype>>();
+        foreach (var network in GetEffectiveNetworkEntities(receiver))
+        {
+            if (TryGetNetworkSeed(network, out var seed))
+                networks.Add(seed);
+        }
+
+        return networks;
+    }
+
+    public bool GrantNetwork(EntityUid receiver, ProtoId<CameraNetworkPrototype> network, EntityUid source)
+    {
+        return GrantNetwork(receiver, ResolveNetwork(network), source);
+    }
+
+    public bool GrantNetwork(EntityUid receiver, EntityUid network, EntityUid source)
+    {
+        if (!HasComp<CameraNetworkIdentityComponent>(network)
+            || !TryComp(receiver, out CameraNetworkReceiverComponent? component))
+            return false;
+
+        var alreadyEffective = HasEffectiveNetwork(receiver, component, network);
         if (!_runtimeGrants.TryGetValue(receiver, out var grants))
         {
             grants = [];
@@ -594,7 +686,7 @@ public sealed class CameraNetworkSystem : EntitySystem
             return false;
 
         AddSourceGrant(source, receiver, network);
-        if (effectiveNetworks.Add(network))
+        if (!alreadyEffective)
         {
             IndexReceiver(receiver, [network]);
             NotifyAuthorizationChanged(receiver);
@@ -605,6 +697,11 @@ public sealed class CameraNetworkSystem : EntitySystem
 
     public bool RevokeNetwork(EntityUid receiver, ProtoId<CameraNetworkPrototype> network, EntityUid source)
     {
+        return RevokeNetwork(receiver, ResolveNetwork(network), source);
+    }
+
+    public bool RevokeNetwork(EntityUid receiver, EntityUid network, EntityUid source)
+    {
         if (!TryComp(receiver, out CameraNetworkReceiverComponent? component))
             return false;
 
@@ -614,7 +711,7 @@ public sealed class CameraNetworkSystem : EntitySystem
     private bool RevokeNetwork(
         EntityUid receiver,
         CameraNetworkReceiverComponent component,
-        ProtoId<CameraNetworkPrototype> network,
+        EntityUid network,
         EntityUid source)
     {
         if (!_runtimeGrants.TryGetValue(receiver, out var grants)
@@ -632,7 +729,7 @@ public sealed class CameraNetworkSystem : EntitySystem
         if (grants.Count == 0)
             _runtimeGrants.Remove(receiver);
 
-        if (component.Networks.Contains(network))
+        if (GetReceiverBaseNetworkEntities(component).Contains(network))
             return true;
 
         UnindexReceiver(receiver, [network]);
@@ -640,7 +737,7 @@ public sealed class CameraNetworkSystem : EntitySystem
         return true;
     }
 
-    private void IndexMember(EntityUid member, IEnumerable<ProtoId<CameraNetworkPrototype>> networks)
+    private void IndexMember(EntityUid member, IEnumerable<EntityUid> networks)
     {
         foreach (var network in networks)
         {
@@ -654,7 +751,7 @@ public sealed class CameraNetworkSystem : EntitySystem
         }
     }
 
-    private void UnindexMember(EntityUid member, IEnumerable<ProtoId<CameraNetworkPrototype>> networks)
+    private void UnindexMember(EntityUid member, IEnumerable<EntityUid> networks)
     {
         foreach (var network in networks)
         {
@@ -667,7 +764,7 @@ public sealed class CameraNetworkSystem : EntitySystem
         }
     }
 
-    private void IndexReceiver(EntityUid receiver, IEnumerable<ProtoId<CameraNetworkPrototype>> networks)
+    private void IndexReceiver(EntityUid receiver, IEnumerable<EntityUid> networks)
     {
         foreach (var network in networks)
         {
@@ -681,7 +778,7 @@ public sealed class CameraNetworkSystem : EntitySystem
         }
     }
 
-    private void UnindexReceiver(EntityUid receiver, IEnumerable<ProtoId<CameraNetworkPrototype>> networks)
+    private void UnindexReceiver(EntityUid receiver, IEnumerable<EntityUid> networks)
     {
         foreach (var network in networks)
         {
@@ -696,25 +793,39 @@ public sealed class CameraNetworkSystem : EntitySystem
 
     private void UpdateReceiverIndex(
         EntityUid receiver,
-        IEnumerable<ProtoId<CameraNetworkPrototype>> oldNetworks,
-        IEnumerable<ProtoId<CameraNetworkPrototype>> newNetworks)
+        IEnumerable<EntityUid> oldNetworks,
+        IEnumerable<EntityUid> newNetworks)
     {
         UnindexReceiver(receiver, oldNetworks);
         IndexReceiver(receiver, newNetworks);
     }
 
-    private HashSet<ProtoId<CameraNetworkPrototype>> GetEffectiveNetworks(
+    private HashSet<EntityUid> GetEffectiveNetworkEntities(
         EntityUid receiver,
         CameraNetworkReceiverComponent component)
     {
-        var networks = new HashSet<ProtoId<CameraNetworkPrototype>>(component.Networks);
+        var networks = GetReceiverBaseNetworkEntities(component);
         if (_runtimeGrants.TryGetValue(receiver, out var grants))
             networks.UnionWith(grants.Keys);
 
         return networks;
     }
 
-    private void AddSourceGrant(EntityUid source, EntityUid receiver, ProtoId<CameraNetworkPrototype> network)
+    private bool HasEffectiveNetwork(
+        EntityUid receiver,
+        CameraNetworkReceiverComponent component,
+        EntityUid network)
+    {
+        if (component.RuntimeNetworks.Contains(network)
+            || _runtimeGrants.TryGetValue(receiver, out var grants) && grants.ContainsKey(network))
+        {
+            return true;
+        }
+
+        return component.Networks.Any(seed => ResolveNetwork(seed) == network);
+    }
+
+    private void AddSourceGrant(EntityUid source, EntityUid receiver, EntityUid network)
     {
         if (!_grantsBySource.TryGetValue(source, out var grants))
         {
@@ -725,7 +836,7 @@ public sealed class CameraNetworkSystem : EntitySystem
         grants.Add((receiver, network));
     }
 
-    private void RemoveSourceGrant(EntityUid source, EntityUid receiver, ProtoId<CameraNetworkPrototype> network)
+    private void RemoveSourceGrant(EntityUid source, EntityUid receiver, EntityUid network)
     {
         if (!_grantsBySource.TryGetValue(source, out var grants))
             return;
@@ -761,7 +872,7 @@ public sealed class CameraNetworkSystem : EntitySystem
         }
     }
 
-    private void RemoveRuntimeGrant(EntityUid receiver, ProtoId<CameraNetworkPrototype> network, EntityUid source)
+    private void RemoveRuntimeGrant(EntityUid receiver, EntityUid network, EntityUid source)
     {
         if (!_runtimeGrants.TryGetValue(receiver, out var grants)
             || !grants.TryGetValue(network, out var sources)
@@ -776,8 +887,40 @@ public sealed class CameraNetworkSystem : EntitySystem
             _runtimeGrants.Remove(receiver);
     }
 
+    private void RemoveNetworkIdentity(EntityUid network)
+    {
+        if (_members.Remove(network, out var members))
+        {
+            foreach (var member in members)
+            {
+                if (TryComp(member, out CameraNetworkMemberComponent? component))
+                    component.RuntimeNetworks.Remove(network);
+            }
+        }
+
+        if (_receivers.Remove(network, out var receivers))
+        {
+            foreach (var receiver in receivers)
+            {
+                if (TryComp(receiver, out CameraNetworkReceiverComponent? component))
+                    component.RuntimeNetworks.Remove(network);
+
+                if (!_runtimeGrants.TryGetValue(receiver, out var grants)
+                    || !grants.Remove(network, out var sources))
+                    continue;
+
+                foreach (var source in sources)
+                    RemoveSourceGrant(source, receiver, network);
+                if (grants.Count == 0)
+                    _runtimeGrants.Remove(receiver);
+
+                NotifyAuthorizationChanged(receiver);
+            }
+        }
+    }
+
     private void NotifyReceivers(
-        IEnumerable<ProtoId<CameraNetworkPrototype>> networks,
+        IEnumerable<EntityUid> networks,
         EntityUid? member,
         CameraReceiverChangeKind kind = CameraReceiverChangeKind.MemberList)
     {
@@ -795,7 +938,7 @@ public sealed class CameraNetworkSystem : EntitySystem
         }
     }
 
-    private bool IsAvailable(EntityUid camera)
+    public bool IsAvailable(EntityUid camera)
     {
         if (TerminatingOrDeleted(camera) || MetaData(camera).EntityPaused)
             return false;
@@ -806,29 +949,75 @@ public sealed class CameraNetworkSystem : EntitySystem
         return !TryComp(camera, out ApcPowerReceiverComponent? power) || power.Powered;
     }
 
-    private void QueueMarkerChange(Entity<CameraMapMarkerComponent> marker)
+    private void QueueMarkerChange(
+        Entity<CameraMapMarkerComponent> marker,
+        bool directoryChanged = false)
     {
         if (marker.Comp.Mobile)
         {
-            _mobileMarkerUpdates.TryAdd(marker.Owner, _timing.CurTime + marker.Comp.UpdateInterval);
+            if (_mobileMarkerUpdates.TryGetValue(marker.Owner, out var pending))
+            {
+                _mobileMarkerUpdates[marker.Owner] = pending with
+                {
+                    DirectoryChanged = pending.DirectoryChanged || directoryChanged,
+                };
+            }
+            else
+            {
+                _mobileMarkerUpdates.Add(
+                    marker.Owner,
+                    new PendingMobileMarkerChange(
+                        _timing.CurTime + marker.Comp.UpdateInterval,
+                        directoryChanged));
+            }
+
             return;
         }
 
-        QueueAffectedReceivers(marker.Owner);
+        QueueAffectedReceivers(marker.Owner, directoryChanged);
     }
 
-    private void QueueAffectedReceivers(EntityUid marker)
+    private void QueueMemberDirectoryChange(Entity<CameraNetworkMemberComponent> member)
+    {
+        if (TryComp(member.Owner, out CameraMapMarkerComponent? marker))
+        {
+            QueueMarkerChange((member.Owner, marker), directoryChanged: true);
+            return;
+        }
+
+        NotifyReceivers(
+            GetMemberNetworkEntities(member.Comp),
+            member.Owner,
+            CameraReceiverChangeKind.Directory);
+    }
+
+    private void QueueAffectedReceivers(EntityUid marker, bool directoryChanged = false)
     {
         if (!TryComp(marker, out CameraNetworkMemberComponent? member))
             return;
 
-        foreach (var network in member.Networks)
+        MarkerRevision++;
+
+        foreach (var network in GetMemberNetworkEntities(member))
         {
             if (!_receivers.TryGetValue(network, out var receivers))
                 continue;
 
             foreach (var receiver in receivers)
-                _pendingMarkerReceivers.TryAdd(receiver, marker);
+            {
+                if (_pendingMarkerReceivers.TryGetValue(receiver, out var pending))
+                {
+                    _pendingMarkerReceivers[receiver] = new PendingMarkerChange(
+                        marker,
+                        pending.DirectoryChanged || directoryChanged);
+                }
+                else
+                {
+                    _pendingMarkerReceivers.Add(
+                        receiver,
+                        new PendingMarkerChange(marker, directoryChanged));
+                }
+            }
         }
     }
 
@@ -843,16 +1032,8 @@ public sealed class CameraNetworkSystem : EntitySystem
         var ev = new CameraReceiverChangedEvent(kind, member);
         RaiseLocalEvent(receiver, ref ev);
     }
-}
 
-internal sealed class MapViewSubscription(ICommonSession session)
-{
-    public ICommonSession Session { get; } = session;
-    public HashSet<EntityUid> Grids { get; } = [];
-}
+    private readonly record struct PendingMarkerChange(EntityUid Marker, bool DirectoryChanged);
 
-internal sealed class MapGridViewSubscription(EntityUid view)
-{
-    public EntityUid View { get; } = view;
-    public int Count { get; set; } = 1;
+    private readonly record struct PendingMobileMarkerChange(TimeSpan Due, bool DirectoryChanged);
 }

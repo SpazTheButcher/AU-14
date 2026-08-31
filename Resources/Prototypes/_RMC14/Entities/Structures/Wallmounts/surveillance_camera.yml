@@ -56,7 +56,6 @@
           params:
             volume: -8
   - type: RMCCamera
-    id: RMCSurveillanceCameraAlmayer
   - type: SurveillanceCamera
     nameSet: true
     networkSet: false
@@ -105,10 +104,6 @@
       enum.RMCCameraUiKey.Key:
         type: RMCCameraBui
   - type: RMCCameraComputer
-    protoIds:
-    - RMCSurveillanceCameraAlmayer
-    - RMCMonitorCameraAlamo
-    - RMCMonitorCameraNormandy
   - type: CameraNetworkReceiver
     networks: [RMCSurveillanceCameraAlmayer, RMCMonitorCameraAlamo, RMCMonitorCameraNormandy]
     supportedSources: Rmc
@@ -124,7 +119,6 @@
   - type: ApcPowerReceiver
     needsPower: true
   - type: RMCCamera
-    id: RMCMonitorCameraAlamo
   - type: SurveillanceCamera
     id: RMCMonitorCameraAlamo
     nameSet: true
@@ -141,7 +135,6 @@
   - type: ApcPowerReceiver
     needsPower: true
   - type: RMCCamera
-    id: RMCMonitorCameraNormandy
   - type: SurveillanceCamera
     id: RMCMonitorCameraNormandy
     nameSet: true
@@ -164,7 +157,6 @@
     state: camera
     cycle: true
   - type: RMCCamera
-    id: RMCMonitorCameraLandingZone
   - type: CameraNetworkMember
     networks: [RMCMonitorCameraLandingZone]
     sourceKinds: Rmc

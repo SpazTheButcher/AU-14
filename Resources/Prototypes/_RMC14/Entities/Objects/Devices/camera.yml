@@ -31,5 +31,10 @@
         - Xeno
   - type: ActiveListener
     range: 10
+  - type: RMCCamera
+    rename: false
+  - type: CameraNetworkMember
+    networks: [RMCTelevision]
+    sourceKinds: Rmc
   - type: Corrodible
     isCorrodible: false

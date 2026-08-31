@@ -7460,7 +7460,7 @@ entities:
       rot: -1.5707963267948966 rad
       pos: 17.5,46.5
       parent: 588
-- proto: CMUMonitorCameraColonyCMB
+- proto: ComputerSurveillanceCameraMonitor
   entities:
   - uid: 635
     components:
@@ -7468,7 +7468,7 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 6.5,21.5
       parent: 588
-- proto: CMUMonitorCameraColonyCMB
+- proto: ComputerTelevision
   entities:
   - uid: 1229
     components:
@@ -11707,7 +11707,7 @@ entities:
     - type: Transform
       pos: 28.5,44.5
       parent: 588
-- proto: CMUMonitorCameraColonyCMB
+- proto: WallmountTelescreen
   entities:
   - uid: 572
     components:

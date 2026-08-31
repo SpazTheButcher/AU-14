@@ -98,7 +98,6 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
     [Dependency] private PowerLoaderSystem _powerloader = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private IRobustRandom _random = default!;
-    [Dependency] private SharedRMCCameraSystem _rmcCamera = default!;
     [Dependency] private SharedRMCFlammableSystem _rmcFlammable = default!;
     [Dependency] private SharedRMCExplosionSystem _rmcExplosion = default!;
     [Dependency] private RMCImplosionSystem _rmcImplosion = default!;
@@ -394,19 +393,11 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
             Dirty(uid, terminal);
         }
 
-        if (!TryComp(ent, out MetaDataComponent? metaData) || metaData.EntityPrototype == null)
-            return;
-
-        var prototype = metaData.EntityPrototype.ID;
-
         AddComp(ent, new RMCCameraComponent
         {
-            Id = prototype,
             Rename = false,
             NameOverride = $"{Name(ent)} [{ent.Comp.Abbreviation}]",
         }, true);
-
-        _rmcCamera.RefreshCameras(prototype);
     }
 
     private void OnDropshipTargetRemove<T>(Entity<DropshipTargetComponent> ent, ref T args)
@@ -449,11 +440,10 @@ public abstract partial class SharedDropshipWeaponSystem : EntitySystem
             Dirty(uid, terminal);
         }
 
-        if (_net.IsServer && TryComp(ent, out MetaDataComponent? metaData) && metaData.EntityPrototype is { } prototype)
+        if (_net.IsServer)
         {
             RemComp<RMCCameraComponent>(ent);
             RemComp<EyeComponent>(ent);
-            _rmcCamera.RefreshCameras(prototype);
         }
 
         foreach (var (_, eye) in ent.Comp.Eyes)

@@ -64,6 +64,20 @@ public sealed partial class RMCCameraWindow : RMCPopOutWindow
             GridSelector.Select(gridId);
     }
 
+    public void SetFeatures(bool mapEnabled, bool editorEnabled)
+    {
+        MapTab.Visible = mapEnabled;
+        EditorTab.Visible = editorEnabled;
+        ManageNetworkButton.Visible = editorEnabled;
+
+        var current = MonitorTabs.CurrentTab;
+        if ((!mapEnabled && current == MapTab.GetPositionInParent()) ||
+            (!editorEnabled && current == EditorTab.GetPositionInParent()))
+        {
+            MonitorTabs.CurrentTab = ListTab.GetPositionInParent();
+        }
+    }
+
     private void OnCameraMapGridChanged(NetEntity? grid)
     {
         _selectedGrid = grid;

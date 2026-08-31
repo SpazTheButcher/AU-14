@@ -5,6 +5,7 @@ using Content.Shared.Access.Systems;
 using Content.Shared._RMC14.Camera;
 using Content.Shared._RMC14.Mortar;
 using Content.Shared.Camera;
+using Content.Shared.CCVar;
 using Content.Shared.Database;
 using Content.Shared.Item;
 using Content.Shared.SurveillanceCamera;
@@ -16,8 +17,6 @@ public sealed partial class RMCCameraSystem
 {
     private const int MaxNetworkNameLength = 48;
     private const int MaxCameraNameLength = 64;
-    private const string RuntimeNetworkPrefix = "CMURuntimeCameraNetwork";
-
     [Dependency] private AccessReaderSystem _accessReader = default!;
     [Dependency] private IAdminLogManager _adminLogger = default!;
     [Dependency] private MetaDataSystem _metaDataSystem = default!;
@@ -27,12 +26,12 @@ public sealed partial class RMCCameraSystem
         var editor = EnsureEditorState(computer);
         var networks = editor.SeededNetworks
             .Select(network => new RMCCameraNetworkEditorNetworkUiData(
-                network,
+                GetNetEntity(network),
                 ResolveNetworkName(computer.Owner, network, editor),
                 RMCCameraNetworkEditorOrigin.Seeded,
                 editor.HiddenSeededNetworks.Contains(network)))
             .Concat(editor.OwnedNetworks.Select(pair => new RMCCameraNetworkEditorNetworkUiData(
-                pair.Key,
+                GetNetEntity(pair.Key),
                 pair.Value,
                 RMCCameraNetworkEditorOrigin.Owned,
                 false)))
@@ -42,17 +41,22 @@ public sealed partial class RMCCameraSystem
 
         var editableNetworks = networks
             .Where(network => !network.Hidden)
-            .Select(network => network.Id)
+            .Select(network => GetEntity(network.Id))
             .ToList();
         var cameras = GetEditableCameras()
             .Select(camera =>
             {
                 var component = Comp<RMCCameraComponent>(camera);
-                var memberships = Comp<CameraNetworkMemberComponent>(camera).Networks;
+                var member = Comp<CameraNetworkMemberComponent>(camera);
+                var memberships = member.Networks.Select(_cameraNetworks.ResolveNetwork)
+                    .Concat(member.RuntimeNetworks)
+                    .ToHashSet();
                 return new RMCCameraNetworkEditorCameraUiData(
                     GetNetEntity(camera),
                     GetCameraName(camera, component),
-                    editableNetworks.Where(memberships.Contains).ToList());
+                    editableNetworks.Where(network => network is { } id && memberships.Contains(id))
+                        .Select(network => GetNetEntity(network))
+                        .ToList());
             })
             .ToList();
 
@@ -86,7 +90,7 @@ public sealed partial class RMCCameraSystem
         uint revision,
         NetEntity camera,
         string name,
-        IReadOnlyCollection<ProtoId<CameraNetworkPrototype>> networks,
+        IReadOnlyCollection<EntityUid> networks,
         out RMCCameraNetworkEditorError error)
     {
         var editor = EnsureEditorState(computer);
@@ -122,11 +126,13 @@ public sealed partial class RMCCameraSystem
             return false;
         }
 
-        var preservedNetworks = member.Networks
-            .Where(network => !editableNetworks.Contains(network));
+        var currentNetworks = member.Networks.Select(_cameraNetworks.ResolveNetwork)
+            .Concat(member.RuntimeNetworks)
+            .ToHashSet();
+        var preservedNetworks = currentNetworks.Where(network => !editableNetworks.Contains(network));
         var updatedNetworks = preservedNetworks.Concat(selectedNetworks).ToHashSet();
         var oldName = GetCameraName(uid, rmc);
-        var oldNetworks = member.Networks.ToHashSet();
+        var oldNetworks = currentNetworks;
 
         if (!string.Equals(oldName, normalized, StringComparison.Ordinal))
         {
@@ -134,8 +140,8 @@ public sealed partial class RMCCameraSystem
             SetCameraName(uid, normalized, rmc);
         }
 
-        if (!member.Networks.SetEquals(updatedNetworks))
-            _cameraNetworks.SetMemberNetworks(uid, updatedNetworks);
+        if (!currentNetworks.SetEquals(updatedNetworks))
+            _cameraNetworks.SetMemberNetworkEntities(uid, updatedNetworks);
 
         editor.Revision++;
         _adminLogger.Add(LogType.Action, LogImpact.Medium,
@@ -149,12 +155,11 @@ public sealed partial class RMCCameraSystem
 
     public bool TryResolveNetworkName(
         EntityUid computer,
-        ProtoId<CameraNetworkPrototype> network,
+        EntityUid network,
         out string name)
     {
-        if (TryComp(computer, out RMCCameraComputerComponent? cameraComputer))
+        if (TryComp(computer, out RMCCameraNetworkEditorComponent? editor))
         {
-            var editor = EnsureEditorState((computer, cameraComputer));
             if (editor.OwnedNetworks.TryGetValue(network, out name!) ||
                 editor.Aliases.TryGetValue(network, out name!))
             {
@@ -162,9 +167,9 @@ public sealed partial class RMCCameraSystem
             }
         }
 
-        if (_prototypeManager.TryIndex<CameraNetworkPrototype>(network, out var prototype))
+        if (TryComp(network, out CameraNetworkIdentityComponent? identity))
         {
-            name = Loc.GetString(prototype.Name);
+            name = identity.DisplayName;
             return true;
         }
 
@@ -186,15 +191,14 @@ public sealed partial class RMCCameraSystem
             return false;
         }
 
-        var network = NextRuntimeNetwork(computer.Owner, editor);
+        var network = _cameraNetworks.CreateNetwork(normalized, computer.Owner);
         editor.OwnedNetworks.Add(network, normalized);
         editor.Revision++;
 
-        var receiver = Comp<CameraNetworkReceiverComponent>(computer);
-        var updated = receiver.Networks.Append(network).ToHashSet();
-        if (!_cameraNetworks.SetReceiverNetworks(computer.Owner, updated))
+        if (!_cameraNetworks.AddReceiverNetwork(computer.Owner, network))
         {
             editor.OwnedNetworks.Remove(network);
+            _cameraNetworks.DeleteNetwork(network);
             editor.Revision--;
             error = RMCCameraNetworkEditorError.InvalidNetwork;
             return false;
@@ -211,7 +215,7 @@ public sealed partial class RMCCameraSystem
         Entity<RMCCameraComputerComponent> computer,
         EntityUid actor,
         uint revision,
-        ProtoId<CameraNetworkPrototype> network,
+        EntityUid network,
         string name,
         out RMCCameraNetworkEditorError error)
     {
@@ -248,7 +252,7 @@ public sealed partial class RMCCameraSystem
         Entity<RMCCameraComputerComponent> computer,
         EntityUid actor,
         uint revision,
-        ProtoId<CameraNetworkPrototype> network,
+        EntityUid network,
         out RMCCameraNetworkEditorError error)
     {
         var editor = EnsureEditorState(computer);
@@ -268,18 +272,21 @@ public sealed partial class RMCCameraSystem
         }
 
         editor.Revision++;
-        var receiver = Comp<CameraNetworkReceiverComponent>(computer);
-        _cameraNetworks.SetReceiverNetworks(computer.Owner, receiver.Networks.Where(existing => existing != network));
+        _cameraNetworks.RemoveReceiverNetwork(computer.Owner, network);
 
-        var updates = new Dictionary<EntityUid, IReadOnlyCollection<ProtoId<CameraNetworkPrototype>>>();
         foreach (var member in _cameraNetworks.GetNetworkMembers(network))
         {
             if (TryComp(member, out CameraNetworkMemberComponent? memberComponent))
-                updates[member] = memberComponent.Networks.Where(existing => existing != network).ToHashSet();
+            {
+                var updated = memberComponent.Networks.Select(_cameraNetworks.ResolveNetwork)
+                    .Concat(memberComponent.RuntimeNetworks)
+                    .Where(existing => existing != network)
+                    .ToHashSet();
+                _cameraNetworks.SetMemberNetworkEntities(member, updated);
+            }
         }
 
-        if (updates.Count > 0)
-            _cameraNetworks.SetMemberNetworksBatch(updates);
+        _cameraNetworks.DeleteNetwork(network);
 
         _adminLogger.Add(LogType.Action, LogImpact.Medium,
             $"{ToPrettyString(actor):player} deleted camera network '{oldName}' ({network}) from {ToPrettyString(computer.Owner):console}");
@@ -292,7 +299,7 @@ public sealed partial class RMCCameraSystem
         Entity<RMCCameraComputerComponent> computer,
         EntityUid actor,
         uint revision,
-        ProtoId<CameraNetworkPrototype> network,
+        EntityUid network,
         bool hidden,
         out RMCCameraNetworkEditorError error)
     {
@@ -341,7 +348,10 @@ public sealed partial class RMCCameraSystem
         if (!IsEditorUiOpen(computer, args.Actor))
             return;
 
-        TryRenameEditorNetwork(computer, args.Actor, args.Revision, args.Network, args.Name, out var error);
+        if (!TryGetEntity(args.Network, out var network) || network is not { } networkUid)
+            return;
+
+        TryRenameEditorNetwork(computer, args.Actor, args.Revision, networkUid, args.Name, out var error);
         FinishEditorCommand(computer, args.Actor, error);
     }
 
@@ -352,7 +362,10 @@ public sealed partial class RMCCameraSystem
         if (!IsEditorUiOpen(computer, args.Actor))
             return;
 
-        TryDeleteEditorNetwork(computer, args.Actor, args.Revision, args.Network, out var error);
+        if (!TryGetEntity(args.Network, out var network) || network is not { } networkUid)
+            return;
+
+        TryDeleteEditorNetwork(computer, args.Actor, args.Revision, networkUid, out var error);
         FinishEditorCommand(computer, args.Actor, error);
     }
 
@@ -363,7 +376,10 @@ public sealed partial class RMCCameraSystem
         if (!IsEditorUiOpen(computer, args.Actor))
             return;
 
-        TrySetSeededNetworkHidden(computer, args.Actor, args.Revision, args.Network, args.Hidden, out var error);
+        if (!TryGetEntity(args.Network, out var network) || network is not { } networkUid)
+            return;
+
+        TrySetSeededNetworkHidden(computer, args.Actor, args.Revision, networkUid, args.Hidden, out var error);
         FinishEditorCommand(computer, args.Actor, error);
     }
 
@@ -374,11 +390,19 @@ public sealed partial class RMCCameraSystem
         if (!IsEditorUiOpen(computer, args.Actor))
             return;
 
-        TrySaveEditorCamera(computer, args.Actor, args.Revision, args.Camera, args.Name, args.Networks, out var error);
+        var networks = new List<EntityUid>();
+        foreach (var netNetwork in args.Networks)
+        {
+            if (!TryGetEntity(netNetwork, out var network) || network is not { } networkUid)
+                return;
+            networks.Add(networkUid);
+        }
+
+        TrySaveEditorCamera(computer, args.Actor, args.Revision, args.Camera, args.Name, networks, out var error);
         FinishEditorCommand(computer, args.Actor, error);
     }
 
-    protected override void OnCameraRemoved(Entity<RMCCameraComponent> camera)
+    private void OnEditorCameraShutdown(Entity<RMCCameraComponent> camera, ref ComponentShutdown args)
     {
         var query = EntityQueryEnumerator<RMCCameraComputerComponent>();
         while (query.MoveNext(out var computerUid, out var computer))
@@ -386,7 +410,6 @@ public sealed partial class RMCCameraSystem
             if (TerminatingOrDeleted(computerUid))
                 continue;
 
-            RebuildComputerCameras(computerUid, computer);
             UpdateUserInterface((computerUid, computer));
         }
     }
@@ -401,7 +424,6 @@ public sealed partial class RMCCameraSystem
             editor.HiddenSeededNetworks.Clear();
             editor.OwnedNetworks.Clear();
             editor.Revision = 0;
-            editor.NextOwnedNetworkId = 1;
 
             if (TryComp(uid, out RMCCameraComputerComponent? computer))
                 RefreshAfterEditorMutation((uid, computer));
@@ -421,26 +443,33 @@ public sealed partial class RMCCameraSystem
             return;
 
         var owned = editor.OwnedNetworks.Keys.ToHashSet();
-        if (TryComp(computer, out CameraNetworkReceiverComponent? receiver))
-            _cameraNetworks.SetReceiverNetworks(computer, receiver.Networks.Where(network => !owned.Contains(network)));
+        var receiverNetworks = _cameraNetworks.GetEffectiveNetworkEntities(computer)
+            .Where(network => !owned.Contains(network))
+            .ToHashSet();
+        _cameraNetworks.SetReceiverNetworkEntities(computer, receiverNetworks);
 
-        var updates = new Dictionary<EntityUid, IReadOnlyCollection<ProtoId<CameraNetworkPrototype>>>();
         foreach (var network in owned)
         {
             foreach (var member in _cameraNetworks.GetNetworkMembers(network))
             {
                 if (TryComp(member, out CameraNetworkMemberComponent? component))
-                    updates[member] = component.Networks.Where(existing => !owned.Contains(existing)).ToHashSet();
+                {
+                    var memberNetworks = component.Networks.Select(_cameraNetworks.ResolveNetwork)
+                        .Concat(component.RuntimeNetworks)
+                        .Where(existing => !owned.Contains(existing))
+                        .ToHashSet();
+                    _cameraNetworks.SetMemberNetworkEntities(member, memberNetworks);
+                }
             }
-        }
 
-        if (updates.Count > 0)
-            _cameraNetworks.SetMemberNetworksBatch(updates);
+            _cameraNetworks.DeleteNetwork(network);
+        }
     }
 
     private bool IsEditorUiOpen(Entity<RMCCameraComputerComponent> computer, EntityUid actor)
     {
-        return !TerminatingOrDeleted(actor) &&
+        return _configuration.GetCVar(CCVars.CMUCameraEditorEnabled) &&
+            !TerminatingOrDeleted(actor) &&
             _userInterface.IsUiOpen(computer.Owner, RMCCameraUiKey.Key, actor);
     }
 
@@ -468,7 +497,7 @@ public sealed partial class RMCCameraSystem
 
         editor = AddComp<RMCCameraNetworkEditorComponent>(computer);
         if (TryComp(computer, out CameraNetworkReceiverComponent? receiver))
-            editor.SeededNetworks.UnionWith(receiver.Networks);
+            editor.SeededNetworks.UnionWith(receiver.Networks.Select(_cameraNetworks.ResolveNetwork));
         return editor;
     }
 
@@ -487,7 +516,7 @@ public sealed partial class RMCCameraSystem
 
     private string ResolveNetworkName(
         EntityUid computer,
-        ProtoId<CameraNetworkPrototype> network,
+        EntityUid network,
         RMCCameraNetworkEditorComponent editor)
     {
         if (editor.OwnedNetworks.TryGetValue(network, out var owned) ||
@@ -496,8 +525,8 @@ public sealed partial class RMCCameraSystem
             return owned;
         }
 
-        return _prototypeManager.TryIndex<CameraNetworkPrototype>(network, out var prototype)
-            ? Loc.GetString(prototype.Name)
+        return TryComp(network, out CameraNetworkIdentityComponent? identity)
+            ? identity.DisplayName
             : network.ToString();
     }
 
@@ -508,7 +537,9 @@ public sealed partial class RMCCameraSystem
         uint revision,
         out RMCCameraNetworkEditorError error)
     {
-        if (TerminatingOrDeleted(actor) || !_accessReader.IsAllowed(actor, computer.Owner))
+        if (!_configuration.GetCVar(CCVars.CMUCameraEditorEnabled) ||
+            TerminatingOrDeleted(actor) ||
+            !_accessReader.IsAllowed(actor, computer.Owner))
         {
             error = RMCCameraNetworkEditorError.AccessDenied;
             return false;
@@ -528,7 +559,7 @@ public sealed partial class RMCCameraSystem
         EntityUid computer,
         RMCCameraNetworkEditorComponent editor,
         string raw,
-        ProtoId<CameraNetworkPrototype>? except,
+        EntityUid? except,
         out string normalized,
         out RMCCameraNetworkEditorError error)
     {
@@ -558,36 +589,8 @@ public sealed partial class RMCCameraSystem
         return true;
     }
 
-    private ProtoId<CameraNetworkPrototype> NextRuntimeNetwork(
-        EntityUid computer,
-        RMCCameraNetworkEditorComponent editor)
-    {
-        while (true)
-        {
-            var candidate = (ProtoId<CameraNetworkPrototype>)
-                $"{RuntimeNetworkPrefix}{computer.Id}N{editor.NextOwnedNetworkId++}";
-            if (_prototypeManager.HasIndex<CameraNetworkPrototype>(candidate))
-                continue;
-
-            var collision = false;
-            var query = EntityQueryEnumerator<RMCCameraNetworkEditorComponent>();
-            while (query.MoveNext(out _, out var other))
-            {
-                if (!other.OwnedNetworks.ContainsKey(candidate))
-                    continue;
-
-                collision = true;
-                break;
-            }
-
-            if (!collision)
-                return candidate;
-        }
-    }
-
     private void RefreshAfterEditorMutation(Entity<RMCCameraComputerComponent> computer)
     {
-        RebuildComputerCameras(computer.Owner, computer.Comp);
         UpdateUserInterface(computer);
     }
 }

@@ -11,7 +11,7 @@
               doAfter: 2.0
 
     - node: assembly
-      entity: CMUSurveillanceCameraAssembly
+      entity: SurveillanceCameraAssembly
       edges:
         - to: wired
           steps:
@@ -27,9 +27,8 @@
           steps:
             - tool: Welding
               doAfter: 2
-
     - node: wired
-      entity: CMUSurveillanceCameraAssembly
+      entity: SurveillanceCameraAssembly
       edges:
         - to: camera
           steps:
@@ -40,7 +39,7 @@
     # instead just require wire cutting + welding
     # to immediately deconstruct
     - node: camera
-      entity: CMUSurveillanceCameraColonyCMB
+      entity: SurveillanceCameraConstructed
       edges:
         - to: start
           conditions:

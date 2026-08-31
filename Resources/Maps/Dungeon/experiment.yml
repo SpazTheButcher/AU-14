@@ -9977,7 +9977,7 @@ entities:
     - type: Transform
       pos: 6.4634795,16.756445
       parent: 1653
-- proto: CMUMonitorCameraColonyCMB
+- proto: WallmountTelescreen
   entities:
   - uid: 1118
     components:
