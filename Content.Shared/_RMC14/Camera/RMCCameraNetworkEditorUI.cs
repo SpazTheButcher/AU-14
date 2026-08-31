@@ -1,0 +1,120 @@
+using Content.Shared.Camera;
+using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization;
+
+namespace Content.Shared._RMC14.Camera;
+
+[Serializable, NetSerializable]
+public enum RMCCameraNetworkEditorOrigin : byte
+{
+    Seeded,
+    Owned,
+}
+
+[Serializable, NetSerializable]
+public enum RMCCameraNetworkEditorError : byte
+{
+    None,
+    AccessDenied,
+    StaleRevision,
+    InvalidName,
+    DuplicateName,
+    MissingCamera,
+    InvalidNetwork,
+    SeededNetworkCannotBeDeleted,
+}
+
+[Serializable, NetSerializable]
+public sealed class RMCCameraNetworkEditorNetworkUiData(
+    ProtoId<CameraNetworkPrototype> id,
+    string name,
+    RMCCameraNetworkEditorOrigin origin,
+    bool hidden)
+{
+    public ProtoId<CameraNetworkPrototype> Id { get; } = id;
+    public string Name { get; } = name;
+    public RMCCameraNetworkEditorOrigin Origin { get; } = origin;
+    public bool Hidden { get; } = hidden;
+}
+
+[Serializable, NetSerializable]
+public sealed class RMCCameraNetworkEditorCameraUiData(
+    NetEntity camera,
+    string name,
+    List<ProtoId<CameraNetworkPrototype>> networks)
+{
+    public NetEntity Camera { get; } = camera;
+    public string Name { get; } = name;
+    public List<ProtoId<CameraNetworkPrototype>> Networks { get; } = networks;
+}
+
+[Serializable, NetSerializable]
+public sealed class RMCCameraNetworkEditorUiState(
+    uint revision,
+    List<RMCCameraNetworkEditorNetworkUiData> networks,
+    List<RMCCameraNetworkEditorCameraUiData> cameras)
+{
+    public uint Revision { get; } = revision;
+    public List<RMCCameraNetworkEditorNetworkUiData> Networks { get; } = networks;
+    public List<RMCCameraNetworkEditorCameraUiData> Cameras { get; } = cameras;
+}
+
+[Serializable, NetSerializable]
+public sealed class RMCCameraNetworkEditorCreateBuiMsg(uint revision, string name) : BoundUserInterfaceMessage
+{
+    public uint Revision { get; } = revision;
+    public string Name { get; } = name;
+}
+
+[Serializable, NetSerializable]
+public sealed class RMCCameraNetworkEditorRenameBuiMsg(
+    uint revision,
+    ProtoId<CameraNetworkPrototype> network,
+    string name) : BoundUserInterfaceMessage
+{
+    public uint Revision { get; } = revision;
+    public ProtoId<CameraNetworkPrototype> Network { get; } = network;
+    public string Name { get; } = name;
+}
+
+[Serializable, NetSerializable]
+public sealed class RMCCameraNetworkEditorDeleteBuiMsg(
+    uint revision,
+    ProtoId<CameraNetworkPrototype> network) : BoundUserInterfaceMessage
+{
+    public uint Revision { get; } = revision;
+    public ProtoId<CameraNetworkPrototype> Network { get; } = network;
+}
+
+[Serializable, NetSerializable]
+public sealed class RMCCameraNetworkEditorSetHiddenBuiMsg(
+    uint revision,
+    ProtoId<CameraNetworkPrototype> network,
+    bool hidden) : BoundUserInterfaceMessage
+{
+    public uint Revision { get; } = revision;
+    public ProtoId<CameraNetworkPrototype> Network { get; } = network;
+    public bool Hidden { get; } = hidden;
+}
+
+[Serializable, NetSerializable]
+public sealed class RMCCameraNetworkEditorSaveCameraBuiMsg(
+    uint revision,
+    NetEntity camera,
+    string name,
+    List<ProtoId<CameraNetworkPrototype>> networks) : BoundUserInterfaceMessage
+{
+    public uint Revision { get; } = revision;
+    public NetEntity Camera { get; } = camera;
+    public string Name { get; } = name;
+    public List<ProtoId<CameraNetworkPrototype>> Networks { get; } = networks;
+}
+
+[Serializable, NetSerializable]
+public sealed class RMCCameraNetworkEditorResultBuiMsg(
+    RMCCameraNetworkEditorError error,
+    uint revision) : BoundUserInterfaceMessage
+{
+    public RMCCameraNetworkEditorError Error { get; } = error;
+    public uint Revision { get; } = revision;
+}

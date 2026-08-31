@@ -2054,7 +2054,7 @@ entities:
     - type: Transform
       pos: -0.5,10.5
       parent: 768
-- proto: ComputerSurveillanceWirelessCameraMonitor
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 621
     components:
@@ -3456,7 +3456,7 @@ entities:
     - type: Transform
       pos: 6.5,-3.5
       parent: 768
-- proto: PonderingOrbWizard
+- proto: PonderingOrb
   entities:
   - uid: 141
     components:

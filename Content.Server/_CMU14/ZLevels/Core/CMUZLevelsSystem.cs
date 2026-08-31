@@ -1,5 +1,8 @@
 using System.Linq;
 using Content.Server.GameTicking;
+using Content.Server.Pinpointer;
+using Content.Server.Shuttles.Components;
+using Content.Server.Shuttles.Systems;
 using Content.Server.Station.Components;
 using Content.Server.Station.Systems;
 using Content.Shared._CMU14.ZLevels.Core;
@@ -16,6 +19,8 @@ public sealed partial class CMUZLevelsSystem : CMUSharedZLevelsSystem
     [Dependency] private MapSystem _map = default!;
     [Dependency] private MapLoaderSystem _mapLoader = default!;
     [Dependency] private MetaDataSystem _meta = default!;
+    [Dependency] private NavMapSystem _navMap = default!;
+    [Dependency] private ShuttleSystem _shuttle = default!;
     [Dependency] private StationSystem _station = default!;
     [Dependency] private TransformSystem _transform = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
@@ -108,7 +113,8 @@ public sealed partial class CMUZLevelsSystem : CMUSharedZLevelsSystem
             depth++;
         }
 
-        TryAddMapsIntoZNetwork(stationNetwork, dict);
+        if (TryAddMapsIntoZNetwork(stationNetwork, dict))
+            StabilizeZLevelDeckGrids(dict.Keys);
     }
 
     private void AddZLevelGridsToStations(
@@ -136,6 +142,28 @@ public sealed partial class CMUZLevelsSystem : CMUSharedZLevelsSystem
             }
 
             _station.AddGridToStation(resolvedStation, grid);
+        }
+    }
+
+    private void StabilizeZLevelDeckGrids(IEnumerable<EntityUid> maps)
+    {
+        foreach (var mapUid in maps)
+        {
+            if (!TryComp<MapComponent>(mapUid, out var map))
+                continue;
+
+            var query = EntityQueryEnumerator<MapGridComponent, TransformComponent>();
+            while (query.MoveNext(out var gridUid, out var grid, out var gridXform))
+            {
+                if (gridXform.MapID != map.MapId)
+                    continue;
+
+                _shuttle.Disable(gridUid);
+                _navMap.EnsureNavMap((gridUid, grid));
+
+                if (TryComp<ShuttleComponent>(gridUid, out var shuttle))
+                    shuttle.Enabled = false;
+            }
         }
     }
 }

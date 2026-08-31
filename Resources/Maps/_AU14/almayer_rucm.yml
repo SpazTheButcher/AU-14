@@ -118713,7 +118713,7 @@ entities:
     - type: Transform
       pos: 1.5,81.5
       parent: 1
-- proto: ComputerTelevision
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 17699
     components:

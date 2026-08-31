@@ -1511,7 +1511,7 @@ entities:
       rot: 1.5707963267948966 rad
       pos: -1.5,-11.5
       parent: 1
-- proto: ComputerSurveillanceCameraMonitor
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 203
     components:
@@ -1519,7 +1519,7 @@ entities:
       rot: 1.5707963267948966 rad
       pos: -1.5,-12.5
       parent: 1
-- proto: ComputerTelevision
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 3
     components:

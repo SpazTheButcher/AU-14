@@ -1,11 +1,16 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
+using Content.Client.Camera;
 using Content.Client._RMC14.UserInterface;
 using Content.Client.Eye;
 using Content.Client.Message;
 using Content.Client.UserInterface.ControlExtensions;
 using Content.Shared._RMC14.Camera;
+using Content.Shared.Camera;
+using Content.Shared.SurveillanceCamera;
 using Robust.Client.Graphics;
+using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
+using Robust.Shared.Prototypes;
 
 namespace Content.Client._RMC14.Camera;
 
@@ -13,6 +18,7 @@ public sealed class RMCCameraBui : RMCPopOutBui<RMCCameraWindow>
 {
     private EntityUid? _currentCamera;
     private Button? _currentCameraButton;
+    private CameraMapUiState? _mapState;
 
     private readonly EyeLerpingSystem _eyeLerping;
     private readonly RMCCameraSystem _system;
@@ -32,10 +38,75 @@ public sealed class RMCCameraBui : RMCPopOutBui<RMCCameraWindow>
         Window.SearchBar.OnTextChanged += _ => RefreshSearch();
         Window.PreviousCameraButton.Text = "<";
         Window.NextCameraButton.Text = ">";
+        Window.RefreshSubnetsButton.Text = Loc.GetString("surveillance-camera-monitor-ui-refresh-subnets");
+        Window.DisconnectButton.Text = Loc.GetString("surveillance-camera-monitor-ui-disconnect");
         Window.PreviousCameraButton.OnPressed += _ => SendPredictedMessage(new RMCCameraPreviousBuiMsg());
         Window.NextCameraButton.OnPressed += _ => SendPredictedMessage(new RMCCameraNextBuiMsg());
+        Window.RefreshSubnetsButton.OnPressed += _ => SendPredictedMessage(new RMCCameraRefreshSubnetsBuiMsg());
+        Window.DisconnectButton.OnPressed += _ => SendPredictedMessage(new RMCCameraDisconnectBuiMsg());
+        Window.NetworkSelector.OnItemSelected += args => SendPredictedMessage(GetNetworkSelectionMessage(args));
+        Window.CameraSelected += camera => SendPredictedMessage(new RMCCameraWatchBuiMsg(camera));
+        Window.NetworkEditor.CreateRequested += message => SendPredictedMessage(message);
+        Window.NetworkEditor.RenameRequested += message => SendPredictedMessage(message);
+        Window.NetworkEditor.DeleteRequested += message => SendPredictedMessage(message);
+        Window.NetworkEditor.HiddenRequested += message => SendPredictedMessage(message);
+        Window.NetworkEditor.SaveCameraRequested += message => SendPredictedMessage(message);
+        Window.NetworkEditor.EditorCameraSelected += _ => RefreshEditorPreview();
 
         Refresh();
+        if (State is RMCCameraBuiState state)
+        {
+            PopulateNetworkSelector(Window.NetworkSelector, state);
+            Window.NetworkEditor.SetState(state.Editor);
+            UpdateMap(state.Map);
+        }
+    }
+
+    protected override void UpdateState(BoundUserInterfaceState state)
+    {
+        base.UpdateState(state);
+
+        if (state is not RMCCameraBuiState cameraState)
+            return;
+
+        _mapState = cameraState.Map;
+        if (Window != null)
+        {
+            PopulateNetworkSelector(Window.NetworkSelector, cameraState);
+            Window.NetworkEditor.SetState(cameraState.Editor);
+        }
+        UpdateMap(_mapState);
+    }
+
+    protected override void ReceiveMessage(BoundUserInterfaceMessage message)
+    {
+        base.ReceiveMessage(message);
+        if (message is RMCCameraNetworkEditorResultBuiMsg result)
+            Window?.NetworkEditor.ShowResult(result);
+    }
+
+    public static void PopulateNetworkSelector(
+        OptionButton selector,
+        RMCCameraBuiState state)
+    {
+        selector.Clear();
+        selector.Disabled = state.Networks.Count == 0;
+
+        foreach (var network in state.Networks)
+        {
+            selector.AddItem(network.Name);
+            var id = selector.ItemCount - 1;
+            selector.SetItemMetadata(id, network.Id);
+
+            if (state.ActiveNetwork == network.Id)
+                selector.Select(id);
+        }
+    }
+
+    public static RMCCameraNetworkBuiMsg GetNetworkSelectionMessage(OptionButton.ItemSelectedEventArgs args)
+    {
+        return new RMCCameraNetworkBuiMsg(
+            (ProtoId<CameraNetworkPrototype>) args.Button.GetItemMetadata(args.Id)!);
     }
 
     public void Refresh()
@@ -50,6 +121,7 @@ public sealed class RMCCameraBui : RMCPopOutBui<RMCCameraWindow>
             Window.Title = Loc.GetString(title);
 
         var currentNetCamera = EntMan.GetNetEntity(computer.CurrentCamera);
+        Window.DisconnectButton.Disabled = computer.CurrentCamera == null;
         var ids = CollectionsMarshal.AsSpan(computer.CameraIds);
         var names = CollectionsMarshal.AsSpan(computer.CameraNames);
         for (var i = 0; i < ids.Length; i++)
@@ -78,12 +150,13 @@ public sealed class RMCCameraBui : RMCPopOutBui<RMCCameraWindow>
                         _currentCameraButton.Pressed = false;
 
                     _currentCameraButton = button;
-                    SendPredictedMessage(new RMCCameraWatchBuiMsg(id));
+                    SendPredictedMessage(button.Binding.CreateSelectionMessage());
                 };
 
                 Window.CamerasContainer.AddChild(button);
             }
 
+            button.Binding.Bind(id);
             button.TextLabel.SetMarkupPermissive($"[font size=11][color=white]{name}[/color][/font]");
             button.Pressed = id == currentNetCamera;
         }
@@ -95,6 +168,20 @@ public sealed class RMCCameraBui : RMCPopOutBui<RMCCameraWindow>
 
         RefreshSearch();
         RefreshCamera();
+
+        if (_mapState != null)
+            UpdateMap(_mapState);
+    }
+
+    private void UpdateMap(CameraMapUiState state)
+    {
+        if (Window == null)
+            return;
+
+        var activeCamera = EntMan.TryGetComponent(Owner, out RMCCameraComputerComponent? computer)
+            ? EntMan.GetNetEntity(computer.CurrentCamera)
+            : null;
+        Window.UpdateMap(state, activeCamera);
     }
 
     private void RefreshSearch()
@@ -126,8 +213,12 @@ public sealed class RMCCameraBui : RMCPopOutBui<RMCCameraWindow>
 
         if (computer.CurrentCamera is not { } camera)
         {
-            Window.Viewport.Eye = new FixedEye();
+            var emptyEye = new FixedEye();
+            Window.Viewport.Eye = emptyEye;
+            Window.MapViewport.Eye = emptyEye;
             Window.CameraName.Text = string.Empty;
+            Window.MapCameraName.Text = string.Empty;
+            RefreshEditorPreview();
             return;
         }
 
@@ -135,15 +226,42 @@ public sealed class RMCCameraBui : RMCPopOutBui<RMCCameraWindow>
             !EntMan.EntityExists(camera) ||
             !EntMan.TryGetComponent(camera, out EyeComponent? eye))
         {
-            Window.Viewport.Eye = new FixedEye();
+            var fixedEye = new FixedEye();
+            Window.Viewport.Eye = fixedEye;
+            Window.MapViewport.Eye = fixedEye;
             Window.CameraName.Text = string.Empty;
+            Window.MapCameraName.Text = string.Empty;
+            RefreshEditorPreview();
             return;
         }
 
         _eyeLerping.AddEye(camera, eye);
         Window.Viewport.Eye = eye.Eye;
+        Window.MapViewport.Eye = eye.Eye;
         _currentCamera = camera;
         if (_system.GetComputerCameraName((Owner, computer), camera, out var name))
+        {
             Window.CameraName.Text = name;
+            Window.MapCameraName.Text = name;
+        }
+
+        RefreshEditorPreview();
+    }
+
+    private void RefreshEditorPreview()
+    {
+        if (Window == null)
+            return;
+
+        Window.NetworkEditor.CameraPreview.Eye = new FixedEye();
+        if (!EntMan.TryGetComponent(Owner, out RMCCameraComputerComponent? computer) ||
+            computer.CurrentCamera is not { } current ||
+            Window.NetworkEditor.SelectedCamera != EntMan.GetNetEntity(current) ||
+            !EntMan.TryGetComponent(current, out EyeComponent? eye))
+        {
+            return;
+        }
+
+        Window.NetworkEditor.CameraPreview.Eye = eye.Eye;
     }
 }

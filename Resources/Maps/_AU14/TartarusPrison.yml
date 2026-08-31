@@ -47219,7 +47219,7 @@ entities:
       rot: 3.141592653589793 rad
       pos: 6.5,11.5
       parent: 1
-- proto: SurveillanceCameraSecurity
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 6584
     components:

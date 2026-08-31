@@ -249,9 +249,9 @@
   - type: RMCCameraComputer
     protoIds:
     - RMCMonitorCameraAlamo
-    - RMCFlareCAS
-    - RMCAirFlareCAS
-    - RMCLaserDesignatorTarget
+  - type: CameraNetworkReceiver
+    networks: [RMCMonitorCameraAlamo]
+    supportedSources: Rmc
   - type: ActivatableUI
     key: enum.RMCCameraUiKey.Key
 
@@ -265,9 +265,9 @@
   - type: RMCCameraComputer
     protoIds:
     - RMCMonitorCameraNormandy
-    - RMCFlareCAS
-    - RMCAirFlareCAS
-    - RMCLaserDesignatorTarget
+  - type: CameraNetworkReceiver
+    networks: [RMCMonitorCameraNormandy]
+    supportedSources: Rmc
 
 - type: entity
   parent: CMComputerDropship

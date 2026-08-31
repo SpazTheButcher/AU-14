@@ -1,7 +1,9 @@
 using Content.Client.Eye;
+using Content.Shared.Camera;
 using Content.Shared.SurveillanceCamera;
 using Robust.Client.GameObjects;
 using Robust.Client.UserInterface;
+using Robust.Shared.Prototypes;
 
 namespace Content.Client.SurveillanceCamera.UI;
 
@@ -29,21 +31,21 @@ public sealed class SurveillanceCameraMonitorBoundUserInterface : BoundUserInter
         _window = this.CreateWindow<SurveillanceCameraMonitorWindow>();
 
         _window.CameraSelected += OnCameraSelected;
-        _window.SubnetOpened += OnSubnetRequest;
+        _window.NetworkOpened += OnNetworkRequest;
         _window.CameraRefresh += OnCameraRefresh;
         _window.SubnetRefresh += OnSubnetRefresh;
         _window.CameraSwitchTimer += OnCameraSwitchTimer;
         _window.CameraDisconnect += OnCameraDisconnect;
     }
 
-    private void OnCameraSelected(string address)
+    private void OnCameraSelected(NetEntity camera)
     {
-        SendMessage(new SurveillanceCameraMonitorSwitchMessage(address));
+        SendMessage(new SurveillanceCameraMonitorSwitchMessage(camera));
     }
 
-    private void OnSubnetRequest(string subnet)
+    private void OnNetworkRequest(ProtoId<CameraNetworkPrototype> network)
     {
-        SendMessage(new SurveillanceCameraMonitorSubnetRequestMessage(subnet));
+        SendMessage(new SurveillanceCameraMonitorSubnetRequestMessage(network));
     }
 
     private void OnCameraSwitchTimer()
@@ -77,7 +79,7 @@ public sealed class SurveillanceCameraMonitorBoundUserInterface : BoundUserInter
 
         if (active == null)
         {
-            _window.UpdateState(null, cast.Subnets, cast.ActiveAddress, cast.ActiveSubnet, cast.Cameras);
+            _window.UpdateState(null, cast);
 
             if (_currentCamera != null)
             {
@@ -100,10 +102,7 @@ public sealed class SurveillanceCameraMonitorBoundUserInterface : BoundUserInter
                 _currentCamera = active;
             }
 
-            if (EntMan.TryGetComponent<EyeComponent>(active, out var eye))
-            {
-                _window.UpdateState(eye.Eye, cast.Subnets, cast.ActiveAddress, cast.ActiveSubnet, cast.Cameras);
-            }
+            _window.UpdateState(EntMan.TryGetComponent<EyeComponent>(active, out var eye) ? eye.Eye : null, cast);
         }
     }
 
