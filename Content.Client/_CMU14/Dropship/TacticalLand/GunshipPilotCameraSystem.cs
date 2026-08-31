@@ -575,13 +575,14 @@ public sealed class GunshipPilotHudOverlay : Overlay
 
         var lines = _warningLines;
         lines.Clear();
-        lines.Add("SYSTEM WARNINGS");
+        lines.Add(Loc.GetString("cmu-gunship-hud-system-warnings"));
         foreach (var alarm in hud.Alarms)
             lines.Add(DropshipAlarmData.GetAlertName(alarm));
         foreach (var malfunction in hud.Malfunctions)
-            lines.Add($"{DropshipMalfunctionData.GetAlertName(malfunction)} detected.");
+            lines.Add(Loc.GetString("cmu-gunship-malfunction-detected",
+                ("malfunction", DropshipMalfunctionData.GetAlertName(malfunction))));
         if (hud.MasterAlarmSilenced && hud.Alarms.Count > 0)
-            lines.Add("MASTER ALARM SILENCED");
+            lines.Add(Loc.GetString("cmu-gunship-hud-master-alarm-silenced"));
 
         var width = 260f;
         foreach (var text in lines)

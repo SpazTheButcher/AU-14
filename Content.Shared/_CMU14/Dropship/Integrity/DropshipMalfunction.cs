@@ -18,11 +18,11 @@ public static class DropshipMalfunctionData
     {
         return malfunction switch
         {
-            DropshipMalfunction.WeaponShort => "Weapon short",
-            DropshipMalfunction.PropulsionFault => "Propulsion fault",
-            DropshipMalfunction.ManeuveringThrusterFault => "Maneuvering thruster fault",
-            DropshipMalfunction.SensorArrayFault => "Sensor array fault",
-            _ => "Unknown malfunction",
+            DropshipMalfunction.WeaponShort => Loc.GetString("cmu-gunship-malfunction-weapon-short"),
+            DropshipMalfunction.PropulsionFault => Loc.GetString("cmu-gunship-malfunction-propulsion"),
+            DropshipMalfunction.ManeuveringThrusterFault => Loc.GetString("cmu-gunship-malfunction-thruster"),
+            DropshipMalfunction.SensorArrayFault => Loc.GetString("cmu-gunship-malfunction-sensor"),
+            _ => Loc.GetString("cmu-gunship-malfunction-unknown"),
         };
     }
 }

@@ -12,9 +12,9 @@ public static class DropshipAlarmData
     {
         return alarm switch
         {
-            DropshipAlarm.Proximity => "COLLISION PROXIMITY WARNING",
-            DropshipAlarm.LowIntegrity => "LOW HULL INTEGRITY",
-            _ => "UNKNOWN ALARM",
+            DropshipAlarm.Proximity => Loc.GetString("cmu-gunship-alarm-proximity"),
+            DropshipAlarm.LowIntegrity => Loc.GetString("cmu-gunship-alarm-low-integrity"),
+            _ => Loc.GetString("cmu-gunship-alarm-unknown"),
         };
     }
 }

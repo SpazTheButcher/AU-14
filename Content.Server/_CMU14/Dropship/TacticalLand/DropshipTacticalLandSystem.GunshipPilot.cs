@@ -20,6 +20,7 @@ using Content.Shared.Buckle.Components;
 using Content.Shared.Damage;
 using Content.Shared.Eye;
 using Content.Shared.Inventory;
+using Content.Shared.Inventory.Events;
 using Content.Shared.Inventory.VirtualItem;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Interaction.Components;
@@ -72,11 +73,12 @@ public sealed partial class DropshipTacticalLandSystem
     // update. This exceeds the maximum possible 48-tile opposite-edge delta,
     // making the pilot camera track the cursor without easing.
     private const float GunshipCursorPanSpeed = 64f;
-    private const float GunshipCursorPvsIncrease = 2.4f;
+    private const float GunshipCursorPvsIncrease = 0.5f;
     private const float GunshipPilotPvsScale = 1f + GunshipCursorPvsIncrease;
     private TimeSpan _nextGunshipAlarmUpdate;
     private TimeSpan _nextGunshipHudUpdate;
-    private readonly HashSet<EntityUid> _validGunshipHudWearers = new();
+    private readonly HashSet<EntityUid> _gunshipHudWearers = new();
+    private readonly List<EntityUid> _gunshipHudWearersScratch = new();
     private readonly HashSet<Vector2i> _proximityOccupiedTiles = new();
     private readonly HashSet<Vector2i> _proximityHazardTiles = new();
     private readonly List<Vector2> _proximityHazardsScratch = new();
@@ -92,6 +94,8 @@ public sealed partial class DropshipTacticalLandSystem
         SubscribeLocalEvent<GunshipPilotSeatComponent, GunshipDropshipOutlineToggleActionEvent>(OnDropshipOutlineToggle);
         SubscribeLocalEvent<GunshipPilotSeatComponent, GunshipPilotPanningToggleActionEvent>(OnPilotPanningToggle);
         SubscribeLocalEvent<GunshipPilotSeatComponent, GunshipPilotZoomToggleActionEvent>(OnPilotZoomToggle);
+        SubscribeLocalEvent<GunshipPilotVisorComponent, GotEquippedEvent>(OnGunshipVisorEquipped);
+        SubscribeLocalEvent<GunshipPilotVisorComponent, GotUnequippedEvent>(OnGunshipVisorUnequipped);
         SubscribeLocalEvent<DropshipTacticalHoverComponent, GunshipCrashStartedEvent>(OnGunshipCrashStarted);
         SubscribeLocalEvent<DropshipIntegrityComponent, ComponentShutdown>(OnDropshipIntegrityShutdown);
         SubscribeNetworkEvent<GunshipControlInputEvent>(OnGunshipControlInput);
@@ -100,6 +104,18 @@ public sealed partial class DropshipTacticalLandSystem
         SubscribeNetworkEvent<GunshipPilotPanningInputEvent>(OnGunshipPilotPanningInput);
         SubscribeNetworkEvent<GunshipOpenNavigationInputEvent>(OnGunshipOpenNavigationInput);
         SubscribeNetworkEvent<GunshipDirectFireAimEvent>(OnGunshipDirectFireAim);
+    }
+
+    private void OnGunshipVisorEquipped(Entity<GunshipPilotVisorComponent> ent, ref GotEquippedEvent args)
+    {
+        if (args.Slot == "head")
+            _gunshipHudWearers.Add(args.Equipee);
+    }
+
+    private void OnGunshipVisorUnequipped(Entity<GunshipPilotVisorComponent> ent, ref GotUnequippedEvent args)
+    {
+        _gunshipHudWearers.Remove(args.Equipee);
+        CleanupGunshipHud(args.Equipee);
     }
 
     private void OnGunshipOpenNavigationInput(GunshipOpenNavigationInputEvent ev, EntitySessionEventArgs args)
@@ -284,7 +300,7 @@ public sealed partial class DropshipTacticalLandSystem
         {
             args.Cancelled = true;
             if (args.Popup)
-                _popup.PopupEntity("Gunship flight controls are currently disabled.",
+                _popup.PopupEntity(Loc.GetString("cmu-gunship-controls-disabled"),
                     ent,
                     args.User ?? args.Buckle.Owner,
                     PopupType.MediumCaution);
@@ -303,7 +319,7 @@ public sealed partial class DropshipTacticalLandSystem
         {
             args.Cancelled = true;
             if (args.Popup)
-                _popup.PopupEntity("The pilot seat is not installed on a dropship.", ent, args.User ?? args.Buckle.Owner, PopupType.MediumCaution);
+                _popup.PopupEntity(Loc.GetString("cmu-gunship-seat-not-installed"), ent, args.User ?? args.Buckle.Owner, PopupType.MediumCaution);
             return;
         }
 
@@ -311,7 +327,7 @@ public sealed partial class DropshipTacticalLandSystem
         {
             args.Cancelled = true;
             if (args.Popup)
-                _popup.PopupEntity("Access denied.", ent, args.User ?? args.Buckle.Owner, PopupType.MediumCaution);
+                _popup.PopupEntity(Loc.GetString("cmu-gunship-access-denied"), ent, args.User ?? args.Buckle.Owner, PopupType.MediumCaution);
         }
     }
 
@@ -336,7 +352,7 @@ public sealed partial class DropshipTacticalLandSystem
         if (Transform(ent).GridUid is { } grid && TryComp(grid, out DropshipTacticalHoverComponent? hover))
             EnsureGunshipPilotEye(ent, (grid, hover));
         else
-            _popup.PopupEntity("Gunship flight controls will engage during tactical hover.", ent, args.Buckle, PopupType.Medium);
+            _popup.PopupEntity(Loc.GetString("cmu-gunship-controls-await-hover"), ent, args.Buckle, PopupType.Medium);
     }
 
     private void OnGunshipSeatUnstrapped(Entity<GunshipPilotSeatComponent> ent, ref UnstrappedEvent args)
@@ -500,7 +516,7 @@ public sealed partial class DropshipTacticalLandSystem
             return true;
         }
 
-        _popup.PopupEntity("Sensor array fault detected. Maneuvering cameras are unavailable.",
+        _popup.PopupEntity(Loc.GetString("cmu-gunship-camera-sensor-fault"),
             ent,
             performer,
             PopupType.SmallCaution);
@@ -626,7 +642,9 @@ public sealed partial class DropshipTacticalLandSystem
         Dirty(dropship, integrity);
         _gunshipActions.SetToggled(ent.Comp.MasterAlarmAction, integrity.MasterAlarmSilenced);
         UpdateGunshipAlarmAudio((dropship, integrity));
-        _popup.PopupEntity(integrity.MasterAlarmSilenced ? "Master alarm silenced." : "Master alarm restored.",
+        _popup.PopupEntity(Loc.GetString(integrity.MasterAlarmSilenced
+                ? "cmu-gunship-master-alarm-silenced"
+                : "cmu-gunship-master-alarm-restored"),
             seat,
             args.Performer,
             PopupType.Small);
@@ -887,7 +905,7 @@ public sealed partial class DropshipTacticalLandSystem
                 else
                 {
                     hover.Comp.GunshipAngularVelocityDegrees = 0f;
-                    PopupGunshipBlocked(seat, "The gunship cannot rotate into an obstruction.");
+                    PopupGunshipBlocked(seat, Loc.GetString("cmu-gunship-rotation-blocked"));
                 }
             }
         }
@@ -950,7 +968,7 @@ public sealed partial class DropshipTacticalLandSystem
             else
             {
                 hover.Comp.GunshipLinearVelocity = Vector2.Zero;
-                PopupGunshipBlocked(seat, "The gunship cannot move into an obstruction.");
+                PopupGunshipBlocked(seat, Loc.GetString("cmu-gunship-movement-blocked"));
             }
         }
 
@@ -1392,19 +1410,21 @@ public sealed partial class DropshipTacticalLandSystem
             !TryComp(grid, out MapGridComponent? dropshipGrid) ||
             Transform(grid).MapUid is not { } currentMap)
         {
-            _popup.PopupEntity("The gunship is not in tactical hover.", seat, pilot, PopupType.MediumCaution);
+            _popup.PopupEntity(Loc.GetString("cmu-gunship-not-hovering"), seat, pilot, PopupType.MediumCaution);
             return;
         }
 
         if (hover.AltitudeTransitionAt != null)
         {
-            _popup.PopupEntity("The gunship is already changing flight levels.", seat, pilot, PopupType.MediumCaution);
+            _popup.PopupEntity(Loc.GetString("cmu-gunship-altitude-transition-active"), seat, pilot, PopupType.MediumCaution);
             return;
         }
 
         if (!_zLevels.TryMapOffset(currentMap, offset, out var targetMap))
         {
-            _popup.PopupEntity(offset > 0 ? "No higher flight level is available." : "No lower flight level is available.",
+            _popup.PopupEntity(Loc.GetString(offset > 0
+                    ? "cmu-gunship-no-higher-flight-level"
+                    : "cmu-gunship-no-lower-flight-level"),
                 seat,
                 pilot,
                 PopupType.MediumCaution);
@@ -1419,7 +1439,7 @@ public sealed partial class DropshipTacticalLandSystem
         var clear = IsGunshipFootprintClear((grid, dropshipGrid), targetMap.Value.Owner, position, snappedRotation, out var blockers);
         if (!clear && !CanGunshipCrashThrough(blockers))
         {
-            _popup.PopupEntity("The target flight level contains an indestructible obstruction.", seat, pilot, PopupType.MediumCaution);
+            _popup.PopupEntity(Loc.GetString("cmu-gunship-target-level-blocked"), seat, pilot, PopupType.MediumCaution);
             return;
         }
 
@@ -1440,11 +1460,11 @@ public sealed partial class DropshipTacticalLandSystem
             (float)GunshipAltitudeTransitionTime.TotalSeconds + 1f);
         _audio.PlayPvs(WarningSound, warningCoords, AudioParams.Default.WithVolume(2f));
 
-        _popup.PopupEntity(hover.AltitudeLanding
-                ? "Landing approach committed. Touchdown in five seconds."
+        _popup.PopupEntity(Loc.GetString(hover.AltitudeLanding
+                ? "cmu-gunship-landing-committed"
                 : offset > 0
-                    ? "Ascending one flight level in five seconds."
-                    : "Descending one flight level in five seconds.",
+                    ? "cmu-gunship-ascent-committed"
+                    : "cmu-gunship-descent-committed"),
             seat,
             pilot,
             PopupType.Medium);
@@ -1547,14 +1567,16 @@ public sealed partial class DropshipTacticalLandSystem
 
             RemComp<DropshipTacticalHoverComponent>(hover.Owner);
             if (pilot is { } landingPilot)
-                _popup.PopupEntity("The gunship has tactically landed.", hover.Owner, landingPilot, PopupType.Medium);
+                _popup.PopupEntity(Loc.GetString("cmu-gunship-landed"), hover.Owner, landingPilot, PopupType.Medium);
             return;
         }
 
         hover.Comp.GroundMapOffset -= offset;
         if (pilot is { } altitudePilot)
         {
-            _popup.PopupEntity(offset > 0 ? "The gunship ascends one flight level." : "The gunship descends one flight level.",
+            _popup.PopupEntity(Loc.GetString(offset > 0
+                    ? "cmu-gunship-ascended"
+                    : "cmu-gunship-descended"),
                 hover.Owner,
                 altitudePilot,
                 PopupType.Medium);
@@ -1594,7 +1616,9 @@ public sealed partial class DropshipTacticalLandSystem
         var offset = seat.Comp.ViewOffset == requestedOffset ? 0 : requestedOffset;
         if (offset != 0 && !_zLevels.TryMapOffset(currentMap, offset, out _))
         {
-            _popup.PopupEntity(offset > 0 ? "No level is available above the gunship." : "No level is available below the gunship.",
+            _popup.PopupEntity(Loc.GetString(offset > 0
+                    ? "cmu-gunship-no-camera-level-above"
+                    : "cmu-gunship-no-camera-level-below"),
                 seat,
                 pilot,
                 PopupType.MediumCaution);
@@ -1621,7 +1645,9 @@ public sealed partial class DropshipTacticalLandSystem
         Dirty(seat);
         UpdateGunshipPilotEye(seat, (grid, hover));
 
-        _popup.PopupEntity(seat.Comp.RearView ? "Rear camera active." : "Rear camera disengaged.",
+        _popup.PopupEntity(Loc.GetString(seat.Comp.RearView
+                ? "cmu-gunship-rear-camera-active"
+                : "cmu-gunship-rear-camera-inactive"),
             seat,
             pilot,
             PopupType.Small);
@@ -1661,7 +1687,7 @@ public sealed partial class DropshipTacticalLandSystem
 
         Dirty(seat);
         UpdateGunshipPilotEye(seat, hover);
-        _popup.PopupEntity("Gunship flight controls engaged.", seat, pilot, PopupType.Medium);
+        _popup.PopupEntity(Loc.GetString("cmu-gunship-controls-engaged"), seat, pilot, PopupType.Medium);
     }
 
     private void UpdateGunshipCameraSubscription(Entity<GunshipPilotSeatComponent> seat)
@@ -1954,25 +1980,27 @@ public sealed partial class DropshipTacticalLandSystem
     {
         UpdateGunshipAlarms();
 
-        var validWearers = _validGunshipHudWearers;
-        validWearers.Clear();
-        var visorQuery = EntityQueryEnumerator<GunshipPilotVisorComponent, TransformComponent>();
-        while (visorQuery.MoveNext(out var visor, out _, out var visorXform))
+        var wearers = _gunshipHudWearersScratch;
+        wearers.Clear();
+        foreach (var wearer in _gunshipHudWearers)
+            wearers.Add(wearer);
+
+        foreach (var wearer in wearers)
         {
-            var wearer = visorXform.ParentUid;
-            if (wearer == visor ||
-                !_pilotInventory.TryGetSlotEntity(wearer, "head", out var wornHead) ||
-                wornHead != visor)
+            if (!_pilotInventory.TryGetSlotEntity(wearer, "head", out var visor) ||
+                visor is not { } wornVisor ||
+                !HasComp<GunshipPilotVisorComponent>(wornVisor))
             {
+                _gunshipHudWearers.Remove(wearer);
+                CleanupGunshipHud(wearer);
                 continue;
             }
 
-            validWearers.Add(wearer);
             var hud = EnsureComp<GunshipPilotHudComponent>(wearer);
-            var visorChanged = hud.Visor != visor;
+            var visorChanged = hud.Visor != wornVisor;
             if (visorChanged && hud.Visor != EntityUid.Invalid)
                 CleanupGunshipNightVision((wearer, hud));
-            hud.Visor = visor;
+            hud.Visor = wornVisor;
 
             EntityUid? dropship = null;
             var flightControlsAvailable = false;
@@ -2088,24 +2116,23 @@ public sealed partial class DropshipTacticalLandSystem
                 Dirty(wearer, hud);
             }
 
-            UpdateGunshipNightVision((wearer, hud), visor, dropship != null);
+            UpdateGunshipNightVision((wearer, hud), wornVisor, dropship != null);
             UpdateGunshipStaticZoom((wearer, hud), dropship != null);
         }
+    }
 
-        var hudQuery = EntityQueryEnumerator<GunshipPilotHudComponent>();
-        while (hudQuery.MoveNext(out var wearer, out var hud))
-        {
-            if (validWearers.Contains(wearer))
-                continue;
+    private void CleanupGunshipHud(EntityUid wearer)
+    {
+        if (!TryComp(wearer, out GunshipPilotHudComponent? hud))
+            return;
 
-            CleanupGunshipNightVision((wearer, hud));
-            CleanupGunshipStaticZoom((wearer, hud));
-            if (TryGetControlledGunshipSeat(wearer, out _))
-                UpdateRemoteDirectFireWeapon(wearer, null, null);
-            else
-                RemCompDeferred<RemoteWeaponOperatorComponent>(wearer);
-            RemCompDeferred<GunshipPilotHudComponent>(wearer);
-        }
+        CleanupGunshipNightVision((wearer, hud));
+        CleanupGunshipStaticZoom((wearer, hud));
+        if (TryGetControlledGunshipSeat(wearer, out _))
+            UpdateRemoteDirectFireWeapon(wearer, null, null);
+        else
+            RemCompDeferred<RemoteWeaponOperatorComponent>(wearer);
+        RemCompDeferred<GunshipPilotHudComponent>(wearer);
     }
 
     private static bool AlarmStateMatches(

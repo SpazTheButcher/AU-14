@@ -24,32 +24,32 @@ public sealed partial class DropshipIntegritySystem
 
     private static readonly IReadOnlyList<MalfunctionRepairStep> WeaponShortRepair =
     [
-        new("Screwing", 4f, "Open the fire-control panel.", "screwdriver"),
-        new("Cutting", 5f, "Cut out the burned wiring.", "wirecutters"),
-        new("Pulsing", 6f, "Reset the fire-control relay.", "multitool"),
-        new("Screwing", 4f, "Close the fire-control panel.", "screwdriver"),
+        new("Screwing", 4f, "cmu-gunship-repair-step-open-fire-control", "cmu-gunship-tool-screwdriver"),
+        new("Cutting", 5f, "cmu-gunship-repair-step-cut-wiring", "cmu-gunship-tool-wirecutters"),
+        new("Pulsing", 6f, "cmu-gunship-repair-step-reset-fire-control", "cmu-gunship-tool-multitool"),
+        new("Screwing", 4f, "cmu-gunship-repair-step-close-fire-control", "cmu-gunship-tool-screwdriver"),
     ];
 
     private static readonly IReadOnlyList<MalfunctionRepairStep> PropulsionFaultRepair =
     [
-        new("Screwing", 4f, "Open the propulsion service panel.", "screwdriver"),
-        new("Pulsing", 6f, "Diagnose and reset the propulsion controller.", "multitool"),
-        new("Anchoring", 5f, "Tighten the engine mounts.", "wrench"),
+        new("Screwing", 4f, "cmu-gunship-repair-step-open-propulsion", "cmu-gunship-tool-screwdriver"),
+        new("Pulsing", 6f, "cmu-gunship-repair-step-reset-propulsion", "cmu-gunship-tool-multitool"),
+        new("Anchoring", 5f, "cmu-gunship-repair-step-tighten-engine", "cmu-gunship-tool-wrench"),
     ];
 
     private static readonly IReadOnlyList<MalfunctionRepairStep> ManeuveringThrusterRepair =
     [
-        new("Prying", 5f, "Free the jammed thruster actuator.", "crowbar"),
-        new("Anchoring", 6f, "Realign and tighten the thruster assembly.", "wrench"),
-        new("Welding", 8f, "Patch the cracked thrust duct.", "welder", true),
+        new("Prying", 5f, "cmu-gunship-repair-step-free-thruster", "cmu-gunship-tool-crowbar"),
+        new("Anchoring", 6f, "cmu-gunship-repair-step-realign-thruster", "cmu-gunship-tool-wrench"),
+        new("Welding", 8f, "cmu-gunship-repair-step-patch-duct", "cmu-gunship-tool-welder", true),
     ];
 
     private static readonly IReadOnlyList<MalfunctionRepairStep> SensorArrayRepair =
     [
-        new("Screwing", 4f, "Open the sensor housing.", "screwdriver"),
-        new("Cutting", 5f, "Remove the damaged data lead.", "wirecutters"),
-        new("Pulsing", 6f, "Recalibrate the sensor array.", "multitool"),
-        new("Screwing", 4f, "Close the sensor housing.", "screwdriver"),
+        new("Screwing", 4f, "cmu-gunship-repair-step-open-sensor", "cmu-gunship-tool-screwdriver"),
+        new("Cutting", 5f, "cmu-gunship-repair-step-remove-data-lead", "cmu-gunship-tool-wirecutters"),
+        new("Pulsing", 6f, "cmu-gunship-repair-step-recalibrate-sensor", "cmu-gunship-tool-multitool"),
+        new("Screwing", 4f, "cmu-gunship-repair-step-close-sensor", "cmu-gunship-tool-screwdriver"),
     ];
 
     private void TryTriggerMalfunctions(Entity<DropshipIntegrityComponent> dropship, float previousIntegrity)
@@ -91,7 +91,8 @@ public sealed partial class DropshipIntegritySystem
         dropship.Comp.RepairingMalfunctions.Remove(malfunction);
         Dirty(dropship);
 
-        var message = $"{DropshipMalfunctionData.GetAlertName(malfunction)} detected.";
+        var message = Loc.GetString("cmu-gunship-malfunction-detected",
+            ("malfunction", DropshipMalfunctionData.GetAlertName(malfunction)));
         var hudQuery = EntityQueryEnumerator<GunshipPilotHudComponent>();
         while (hudQuery.MoveNext(out var pilot, out var hud))
         {
@@ -111,7 +112,7 @@ public sealed partial class DropshipIntegritySystem
         if (integrity.Comp.Wrecked || integrity.Comp.Crashing)
         {
             args.Handled = true;
-            _popup.PopupEntity("This dropship is wrecked beyond repair.", target, args.User, PopupType.SmallCaution);
+            _popup.PopupEntity(Loc.GetString("cmu-gunship-repair-wrecked"), target, args.User, PopupType.SmallCaution);
             return true;
         }
 
@@ -135,7 +136,7 @@ public sealed partial class DropshipIntegritySystem
             args.Handled = true;
             if (!CanRepairDropship(integrity.Owner))
             {
-                _popup.PopupEntity("The dropship must be landed before its systems can be repaired.",
+                _popup.PopupEntity(Loc.GetString("cmu-gunship-system-repair-must-be-landed"),
                     target,
                     args.User,
                     PopupType.SmallCaution);
@@ -144,7 +145,7 @@ public sealed partial class DropshipIntegritySystem
 
             if (IsRepairerInsideDropship(args.User, integrity.Owner))
             {
-                _popup.PopupEntity("You must be outside the dropship to repair it.", target, args.User, PopupType.SmallCaution);
+                _popup.PopupEntity(Loc.GetString("cmu-gunship-repair-must-be-outside"), target, args.User, PopupType.SmallCaution);
                 return true;
             }
 
@@ -177,7 +178,9 @@ public sealed partial class DropshipIntegritySystem
                 return true;
             }
 
-            _popup.PopupEntity($"You begin to repair the {DropshipMalfunctionData.GetAlertName(malfunction).ToLowerInvariant()}. {step.Instruction}",
+            _popup.PopupEntity(Loc.GetString("cmu-gunship-system-repair-started",
+                    ("malfunction", DropshipMalfunctionData.GetAlertName(malfunction).ToLowerInvariant()),
+                    ("instruction", Loc.GetString(step.Instruction))),
                 target,
                 args.User);
             return true;
@@ -225,7 +228,9 @@ public sealed partial class DropshipIntegritySystem
         {
             integrity.Comp.MalfunctionRepairProgress[args.Malfunction] = nextStep;
             var next = steps[nextStep];
-            _popup.PopupEntity($"Repair step complete. Next: {next.Instruction} Use a {next.ToolName}.",
+            _popup.PopupEntity(Loc.GetString("cmu-gunship-system-repair-next",
+                    ("instruction", Loc.GetString(next.Instruction)),
+                    ("tool", Loc.GetString(next.ToolName))),
                 target,
                 args.User);
             return;
@@ -234,7 +239,8 @@ public sealed partial class DropshipIntegritySystem
         integrity.Comp.ActiveMalfunctions.Remove(args.Malfunction);
         integrity.Comp.MalfunctionRepairProgress.Remove(args.Malfunction);
         Dirty(integrity);
-        _popup.PopupEntity($"{DropshipMalfunctionData.GetAlertName(args.Malfunction)} repaired.",
+        _popup.PopupEntity(Loc.GetString("cmu-gunship-system-repaired",
+                ("malfunction", DropshipMalfunctionData.GetAlertName(args.Malfunction))),
             target,
             args.User,
             PopupType.Medium);
@@ -245,7 +251,7 @@ public sealed partial class DropshipIntegritySystem
         if (integrity.Comp.ActiveMalfunctions.Count == 0)
             return;
 
-        args.PushMarkup("[color=#ff5a36]Dropship malfunctions:[/color]");
+        args.PushMarkup(Loc.GetString("cmu-gunship-malfunctions-header"));
         foreach (var malfunction in integrity.Comp.ActiveMalfunctions)
         {
             var stepIndex = GetRepairProgress(integrity.Comp, malfunction);
@@ -254,8 +260,14 @@ public sealed partial class DropshipIntegritySystem
                 continue;
 
             var step = steps[stepIndex];
-            args.PushMarkup($"[color=#ff5a36]{DropshipMalfunctionData.GetAlertName(malfunction)} detected.[/color] {GetMalfunctionEffect(malfunction)}");
-            args.PushMarkup($"Repair {stepIndex + 1}/{steps.Count}: {step.Instruction} Use a {step.ToolName}.");
+            args.PushMarkup(Loc.GetString("cmu-gunship-malfunction-diagnostic",
+                ("malfunction", DropshipMalfunctionData.GetAlertName(malfunction)),
+                ("effect", GetMalfunctionEffect(malfunction))));
+            args.PushMarkup(Loc.GetString("cmu-gunship-repair-diagnostic",
+                ("step", stepIndex + 1),
+                ("total", steps.Count),
+                ("instruction", Loc.GetString(step.Instruction)),
+                ("tool", Loc.GetString(step.ToolName))));
         }
     }
 
@@ -276,15 +288,15 @@ public sealed partial class DropshipIntegritySystem
         };
     }
 
-    private static string GetMalfunctionEffect(DropshipMalfunction malfunction)
+    private string GetMalfunctionEffect(DropshipMalfunction malfunction)
     {
         return malfunction switch
         {
-            DropshipMalfunction.WeaponShort => "The direct-fire weapon is offline.",
-            DropshipMalfunction.PropulsionFault => "Forward thrust and maximum speed are reduced.",
-            DropshipMalfunction.ManeuveringThrusterFault => "Lateral and rotational response are reduced.",
-            DropshipMalfunction.SensorArrayFault => "Upper, lower, and rear cameras are offline.",
-            _ => "Its effect is unknown.",
+            DropshipMalfunction.WeaponShort => Loc.GetString("cmu-gunship-malfunction-effect-weapon"),
+            DropshipMalfunction.PropulsionFault => Loc.GetString("cmu-gunship-malfunction-effect-propulsion"),
+            DropshipMalfunction.ManeuveringThrusterFault => Loc.GetString("cmu-gunship-malfunction-effect-thruster"),
+            DropshipMalfunction.SensorArrayFault => Loc.GetString("cmu-gunship-malfunction-effect-sensor"),
+            _ => Loc.GetString("cmu-gunship-malfunction-effect-unknown"),
         };
     }
 }

@@ -795,7 +795,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
                 (float) integrity.Comp.CrashWarningTime.TotalSeconds);
         }
 
-        _popup.PopupEntity("CRITICAL HULL FAILURE! IMPACT IN THREE SECONDS!", integrity.Owner, PopupType.LargeCaution);
+        _popup.PopupEntity(Loc.GetString("cmu-gunship-critical-hull-failure"), integrity.Owner, PopupType.LargeCaution);
     }
 
     private void SpawnCrashWarning(EntityUid map, Vector2 position, EntityUid dropship, float lifetime)
@@ -1109,25 +1109,25 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         args.Handled = true;
         if (integrity.Comp.Wrecked || integrity.Comp.Crashing)
         {
-            _popup.PopupEntity("This dropship is wrecked beyond repair.", target, args.User, PopupType.SmallCaution);
+            _popup.PopupEntity(Loc.GetString("cmu-gunship-repair-wrecked"), target, args.User, PopupType.SmallCaution);
             return;
         }
 
         if (!CanRepairDropship(integrity.Owner))
         {
-            _popup.PopupEntity("The dropship must be landed before its hull can be repaired.", target, args.User, PopupType.SmallCaution);
+            _popup.PopupEntity(Loc.GetString("cmu-gunship-repair-must-be-landed"), target, args.User, PopupType.SmallCaution);
             return;
         }
 
         if (IsRepairerInsideDropship(args.User, integrity.Owner))
         {
-            _popup.PopupEntity("You must be outside the dropship to repair it.", target, args.User, PopupType.SmallCaution);
+            _popup.PopupEntity(Loc.GetString("cmu-gunship-repair-must-be-outside"), target, args.User, PopupType.SmallCaution);
             return;
         }
 
         if (integrity.Comp.Integrity >= integrity.Comp.MaxIntegrity)
         {
-            _popup.PopupEntity("The dropship hull is already fully repaired.", target, args.User, PopupType.SmallCaution);
+            _popup.PopupEntity(Loc.GetString("cmu-gunship-repair-already-complete"), target, args.User, PopupType.SmallCaution);
             return;
         }
 
@@ -1144,7 +1144,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         };
 
         if (_doAfter.TryStartDoAfter(doAfter))
-            _popup.PopupEntity("You begin welding the dropship hull.", target, args.User);
+            _popup.PopupEntity(Loc.GetString("cmu-gunship-repair-started"), target, args.User);
     }
 
     private void OnHullExamined(Entity<DropshipHullComponent> target, ref ExaminedEvent args)
@@ -1155,7 +1155,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         var status = integrity.Comp.Wrecked
             ? "[color=red]WRECKED[/color]"
             : $"{MathF.Ceiling(integrity.Comp.Integrity)}/{MathF.Ceiling(integrity.Comp.MaxIntegrity)}";
-        args.PushMarkup($"Dropship hull integrity: {status}");
+        args.PushMarkup(Loc.GetString("cmu-gunship-hull-integrity", ("status", status)));
         PushMalfunctionDiagnostics(integrity, args);
     }
 
@@ -1175,7 +1175,9 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             integrity.Comp.Integrity + integrity.Comp.RepairAmount);
         Dirty(integrity);
         _audio.PlayPvs(integrity.Comp.RepairSound, target);
-        _popup.PopupEntity($"Dropship hull integrity restored to {MathF.Ceiling(integrity.Comp.Integrity)}/{MathF.Ceiling(integrity.Comp.MaxIntegrity)}.",
+        _popup.PopupEntity(Loc.GetString("cmu-gunship-repair-restored",
+                ("integrity", MathF.Ceiling(integrity.Comp.Integrity)),
+                ("maximum", MathF.Ceiling(integrity.Comp.MaxIntegrity))),
             target,
             args.User);
     }
