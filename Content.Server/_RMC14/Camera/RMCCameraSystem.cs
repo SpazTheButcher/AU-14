@@ -3,21 +3,29 @@ using Content.Server.Camera;
 using Content.Server.SurveillanceCamera;
 using Content.Shared._RMC14.Camera;
 using Content.Shared.Camera;
+using Content.Shared.CCVar;
 using Content.Shared.SurveillanceCamera;
 using Robust.Server.GameObjects;
+using Robust.Shared.Configuration;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Timing;
 
 namespace Content.Server._RMC14.Camera;
 
 public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
 {
-    [Dependency] private ViewSubscriberSystem _viewSubscriber = default!;
-    [Dependency] private UserInterfaceSystem _userInterface = default!;
+    private static readonly TimeSpan ViewerValidationInterval = TimeSpan.FromSeconds(0.5);
+
     [Dependency] private CameraNetworkSystem _cameraNetworks = default!;
+    [Dependency] private IConfigurationManager _configuration = default!;
     [Dependency] private IPrototypeManager _prototypeManager = default!;
+    [Dependency] private IGameTiming _serverTiming = default!;
+    [Dependency] private UserInterfaceSystem _userInterface = default!;
+    [Dependency] private ViewSubscriberSystem _viewSubscriber = default!;
 
     private EntityQuery<ActorComponent> _actorQuery;
+    private TimeSpan _nextViewerValidation;
 
     public override void Initialize()
     {
@@ -29,6 +37,25 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
         SubscribeLocalEvent<RMCCameraWatcherComponent, PlayerDetachedEvent>(OnWatcherPlayerDetached);
         SubscribeLocalEvent<RMCCameraComputerComponent, CameraReceiverChangedEvent>(OnCameraReceiverChanged);
         SubscribeLocalEvent<RMCCameraNetworkEditorComponent, ComponentShutdown>(OnCameraEditorShutdown);
+    }
+
+    public override void Update(float frameTime)
+    {
+        base.Update(frameTime);
+
+        if (_serverTiming.CurTime < _nextViewerValidation)
+            return;
+
+        _nextViewerValidation = _serverTiming.CurTime + ViewerValidationInterval;
+        var query = EntityQueryEnumerator<RMCCameraComputerComponent>();
+        while (query.MoveNext(out var uid, out var computer))
+        {
+            foreach (var watcher in computer.Watchers.ToArray())
+            {
+                if (!CanUseComputer((uid, computer), watcher))
+                    RemoveComputerWatcher((uid, computer), watcher);
+            }
+        }
     }
 
     private void OnCameraReceiverChanged(
@@ -85,13 +112,19 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
 
     public RMCCameraBuiState BuildBuiState(Entity<RMCCameraComputerComponent> computer)
     {
+        var mapEnabled = _configuration.GetCVar(CCVars.CMUCameraMapEnabled);
+        var editorEnabled = _configuration.GetCVar(CCVars.CMUCameraEditorEnabled);
         var networks = BuildAvailableNetworks(computer.Owner);
         EnsureActiveNetwork(computer, networks);
         return new RMCCameraBuiState(
-            BuildSelectedMapState(computer.Owner, computer.Comp.ActiveNetwork),
+            mapEnabled
+                ? BuildSelectedMapState(computer.Owner, computer.Comp.ActiveNetwork)
+                : new CameraMapUiState(default, []),
             networks,
             computer.Comp.ActiveNetwork,
-            BuildEditorState(computer));
+            editorEnabled ? BuildEditorState(computer) : null,
+            mapEnabled,
+            editorEnabled);
     }
 
     public List<CameraNetworkUiData> BuildAvailableNetworks(EntityUid computer)
@@ -99,9 +132,11 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
         if (!TryComp(computer, out CameraNetworkReceiverComponent? receiver))
             return [];
 
-        var editor = EnsureEditorState((computer, Comp<RMCCameraComputerComponent>(computer)));
+        var hiddenNetworks = TryComp(computer, out RMCCameraNetworkEditorComponent? editor)
+            ? editor.HiddenSeededNetworks
+            : [];
         return _cameraNetworks.GetEffectiveNetworks(computer)
-            .Where(network => !editor.HiddenSeededNetworks.Contains(network))
+            .Where(network => !hiddenNetworks.Contains(network))
             .Select(network => TryResolveNetworkName(computer, network, out var name)
                 ? new CameraNetworkUiData(network, name)
                 : null)
@@ -212,16 +247,7 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
             Dirty(watcher, watcherComp);
         }
 
-        SyncMapViewSubscriptions(ent);
-
         UpdateUserInterface(ent);
-    }
-
-    private void SyncMapViewSubscriptions(Entity<RMCCameraComputerComponent> computer)
-    {
-        var map = BuildSelectedMapState(computer.Owner, computer.Comp.ActiveNetwork);
-        foreach (var watcher in computer.Comp.Watchers)
-            _cameraNetworks.SyncMapViewSubscriptions(computer.Owner, watcher, map);
     }
 
     private void UpdateUserInterface(Entity<RMCCameraComputerComponent> computer)
@@ -229,11 +255,7 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
         if (!_userInterface.IsUiOpen(computer.Owner, RMCCameraUiKey.Key))
             return;
 
-        var state = BuildBuiState(computer);
-        foreach (var watcher in computer.Comp.Watchers)
-            _cameraNetworks.SyncMapViewSubscriptions(computer.Owner, watcher, state.Map);
-
-        _userInterface.SetUiState(computer.Owner, RMCCameraUiKey.Key, state);
+        _userInterface.SetUiState(computer.Owner, RMCCameraUiKey.Key, BuildBuiState(computer));
     }
 
     protected override void OnNetworkBuiMsg(Entity<RMCCameraComputerComponent> computer, RMCCameraNetworkBuiMsg args)
@@ -292,7 +314,17 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
 
     protected override void OnComputerUiClosed(Entity<RMCCameraComputerComponent> computer, EntityUid actor)
     {
-        _cameraNetworks.ClearMapViewSubscriptions(computer.Owner, actor);
+        if (TryComp(actor, out RMCCameraWatcherComponent? watcher) && _actorQuery.TryComp(actor, out var actorComponent))
+            RemoveOverrides((actor, watcher, actorComponent));
+    }
+
+    protected override bool CanUseComputer(Entity<RMCCameraComputerComponent> computer, EntityUid actor)
+    {
+        return !TerminatingOrDeleted(actor) &&
+            _actorQuery.TryComp(actor, out var actorComponent) &&
+            actorComponent.PlayerSession.AttachedEntity == actor &&
+            _userInterface.IsUiOpen(computer.Owner, RMCCameraUiKey.Key, actor) &&
+            _accessReader.IsAllowed(actor, computer.Owner);
     }
 
     private void RemoveOverrides(Entity<RMCCameraWatcherComponent, ActorComponent?> watcher)

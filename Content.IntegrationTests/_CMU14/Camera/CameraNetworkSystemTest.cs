@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Content.Client.Camera;
 using Content.Server.Camera;
 using Content.Server.GameTicking;
 using Content.Server.Maps;
@@ -12,6 +11,7 @@ using Content.Server.SurveillanceCamera;
 using Content.Server.Wires;
 using Content.Shared._RMC14.Camera;
 using Content.Shared.Camera;
+using Content.Shared.CCVar;
 using Content.Shared.GameTicking;
 using Content.Shared.Item;
 using Content.Shared.Interaction;
@@ -21,6 +21,7 @@ using Content.Shared.SurveillanceCamera;
 using Content.Shared.Verbs;
 using Content.Shared.Wires;
 using Robust.Server.GameObjects;
+using Robust.Shared;
 using Robust.Shared.EntitySerialization;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
@@ -28,6 +29,8 @@ using Robust.Shared.Localization;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Maths;
+using Robust.Shared.Physics;
+using Robust.Shared.Physics.Components;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using Robust.UnitTesting;
@@ -39,6 +42,24 @@ public sealed class CameraNetworkSystemTest
 {
     private const string NetworkA = "CMUTestCameraNetworkA";
     private const string NetworkB = "CMUTestCameraNetworkB";
+
+    [Test]
+    public async Task CameraMapAndEditorFeatureGatesDefaultToDisabled()
+    {
+        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
+        try
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(server.CfgMan.GetCVar(CCVars.CMUCameraMapEnabled), Is.False);
+                Assert.That(server.CfgMan.GetCVar(CCVars.CMUCameraEditorEnabled), Is.False);
+            });
+        }
+        finally
+        {
+            server.Dispose();
+        }
+    }
 
     [Test]
     public void RmcEditorContractCarriesOpaqueIdsRevisionMembershipAndErrors()
@@ -1298,7 +1319,7 @@ public sealed class CameraNetworkSystemTest
     }
 
     [Test]
-    public async Task StandardMonitorSubscribesViewerToEveryVisibleCameraGrid()
+    public async Task StandardMonitorDoesNotSubscribeViewerToCameraGrids()
     {
         var pair = await PoolManager.GetServerClient(new PoolSettings { Connected = true });
         var server = pair.Server;
@@ -1334,7 +1355,7 @@ public sealed class CameraNetworkSystemTest
 
                     Assert.That(session.ViewSubscriptions.Any(view =>
                         entMan.TryGetComponent(view, out TransformComponent? viewTransform) &&
-                        viewTransform.GridUid == remoteGrid.Owner), Is.True);
+                        viewTransform.GridUid == remoteGrid.Owner), Is.False);
 
                     entMan.EventBus.RaiseLocalEvent(monitor,
                         new BoundUIClosedEvent(SurveillanceCameraMonitorUiKey.Key, monitor, viewer));
@@ -1357,7 +1378,7 @@ public sealed class CameraNetworkSystemTest
     }
 
     [Test]
-    public async Task StandardMonitorReplicatesRemoteNavMapGeometryToClient()
+    public async Task StandardMonitorMapDoesNotReplicateUnrelatedRemoteEntities()
     {
         var pair = await PoolManager.GetServerClient(new PoolSettings { Connected = true });
         var server = pair.Server;
@@ -1367,14 +1388,14 @@ public sealed class CameraNetworkSystemTest
         var viewer = EntityUid.Invalid;
         var consoleGrid = EntityUid.Invalid;
         var remoteGrid = EntityUid.Invalid;
-        var remoteGridNet = NetEntity.Invalid;
-        CameraMapUiState? cameraMap = null;
-        CameraNavMapControl? control = null;
+        var remoteProbe = EntityUid.Invalid;
+        var remoteProbeNet = NetEntity.Invalid;
         EntityUid? previousAttached = null;
         try
         {
             if (!server.ProtoMan.HasIndex<CameraNetworkPrototype>(NetworkA))
                 await LoadPrototypes(server);
+            await server.WaitPost(() => server.CfgMan.SetCVar(CVars.NetPVS, true));
 
             await server.WaitAssertion(() =>
             {
@@ -1383,12 +1404,12 @@ public sealed class CameraNetworkSystemTest
                 var monitors = entMan.System<SurveillanceCameraMonitorSystem>();
                 var session = server.PlayerMan.Sessions.Single();
                 previousAttached = session.AttachedEntity;
-                mapSystem.CreateMap(out var mapId);
-                var consoleGridEntity = mapSystem.CreateGridEntity(mapId);
-                var remoteGridEntity = mapSystem.CreateGridEntity(mapId);
+                mapSystem.CreateMap(out var consoleMapId);
+                mapSystem.CreateMap(out var remoteMapId);
+                var consoleGridEntity = mapSystem.CreateGridEntity(consoleMapId);
+                var remoteGridEntity = mapSystem.CreateGridEntity(remoteMapId);
                 consoleGrid = consoleGridEntity.Owner;
                 remoteGrid = remoteGridEntity.Owner;
-                entMan.System<SharedTransformSystem>().SetLocalPosition(remoteGridEntity, new Vector2(50, 50));
                 mapSystem.SetTile(consoleGridEntity.Owner, consoleGridEntity.Comp, Vector2i.Zero, new Tile(1));
                 mapSystem.SetTile(remoteGridEntity.Owner, remoteGridEntity.Comp, Vector2i.Zero, new Tile(1));
 
@@ -1401,24 +1422,16 @@ public sealed class CameraNetworkSystemTest
                     new EntityCoordinates(consoleGrid, Vector2.Zero));
                 camera = entMan.SpawnEntity("CMUTestSurveillanceCameraStandard",
                     new EntityCoordinates(remoteGrid, Vector2.Zero));
+                remoteProbe = entMan.SpawnEntity(null, new EntityCoordinates(remoteGrid, new Vector2(4, 4)));
                 viewer = entMan.SpawnEntity(null, new EntityCoordinates(consoleGrid, Vector2.Zero));
                 entMan.AddComponent<CameraMapMarkerComponent>(camera);
                 server.PlayerMan.SetAttachedEntity(session, viewer);
-                remoteGridNet = entMan.GetNetEntity(remoteGrid);
-                cameraMap = monitors.BuildUiState((monitor,
-                    entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor))).CameraMap;
+                remoteProbeNet = entMan.GetNetEntity(remoteProbe);
             });
 
             await client.WaitAssertion(() =>
             {
-                Assert.That(client.EntMan.TryGetEntity(remoteGridNet, out _), Is.False);
-                control = new CameraNavMapControl();
-                control.SetState(cameraMap!, null);
-                Assert.Multiple(() =>
-                {
-                    Assert.That(control.MapUid, Is.Null);
-                    Assert.That(control.GridBindingReady, Is.False);
-                });
+                Assert.That(client.EntMan.TryGetEntity(remoteProbeNet, out _), Is.False);
             });
 
             await server.WaitAssertion(() =>
@@ -1431,28 +1444,17 @@ public sealed class CameraNetworkSystemTest
 
             await client.WaitAssertion(() =>
             {
-                var entMan = client.EntMan;
-                Assert.That(entMan.TryGetEntity(remoteGridNet, out var clientGrid), Is.True);
-                Assert.That(clientGrid, Is.Not.Null);
-                var navMap = entMan.GetComponent<NavMapComponent>(clientGrid.Value);
-                Assert.Multiple(() =>
-                {
-                    Assert.That(control!.RefreshSelectedGridBinding(), Is.True);
-                    Assert.That(control.MapUid, Is.EqualTo(clientGrid));
-                    Assert.That(control.GridBindingReady, Is.True);
-                    Assert.That(navMap.Chunks, Contains.Key(Vector2i.Zero));
-                    Assert.That(navMap.Chunks[Vector2i.Zero].TileData[0],
-                        Is.EqualTo(SharedNavMapSystem.FloorMask));
-                });
+                Assert.That(client.EntMan.TryGetEntity(remoteProbeNet, out _), Is.False);
             });
         }
         finally
         {
+            await server.WaitPost(() => server.CfgMan.SetCVar(CVars.NetPVS, false));
             await server.WaitAssertion(() =>
             {
                 var session = server.PlayerMan.Sessions.Single();
                 server.PlayerMan.SetAttachedEntity(session, previousAttached);
-                foreach (var uid in new[] { viewer, camera, monitor, consoleGrid, remoteGrid })
+                foreach (var uid in new[] { viewer, remoteProbe, camera, monitor, consoleGrid, remoteGrid })
                 {
                     if (server.EntMan.EntityExists(uid))
                         server.EntMan.DeleteEntity(uid);
@@ -1463,7 +1465,7 @@ public sealed class CameraNetworkSystemTest
     }
 
     [Test]
-    public async Task LoadedZLevelGridHasGeneratedNavMapGeometry()
+    public async Task LoadedZLevelGridRemainsDynamic()
     {
         var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
         try
@@ -1494,11 +1496,7 @@ public sealed class CameraNetworkSystemTest
                 var upperMapId = entMan.GetComponent<MapComponent>(upperMap.Value).MapId;
                 var upperGrid = mapSystem.GetAllGrids(upperMapId).Single();
 
-                Assert.Multiple(() =>
-                {
-                    Assert.That(entMan.HasComponent<NavMapComponent>(upperGrid.Owner), Is.True);
-                    Assert.That(entMan.GetComponent<NavMapComponent>(upperGrid.Owner).Chunks, Is.Not.Empty);
-                });
+                Assert.That(entMan.GetComponent<PhysicsComponent>(upperGrid.Owner).BodyType, Is.EqualTo(BodyType.Dynamic));
             });
         }
         finally
@@ -1508,7 +1506,7 @@ public sealed class CameraNetworkSystemTest
     }
 
     [Test]
-    public async Task ColonyCameraGridGetsGeneratedNavMapGeometry()
+    public async Task BuildingMapStateDoesNotGenerateNavMapGeometry()
     {
         var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
         try
@@ -1533,14 +1531,10 @@ public sealed class CameraNetworkSystemTest
                     Assert.That(entMan.HasComponent<NavMapComponent>(grid.Owner), Is.False);
 
                     var state = networks.BuildMapState(receiver);
-                    var navMap = entMan.GetComponent<NavMapComponent>(grid.Owner);
-
                     Assert.Multiple(() =>
                     {
                         Assert.That(state.Grids.Single().Grid, Is.EqualTo(entMan.GetNetEntity(grid.Owner)));
-                        Assert.That(navMap.Chunks, Contains.Key(Vector2i.Zero));
-                        Assert.That(navMap.Chunks[Vector2i.Zero].TileData[0],
-                            Is.EqualTo(SharedNavMapSystem.FloorMask));
+                        Assert.That(entMan.HasComponent<NavMapComponent>(grid.Owner), Is.False);
                     });
                 }
                 finally
@@ -1558,7 +1552,7 @@ public sealed class CameraNetworkSystemTest
     }
 
     [Test]
-    public async Task RmcMonitorSubscribesViewerToEveryVisibleCameraGrid()
+    public async Task RmcMonitorDoesNotSubscribeViewerToCameraGrids()
     {
         var pair = await PoolManager.GetServerClient(new PoolSettings { Connected = true });
         var server = pair.Server;
@@ -1595,7 +1589,7 @@ public sealed class CameraNetworkSystemTest
 
                     Assert.That(session.ViewSubscriptions.Any(view =>
                         entMan.TryGetComponent(view, out TransformComponent? viewTransform) &&
-                        viewTransform.GridUid == remoteGrid.Owner), Is.True);
+                        viewTransform.GridUid == remoteGrid.Owner), Is.False);
 
                     entMan.EventBus.RaiseLocalEvent(monitor,
                         new BoundUIClosedEvent(RMCCameraUiKey.Key, monitor, viewer));
@@ -1619,7 +1613,7 @@ public sealed class CameraNetworkSystemTest
     }
 
     [Test]
-    public async Task CameraMapSubscriptionsDoNotRemoveAnExistingGridView()
+    public async Task OpeningCameraMapsDoesNotCreateProxyOrRemoveExistingGridView()
     {
         var pair = await PoolManager.GetServerClient(new PoolSettings { Connected = true });
         var server = pair.Server;
@@ -1663,7 +1657,7 @@ public sealed class CameraNetworkSystemTest
                     Assert.That(session.ViewSubscriptions.Any(view =>
                         view != remoteGrid.Owner &&
                         entMan.TryGetComponent(view, out TransformComponent? viewTransform) &&
-                        viewTransform.GridUid == remoteGrid.Owner), Is.True);
+                        viewTransform.GridUid == remoteGrid.Owner), Is.False);
 
                     entMan.EventBus.RaiseLocalEvent(secondMonitor,
                         new BoundUIClosedEvent(SurveillanceCameraMonitorUiKey.Key, secondMonitor, viewer));
@@ -4582,8 +4576,14 @@ public sealed class CameraNetworkSystemTest
         }
     }
 
-    private static async Task LoadPrototypes(RobustIntegrationTest.IntegrationInstance server)
+    private static async Task LoadPrototypes(
+        RobustIntegrationTest.IntegrationInstance server,
+        bool enableMap = true,
+        bool enableEditor = true)
     {
+        server.CfgMan.SetCVar(CCVars.CMUCameraMapEnabled, enableMap);
+        server.CfgMan.SetCVar(CCVars.CMUCameraEditorEnabled, enableEditor);
+
         if (server.ProtoMan.HasIndex<CameraNetworkPrototype>(NetworkA))
             return;
 

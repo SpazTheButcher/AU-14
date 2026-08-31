@@ -56,9 +56,12 @@ public sealed class RMCCameraBui : RMCPopOutBui<RMCCameraWindow>
         Refresh();
         if (State is RMCCameraBuiState state)
         {
+            Window.SetFeatures(state.MapEnabled, state.EditorEnabled);
             PopulateNetworkSelector(Window.NetworkSelector, state);
-            Window.NetworkEditor.SetState(state.Editor);
-            UpdateMap(state.Map);
+            if (state.EditorEnabled)
+                Window.NetworkEditor.SetState(state.Editor);
+            if (state.MapEnabled)
+                UpdateMap(state.Map);
         }
     }
 
@@ -72,10 +75,13 @@ public sealed class RMCCameraBui : RMCPopOutBui<RMCCameraWindow>
         _mapState = cameraState.Map;
         if (Window != null)
         {
+            Window.SetFeatures(cameraState.MapEnabled, cameraState.EditorEnabled);
             PopulateNetworkSelector(Window.NetworkSelector, cameraState);
-            Window.NetworkEditor.SetState(cameraState.Editor);
+            if (cameraState.EditorEnabled)
+                Window.NetworkEditor.SetState(cameraState.Editor);
         }
-        UpdateMap(_mapState);
+        if (cameraState.MapEnabled)
+            UpdateMap(_mapState);
     }
 
     protected override void ReceiveMessage(BoundUserInterfaceMessage message)

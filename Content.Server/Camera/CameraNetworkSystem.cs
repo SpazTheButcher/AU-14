@@ -1,14 +1,9 @@
 using System.Numerics;
-using Content.Server.Pinpointer;
 using Content.Server.Power.Components;
 using Content.Server.SurveillanceCamera;
 using Content.Shared.Camera;
 using Content.Shared._RMC14.Camera;
 using Content.Shared.Power;
-using Robust.Server.GameObjects;
-using Robust.Shared.Map;
-using Robust.Shared.Map.Components;
-using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using System.Linq;
@@ -20,8 +15,6 @@ public sealed class CameraNetworkSystem : EntitySystem
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
-    [Dependency] private readonly NavMapSystem _navMap = default!;
-    [Dependency] private readonly ViewSubscriberSystem _viewSubscriber = default!;
 
     private readonly Dictionary<ProtoId<CameraNetworkPrototype>, HashSet<EntityUid>> _members = [];
     private readonly Dictionary<ProtoId<CameraNetworkPrototype>, HashSet<EntityUid>> _receivers = [];
@@ -33,9 +26,6 @@ public sealed class CameraNetworkSystem : EntitySystem
     private readonly Dictionary<EntityUid, TimeSpan> _mobileMarkerUpdates = [];
     private readonly HashSet<EntityUid> _legacyMembers = [];
     private readonly HashSet<EntityUid> _legacyReceivers = [];
-    private readonly Dictionary<(EntityUid Receiver, EntityUid Viewer), MapViewSubscription> _mapViewSubscriptions = [];
-    private readonly Dictionary<(EntityUid Grid, ICommonSession Session), MapGridViewSubscription>
-        _mapGridViewSubscriptions = [];
 
     public override void Initialize()
     {
@@ -49,6 +39,8 @@ public sealed class CameraNetworkSystem : EntitySystem
         SubscribeLocalEvent<RMCCameraComponent, RMCLegacyCameraMapInitEvent>(OnLegacyCameraMapInit);
         SubscribeLocalEvent<RMCCameraComputerComponent, RMCLegacyCameraComputerMapInitEvent>(OnLegacyComputerMapInit);
         SubscribeLocalEvent<RMCCameraComponent, RMCLegacyCameraIdChangedEvent>(OnLegacyCameraIdChanged);
+        SubscribeLocalEvent<RMCCameraComponent, RMCLegacyCameraRemovedEvent>(OnLegacyCameraRemoved);
+        SubscribeLocalEvent<RMCCameraComputerComponent, RMCLegacyCameraComputerRemovedEvent>(OnLegacyComputerRemoved);
         SubscribeLocalEvent<CameraMapMarkerComponent, ComponentStartup>(OnMarkerStartup);
         SubscribeLocalEvent<CameraMapMarkerComponent, ComponentShutdown>(OnMarkerShutdown);
         SubscribeLocalEvent<CameraMapMarkerComponent, MoveEvent>(OnMarkerMove);
@@ -79,7 +71,6 @@ public sealed class CameraNetworkSystem : EntitySystem
     private void OnReceiverShutdown(Entity<CameraNetworkReceiverComponent> ent, ref ComponentShutdown args)
     {
         _pendingMarkerReceivers.Remove(ent.Owner);
-        ClearMapViewSubscriptions(ent.Owner);
         UnindexReceiver(ent.Owner, GetEffectiveNetworks(ent.Owner, ent.Comp));
         CleanupReceiverGrants(ent.Owner);
     }
@@ -120,6 +111,20 @@ public sealed class CameraNetworkSystem : EntitySystem
             return;
 
         SetMemberNetworks(ent, ValidateLegacyNetworks(ent.Owner, args.NewId));
+    }
+
+    private void OnLegacyCameraRemoved(Entity<RMCCameraComponent> ent, ref RMCLegacyCameraRemovedEvent args)
+    {
+        if (_legacyMembers.Remove(ent.Owner))
+            RemCompDeferred<CameraNetworkMemberComponent>(ent.Owner);
+    }
+
+    private void OnLegacyComputerRemoved(
+        Entity<RMCCameraComputerComponent> ent,
+        ref RMCLegacyCameraComputerRemovedEvent args)
+    {
+        if (_legacyReceivers.Remove(ent.Owner))
+            RemCompDeferred<CameraNetworkReceiverComponent>(ent.Owner);
     }
 
     private HashSet<ProtoId<CameraNetworkPrototype>> ValidateLegacyNetworks(
@@ -209,8 +214,6 @@ public sealed class CameraNetworkSystem : EntitySystem
         _legacyMembers.Remove(entity);
         _legacyReceivers.Remove(entity);
         _pendingMarkerReceivers.Remove(entity);
-        ClearMapViewSubscriptions(entity);
-        ClearMapViewSubscriptionsForViewer(entity);
         CleanupSourceGrants(entity);
 
         if (TryComp(entity, out CameraNetworkReceiverComponent? receiver))
@@ -223,16 +226,22 @@ public sealed class CameraNetworkSystem : EntitySystem
     public HashSet<EntityUid> GetAccessibleCameras(Entity<CameraNetworkReceiverComponent> receiver)
     {
         var cameras = new HashSet<EntityUid>();
+        var effectiveNetworks = GetEffectiveNetworks(receiver.Owner, receiver.Comp);
 
-        foreach (var network in GetEffectiveNetworks(receiver.Owner, receiver.Comp))
+        foreach (var network in effectiveNetworks)
         {
             if (!_members.TryGetValue(network, out var members))
                 continue;
 
             foreach (var member in members)
             {
-                if (CanAccess(receiver.Owner, member))
-                    cameras.Add(member);
+                if (!TryComp(member, out CameraNetworkMemberComponent? memberComponent) ||
+                    (receiver.Comp.SupportedSources & memberComponent.SourceKinds) == CameraSourceKinds.None)
+                {
+                    continue;
+                }
+
+                cameras.Add(member);
             }
         }
 
@@ -266,12 +275,6 @@ public sealed class CameraNetworkSystem : EntitySystem
 
             if (!grouped.TryGetValue(grid.Value, out var markers))
             {
-                // Colony and standalone maps are not necessarily registered as station grids,
-                // so NavMapSystem never sees StationGridAddedEvent for them. Generate the
-                // geometry lazily when an accessible camera exposes such a grid in the UI.
-                if (TryComp<MapGridComponent>(grid.Value, out var mapGrid))
-                    _navMap.EnsureNavMapIfMissing((grid.Value, mapGrid));
-
                 markers = [];
                 grouped.Add(grid.Value, markers);
             }
@@ -311,118 +314,19 @@ public sealed class CameraNetworkSystem : EntitySystem
 
     public void SyncMapViewSubscriptions(EntityUid receiver, EntityUid viewer, CameraMapUiState state)
     {
-        if (!TryComp(viewer, out ActorComponent? actor))
-        {
-            ClearMapViewSubscriptions(receiver, viewer);
-            return;
-        }
-
-        var key = (receiver, viewer);
-        if (_mapViewSubscriptions.TryGetValue(key, out var existing) && existing.Session != actor.PlayerSession)
-        {
-            ReleaseMapViewSubscription(existing);
-            existing = null;
-        }
-
-        var desired = new HashSet<EntityUid>();
-        foreach (var gridData in state.Grids)
-        {
-            if (state.ConsoleGrid == gridData.Grid)
-                continue;
-
-            if (TryGetEntity(gridData.Grid, out var grid) && grid is { } gridUid && !TerminatingOrDeleted(gridUid))
-                desired.Add(gridUid);
-        }
-
-        existing ??= new MapViewSubscription(actor.PlayerSession);
-
-        foreach (var grid in existing.Grids.Except(desired).ToArray())
-        {
-            existing.Grids.Remove(grid);
-            ReleaseMapGrid(grid, existing.Session);
-        }
-
-        foreach (var grid in desired.Except(existing.Grids))
-        {
-            existing.Grids.Add(grid);
-            AcquireMapGrid(grid, existing.Session);
-        }
-
-        if (existing.Grids.Count == 0)
-            _mapViewSubscriptions.Remove(key);
-        else
-            _mapViewSubscriptions[key] = existing;
+        // Camera maps must never grant remote-grid PVS. Geometry will be delivered by a dedicated protocol.
     }
 
     public void ClearMapViewSubscriptions(EntityUid receiver, EntityUid viewer)
     {
-        var key = (receiver, viewer);
-        if (_mapViewSubscriptions.Remove(key, out var subscription))
-            ReleaseMapViewSubscription(subscription);
     }
 
     public void ClearMapViewSubscriptions(EntityUid receiver)
     {
-        foreach (var (key, subscription) in _mapViewSubscriptions.ToArray())
-        {
-            if (key.Receiver != receiver)
-                continue;
-
-            _mapViewSubscriptions.Remove(key);
-            ReleaseMapViewSubscription(subscription);
-        }
     }
 
     public void ClearMapViewSubscriptionsForViewer(EntityUid viewer)
     {
-        foreach (var (key, subscription) in _mapViewSubscriptions.ToArray())
-        {
-            if (key.Viewer != viewer)
-                continue;
-
-            _mapViewSubscriptions.Remove(key);
-            ReleaseMapViewSubscription(subscription);
-        }
-    }
-
-    private void AcquireMapGrid(EntityUid grid, ICommonSession session)
-    {
-        var key = (grid, session);
-        if (_mapGridViewSubscriptions.TryGetValue(key, out var subscription))
-        {
-            subscription.Count++;
-            return;
-        }
-
-        // ViewSubscriberSystem stores a global set rather than source-aware
-        // subscriptions. Use our own view entity so closing a camera UI can
-        // never remove a subscription owned by another feature.
-        var view = Spawn(null, new EntityCoordinates(grid, Vector2.Zero));
-        _mapGridViewSubscriptions[key] = new MapGridViewSubscription(view);
-        _viewSubscriber.AddViewSubscriber(view, session);
-    }
-
-    private void ReleaseMapGrid(EntityUid grid, ICommonSession session)
-    {
-        var key = (grid, session);
-        if (!_mapGridViewSubscriptions.TryGetValue(key, out var subscription))
-            return;
-
-        if (subscription.Count > 1)
-        {
-            subscription.Count--;
-            return;
-        }
-
-        _mapGridViewSubscriptions.Remove(key);
-        _viewSubscriber.RemoveViewSubscriber(subscription.View, session);
-        QueueDel(subscription.View);
-    }
-
-    private void ReleaseMapViewSubscription(MapViewSubscription subscription)
-    {
-        foreach (var grid in subscription.Grids)
-            ReleaseMapGrid(grid, subscription.Session);
     }
 
     public bool CanAccess(EntityUid receiver, EntityUid camera)
@@ -843,16 +747,4 @@ public sealed class CameraNetworkSystem : EntitySystem
         var ev = new CameraReceiverChangedEvent(kind, member);
         RaiseLocalEvent(receiver, ref ev);
     }
-}
-
-internal sealed class MapViewSubscription(ICommonSession session)
-{
-    public ICommonSession Session { get; } = session;
-    public HashSet<EntityUid> Grids { get; } = [];
-}
-
-internal sealed class MapGridViewSubscription(EntityUid view)
-{
-    public EntityUid View { get; } = view;
-    public int Count { get; set; } = 1;
 }

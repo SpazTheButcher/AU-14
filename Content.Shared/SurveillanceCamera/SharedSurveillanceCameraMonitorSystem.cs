@@ -29,7 +29,8 @@ public sealed class SurveillanceCameraMonitorUiState(
     List<CameraNetworkUiData> networks,
     ProtoId<CameraNetworkPrototype>? activeNetwork,
     List<CameraListUiData> cameras,
-    CameraMapUiState cameraMap) : BoundUserInterfaceState
+    CameraMapUiState cameraMap,
+    bool mapEnabled = false) : BoundUserInterfaceState
 {
     public NetEntity? ActiveCamera { get; } = activeCamera;
     public string? ActiveCameraName { get; } = activeCameraName;
@@ -37,6 +38,7 @@ public sealed class SurveillanceCameraMonitorUiState(
     public ProtoId<CameraNetworkPrototype>? ActiveNetwork { get; } = activeNetwork;
     public List<CameraListUiData> CameraList { get; } = cameras;
     public CameraMapUiState CameraMap { get; } = cameraMap;
+    public bool MapEnabled { get; } = mapEnabled;
 
     // TODO: Remove when the client UI switches to logical camera networks.
     [Obsolete("Use Networks.")]

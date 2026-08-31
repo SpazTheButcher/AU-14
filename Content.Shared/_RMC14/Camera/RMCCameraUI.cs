@@ -16,12 +16,16 @@ public sealed class RMCCameraBuiState(
     CameraMapUiState map,
     List<CameraNetworkUiData>? networks = null,
     ProtoId<CameraNetworkPrototype>? activeNetwork = null,
-    RMCCameraNetworkEditorUiState? editor = null) : BoundUserInterfaceState
+    RMCCameraNetworkEditorUiState? editor = null,
+    bool mapEnabled = false,
+    bool editorEnabled = false) : BoundUserInterfaceState
 {
     public CameraMapUiState Map { get; } = map;
     public List<CameraNetworkUiData> Networks { get; } = networks ?? [];
     public ProtoId<CameraNetworkPrototype>? ActiveNetwork { get; } = activeNetwork;
     public RMCCameraNetworkEditorUiState Editor { get; } = editor ?? new(0, [], []);
+    public bool MapEnabled { get; } = mapEnabled;
+    public bool EditorEnabled { get; } = editorEnabled;
 }
 
 [Serializable, NetSerializable]

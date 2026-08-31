@@ -79,11 +79,16 @@ public sealed partial class SurveillanceCameraMonitorWindow : DefaultWindow
     // The UI class gets the eye from the active entity, and passes it here to change the view.
     public void UpdateState(IEye? eye, SurveillanceCameraMonitorUiState state)
     {
+        MapTab.Visible = state.MapEnabled;
+        if (!state.MapEnabled && MonitorTabs.CurrentTab == MapTab.GetPositionInParent())
+            MonitorTabs.CurrentTab = ListTab.GetPositionInParent();
+
         _currentCameraName = state.ActiveCameraName ?? string.Empty;
         SetCameraView(eye);
         PopulateNetworkSelector(state.Networks, state.ActiveNetwork);
         PopulateCameraList(state.CameraList);
-        PopulateMap(state.CameraMap, state.ActiveCamera);
+        if (state.MapEnabled)
+            PopulateMap(state.CameraMap, state.ActiveCamera);
     }
 
     private void PopulateNetworkSelector(

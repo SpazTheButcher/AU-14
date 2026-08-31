@@ -24,6 +24,7 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
         SubscribeLocalEvent<RMCCameraComponent, EntityTerminatingEvent>(OnCameraTerminating);
 
         SubscribeLocalEvent<RMCCameraComputerComponent, MapInitEvent>(OnComputerMapInit, after: new [] { typeof(AreaSystem), typeof(SharedDropshipWeaponSystem) });
+        SubscribeLocalEvent<RMCCameraComputerComponent, ComponentRemove>(OnComputerRemove);
 
         SubscribeLocalEvent<RMCCameraWatcherComponent, ComponentRemove>(OnWatcherRemove);
         SubscribeLocalEvent<RMCCameraWatcherComponent, EntityTerminatingEvent>(OnWatcherTerminating);
@@ -90,6 +91,8 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
 
     private void OnCameraRemove(Entity<RMCCameraComponent> ent, ref ComponentRemove args)
     {
+        var ev = new RMCLegacyCameraRemovedEvent(ent.Owner);
+        RaiseLocalEvent(ent.Owner, ref ev);
         OnCameraRemoved(ent);
     }
 
@@ -105,6 +108,12 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
         RebuildComputerCameras(ent.Owner, ent.Comp);
     }
 
+    private void OnComputerRemove(Entity<RMCCameraComputerComponent> ent, ref ComponentRemove args)
+    {
+        var ev = new RMCLegacyCameraComputerRemovedEvent(ent.Owner);
+        RaiseLocalEvent(ent.Owner, ref ev);
+    }
+
     private void OnWatcherRemove(Entity<RMCCameraWatcherComponent> ent, ref ComponentRemove args)
     {
         OnWatcherRemoved(ent);
@@ -117,7 +126,7 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
 
     private void OnComputerBuiOpened(Entity<RMCCameraComputerComponent> ent, ref BoundUIOpenedEvent args)
     {
-        if (_timing.ApplyingState)
+        if (_timing.ApplyingState || !CanUseComputer(ent, args.Actor))
             return;
 
         var actor = args.Actor;
@@ -149,9 +158,31 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
     {
     }
 
+    protected virtual bool CanUseComputer(Entity<RMCCameraComputerComponent> computer, EntityUid actor)
+    {
+        return true;
+    }
+
+    protected void RemoveComputerWatcher(Entity<RMCCameraComputerComponent> computer, EntityUid actor)
+    {
+        computer.Comp.Watchers.Remove(actor);
+        Dirty(computer);
+        OnComputerUiClosed(computer, actor);
+        RemCompDeferred<RMCCameraWatcherComponent>(actor);
+    }
+
+    private bool TryUseComputer(Entity<RMCCameraComputerComponent> computer, EntityUid actor)
+    {
+        if (CanUseComputer(computer, actor))
+            return true;
+
+        RemoveComputerWatcher(computer, actor);
+        return false;
+    }
+
     private void OnComputerWatchBuiMsg(Entity<RMCCameraComputerComponent> ent, ref RMCCameraWatchBuiMsg args)
     {
-        if (_timing.ApplyingState)
+        if (_timing.ApplyingState || !TryUseComputer(ent, args.Actor))
             return;
 
         if (!TryGetEntity(args.Camera, out var camera) || camera is not { } cameraUid)
@@ -166,6 +197,9 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
 
     private void OnComputerPreviousBuiMsg(Entity<RMCCameraComputerComponent> ent, ref RMCCameraPreviousBuiMsg args)
     {
+        if (!TryUseComputer(ent, args.Actor))
+            return;
+
         var index = 0;
         if (ent.Comp.CurrentCamera is { } old &&
             TryGetNetEntity(old, out var netCamera))
@@ -183,6 +217,9 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
 
     private void OnComputerNextBuiMsg(Entity<RMCCameraComputerComponent> ent, ref RMCCameraNextBuiMsg args)
     {
+        if (!TryUseComputer(ent, args.Actor))
+            return;
+
         var index = 0;
         if (ent.Comp.CurrentCamera is { } old &&
             TryGetNetEntity(old, out var netCamera))
@@ -200,7 +237,7 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
 
     private void OnComputerRefreshSubnetsBuiMsg(Entity<RMCCameraComputerComponent> ent, ref RMCCameraRefreshSubnetsBuiMsg args)
     {
-        if (_timing.ApplyingState)
+        if (_timing.ApplyingState || !TryUseComputer(ent, args.Actor))
             return;
 
         var old = ent.Comp.CurrentCamera;
@@ -213,7 +250,7 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
 
     private void OnComputerNetworkBuiMsg(Entity<RMCCameraComputerComponent> ent, ref RMCCameraNetworkBuiMsg args)
     {
-        if (_timing.ApplyingState)
+        if (_timing.ApplyingState || !TryUseComputer(ent, args.Actor))
             return;
 
         OnNetworkBuiMsg(ent, args);
@@ -225,7 +262,7 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
 
     private void OnComputerDisconnectBuiMsg(Entity<RMCCameraComputerComponent> ent, ref RMCCameraDisconnectBuiMsg args)
     {
-        if (_timing.ApplyingState)
+        if (_timing.ApplyingState || !TryUseComputer(ent, args.Actor))
             return;
 
         var old = ent.Comp.CurrentCamera;
@@ -237,7 +274,7 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
         Entity<RMCCameraComputerComponent> computer,
         ref RMCCameraNetworkEditorCreateBuiMsg args)
     {
-        if (!_timing.ApplyingState)
+        if (!_timing.ApplyingState && TryUseComputer(computer, args.Actor))
             OnEditorCreate(computer, args);
     }
 
@@ -245,7 +282,7 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
         Entity<RMCCameraComputerComponent> computer,
         ref RMCCameraNetworkEditorRenameBuiMsg args)
     {
-        if (!_timing.ApplyingState)
+        if (!_timing.ApplyingState && TryUseComputer(computer, args.Actor))
             OnEditorRename(computer, args);
     }
 
@@ -253,7 +290,7 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
         Entity<RMCCameraComputerComponent> computer,
         ref RMCCameraNetworkEditorDeleteBuiMsg args)
     {
-        if (!_timing.ApplyingState)
+        if (!_timing.ApplyingState && TryUseComputer(computer, args.Actor))
             OnEditorDelete(computer, args);
     }
 
@@ -261,7 +298,7 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
         Entity<RMCCameraComputerComponent> computer,
         ref RMCCameraNetworkEditorSetHiddenBuiMsg args)
     {
-        if (!_timing.ApplyingState)
+        if (!_timing.ApplyingState && TryUseComputer(computer, args.Actor))
             OnEditorSetHidden(computer, args);
     }
 
@@ -269,7 +306,7 @@ public abstract partial class SharedRMCCameraSystem : EntitySystem
         Entity<RMCCameraComputerComponent> computer,
         ref RMCCameraNetworkEditorSaveCameraBuiMsg args)
     {
-        if (!_timing.ApplyingState)
+        if (!_timing.ApplyingState && TryUseComputer(computer, args.Actor))
             OnEditorSaveCamera(computer, args);
     }
 

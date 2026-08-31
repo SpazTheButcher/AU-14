@@ -5,6 +5,7 @@ using Content.Shared.Access.Systems;
 using Content.Shared._RMC14.Camera;
 using Content.Shared._RMC14.Mortar;
 using Content.Shared.Camera;
+using Content.Shared.CCVar;
 using Content.Shared.Database;
 using Content.Shared.Item;
 using Content.Shared.SurveillanceCamera;
@@ -152,9 +153,8 @@ public sealed partial class RMCCameraSystem
         ProtoId<CameraNetworkPrototype> network,
         out string name)
     {
-        if (TryComp(computer, out RMCCameraComputerComponent? cameraComputer))
+        if (TryComp(computer, out RMCCameraNetworkEditorComponent? editor))
         {
-            var editor = EnsureEditorState((computer, cameraComputer));
             if (editor.OwnedNetworks.TryGetValue(network, out name!) ||
                 editor.Aliases.TryGetValue(network, out name!))
             {
@@ -440,7 +440,8 @@ public sealed partial class RMCCameraSystem
 
     private bool IsEditorUiOpen(Entity<RMCCameraComputerComponent> computer, EntityUid actor)
     {
-        return !TerminatingOrDeleted(actor) &&
+        return _configuration.GetCVar(CCVars.CMUCameraEditorEnabled) &&
+            !TerminatingOrDeleted(actor) &&
             _userInterface.IsUiOpen(computer.Owner, RMCCameraUiKey.Key, actor);
     }
 
@@ -508,7 +509,9 @@ public sealed partial class RMCCameraSystem
         uint revision,
         out RMCCameraNetworkEditorError error)
     {
-        if (TerminatingOrDeleted(actor) || !_accessReader.IsAllowed(actor, computer.Owner))
+        if (!_configuration.GetCVar(CCVars.CMUCameraEditorEnabled) ||
+            TerminatingOrDeleted(actor) ||
+            !_accessReader.IsAllowed(actor, computer.Owner))
         {
             error = RMCCameraNetworkEditorError.AccessDenied;
             return false;
