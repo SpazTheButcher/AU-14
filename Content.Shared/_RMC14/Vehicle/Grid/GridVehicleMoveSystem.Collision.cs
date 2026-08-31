@@ -119,6 +119,7 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         {
             hits.Add(hit.Owner);
         }
+        hits.Sort(static (left, right) => left.Id.CompareTo(right.Id));
         var playedCollisionSound = false;
         var mobHits = new ValueList<EntityUid>(0);
 
@@ -912,7 +913,7 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
             SetRemainingSmashSpeed(
                 mover,
                 physicalImpactCanDestroy
-                    ? GridVehicleMotionSimulator.GetRemainingImpactSpeed(impactSpeed, query.RequiredSpeed)
+                    ? ImpactEnergySolver.GetRemainingSpeed(impactSpeed, query.RequiredSpeed)
                     : 0f);
         }
         else
@@ -1494,7 +1495,7 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
             {
                 SetRemainingSmashSpeed(
                     mover,
-                    GridVehicleMotionSimulator.GetRemainingImpactSpeed(impactSpeed, query.RequiredSpeed));
+                    ImpactEnergySolver.GetRemainingSpeed(impactSpeed, query.RequiredSpeed));
                 Dirty(vehicle, mover);
             }
             else

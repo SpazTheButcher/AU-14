@@ -13,6 +13,7 @@ using Content.Shared._RMC14.Marines;
 using Content.Shared._RMC14.Rules;
 using Content.Shared.AU14.Round;
 using Content.Shared.Coordinates;
+using Content.Shared.CCVar;
 using Content.Shared.Doors.Components;
 using Content.Shared.Eye;
 using Content.Shared.Maps;
@@ -26,6 +27,7 @@ using Content.Shared.Shuttles.Systems;
 using Content.Shared.UserInterface;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
+using Robust.Shared.Configuration;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Player;
@@ -50,12 +52,14 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
     [Dependency] private ITileDefinitionManager _tile = default!;
     [Dependency] private CMUZLevelsSystem _zLevels = default!;
     [Dependency] private DropshipIntegritySystem _integrity = default!;
+    [Dependency] private IConfigurationManager _configuration = default!;
 
     private static readonly TimeSpan FootprintTickInterval = TimeSpan.FromMilliseconds(150);
     private static readonly TimeSpan HoverEffectUpdateInterval = TimeSpan.FromMilliseconds(50);
     private static readonly TimeSpan GunshipAltitudeTransitionTime = TimeSpan.FromSeconds(5);
     private TimeSpan _nextFootprintTick;
     private int _destinationRevision;
+    private bool _gunshipOverhaulEnabled;
 
     private static readonly SoundSpecifier WarningSound =
         new SoundPathSpecifier("/Audio/_RMC14/Dropship/dropship_incoming.ogg");
@@ -69,6 +73,11 @@ public sealed partial class DropshipTacticalLandSystem : SharedDropshipTacticalL
     public override void Initialize()
     {
         base.Initialize();
+
+        Subs.CVar(_configuration,
+            CCVars.CMUEnableGunshipOverhaul,
+            enabled => _gunshipOverhaulEnabled = enabled,
+            true);
 
         SubscribeLocalEvent<DropshipTacticalLandSessionComponent, BoundUIClosedEvent>(OnSessionUIClosed);
         SubscribeLocalEvent<DropshipTacticalLandSessionComponent, ComponentRemove>(OnSessionRemove);

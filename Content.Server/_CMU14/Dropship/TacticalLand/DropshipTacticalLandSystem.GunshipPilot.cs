@@ -280,6 +280,17 @@ public sealed partial class DropshipTacticalLandSystem
 
     private void OnGunshipSeatStrapAttempt(Entity<GunshipPilotSeatComponent> ent, ref StrapAttemptEvent args)
     {
+        if (!_gunshipOverhaulEnabled)
+        {
+            args.Cancelled = true;
+            if (args.Popup)
+                _popup.PopupEntity("Gunship flight controls are currently disabled.",
+                    ent,
+                    args.User ?? args.Buckle.Owner,
+                    PopupType.MediumCaution);
+            return;
+        }
+
         if (_gunshipHands.CountFreeHands(args.Buckle.Owner) < _gunshipHands.GetHandCount(args.Buckle.Owner))
         {
             args.Cancelled = true;
@@ -715,6 +726,9 @@ public sealed partial class DropshipTacticalLandSystem
 
     private void UpdateGunshipPilots(float frameTime)
     {
+        if (!_gunshipOverhaulEnabled)
+            return;
+
         if (_timing.CurTime >= _nextGunshipHudUpdate)
         {
             _nextGunshipHudUpdate = _timing.CurTime + GunshipHudUpdateInterval;

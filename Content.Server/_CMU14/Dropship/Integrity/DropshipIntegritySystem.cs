@@ -6,6 +6,7 @@ using Content.Server.Explosion.EntitySystems;
 using Content.Server.Destructible;
 using Content.Server.Shuttles.Components;
 using Content.Server.Station.Components;
+using Content.Shared._CMU14.Destruction;
 using Content.Shared._CMU14.Dropship.Integrity;
 using Content.Server._CMU14.Destruction;
 using Content.Shared._CMU14.Dropship.GunshipControls;
@@ -17,6 +18,7 @@ using Content.Shared._RMC14.Vehicle;
 using Content.Shared._RMC14.Xenonids.Projectile;
 using Content.Shared.Damage;
 using Content.Shared.DoAfter;
+using Content.Shared.CCVar;
 using Content.Shared.Examine;
 using Content.Shared.FixedPoint;
 using Content.Shared.Interaction;
@@ -31,6 +33,7 @@ using Content.Shared.Tag;
 using Content.Shared.Tools;
 using Content.Shared.Tools.Systems;
 using Robust.Shared.Audio.Systems;
+using Robust.Shared.Configuration;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Physics.Components;
@@ -63,6 +66,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
     [Dependency] private TriggerSystem _trigger = default!;
     [Dependency] private CMUSharedZLevelsSystem _zLevels = default!;
     [Dependency] private DestructionMomentumSystem _destructionMomentum = default!;
+    [Dependency] private IConfigurationManager _configuration = default!;
 
     private static readonly ProtoId<ToolQualityPrototype> WeldingQuality = "Welding";
     private static readonly ProtoId<TagPrototype> WallTag = "Wall";
@@ -77,9 +81,15 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
     private readonly Dictionary<EntityUid, HullExplosionDamageState> _hullExplosionDamage = new();
     private readonly HashSet<EntityUid> _emptyFlightObstructions = new();
     private readonly List<EntityUid> _finishedImpactAdoptions = new();
+    private bool _gunshipOverhaulEnabled;
 
     public override void Initialize()
     {
+        Subs.CVar(_configuration,
+            CCVars.CMUEnableGunshipOverhaul,
+            enabled => _gunshipOverhaulEnabled = enabled,
+            true);
+
         SubscribeLocalEvent<DropshipComponent, ComponentStartup>(OnDropshipStartup);
         SubscribeLocalEvent<GunshipControlsComponent, ComponentStartup>(OnGunshipControlsStartup);
         SubscribeLocalEvent<GunshipPilotSeatComponent, ComponentStartup>(OnGunshipPilotSeatStartup);
@@ -99,7 +109,9 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         // Navigation computers can cause DropshipComponent to be ensured on their
         // parent grid. Only gunships that explicitly opt in through their pilot
         // seat or controls console should receive hull integrity and crash behavior.
-        if (!IsDropshipIntegrityGrid(ent.Owner) || !HasGunshipControls(ent.Owner))
+        if (!_gunshipOverhaulEnabled ||
+            !IsDropshipIntegrityGrid(ent.Owner) ||
+            !HasGunshipControls(ent.Owner))
         {
             RemoveDropshipIntegrity(ent.Owner);
             return;
@@ -120,7 +132,8 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
 
     private void TryInitializeControlledGunship(EntityUid controls)
     {
-        if (Transform(controls).GridUid is not { } grid ||
+        if (!_gunshipOverhaulEnabled ||
+            Transform(controls).GridUid is not { } grid ||
             !HasComp<DropshipComponent>(grid) ||
             !IsDropshipIntegrityGrid(grid))
         {
@@ -350,49 +363,59 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
             return 0f;
         }
 
+        var orderedObstructions = obstructions
+            .Where(obstruction => !TerminatingOrDeleted(obstruction))
+            .OrderBy(obstruction => obstruction.Id)
+            .ToArray();
         var remainingSpeed = speed;
         var removedEveryObstruction = true;
         var removedAnyObstruction = false;
-        foreach (var obstruction in obstructions.Order())
+        if (!TryApplyProportionalImpactBatch(
+                dropship,
+                orderedObstructions,
+                speed,
+                integrity.ObstacleDamageMultiplier,
+                out remainingSpeed,
+                out removedEveryObstruction,
+                out removedAnyObstruction))
         {
-            if (TerminatingOrDeleted(obstruction))
-                continue;
-
-            if (remainingSpeed <= 0f)
+            foreach (var obstruction in orderedObstructions)
             {
-                removedEveryObstruction = false;
-                break;
-            }
+                if (remainingSpeed <= 0f)
+                {
+                    removedEveryObstruction = false;
+                    break;
+                }
 
-            if (TrySmashFlightObstacle(
-                    obstruction,
-                    dropship,
-                    integrity.ObstacleDamageMultiplier,
-                    ref remainingSpeed))
-            {
+                if (TrySmashFlightObstacle(
+                        obstruction,
+                        dropship,
+                        integrity.ObstacleDamageMultiplier,
+                        ref remainingSpeed))
+                {
+                    removedAnyObstruction = true;
+                    continue;
+                }
+
+                if (!_destructionMomentum.TryGetBreakCost(obstruction,
+                        remainingSpeed,
+                        integrity.ObstacleDamageMultiplier,
+                        out var breakCost))
+                {
+                    // Legacy fallback for explicitly smashable or unusual
+                    // damageables without a resolvable destruction threshold.
+                    var remainingDamage = remainingSpeed * remainingSpeed * integrity.ObstacleDamageMultiplier;
+                    ApplyObstacleDamage(obstruction, remainingDamage, dropship);
+                    remainingSpeed = 0f;
+                    removedEveryObstruction = false;
+                    break;
+                }
+
+                var rawDamage = breakCost * breakCost * integrity.ObstacleDamageMultiplier;
+                ApplyObstacleDamage(obstruction, rawDamage, dropship);
+                remainingSpeed = ImpactEnergySolver.GetRemainingSpeed(remainingSpeed, breakCost);
                 removedAnyObstruction = true;
-                continue;
             }
-
-            if (!_destructionMomentum.TryGetBreakCost(obstruction,
-                    remainingSpeed,
-                    integrity.ObstacleDamageMultiplier,
-                    out var breakCost))
-            {
-                // Spend whatever remains against the obstruction that stopped
-                // the ship. Do not also give every other blocker the original
-                // full-speed impact for free.
-                var remainingDamage = remainingSpeed * remainingSpeed * integrity.ObstacleDamageMultiplier;
-                ApplyObstacleDamage(obstruction, remainingDamage, dropship);
-                remainingSpeed = 0f;
-                removedEveryObstruction = false;
-                break;
-            }
-
-            var rawDamage = breakCost * breakCost * integrity.ObstacleDamageMultiplier;
-            ApplyObstacleDamage(obstruction, rawDamage, dropship);
-            remainingSpeed = DestructionMomentumSystem.GetRemainingSpeed(remainingSpeed, breakCost);
-            removedAnyObstruction = true;
         }
 
         GuardImpactAdoptions(dropship, obstructionGrid, originalChildren, obstructions);
@@ -410,6 +433,63 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         return integrity.Crashing || integrity.Wrecked
             ? 0f
             : resultSpeed;
+    }
+
+    private bool TryApplyProportionalImpactBatch(
+        EntityUid dropship,
+        IReadOnlyList<EntityUid> obstructions,
+        float speed,
+        float damageMultiplier,
+        out float remainingSpeed,
+        out bool removedEveryObstruction,
+        out bool removedAnyObstruction)
+    {
+        remainingSpeed = speed;
+        removedEveryObstruction = true;
+        removedAnyObstruction = false;
+        if (obstructions.Count == 0)
+            return true;
+
+        var requiredSpeeds = new float[obstructions.Count];
+        for (var i = 0; i < obstructions.Count; i++)
+        {
+            if (!_destructionMomentum.TryGetRequiredBreakSpeed(
+                    obstructions[i],
+                    damageMultiplier,
+                    out requiredSpeeds[i]))
+            {
+                return false;
+            }
+        }
+
+        var allocation = ImpactEnergySolver.AllocateBatch(speed, requiredSpeeds);
+        for (var i = 0; i < obstructions.Count; i++)
+        {
+            var obstruction = obstructions[i];
+            var requiredSpeed = requiredSpeeds[i];
+            var rawDamage = requiredSpeed * requiredSpeed * damageMultiplier * allocation.AppliedFraction;
+
+            var smashed = false;
+            if (allocation.CanClearAll &&
+                TryComp(obstruction, out VehicleSmashableComponent? smashable) &&
+                smashable is { DeleteOnHit: true })
+            {
+                var ignoredRemainingSpeed = speed;
+                smashed = TrySmashFlightObstacle(
+                    obstruction,
+                    dropship,
+                    damageMultiplier,
+                    ref ignoredRemainingSpeed);
+            }
+
+            if (!smashed)
+                ApplyObstacleDamage(obstruction, rawDamage, dropship);
+        }
+
+        remainingSpeed = allocation.RemainingSpeed;
+        removedEveryObstruction = allocation.CanClearAll;
+        removedAnyObstruction = allocation.CanClearAll;
+        return true;
     }
 
     /// <summary>
@@ -463,7 +543,7 @@ public sealed partial class DropshipIntegritySystem : EntitySystem
         // of railings or platform edges that compounded to effectively zero.
         if (hasBreakCost)
         {
-            remainingSpeed = DestructionMomentumSystem.GetRemainingSpeed(remainingSpeed, breakCost);
+            remainingSpeed = ImpactEnergySolver.GetRemainingSpeed(remainingSpeed, breakCost);
         }
         else
         {

@@ -76,15 +76,47 @@ public sealed partial class DestructionMomentumSystem : EntitySystem
     }
 
     /// <summary>
-    /// Spends a destruction cost from the same squared-speed budget used to
-    /// calculate impact damage. Subtracting the required speed directly would
-    /// discard too much kinetic energy, especially across multiple obstacles.
+    /// Resolves the physical cost of an obstruction independently of the
+    /// caller's current budget. This is used to batch simultaneous contacts.
     /// </summary>
-    public static float GetRemainingSpeed(float availableSpeed, float requiredSpeed)
+    public bool TryGetRequiredBreakSpeed(
+        EntityUid obstruction,
+        float damageMultiplier,
+        out float requiredSpeed)
     {
-        var available = MathF.Max(0f, availableSpeed);
-        var required = Math.Clamp(requiredSpeed, 0f, available);
-        return MathF.Sqrt(MathF.Max(0f, available * available - required * required));
+        requiredSpeed = 0f;
+        if (damageMultiplier <= 0f ||
+            !TryGetRemovalThreshold(obstruction, out var damageable, out var remainingDamage))
+        {
+            return false;
+        }
+
+        if (remainingDamage <= 0f)
+            return true;
+
+        var low = 0f;
+        var high = 1f;
+        while (high < 1_000_000f &&
+               GetEffectiveDamage(damageable, high * high * damageMultiplier) < remainingDamage)
+        {
+            low = high;
+            high *= 2f;
+        }
+
+        if (GetEffectiveDamage(damageable, high * high * damageMultiplier) < remainingDamage)
+            return false;
+
+        for (var i = 0; i < 20; i++)
+        {
+            var middle = (low + high) * 0.5f;
+            if (GetEffectiveDamage(damageable, middle * middle * damageMultiplier) >= remainingDamage)
+                high = middle;
+            else
+                low = middle;
+        }
+
+        requiredSpeed = high;
+        return true;
     }
 
     private bool TryGetRemovalThreshold(
