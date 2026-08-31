@@ -456,6 +456,11 @@ public sealed class CameraNetworkSystem : EntitySystem
         return false;
     }
 
+    public bool IsMemberOfNetwork(EntityUid member, EntityUid network)
+    {
+        return _members.TryGetValue(network, out var members) && members.Contains(member);
+    }
+
     public bool SetMapVisibility(EntityUid camera, bool visible)
     {
         if (!TryComp(camera, out CameraMapMarkerComponent? marker)

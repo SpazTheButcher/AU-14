@@ -1761,6 +1761,84 @@ public sealed class CameraNetworkSystemTest
     }
 
     [Test]
+    public async Task StandardMonitorSelectionUsesPrivateCameraOnlyLease()
+    {
+        var pair = await PoolManager.GetServerClient(new PoolSettings { Connected = true });
+        var server = pair.Server;
+        try
+        {
+            if (!server.ProtoMan.HasIndex<CameraNetworkPrototype>(NetworkA))
+                await LoadPrototypes(server);
+            await server.WaitAssertion(() =>
+            {
+                var entMan = server.EntMan;
+                var mapSystem = entMan.System<SharedMapSystem>();
+                var monitors = entMan.System<SurveillanceCameraMonitorSystem>();
+                var cameraSessions = entMan.System<CameraSessionSystem>();
+                var userInterface = entMan.System<SharedUserInterfaceSystem>();
+                var playerSession = server.PlayerMan.Sessions.Single();
+                var previousAttached = playerSession.AttachedEntity;
+                mapSystem.CreateMap(out var mapId);
+                var consoleGrid = mapSystem.CreateGridEntity(mapId);
+                var remoteGrid = mapSystem.CreateGridEntity(mapId);
+                entMan.System<SharedTransformSystem>().SetLocalPosition(remoteGrid, new Vector2(50, 50));
+                mapSystem.SetTile(consoleGrid.Owner, consoleGrid.Comp, Vector2i.Zero, new Tile(1));
+                mapSystem.SetTile(remoteGrid.Owner, remoteGrid.Comp, Vector2i.Zero, new Tile(1));
+                var monitor = entMan.SpawnEntity("CMUTestSurveillanceMonitor",
+                    new EntityCoordinates(consoleGrid.Owner, Vector2.Zero));
+                var camera = entMan.SpawnEntity("CMUTestSurveillanceCameraStandard",
+                    new EntityCoordinates(remoteGrid.Owner, Vector2.Zero));
+                var viewer = entMan.SpawnEntity(null, new EntityCoordinates(consoleGrid.Owner, Vector2.Zero));
+
+                try
+                {
+                    server.PlayerMan.SetAttachedEntity(playerSession, viewer);
+                    userInterface.OpenUi(monitor, SurveillanceCameraMonitorUiKey.Key, viewer);
+                    Assert.That(userInterface.IsUiOpen(
+                        monitor,
+                        SurveillanceCameraMonitorUiKey.Key,
+                        viewer), Is.True);
+                    monitors.AfterOpenUserInterface(monitor, viewer);
+
+                    Assert.That(cameraSessions.TryGetSession(playerSession, monitor, out var cameraSession), Is.True);
+                    Assert.That(cameraSessions.SelectCamera(cameraSession.Id, camera), Is.True);
+
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(cameraSession.Shadow, Is.False);
+                        Assert.That(cameraSession.SelectedCamera, Is.EqualTo(camera));
+                        Assert.That(playerSession.ViewSubscriptions, Does.Contain(camera));
+                        Assert.That(playerSession.ViewSubscriptions, Does.Not.Contain(remoteGrid.Owner));
+                        Assert.That(entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor).ActiveCamera,
+                            Is.Null);
+                        Assert.That(entMan.GetComponent<SurveillanceCameraComponent>(camera).ActiveMonitors,
+                            Does.Not.Contain(monitor));
+                    });
+
+                    entMan.EventBus.RaiseLocalEvent(monitor,
+                        new BoundUIClosedEvent(SurveillanceCameraMonitorUiKey.Key, monitor, viewer));
+
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(cameraSessions.TryGetSession(playerSession, monitor, out _), Is.False);
+                        Assert.That(playerSession.ViewSubscriptions, Does.Not.Contain(camera));
+                    });
+                }
+                finally
+                {
+                    server.PlayerMan.SetAttachedEntity(playerSession, previousAttached);
+                    entMan.DeleteEntity(viewer);
+                    entMan.DeleteEntity(camera);
+                    entMan.DeleteEntity(monitor);
+                    entMan.DeleteEntity(consoleGrid);
+                    entMan.DeleteEntity(remoteGrid);
+                }
+            });
+        }
+        finally { await pair.CleanReturnAsync(); }
+    }
+
+    [Test]
     public async Task RmcRejectingUnavailableNetworkKeepsSelectionAndCameras()
     {
         var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
@@ -1930,6 +2008,10 @@ public sealed class CameraNetworkSystemTest
             supportedSources: Standard
           - type: SurveillanceCameraMonitor
           - type: Eye
+          - type: UserInterface
+            interfaces:
+              enum.SurveillanceCameraMonitorUiKey.Key:
+                type: SurveillanceCameraMonitorBoundUserInterface
 
         - type: entity
           id: CMUTestSurveillanceMonitorDualNetwork
@@ -1939,6 +2021,10 @@ public sealed class CameraNetworkSystemTest
             supportedSources: Standard
           - type: SurveillanceCameraMonitor
           - type: Eye
+          - type: UserInterface
+            interfaces:
+              enum.SurveillanceCameraMonitorUiKey.Key:
+                type: SurveillanceCameraMonitorBoundUserInterface
 
         - type: entity
           id: CMUTestSurveillanceCameraStandard
@@ -2526,7 +2612,7 @@ public sealed class CameraNetworkSystemTest
     }
 
     [Test]
-    public async Task StandardMonitorSwitchesWithoutDeviceNetwork()
+    public async Task StandardMonitorCompatibilitySelectionDoesNotMutateSharedState()
     {
         var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
 
@@ -2552,9 +2638,9 @@ public sealed class CameraNetworkSystemTest
                     {
                         Assert.That(selected, Is.True);
                         Assert.That(entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor).ActiveCamera,
-                            Is.EqualTo(camera));
+                            Is.Null);
                         Assert.That(entMan.GetComponent<SurveillanceCameraComponent>(camera).ActiveMonitors,
-                            Does.Contain(monitor));
+                            Does.Not.Contain(monitor));
                     });
                 }
                 finally

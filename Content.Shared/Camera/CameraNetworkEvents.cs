@@ -27,3 +27,6 @@ public enum CameraSessionCapabilities : byte
     Map = 1 << 2,
     Edit = 1 << 3,
 }
+
+[ByRefEvent]
+public record struct CameraSessionChangedEvent(EntityUid Actor);

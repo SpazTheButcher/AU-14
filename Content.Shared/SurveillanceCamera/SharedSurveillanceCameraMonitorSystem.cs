@@ -93,6 +93,102 @@ public sealed class SurveillanceCameraDisconnectMessage : BoundUserInterfaceMess
 {}
 
 [Serializable, NetSerializable]
+public sealed class CameraSessionNetworkUiData(NetEntity network, string name)
+{
+    public NetEntity Network { get; } = network;
+    public string Name { get; } = name;
+}
+
+[Serializable, NetSerializable]
+public sealed class CameraSessionCameraUiData(NetEntity camera, string name, bool active)
+{
+    public NetEntity Camera { get; } = camera;
+    public string Name { get; } = name;
+    public bool Active { get; } = active;
+}
+
+[Serializable, NetSerializable]
+public sealed class CameraSessionDirectoryUiData(
+    NetEntity? activeCamera,
+    string? activeCameraName,
+    List<CameraSessionNetworkUiData> networks,
+    NetEntity? activeNetwork,
+    List<CameraSessionCameraUiData> cameras,
+    bool mapEnabled)
+{
+    public NetEntity? ActiveCamera { get; } = activeCamera;
+    public string? ActiveCameraName { get; } = activeCameraName;
+    public List<CameraSessionNetworkUiData> Networks { get; } = networks;
+    public NetEntity? ActiveNetwork { get; } = activeNetwork;
+    public List<CameraSessionCameraUiData> Cameras { get; } = cameras;
+    public bool MapEnabled { get; } = mapEnabled;
+}
+
+[Serializable, NetSerializable]
+public sealed class CameraSessionSnapshotMessage(
+    uint sessionId,
+    ulong revision,
+    CameraSessionDirectoryUiData directory) : BoundUserInterfaceMessage
+{
+    public uint SessionId { get; } = sessionId;
+    public ulong Revision { get; } = revision;
+    public CameraSessionDirectoryUiData Directory { get; } = directory;
+}
+
+[Serializable, NetSerializable]
+public sealed class CameraSessionDeltaMessage(
+    uint sessionId,
+    ulong baseRevision,
+    ulong revision,
+    CameraSessionDirectoryUiData directory) : BoundUserInterfaceMessage
+{
+    public uint SessionId { get; } = sessionId;
+    public ulong BaseRevision { get; } = baseRevision;
+    public ulong Revision { get; } = revision;
+    public CameraSessionDirectoryUiData Directory { get; } = directory;
+}
+
+[Serializable, NetSerializable]
+public sealed class CameraSessionGeometryMessage(
+    uint sessionId,
+    ulong markerRevision,
+    CameraMapUiState geometry) : BoundUserInterfaceMessage
+{
+    public uint SessionId { get; } = sessionId;
+    public ulong MarkerRevision { get; } = markerRevision;
+    public CameraMapUiState Geometry { get; } = geometry;
+}
+
+[Serializable, NetSerializable]
+public sealed class CameraSessionResetMessage(uint sessionId) : BoundUserInterfaceMessage
+{
+    public uint SessionId { get; } = sessionId;
+}
+
+[Serializable, NetSerializable]
+public sealed class CameraSessionResyncMessage(uint sessionId) : BoundUserInterfaceMessage
+{
+    public uint SessionId { get; } = sessionId;
+}
+
+[Serializable, NetSerializable]
+public sealed class CameraSessionSelectMessage(NetEntity camera) : BoundUserInterfaceMessage
+{
+    public NetEntity Camera { get; } = camera;
+}
+
+[Serializable, NetSerializable]
+public sealed class CameraSessionSelectNetworkMessage(NetEntity network) : BoundUserInterfaceMessage
+{
+    public NetEntity Network { get; } = network;
+}
+
+[Serializable, NetSerializable]
+public sealed class CameraSessionDisconnectMessage : BoundUserInterfaceMessage
+{
+}
+
+[Serializable, NetSerializable]
 public enum SurveillanceCameraMonitorUiKey : byte
 {
     Key

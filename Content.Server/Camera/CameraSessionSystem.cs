@@ -2,6 +2,7 @@ using System.Linq;
 using Content.Shared.Access.Systems;
 using Content.Shared.Camera;
 using Content.Shared.GameTicking;
+using Content.Server.SurveillanceCamera;
 using Robust.Server.GameObjects;
 using Robust.Shared.Enums;
 using Robust.Shared.Player;
@@ -40,6 +41,7 @@ public sealed class CameraSessionSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<CameraNetworkReceiverComponent, CameraReceiverChangedEvent>(OnReceiverChanged);
+        SubscribeLocalEvent<SurveillanceCameraDeactivateEvent>(OnCameraDeactivated);
         SubscribeLocalEvent<EntityTerminatingEvent>(OnEntityTerminating);
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
     }
@@ -77,8 +79,8 @@ public sealed class CameraSessionSystem : EntitySystem
         {
             var existing = _sessions[existingId];
             existing.Capabilities = capabilities;
-            existing.Shadow = shadow;
-            RefreshAuthorization(existing, receiverComponent);
+            SetShadow(existing, shadow);
+            RefreshAuthorization(existing, receiverComponent, notify: false);
             CaptureDirectoryRevisions(existing);
             return existing;
         }
@@ -100,6 +102,7 @@ public sealed class CameraSessionSystem : EntitySystem
         _sessionByKey.Add(key, session.Id);
         AddIndex(_sessionsByViewer, viewer, session.Id);
         AddIndex(_sessionsByReceiver, receiver, session.Id);
+        EnsureActiveNetwork(session);
         CaptureDirectoryRevisions(session);
 
         // Shadow mode deliberately computes the same ECS projection twice via
@@ -140,13 +143,71 @@ public sealed class CameraSessionSystem : EntitySystem
             && (TerminatingOrDeleted(selected)
                 || Paused(selected)
                 || !session.AuthorizedCameras.Contains(selected)
-                || !_networks.CanAccess(session.Receiver, selected)))
+                || !_networks.CanAccess(session.Receiver, selected)
+                || session.ActiveNetwork is { } activeNetwork
+                && !_networks.IsMemberOfNetwork(selected, activeNetwork)))
         {
             return false;
         }
 
         SetSelection(session, camera);
         return true;
+    }
+
+    public bool SelectNetwork(uint sessionId, EntityUid network)
+    {
+        if (!_sessions.TryGetValue(sessionId, out var session)
+            || !Validate(session.Viewer, session.Actor, session.Receiver)
+            || (session.Capabilities & CameraSessionCapabilities.Browse) == 0
+            || !_networks.GetEffectiveNetworkEntities(session.Receiver).Contains(network))
+        {
+            return false;
+        }
+
+        if (session.ActiveNetwork == network)
+            return true;
+
+        session.ActiveNetwork = network;
+        session.Revision++;
+        if (session.SelectedCamera is { } selected && !_networks.IsMemberOfNetwork(selected, network))
+            SetSelection(session, null, notify: false);
+        RaiseSessionChanged(session);
+        return true;
+    }
+
+    public IReadOnlyCollection<CameraViewerSession> GetSessions(EntityUid receiver)
+    {
+        if (!_sessionsByReceiver.TryGetValue(receiver, out var ids))
+            return Array.Empty<CameraViewerSession>();
+
+        return ids.Select(id => _sessions[id]).ToArray();
+    }
+
+    public bool HasActiveSelection(EntityUid receiver)
+    {
+        return _sessionsByReceiver.TryGetValue(receiver, out var ids)
+            && ids.Any(id => _sessions.GetValueOrDefault(id)?.SelectedCamera != null);
+    }
+
+    public void CloseSessions(EntityUid receiver)
+    {
+        if (!_sessionsByReceiver.TryGetValue(receiver, out var ids))
+            return;
+
+        foreach (var id in ids.ToArray())
+            CloseSession(id);
+    }
+
+    public void ClearSelections(EntityUid receiver)
+    {
+        if (!_sessionsByReceiver.TryGetValue(receiver, out var ids))
+            return;
+
+        foreach (var id in ids.ToArray())
+        {
+            if (_sessions.TryGetValue(id, out var session))
+                SetSelection(session, null);
+        }
     }
 
     public void CloseSession(ICommonSession viewer, EntityUid receiver)
@@ -160,7 +221,7 @@ public sealed class CameraSessionSystem : EntitySystem
         if (!_sessions.Remove(id, out var session))
             return;
 
-        SetSelection(session, null);
+        SetSelection(session, null, notify: false);
         _sessionByKey.Remove((session.Viewer, session.Receiver));
         RemoveIndex(_sessionsByViewer, session.Viewer, id);
         RemoveIndex(_sessionsByReceiver, session.Receiver, id);
@@ -174,21 +235,42 @@ public sealed class CameraSessionSystem : EntitySystem
         foreach (var id in ids.ToArray())
         {
             if (_sessions.TryGetValue(id, out var session))
-                RefreshAuthorization(session, receiver.Comp);
+            {
+                RefreshAuthorization(session, receiver.Comp, notify: false);
                 CaptureDirectoryRevisions(session);
+                RaiseSessionChanged(session);
+            }
         }
     }
 
-    private void RefreshAuthorization(CameraViewerSession session, CameraNetworkReceiverComponent receiver)
+    private void RefreshAuthorization(
+        CameraViewerSession session,
+        CameraNetworkReceiverComponent receiver,
+        bool notify)
     {
         var authorized = _networks.GetAccessibleCameras((session.Receiver, receiver));
         if (authorized.Count > MaximumAuthorizedCameras)
             authorized = authorized.Take(MaximumAuthorizedCameras).ToHashSet();
 
         session.AuthorizedCameras = authorized;
+        EnsureActiveNetwork(session);
         session.Revision++;
-        if (session.SelectedCamera is { } selected && !authorized.Contains(selected))
-            SetSelection(session, null);
+        if (session.SelectedCamera is { } selected
+            && (!authorized.Contains(selected)
+                || session.ActiveNetwork is { } activeNetwork
+                && !_networks.IsMemberOfNetwork(selected, activeNetwork)))
+            SetSelection(session, null, notify);
+    }
+
+    private void EnsureActiveNetwork(CameraViewerSession session)
+    {
+        var networks = _networks.GetEffectiveNetworkEntities(session.Receiver);
+        if (session.ActiveNetwork is { } active && networks.Contains(active))
+            return;
+
+        session.ActiveNetwork = networks.OrderBy(network => network.Id).FirstOrDefault();
+        if (session.ActiveNetwork == EntityUid.Invalid)
+            session.ActiveNetwork = null;
     }
 
     private void CaptureDirectoryRevisions(CameraViewerSession session)
@@ -198,8 +280,11 @@ public sealed class CameraSessionSystem : EntitySystem
         session.MarkerSnapshotRevision = _networks.MarkerRevision;
     }
 
-    private void SetSelection(CameraViewerSession session, EntityUid? camera)
+    private void SetSelection(CameraViewerSession session, EntityUid? camera, bool notify = true)
     {
+        if (session.SelectedCamera == camera)
+            return;
+
         if (session.SelectedCamera is { } previous)
         {
             RemoveIndex(_sessionsBySelectedCamera, previous, session.Id);
@@ -211,11 +296,51 @@ public sealed class CameraSessionSystem : EntitySystem
         session.Revision++;
 
         if (camera is not { } selected)
+        {
+            if (notify)
+                RaiseSessionChanged(session);
             return;
+        }
 
         AddIndex(_sessionsBySelectedCamera, selected, session.Id);
         if (!session.Shadow)
             _viewSubscriber.AddViewSubscriber(selected, session.Viewer);
+        if (notify)
+            RaiseSessionChanged(session);
+    }
+
+    private void OnCameraDeactivated(SurveillanceCameraDeactivateEvent args)
+    {
+        if (!_sessionsBySelectedCamera.TryGetValue(args.Camera, out var ids))
+            return;
+
+        foreach (var id in ids.ToArray())
+        {
+            if (_sessions.TryGetValue(id, out var session))
+                SetSelection(session, null);
+        }
+    }
+
+    private void RaiseSessionChanged(CameraViewerSession session)
+    {
+        var ev = new CameraSessionChangedEvent(session.Actor);
+        RaiseLocalEvent(session.Receiver, ref ev);
+    }
+
+    private void SetShadow(CameraViewerSession session, bool shadow)
+    {
+        if (session.Shadow == shadow)
+            return;
+
+        if (session.SelectedCamera is { } selected)
+        {
+            if (shadow)
+                _viewSubscriber.RemoveViewSubscriber(selected, session.Viewer);
+            else
+                _viewSubscriber.AddViewSubscriber(selected, session.Viewer);
+        }
+
+        session.Shadow = shadow;
     }
 
     private void OnEntityTerminating(ref EntityTerminatingEvent args)
@@ -311,10 +436,13 @@ public sealed class CameraViewerSession(
     public CameraSessionCapabilities Capabilities { get; internal set; } = capabilities;
     public HashSet<EntityUid> AuthorizedCameras { get; internal set; } = authorizedCameras;
     public EntityUid? SelectedCamera { get; internal set; }
+    public EntityUid? ActiveNetwork { get; internal set; }
     public ulong Revision { get; internal set; } = 1;
     public ulong AuthorizationSnapshotRevision { get; internal set; }
     public ulong DirectorySnapshotRevision { get; internal set; }
     public ulong MarkerSnapshotRevision { get; internal set; }
     public int Cursor { get; internal set; }
     public bool Shadow { get; internal set; } = shadow;
+    public ulong LastSentRevision { get; internal set; }
+    public ulong LastSentMarkerRevision { get; internal set; }
 }
