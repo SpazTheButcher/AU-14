@@ -63,6 +63,10 @@ public sealed class RMCCameraBui : RMCPopOutBui<RMCCameraWindow>
         switch (message)
         {
             case CameraSessionSnapshotMessage snapshot:
+                if (_sessionId != snapshot.SessionId
+                    || _directory.ActiveNetwork != snapshot.Directory.ActiveNetwork)
+                    ResetGeometry();
+
                 _sessionId = snapshot.SessionId;
                 _revision = snapshot.Revision;
                 _directory = snapshot.Directory;
@@ -75,11 +79,16 @@ public sealed class RMCCameraBui : RMCPopOutBui<RMCCameraWindow>
                     break;
                 }
 
+                if (_directory.ActiveNetwork != delta.Directory.ActiveNetwork)
+                    ResetGeometry();
+
                 _revision = delta.Revision;
                 _directory = delta.Directory;
                 ApplyDirectory();
                 break;
-            case CameraSessionGeometryMessage geometry when geometry.SessionId == _sessionId:
+            case CameraSessionGeometryMessage geometry when
+                geometry.SessionId == _sessionId &&
+                geometry.Network == _directory.ActiveNetwork:
                 if (geometry.MarkerRevision < _markerRevision)
                     break;
                 _markerRevision = geometry.MarkerRevision;
@@ -89,9 +98,8 @@ public sealed class RMCCameraBui : RMCPopOutBui<RMCCameraWindow>
             case CameraSessionResetMessage reset when reset.SessionId == _sessionId:
                 _sessionId = 0;
                 _revision = 0;
-                _markerRevision = 0;
                 _directory = new(null, null, [], null, [], false);
-                _mapState = null;
+                ResetGeometry();
                 ApplyDirectory();
                 break;
             case RMCCameraEditorStateBuiMsg editor:
@@ -187,6 +195,12 @@ public sealed class RMCCameraBui : RMCPopOutBui<RMCCameraWindow>
 
         if (_mapState != null)
             UpdateMap(_mapState);
+    }
+
+    private void ResetGeometry()
+    {
+        _markerRevision = 0;
+        _mapState = null;
     }
 
     private void UpdateMap(CameraMapUiState state)

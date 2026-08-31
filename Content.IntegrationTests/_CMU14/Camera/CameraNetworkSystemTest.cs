@@ -63,6 +63,78 @@ public sealed class CameraNetworkSystemTest
     }
 
     [Test]
+    public async Task SessionRebindsToCurrentActorAndIdsSurviveRoundCleanup()
+    {
+        var pair = await PoolManager.GetServerClient(new PoolSettings { Connected = true });
+        var server = pair.Server;
+        try
+        {
+            if (!server.ProtoMan.HasIndex<CameraNetworkPrototype>(NetworkA))
+                await LoadPrototypes(server);
+
+            await server.WaitAssertion(() =>
+            {
+                var entMan = server.EntMan;
+                var cameraSessions = entMan.System<CameraSessionSystem>();
+                var playerSession = server.PlayerMan.Sessions.Single();
+                var previousAttached = playerSession.AttachedEntity;
+                var receiver = entMan.SpawnEntity("CMUTestCameraReceiver", MapCoordinates.Nullspace);
+                var firstActor = entMan.SpawnEntity(null, MapCoordinates.Nullspace);
+                var secondActor = entMan.SpawnEntity(null, MapCoordinates.Nullspace);
+
+                try
+                {
+                    server.PlayerMan.SetAttachedEntity(playerSession, firstActor);
+                    var first = cameraSessions.OpenSession(
+                        playerSession,
+                        firstActor,
+                        receiver,
+                        CameraSessionCapabilities.Browse);
+                    Assert.That(first, Is.Not.Null);
+
+                    server.PlayerMan.SetAttachedEntity(playerSession, secondActor);
+                    var rebound = cameraSessions.OpenSession(
+                        playerSession,
+                        secondActor,
+                        receiver,
+                        CameraSessionCapabilities.Browse);
+
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(rebound, Is.SameAs(first));
+                        Assert.That(rebound!.Actor, Is.EqualTo(secondActor));
+                    });
+
+                    entMan.EventBus.RaiseEvent(EventSource.Local, new RoundRestartCleanupEvent());
+                    var nextRound = cameraSessions.OpenSession(
+                        playerSession,
+                        secondActor,
+                        receiver,
+                        CameraSessionCapabilities.Browse);
+
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(nextRound, Is.Not.Null);
+                        Assert.That(nextRound!.Id, Is.GreaterThan(first!.Id));
+                    });
+                }
+                finally
+                {
+                    cameraSessions.CloseSession(playerSession, receiver);
+                    server.PlayerMan.SetAttachedEntity(playerSession, previousAttached);
+                    entMan.DeleteEntity(firstActor);
+                    entMan.DeleteEntity(secondActor);
+                    entMan.DeleteEntity(receiver);
+                }
+            });
+        }
+        finally
+        {
+            await pair.CleanReturnAsync();
+        }
+    }
+
+    [Test]
     public async Task StaticSeedResolvesToOneRoundScopedNetworkEntity()
     {
         var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
@@ -84,6 +156,52 @@ public sealed class CameraNetworkSystemTest
                     Assert.That(identity.Runtime, Is.False);
                     Assert.That(identity.DisplayName, Is.Not.Empty);
                 });
+            });
+        }
+        finally
+        {
+            server.Dispose();
+        }
+    }
+
+    [Test]
+    public async Task StaticCameraAccessRequiresSharedNetwork()
+    {
+        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
+        try
+        {
+            await LoadPrototypes(server);
+            await server.WaitAssertion(() =>
+            {
+                var entMan = server.EntMan;
+                var networks = entMan.System<CameraNetworkSystem>();
+                _ = entMan.System<CameraNetworkReceiverChangedProbeSystem>();
+                var receiver = entMan.SpawnEntity("CMUTestCameraReceiver", MapCoordinates.Nullspace);
+                var sameNetwork = entMan.SpawnEntity("CMUTestCameraStandardA", MapCoordinates.Nullspace);
+                var otherNetwork = entMan.SpawnEntity("CMUTestCameraStandardB", MapCoordinates.Nullspace);
+
+                try
+                {
+                    var probe = entMan.AddComponent<CameraNetworkReceiverChangedProbeComponent>(receiver);
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(networks.CanAccess(receiver, sameNetwork), Is.True);
+                        Assert.That(networks.CanAccess(receiver, otherNetwork), Is.False);
+                    });
+
+                    entMan.System<MetaDataSystem>().SetEntityName(sameNetwork, "Renamed without marker");
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(probe.Events, Is.EqualTo(1));
+                        Assert.That(probe.LastKind, Is.EqualTo(CameraReceiverChangeKind.Directory));
+                    });
+                }
+                finally
+                {
+                    entMan.DeleteEntity(receiver);
+                    entMan.DeleteEntity(sameNetwork);
+                    entMan.DeleteEntity(otherNetwork);
+                }
             });
         }
         finally
@@ -1432,7 +1550,6 @@ public sealed class CameraNetworkSystemTest
                         (monitor, entMan.GetComponent<RMCCameraComputerComponent>(monitor)), viewer, camera), Is.True);
                     Assert.Multiple(() =>
                     {
-                        Assert.That(cameraSession.Shadow, Is.False);
                         Assert.That(cameraSession.SelectedCamera, Is.EqualTo(camera));
                         Assert.That(playerSession.ViewSubscriptions, Does.Contain(camera));
                         Assert.That(playerSession.ViewSubscriptions, Does.Not.Contain(remoteGrid.Owner));
@@ -1548,6 +1665,7 @@ public sealed class CameraNetworkSystemTest
                 var mapSystem = entMan.System<SharedMapSystem>();
                 var monitors = entMan.System<SurveillanceCameraMonitorSystem>();
                 var cameraSessions = entMan.System<CameraSessionSystem>();
+                var cameraNetworks = entMan.System<CameraNetworkSystem>();
                 var microphones = entMan.System<SurveillanceCameraMicrophoneSystem>();
                 var appearances = entMan.System<SharedAppearanceSystem>();
                 var userInterface = entMan.System<SharedUserInterfaceSystem>();
@@ -1568,6 +1686,8 @@ public sealed class CameraNetworkSystemTest
 
                 try
                 {
+                    entMan.AddComponent<CameraMapMarkerComponent>(camera);
+                    cameraNetworks.Update(0f);
                     var microphone = entMan.AddComponent<SurveillanceCameraMicrophoneComponent>(camera);
                     var speechProbe = entMan.AddComponent<CameraSpeechProbeComponent>(monitor);
                     server.PlayerMan.SetAttachedEntity(playerSession, viewer);
@@ -1580,17 +1700,21 @@ public sealed class CameraNetworkSystemTest
 
                     Assert.That(cameraSessions.TryGetSession(playerSession, monitor, out var cameraSession), Is.True);
                     Assert.That(cameraSessions.SelectCamera(cameraSession.Id, camera), Is.True);
+                    var revisionBeforeMovement = cameraSession.Revision;
+                    entMan.System<SharedTransformSystem>().SetLocalPosition(camera, Vector2.One);
+                    cameraNetworks.Update(0f);
                     Assert.That(appearances.TryGetData(camera, SurveillanceCameraVisualsKey.Key,
                         out SurveillanceCameraVisuals selectedVisual), Is.True);
 
                     Assert.Multiple(() =>
                     {
-                        Assert.That(cameraSession.Shadow, Is.False);
                         Assert.That(cameraSession.SelectedCamera, Is.EqualTo(camera));
                         Assert.That(playerSession.ViewSubscriptions, Does.Contain(camera));
                         Assert.That(playerSession.ViewSubscriptions, Does.Not.Contain(remoteGrid.Owner));
                         Assert.That(cameraSessions.HasActiveViewers(camera), Is.True);
                         Assert.That(cameraSessions.GetSessionsForCamera(camera).Single(), Is.SameAs(cameraSession));
+                        Assert.That(cameraSession.Revision, Is.EqualTo(revisionBeforeMovement));
+                        Assert.That(entMan.HasComponent<ActiveSurveillanceCameraMonitorComponent>(monitor), Is.True);
                         Assert.That(selectedVisual, Is.EqualTo(SurveillanceCameraVisuals.InUse));
                     });
 
@@ -1614,6 +1738,7 @@ public sealed class CameraNetworkSystemTest
                         Assert.That(cameraSessions.TryGetSession(playerSession, monitor, out _), Is.False);
                         Assert.That(playerSession.ViewSubscriptions, Does.Not.Contain(camera));
                         Assert.That(cameraSessions.HasActiveViewers(camera), Is.False);
+                        Assert.That(entMan.HasComponent<ActiveSurveillanceCameraMonitorComponent>(monitor), Is.False);
                         Assert.That(speechProbe.Events, Is.EqualTo(1));
                         Assert.That(closedVisual, Is.EqualTo(SurveillanceCameraVisuals.Active));
                     });
@@ -2847,7 +2972,10 @@ public sealed class CameraNetworkSystemTest
                     Assert.Multiple(() =>
                     {
                         Assert.That(probe.Events, Is.EqualTo(1));
-                        Assert.That(probe.LastKind, Is.EqualTo(CameraReceiverChangeKind.Marker));
+                        Assert.That(probe.LastKind, Is.EqualTo(
+                            change is MarkerLifecycleChange.Rename or MarkerLifecycleChange.PowerLoss
+                                ? CameraReceiverChangeKind.Directory
+                                : CameraReceiverChangeKind.Marker));
                     });
                 }
                 finally

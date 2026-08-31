@@ -6,6 +6,7 @@ public enum CameraReceiverChangeKind : byte
 {
     Authorization,
     MemberList,
+    Directory,
     Marker,
 }
 
@@ -25,7 +26,6 @@ public enum CameraSessionCapabilities : byte
     Browse = 1 << 0,
     LiveView = 1 << 1,
     Map = 1 << 2,
-    Edit = 1 << 3,
 }
 
 [ByRefEvent]

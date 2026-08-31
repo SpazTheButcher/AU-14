@@ -15,16 +15,11 @@ namespace Content.Server.SurveillanceCamera;
 
 public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
 {
-    private static readonly TimeSpan ViewerValidationInterval = TimeSpan.FromSeconds(0.5);
-
     [Dependency] private readonly AccessReaderSystem _accessReader = default!;
     [Dependency] private readonly CameraNetworkSystem _cameraNetworks = default!;
     [Dependency] private readonly CameraSessionSystem _cameraSessions = default!;
     [Dependency] private readonly IConfigurationManager _configuration = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly UserInterfaceSystem _userInterface = default!;
-
-    private TimeSpan _nextViewerValidation;
 
     public override void Initialize()
     {
@@ -40,24 +35,6 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
             subs.Event<CameraSessionDisconnectMessage>(OnSessionDisconnectMessage);
             subs.Event<BoundUIClosedEvent>(OnBoundUiClose);
         });
-    }
-
-    public override void Update(float frameTime)
-    {
-        base.Update(frameTime);
-        if (_timing.CurTime < _nextViewerValidation)
-            return;
-
-        _nextViewerValidation = _timing.CurTime + ViewerValidationInterval;
-        var query = EntityQueryEnumerator<SurveillanceCameraMonitorComponent>();
-        while (query.MoveNext(out var uid, out var monitor))
-        {
-            foreach (var viewer in monitor.Viewers.ToArray())
-            {
-                if (!CanUseMonitor(uid, viewer))
-                    RemoveViewer(uid, viewer, monitor);
-            }
-        }
     }
 
     private void OnSessionSelectMessage(EntityUid uid, SurveillanceCameraMonitorComponent component,
@@ -108,7 +85,6 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
     private void OnShutdown(EntityUid uid, SurveillanceCameraMonitorComponent component, ComponentShutdown args)
     {
         _cameraSessions.CloseSessions(uid);
-        component.Viewers.Clear();
     }
 
     private void OnToggleInterface(EntityUid uid, SurveillanceCameraMonitorComponent component,
@@ -134,7 +110,6 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
         if (!TryComp(player, out ActorComponent? actor))
             return;
 
-        monitor.Viewers.Add(player);
         var capabilities = CameraSessionCapabilities.Browse | CameraSessionCapabilities.LiveView;
         if (_configuration.GetCVar(CCVars.CMUCameraMapEnabled))
             capabilities |= CameraSessionCapabilities.Map;
@@ -143,15 +118,13 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
             actor.PlayerSession,
             player,
             uid,
-            capabilities,
-            shadow: false);
+            capabilities);
         if (session != null)
             SendSnapshot(uid, player, session);
     }
 
     private void RemoveViewer(EntityUid uid, EntityUid player, SurveillanceCameraMonitorComponent monitor)
     {
-        monitor.Viewers.Remove(player);
         if (!TryComp(player, out ActorComponent? actor))
             return;
 
@@ -274,6 +247,12 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
             return;
         }
 
+        if (session.LastSentRevision == session.Revision)
+        {
+            SendGeometry(uid, actor, session);
+            return;
+        }
+
         _userInterface.ServerSendUiMessage(
             uid,
             SurveillanceCameraMonitorUiKey.Key,
@@ -301,6 +280,7 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
             SurveillanceCameraMonitorUiKey.Key,
             new CameraSessionGeometryMessage(
                 session.Id,
+                GetNetEntity(session.ActiveNetwork),
                 _cameraNetworks.MarkerRevision,
                 BuildGeometry(session)),
             actor);

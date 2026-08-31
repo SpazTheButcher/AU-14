@@ -44,6 +44,10 @@ public sealed class SurveillanceCameraMonitorBoundUserInterface : BoundUserInter
         switch (message)
         {
             case CameraSessionSnapshotMessage snapshot:
+                if (_sessionId != snapshot.SessionId
+                    || _directory?.ActiveNetwork != snapshot.Directory.ActiveNetwork)
+                    ResetGeometry();
+
                 _sessionId = snapshot.SessionId;
                 _revision = snapshot.Revision;
                 _directory = snapshot.Directory;
@@ -56,11 +60,16 @@ public sealed class SurveillanceCameraMonitorBoundUserInterface : BoundUserInter
                     return;
                 }
 
+                if (_directory?.ActiveNetwork != delta.Directory.ActiveNetwork)
+                    ResetGeometry();
+
                 _revision = delta.Revision;
                 _directory = delta.Directory;
                 ApplyState();
                 break;
-            case CameraSessionGeometryMessage geometry when _sessionId == geometry.SessionId:
+            case CameraSessionGeometryMessage geometry when
+                _sessionId == geometry.SessionId &&
+                _directory?.ActiveNetwork == geometry.Network:
                 if (geometry.MarkerRevision < _markerRevision)
                     return;
 
@@ -78,6 +87,12 @@ public sealed class SurveillanceCameraMonitorBoundUserInterface : BoundUserInter
     {
         if (_sessionId is { } sessionId)
             SendMessage(new CameraSessionResyncMessage(sessionId));
+    }
+
+    private void ResetGeometry()
+    {
+        _markerRevision = 0;
+        _geometry = new CameraMapUiState(default, []);
     }
 
     private void ApplyState()
@@ -114,9 +129,8 @@ public sealed class SurveillanceCameraMonitorBoundUserInterface : BoundUserInter
         UpdateEye(null);
         _sessionId = null;
         _revision = 0;
-        _markerRevision = 0;
         _directory = null;
-        _geometry = new CameraMapUiState(default, []);
+        ResetGeometry();
     }
 
     protected override void Dispose(bool disposing)

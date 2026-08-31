@@ -207,6 +207,12 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
             return;
         }
 
+        if (session.LastSentRevision == session.Revision)
+        {
+            SendSessionGeometry(computer.Owner, actor, session);
+            return;
+        }
+
         _userInterface.ServerSendUiMessage(
             computer.Owner,
             RMCCameraUiKey.Key,
@@ -235,6 +241,7 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
             RMCCameraUiKey.Key,
             new CameraSessionGeometryMessage(
                 session.Id,
+                GetNetEntity(session.ActiveNetwork),
                 _cameraNetworks.MarkerRevision,
                 BuildSessionGeometry(session)),
             actor);
@@ -268,15 +275,12 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
         var capabilities = CameraSessionCapabilities.Browse | CameraSessionCapabilities.LiveView;
         if (_configuration.GetCVar(CCVars.CMUCameraMapEnabled))
             capabilities |= CameraSessionCapabilities.Map;
-        if (_configuration.GetCVar(CCVars.CMUCameraEditorEnabled))
-            capabilities |= CameraSessionCapabilities.Edit;
 
         var session = _cameraSessions.OpenSession(
             actorComponent.PlayerSession,
             actor,
             computer.Owner,
-            capabilities,
-            shadow: false);
+            capabilities);
         if (session == null)
             return;
 

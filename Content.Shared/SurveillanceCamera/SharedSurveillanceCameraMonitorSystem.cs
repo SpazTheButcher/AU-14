@@ -63,10 +63,12 @@ public sealed class CameraSessionDeltaMessage(
 [Serializable, NetSerializable]
 public sealed class CameraSessionGeometryMessage(
     uint sessionId,
+    NetEntity? network,
     ulong markerRevision,
     CameraMapUiState geometry) : BoundUserInterfaceMessage
 {
     public uint SessionId { get; } = sessionId;
+    public NetEntity? Network { get; } = network;
     public ulong MarkerRevision { get; } = markerRevision;
     public CameraMapUiState Geometry { get; } = geometry;
 }

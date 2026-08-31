@@ -25,11 +25,9 @@ public sealed class CameraNetworkSystem : EntitySystem
     private readonly Dictionary<EntityUid, HashSet<(EntityUid Receiver, EntityUid Network)>>
         _grantsBySource = [];
     private readonly Dictionary<ProtoId<CameraNetworkPrototype>, EntityUid> _seedNetworks = [];
-    private readonly Dictionary<EntityUid, EntityUid> _pendingMarkerReceivers = [];
-    private readonly Dictionary<EntityUid, TimeSpan> _mobileMarkerUpdates = [];
+    private readonly Dictionary<EntityUid, PendingMarkerChange> _pendingMarkerReceivers = [];
+    private readonly Dictionary<EntityUid, PendingMobileMarkerChange> _mobileMarkerUpdates = [];
 
-    public ulong AuthorizationRevision { get; private set; }
-    public ulong DirectoryRevision { get; private set; }
     public ulong MarkerRevision { get; private set; }
 
     public override void Initialize()
@@ -38,6 +36,10 @@ public sealed class CameraNetworkSystem : EntitySystem
 
         SubscribeLocalEvent<CameraNetworkMemberComponent, ComponentStartup>(OnMemberStartup);
         SubscribeLocalEvent<CameraNetworkMemberComponent, ComponentShutdown>(OnMemberShutdown);
+        SubscribeLocalEvent<CameraNetworkMemberComponent, EntityRenamedEvent>(OnMemberRenamed);
+        SubscribeLocalEvent<CameraNetworkMemberComponent, PowerChangedEvent>(OnMemberPowerChanged);
+        SubscribeLocalEvent<CameraNetworkMemberComponent, EntityPausedEvent>(OnMemberPaused);
+        SubscribeLocalEvent<CameraNetworkMemberComponent, EntityUnpausedEvent>(OnMemberUnpaused);
         SubscribeLocalEvent<CameraNetworkReceiverComponent, ComponentStartup>(OnReceiverStartup);
         SubscribeLocalEvent<CameraNetworkReceiverComponent, ComponentShutdown>(OnReceiverShutdown);
         SubscribeLocalEvent<CameraNetworkReceiverComponent, CameraNetworkGrantRequestEvent>(OnGrantRequest);
@@ -45,10 +47,6 @@ public sealed class CameraNetworkSystem : EntitySystem
         SubscribeLocalEvent<CameraMapMarkerComponent, ComponentStartup>(OnMarkerStartup);
         SubscribeLocalEvent<CameraMapMarkerComponent, ComponentShutdown>(OnMarkerShutdown);
         SubscribeLocalEvent<CameraMapMarkerComponent, MoveEvent>(OnMarkerMove);
-        SubscribeLocalEvent<CameraMapMarkerComponent, EntityRenamedEvent>(OnMarkerRenamed);
-        SubscribeLocalEvent<CameraMapMarkerComponent, PowerChangedEvent>(OnMarkerPowerChanged);
-        SubscribeLocalEvent<CameraMapMarkerComponent, EntityPausedEvent>(OnMarkerPaused);
-        SubscribeLocalEvent<CameraMapMarkerComponent, EntityUnpausedEvent>(OnMarkerUnpaused);
         SubscribeLocalEvent<EntityTerminatingEvent>(OnEntityTerminating);
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
     }
@@ -65,6 +63,26 @@ public sealed class CameraNetworkSystem : EntitySystem
         var networks = GetMemberNetworkEntities(ent.Comp);
         UnindexMember(ent.Owner, networks);
         NotifyReceivers(networks, ent.Owner);
+    }
+
+    private void OnMemberRenamed(Entity<CameraNetworkMemberComponent> ent, ref EntityRenamedEvent args)
+    {
+        QueueMemberDirectoryChange(ent);
+    }
+
+    private void OnMemberPowerChanged(Entity<CameraNetworkMemberComponent> ent, ref PowerChangedEvent args)
+    {
+        QueueMemberDirectoryChange(ent);
+    }
+
+    private void OnMemberPaused(Entity<CameraNetworkMemberComponent> ent, ref EntityPausedEvent args)
+    {
+        QueueMemberDirectoryChange(ent);
+    }
+
+    private void OnMemberUnpaused(Entity<CameraNetworkMemberComponent> ent, ref EntityUnpausedEvent args)
+    {
+        QueueMemberDirectoryChange(ent);
     }
 
     private void OnReceiverStartup(Entity<CameraNetworkReceiverComponent> ent, ref ComponentStartup args)
@@ -98,8 +116,6 @@ public sealed class CameraNetworkSystem : EntitySystem
         // other round-cleanup subscribers cannot manufacture duplicate identities.
         _pendingMarkerReceivers.Clear();
         _mobileMarkerUpdates.Clear();
-        AuthorizationRevision = 0;
-        DirectoryRevision = 0;
         MarkerRevision = 0;
     }
 
@@ -119,30 +135,10 @@ public sealed class CameraNetworkSystem : EntitySystem
     private void OnMarkerShutdown(Entity<CameraMapMarkerComponent> ent, ref ComponentShutdown args)
     {
         _mobileMarkerUpdates.Remove(ent.Owner);
-        QueueMarkerChange(ent);
+        QueueAffectedReceivers(ent.Owner);
     }
 
     private void OnMarkerMove(Entity<CameraMapMarkerComponent> ent, ref MoveEvent args)
-    {
-        QueueMarkerChange(ent);
-    }
-
-    private void OnMarkerRenamed(Entity<CameraMapMarkerComponent> ent, ref EntityRenamedEvent args)
-    {
-        QueueMarkerChange(ent);
-    }
-
-    private void OnMarkerPowerChanged(Entity<CameraMapMarkerComponent> ent, ref PowerChangedEvent args)
-    {
-        QueueMarkerChange(ent);
-    }
-
-    private void OnMarkerPaused(Entity<CameraMapMarkerComponent> ent, ref EntityPausedEvent args)
-    {
-        QueueMarkerChange(ent);
-    }
-
-    private void OnMarkerUnpaused(Entity<CameraMapMarkerComponent> ent, ref EntityUnpausedEvent args)
     {
         QueueMarkerChange(ent);
     }
@@ -151,21 +147,28 @@ public sealed class CameraNetworkSystem : EntitySystem
     {
         base.Update(frameTime);
 
-        foreach (var (marker, due) in _mobileMarkerUpdates.ToArray())
+        foreach (var (marker, pending) in _mobileMarkerUpdates.ToArray())
         {
-            if (due > _timing.CurTime)
+            if (pending.Due > _timing.CurTime)
                 continue;
 
             _mobileMarkerUpdates.Remove(marker);
-            QueueAffectedReceivers(marker);
+            QueueAffectedReceivers(marker, pending.DirectoryChanged);
         }
 
         var pendingMarkerReceivers = _pendingMarkerReceivers.ToArray();
         // Preserve marker changes queued synchronously by receiver event handlers for the next update.
         _pendingMarkerReceivers.Clear();
 
-        foreach (var (receiver, marker) in pendingMarkerReceivers)
-            NotifyReceiver(receiver, marker, CameraReceiverChangeKind.Marker);
+        foreach (var (receiver, pending) in pendingMarkerReceivers)
+        {
+            NotifyReceiver(
+                receiver,
+                pending.Marker,
+                pending.DirectoryChanged
+                    ? CameraReceiverChangeKind.Directory
+                    : CameraReceiverChangeKind.Marker);
+        }
     }
 
     private void OnEntityTerminating(ref EntityTerminatingEvent args)
@@ -340,23 +343,6 @@ public sealed class CameraNetworkSystem : EntitySystem
             : Name(camera);
     }
 
-    public void SyncMapViewSubscriptions(EntityUid receiver, EntityUid viewer, CameraMapUiState state)
-    {
-        // Camera maps must never grant remote-grid PVS. Geometry will be delivered by a dedicated protocol.
-    }
-
-    public void ClearMapViewSubscriptions(EntityUid receiver, EntityUid viewer)
-    {
-    }
-
-    public void ClearMapViewSubscriptions(EntityUid receiver)
-    {
-    }
-
-    public void ClearMapViewSubscriptionsForViewer(EntityUid viewer)
-    {
-    }
-
     public bool CanAccess(EntityUid receiver, EntityUid camera)
     {
         if (!TryComp(receiver, out CameraNetworkReceiverComponent? receiverComponent)
@@ -366,12 +352,21 @@ public sealed class CameraNetworkSystem : EntitySystem
             return false;
         }
 
-        foreach (var network in GetEffectiveNetworkEntities(receiver, receiverComponent))
+        foreach (var network in memberComponent.Networks.Select(ResolveNetwork))
         {
             // ComponentShutdown leaves the component readable while its lifecycle
             // callback runs. The index is therefore the authoritative indicator
             // that this source is still a live member of the logical network.
-            if (_members.TryGetValue(network, out var members)
+            if (HasEffectiveNetwork(receiver, receiverComponent, network)
+                && _members.TryGetValue(network, out var members)
+                && members.Contains(camera))
+                return true;
+        }
+
+        foreach (var network in memberComponent.RuntimeNetworks)
+        {
+            if (HasEffectiveNetwork(receiver, receiverComponent, network)
+                && _members.TryGetValue(network, out var members)
                 && members.Contains(camera))
                 return true;
         }
@@ -652,7 +647,7 @@ public sealed class CameraNetworkSystem : EntitySystem
             || !TryComp(receiver, out CameraNetworkReceiverComponent? component))
             return false;
 
-        var effectiveNetworks = GetEffectiveNetworkEntities(receiver, component);
+        var alreadyEffective = HasEffectiveNetwork(receiver, component, network);
         if (!_runtimeGrants.TryGetValue(receiver, out var grants))
         {
             grants = [];
@@ -669,7 +664,7 @@ public sealed class CameraNetworkSystem : EntitySystem
             return false;
 
         AddSourceGrant(source, receiver, network);
-        if (effectiveNetworks.Add(network))
+        if (!alreadyEffective)
         {
             IndexReceiver(receiver, [network]);
             NotifyAuthorizationChanged(receiver);
@@ -794,6 +789,20 @@ public sealed class CameraNetworkSystem : EntitySystem
         return networks;
     }
 
+    private bool HasEffectiveNetwork(
+        EntityUid receiver,
+        CameraNetworkReceiverComponent component,
+        EntityUid network)
+    {
+        if (component.RuntimeNetworks.Contains(network)
+            || _runtimeGrants.TryGetValue(receiver, out var grants) && grants.ContainsKey(network))
+        {
+            return true;
+        }
+
+        return component.Networks.Any(seed => ResolveNetwork(seed) == network);
+    }
+
     private void AddSourceGrant(EntityUid source, EntityUid receiver, EntityUid network)
     {
         if (!_grantsBySource.TryGetValue(source, out var grants))
@@ -893,9 +902,6 @@ public sealed class CameraNetworkSystem : EntitySystem
         EntityUid? member,
         CameraReceiverChangeKind kind = CameraReceiverChangeKind.MemberList)
     {
-        if (kind == CameraReceiverChangeKind.MemberList)
-            DirectoryRevision++;
-
         var notified = new HashSet<EntityUid>();
         foreach (var network in networks)
         {
@@ -910,7 +916,7 @@ public sealed class CameraNetworkSystem : EntitySystem
         }
     }
 
-    private bool IsAvailable(EntityUid camera)
+    public bool IsAvailable(EntityUid camera)
     {
         if (TerminatingOrDeleted(camera) || MetaData(camera).EntityPaused)
             return false;
@@ -921,18 +927,49 @@ public sealed class CameraNetworkSystem : EntitySystem
         return !TryComp(camera, out ApcPowerReceiverComponent? power) || power.Powered;
     }
 
-    private void QueueMarkerChange(Entity<CameraMapMarkerComponent> marker)
+    private void QueueMarkerChange(
+        Entity<CameraMapMarkerComponent> marker,
+        bool directoryChanged = false)
     {
         if (marker.Comp.Mobile)
         {
-            _mobileMarkerUpdates.TryAdd(marker.Owner, _timing.CurTime + marker.Comp.UpdateInterval);
+            if (_mobileMarkerUpdates.TryGetValue(marker.Owner, out var pending))
+            {
+                _mobileMarkerUpdates[marker.Owner] = pending with
+                {
+                    DirectoryChanged = pending.DirectoryChanged || directoryChanged,
+                };
+            }
+            else
+            {
+                _mobileMarkerUpdates.Add(
+                    marker.Owner,
+                    new PendingMobileMarkerChange(
+                        _timing.CurTime + marker.Comp.UpdateInterval,
+                        directoryChanged));
+            }
+
             return;
         }
 
-        QueueAffectedReceivers(marker.Owner);
+        QueueAffectedReceivers(marker.Owner, directoryChanged);
     }
 
-    private void QueueAffectedReceivers(EntityUid marker)
+    private void QueueMemberDirectoryChange(Entity<CameraNetworkMemberComponent> member)
+    {
+        if (TryComp(member.Owner, out CameraMapMarkerComponent? marker))
+        {
+            QueueMarkerChange((member.Owner, marker), directoryChanged: true);
+            return;
+        }
+
+        NotifyReceivers(
+            GetMemberNetworkEntities(member.Comp),
+            member.Owner,
+            CameraReceiverChangeKind.Directory);
+    }
+
+    private void QueueAffectedReceivers(EntityUid marker, bool directoryChanged = false)
     {
         if (!TryComp(marker, out CameraNetworkMemberComponent? member))
             return;
@@ -945,13 +982,25 @@ public sealed class CameraNetworkSystem : EntitySystem
                 continue;
 
             foreach (var receiver in receivers)
-                _pendingMarkerReceivers.TryAdd(receiver, marker);
+            {
+                if (_pendingMarkerReceivers.TryGetValue(receiver, out var pending))
+                {
+                    _pendingMarkerReceivers[receiver] = new PendingMarkerChange(
+                        marker,
+                        pending.DirectoryChanged || directoryChanged);
+                }
+                else
+                {
+                    _pendingMarkerReceivers.Add(
+                        receiver,
+                        new PendingMarkerChange(marker, directoryChanged));
+                }
+            }
         }
     }
 
     private void NotifyAuthorizationChanged(EntityUid receiver)
     {
-        AuthorizationRevision++;
         var ev = new CameraReceiverChangedEvent(CameraReceiverChangeKind.Authorization);
         RaiseLocalEvent(receiver, ref ev);
     }
@@ -961,4 +1010,8 @@ public sealed class CameraNetworkSystem : EntitySystem
         var ev = new CameraReceiverChangedEvent(kind, member);
         RaiseLocalEvent(receiver, ref ev);
     }
+
+    private readonly record struct PendingMarkerChange(EntityUid Marker, bool DirectoryChanged);
+
+    private readonly record struct PendingMobileMarkerChange(TimeSpan Due, bool DirectoryChanged);
 }
