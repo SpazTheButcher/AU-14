@@ -63,7 +63,7 @@ public sealed class GunshipFlightSimulationTest
     }
 
     [Test]
-    public void CombinedSweepUsesTheMoreRestrictiveMotion()
+    public void CombinedSweepConservativelyCombinesMotion()
     {
         var steps = GunshipFlightSimulation.GetCombinedSweepSteps(
             linearDistance: 1f,
@@ -71,7 +71,7 @@ public sealed class GunshipFlightSimulationTest
             hullRadius: 2f,
             maximumSpacing: 0.5f);
 
-        Assert.That(steps, Is.EqualTo(7));
+        Assert.That(steps, Is.EqualTo(9));
     }
 
     [Test]

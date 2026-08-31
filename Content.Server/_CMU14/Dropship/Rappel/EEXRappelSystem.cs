@@ -84,7 +84,7 @@ public sealed partial class EEXRappelSystem : SharedEEXRappelSystem
             ent.Comp.Dropship = dropship;
     }
 
-    private void OnTacticalHoverEnded(DropshipTacticalHoverEndedEvent args)
+    private void OnTacticalHoverEnded(ref DropshipTacticalHoverEndedEvent args)
     {
         var query = EntityQueryEnumerator<EEXRappelSystemComponent, RMCEquipmentDeployerComponent>();
         while (query.MoveNext(out var uid, out var rappel, out var deployer))

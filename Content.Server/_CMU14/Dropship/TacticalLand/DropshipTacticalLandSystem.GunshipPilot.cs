@@ -993,9 +993,10 @@ public sealed partial class DropshipTacticalLandSystem
                 hover.Comp.GunshipAngularVelocityDegrees)) * radius;
             var impactSpeed = MathF.Sqrt(
                 hover.Comp.GunshipLinearVelocity.LengthSquared() + tangentialSpeed * tangentialSpeed);
+            var contactExtents = Vector2.One * dropshipGrid.LocalAABB.Size.Length() * 0.5f;
             var remainingImpactSpeed = _integrity.ApplyFlightImpact(
                 hover.Owner,
-                OrderGunshipImpactContacts(blockers, position, proposedPosition),
+                OrderGunshipImpactContacts(blockers, position, proposedPosition, contactExtents),
                 impactSpeed,
                 map.Value);
             if (remainingImpactSpeed <= 0f || impactSpeed <= 0f)
@@ -1081,17 +1082,60 @@ public sealed partial class DropshipTacticalLandSystem
     private EntityUid[] OrderGunshipImpactContacts(
         IReadOnlyCollection<EntityUid> blockers,
         Vector2 startPosition,
-        Vector2 targetPosition)
+        Vector2 targetPosition,
+        Vector2 contactExtents)
     {
-        return blockers
-            .Where(blocker => !TerminatingOrDeleted(blocker))
-            .OrderBy(blocker => ImpactEnergySolver.GetContactOrder(
-                startPosition,
-                targetPosition,
-                _transform.GetWorldPosition(blocker)))
-            .ThenBy(blocker => blocker.Id)
-            .ToArray();
+        var contacts = new List<GunshipImpactContact>(blockers.Count);
+        foreach (var blocker in blockers)
+        {
+            if (TerminatingOrDeleted(blocker))
+                continue;
+
+            var bounds = _entityLookup.GetWorldAABB(blocker);
+            var center = bounds.Center;
+            contacts.Add(new GunshipImpactContact(
+                blocker,
+                ImpactEnergySolver.GetSweptAabbContactTime(
+                    startPosition,
+                    targetPosition,
+                    contactExtents,
+                    bounds),
+                ImpactEnergySolver.GetContactOrder(startPosition, targetPosition, center),
+                bounds));
+        }
+
+        contacts.Sort(static (left, right) =>
+        {
+            var order = left.TimeOfImpact.CompareTo(right.TimeOfImpact);
+            if (order != 0)
+                return order;
+            order = left.GeometricOrder.CompareTo(right.GeometricOrder);
+            if (order != 0)
+                return order;
+            order = left.Bounds.Left.CompareTo(right.Bounds.Left);
+            if (order != 0)
+                return order;
+            order = left.Bounds.Bottom.CompareTo(right.Bounds.Bottom);
+            if (order != 0)
+                return order;
+            order = left.Bounds.Right.CompareTo(right.Bounds.Right);
+            if (order != 0)
+                return order;
+            order = left.Bounds.Top.CompareTo(right.Bounds.Top);
+            return order != 0 ? order : left.Entity.Id.CompareTo(right.Entity.Id);
+        });
+
+        var ordered = new EntityUid[contacts.Count];
+        for (var i = 0; i < contacts.Count; i++)
+            ordered[i] = contacts[i].Entity;
+        return ordered;
     }
+
+    private readonly record struct GunshipImpactContact(
+        EntityUid Entity,
+        float TimeOfImpact,
+        float GeometricOrder,
+        Box2 Bounds);
 
     private bool IsGunshipFootprintClear(
         Entity<MapGridComponent> dropship,

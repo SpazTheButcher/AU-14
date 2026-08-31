@@ -4,6 +4,7 @@ using Content.Shared.Damage;
 using System.Numerics;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
+using Robust.Shared.Maths;
 
 namespace Content.IntegrationTests._CMU14;
 
@@ -140,6 +141,31 @@ public sealed class DestructionMomentumSystemTest
         var far = ImpactEnergySolver.GetContactOrder(center, center, new Vector2(8f, 5f));
 
         Assert.That(near, Is.LessThan(far));
+    }
+
+    [Test]
+    public void SweptAabbContactsUseEntryTimeRatherThanEntityOrigin()
+    {
+        var halfExtents = new Vector2(0.5f, 0.5f);
+        var nearWideObstacle = new Box2(2f, -2f, 8f, 2f);
+        var farNarrowObstacle = new Box2(6f, -0.5f, 7f, 0.5f);
+
+        var nearTime = ImpactEnergySolver.GetSweptAabbContactTime(
+            Vector2.Zero,
+            new Vector2(10f, 0f),
+            halfExtents,
+            nearWideObstacle);
+        var farTime = ImpactEnergySolver.GetSweptAabbContactTime(
+            Vector2.Zero,
+            new Vector2(10f, 0f),
+            halfExtents,
+            farNarrowObstacle);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(nearTime, Is.EqualTo(0.15f).Within(0.001f));
+            Assert.That(farTime, Is.EqualTo(0.55f).Within(0.001f));
+        });
     }
 
     [Test]

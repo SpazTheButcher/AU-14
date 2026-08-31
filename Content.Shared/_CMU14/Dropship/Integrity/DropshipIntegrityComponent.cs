@@ -28,6 +28,9 @@ public sealed partial class DropshipIntegrityComponent : Component
     [DataField, AutoNetworkedField]
     public bool Wrecked;
 
+    /// <summary>
+    /// Authoritative lifecycle state replicated for policy and presentation consumers.
+    /// </summary>
     [DataField, AutoNetworkedField]
     public DropshipFlightState FlightState = DropshipFlightState.Landed;
 
@@ -61,6 +64,9 @@ public sealed partial class DropshipIntegrityComponent : Component
     [DataField]
     public float MinimumDamagingImpactSpeed = 1.5f;
 
+    /// <summary>
+    /// Damage multiplier applied to xeno acid projectiles which strike the hull.
+    /// </summary>
     [DataField]
     public float XenoAcidProjectileDamageMultiplier = 4f;
 

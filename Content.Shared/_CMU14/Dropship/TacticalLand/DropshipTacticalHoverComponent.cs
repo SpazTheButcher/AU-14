@@ -177,4 +177,5 @@ public sealed partial class DropshipTacticalHoverDownwashComponent : Component
 /// <summary>
 /// Raised after a dropship leaves tactical hover so hover-only equipment can clean itself up.
 /// </summary>
+[ByRefEvent]
 public readonly record struct DropshipTacticalHoverEndedEvent(EntityUid Dropship);

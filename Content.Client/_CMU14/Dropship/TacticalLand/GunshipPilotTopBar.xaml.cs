@@ -19,12 +19,18 @@ public sealed partial class GunshipPilotTopBar : PanelContainer
             ("stage", Loc.GetString("cmu-gunship-stage-ready")));
     }
 
+    /// <summary>
+    /// Updates the localized camera/view label when its value changes.
+    /// </summary>
     public void SetViewMode(string mode)
     {
         if (ViewMode.Text != mode)
             ViewMode.Text = mode;
     }
 
+    /// <summary>
+    /// Updates the localized ETA and flight-stage labels when their values change.
+    /// </summary>
     public void SetFlightStatus(string eta, string stage)
     {
         if (_lastEta != eta)

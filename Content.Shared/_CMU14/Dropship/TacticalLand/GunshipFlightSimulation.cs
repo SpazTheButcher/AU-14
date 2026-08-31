@@ -38,15 +38,18 @@ public static class GunshipFlightSimulation
         return GetSweepSteps(cornerTravel, maximumSpacing);
     }
 
+    /// <summary>
+    /// Returns a conservative sample count for simultaneous translation and rotation.
+    /// </summary>
     public static int GetCombinedSweepSteps(
         float linearDistance,
         float angleRadians,
         float hullRadius,
         float maximumSpacing = MaximumSweepSpacing)
     {
-        return Math.Max(
-            GetLinearSweepSteps(linearDistance, maximumSpacing),
-            GetAngularSweepSteps(angleRadians, hullRadius, maximumSpacing));
+        var linearTravel = MathF.Abs(linearDistance);
+        var cornerTravel = MathF.Abs(angleRadians) * MathF.Max(0f, hullRadius);
+        return GetSweepSteps(linearTravel + cornerTravel, maximumSpacing);
     }
 
     private static int GetSweepSteps(float travel, float maximumSpacing)
