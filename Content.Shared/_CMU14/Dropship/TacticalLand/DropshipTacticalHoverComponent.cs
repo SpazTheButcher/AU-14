@@ -35,6 +35,11 @@ public sealed partial class DropshipTacticalHoverComponent : Component
     public float GunshipAngularVelocityDegrees;
 
     /// <summary>
+    /// Unconsumed server time retained by the fixed-step flight simulation.
+    /// </summary>
+    public float GunshipFlightSimulationAccumulator;
+
+    /// <summary>
     /// Static local-space centers of every occupied dropship tile. Building
     /// this once avoids enumerating the grid for every movement and alarm
     /// check while the ship is hovering.

@@ -795,7 +795,17 @@ public sealed partial class DropshipTacticalLandSystem
             }
 
             EnsureGunshipPilotEye((seatUid, seat), (grid, hover));
-            ApplyGunshipFlightInput((seatUid, seat), (grid, hover), frameTime);
+            var simulationSteps = GunshipFlightSimulation.ConsumeSteps(
+                ref hover.GunshipFlightSimulationAccumulator,
+                frameTime);
+            for (var step = 0; step < simulationSteps; step++)
+            {
+                ApplyGunshipFlightInput(
+                    (seatUid, seat),
+                    (grid, hover),
+                    GunshipFlightSimulation.StepSeconds);
+            }
+
             UpdateGunshipPilotEye((seatUid, seat), (grid, hover));
         }
     }
@@ -838,6 +848,20 @@ public sealed partial class DropshipTacticalLandSystem
         if (map is null)
             return;
 
+        var maximumTravel = (hover.Comp.GunshipLinearVelocity.Length() +
+                             seat.Comp.TranslationAcceleration * frameTime) * frameTime;
+        var collisionQueryRadius = dropshipGrid.LocalAABB.Size.Length() * 0.5f + maximumTravel + 1f;
+        if (!PrepareGunshipCollisionCandidates(
+                (hover.Owner, hover.Comp),
+                map.Value,
+                position,
+                collisionQueryRadius))
+        {
+            hover.Comp.GunshipLinearVelocity = Vector2.Zero;
+            hover.Comp.GunshipAngularVelocityDegrees = 0f;
+            return;
+        }
+
         if (!hover.Comp.FlightGridChildrenInitialized)
         {
             var children = Transform(hover.Owner).ChildEnumerator;
@@ -873,8 +897,13 @@ public sealed partial class DropshipTacticalLandSystem
             hover.Comp.FlightTerrainAnchors.Clear();
             var proposedRotation = rotation +
                 Angle.FromDegrees(hover.Comp.GunshipAngularVelocityDegrees * frameTime);
-            if (IsGunshipFootprintClear((hover.Owner, dropshipGrid), map.Value, position, proposedRotation,
-                    boundaryOnly: false, out var rotationBlockers))
+            if (IsGunshipRotationPathClear(
+                    (hover.Owner, dropshipGrid),
+                    map.Value,
+                    position,
+                    rotation,
+                    proposedRotation,
+                    out var rotationBlockers))
             {
                 rotation = proposedRotation;
                 _transform.SetWorldRotation(hover.Owner, rotation);
@@ -981,7 +1010,7 @@ public sealed partial class DropshipTacticalLandSystem
         Angle targetRotation)
     {
         if (IsGunshipFootprintClear(dropship, targetMap, targetPosition, targetRotation,
-                boundaryOnly: false, out var remainingBlockers))
+                boundaryOnly: false, candidatesPrepared: true, out var remainingBlockers))
             return true;
 
         // Destructible deletion is queued until the end of the tick, so its
@@ -989,6 +1018,46 @@ public sealed partial class DropshipTacticalLandSystem
         // follows the damage event. It is safe to continue when every remaining
         // blocker is already terminating; anything durable still stops us.
         return remainingBlockers.Count > 0 && remainingBlockers.All(uid => TerminatingOrDeleted(uid));
+    }
+
+    private bool IsGunshipRotationPathClear(
+        Entity<MapGridComponent> dropship,
+        EntityUid targetMap,
+        Vector2 targetPosition,
+        Angle startRotation,
+        Angle targetRotation,
+        out HashSet<EntityUid> blockers)
+    {
+        var delta = Angle.ShortestDistance(startRotation, targetRotation);
+        var radius = dropship.Comp.LocalAABB.Size.Length() * 0.5f;
+        var steps = GunshipFlightSimulation.GetAngularSweepSteps((float) delta.Theta, radius);
+        for (var step = 1; step <= steps; step++)
+        {
+            var rotation = startRotation + new Angle(delta.Theta * step / steps);
+            if (!IsGunshipFootprintClear(
+                    dropship,
+                    targetMap,
+                    targetPosition,
+                    rotation,
+                    boundaryOnly: step < steps,
+                    candidatesPrepared: true,
+                    out blockers))
+            {
+                return false;
+            }
+        }
+
+        if (TryComp(dropship.Owner, out DropshipTacticalHoverComponent? hover))
+        {
+            blockers = hover.CollisionBlockers;
+            blockers.Clear();
+        }
+        else
+        {
+            blockers = new HashSet<EntityUid>();
+        }
+
+        return true;
     }
 
     private bool IsGunshipFootprintClear(
@@ -1009,12 +1078,12 @@ public sealed partial class DropshipTacticalLandSystem
         out HashSet<EntityUid> blockers)
     {
         var distance = Vector2.Distance(startPosition, targetPosition);
-        var steps = Math.Max(1, (int) MathF.Ceiling(distance / 0.5f));
+        var steps = GunshipFlightSimulation.GetLinearSweepSteps(distance);
         for (var step = 1; step <= steps; step++)
         {
             var position = Vector2.Lerp(startPosition, targetPosition, step / (float) steps);
             if (!IsGunshipFootprintClear(dropship, targetMap, position, targetRotation,
-                    boundaryOnly: true, out blockers))
+                    boundaryOnly: true, candidatesPrepared: true, out blockers))
             {
                 return false;
             }
@@ -1025,7 +1094,7 @@ public sealed partial class DropshipTacticalLandSystem
         // or an initial overlap. Validate the complete footprint once at the
         // final pose so those structures enter the impact/destruction path.
         if (!IsGunshipFootprintClear(dropship, targetMap, targetPosition, targetRotation,
-                boundaryOnly: false, out blockers))
+                boundaryOnly: false, candidatesPrepared: true, out blockers))
         {
             return false;
         }
@@ -1051,7 +1120,7 @@ public sealed partial class DropshipTacticalLandSystem
         out HashSet<EntityUid> blockers)
     {
         return IsGunshipFootprintClear(dropship, targetMap, targetPosition, targetRotation,
-            boundaryOnly: false, out blockers);
+            boundaryOnly: false, candidatesPrepared: false, out blockers);
     }
 
     private bool IsGunshipFootprintClear(
@@ -1060,6 +1129,7 @@ public sealed partial class DropshipTacticalLandSystem
         Vector2 targetPosition,
         Angle targetRotation,
         bool boundaryOnly,
+        bool candidatesPrepared,
         out HashSet<EntityUid> blockers)
     {
         if (TryComp(dropship.Owner, out DropshipTacticalHoverComponent? hover))
@@ -1089,21 +1159,15 @@ public sealed partial class DropshipTacticalLandSystem
         if (TryComp(dropship.Owner, out DropshipTacticalHoverComponent? collisionHover))
         {
             flightTerrainCandidates = collisionHover.FlightTerrainCandidates;
-            flightTerrainCandidates.Clear();
-
-            var queryBudget = new GunshipSpatialQueryBudget(1);
-            if (!queryBudget.TryConsume())
+            if (!candidatesPrepared &&
+                !PrepareGunshipCollisionCandidates(
+                    (dropship.Owner, collisionHover),
+                    targetMap,
+                    targetPosition,
+                    dropship.Comp.LocalAABB.Size.Length() * 0.5f + 1f))
+            {
                 return false;
-
-            var radius = dropship.Comp.LocalAABB.Size.Length() * 0.5f + 1f;
-            _entityLookup.GetEntitiesInRange(
-                Transform(targetMap).MapID,
-                targetPosition,
-                radius,
-                flightTerrainCandidates,
-                LookupFlags.Static | LookupFlags.Dynamic);
-            collisionHover.LastFlightCollisionSpatialQueries = queryBudget.Used;
-            GunshipCollisionSpatialQueriesMetric.Observe(queryBudget.Used);
+            }
         }
 
         foreach (var rotatedCenter in GetRotatedGunshipFootprintCenters(dropship, targetRotation, boundaryOnly))
@@ -1231,6 +1295,30 @@ public sealed partial class DropshipTacticalLandSystem
         }
 
         return !blocked;
+    }
+
+    private bool PrepareGunshipCollisionCandidates(
+        Entity<DropshipTacticalHoverComponent> dropship,
+        EntityUid targetMap,
+        Vector2 queryCenter,
+        float queryRadius)
+    {
+        var candidates = dropship.Comp.FlightTerrainCandidates;
+        candidates.Clear();
+
+        var queryBudget = new GunshipSpatialQueryBudget(1);
+        if (!queryBudget.TryConsume())
+            return false;
+
+        _entityLookup.GetEntitiesInRange(
+            Transform(targetMap).MapID,
+            queryCenter,
+            queryRadius,
+            candidates,
+            LookupFlags.Static | LookupFlags.Dynamic);
+        dropship.Comp.LastFlightCollisionSpatialQueries = queryBudget.Used;
+        GunshipCollisionSpatialQueriesMetric.Observe(queryBudget.Used);
+        return true;
     }
 
     private void CollectOverlappingFlightSmashables(
