@@ -3347,7 +3347,7 @@ entities:
     - type: Transform
       pos: 12.5,11.5
       parent: 2
-- proto: ComputerSurveillanceCameraMonitor
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 354
     components:
@@ -6967,7 +6967,7 @@ entities:
     - type: Transform
       pos: 12.5,6.5
       parent: 2
-- proto: SurveillanceCameraGeneral
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 1091
     components:
@@ -6976,7 +6976,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bridge
   - uid: 1092
@@ -6987,7 +6987,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Brig
   - uid: 1093
@@ -6997,7 +6997,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: EVA
   - uid: 1094
@@ -7008,7 +7008,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: North
   - uid: 1095
@@ -7019,7 +7019,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bar
   - uid: 1096
@@ -7030,7 +7030,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: East
   - uid: 1097
@@ -7040,7 +7040,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Medical
   - uid: 1098
@@ -7051,7 +7051,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: West
   - uid: 1099
@@ -7061,7 +7061,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: South
   - uid: 1100
@@ -7072,7 +7072,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Cargo
   - uid: 1101
@@ -7082,7 +7082,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Engineering
 - proto: SurveillanceCameraRouterGeneral

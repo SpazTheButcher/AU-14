@@ -2480,7 +2480,7 @@ entities:
     - type: Transform
       pos: -1.5,0.5
       parent: 1
-- proto: ComputerSurveillanceWirelessCameraMonitor
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 81
     components:

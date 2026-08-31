@@ -44552,7 +44552,7 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 57.5,-29.5
       parent: 2
-- proto: ComputerSurveillanceCameraMonitor
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 374
     components:
@@ -44580,7 +44580,7 @@ entities:
     - type: Transform
       pos: 59.5,-26.5
       parent: 2
-- proto: ComputerTelevision
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 5478
     components:
@@ -100602,7 +100602,7 @@ entities:
     - type: Transform
       pos: 57.5,-41.5
       parent: 2
-- proto: SurveillanceCameraCommand
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 7240
     components:
@@ -100612,7 +100612,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: AI Core, Pathway
   - uid: 7438
@@ -100623,7 +100623,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: AI Core Outside, South
   - uid: 8044
@@ -100634,7 +100634,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bridge, Telecomms
   - uid: 16311
@@ -100645,7 +100645,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: AI Upload
   - uid: 16344
@@ -100656,7 +100656,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: AI Upload Entrance
   - uid: 17595
@@ -100667,7 +100667,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: HoP's Office
   - uid: 17612
@@ -100678,7 +100678,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: EVA Storage
   - uid: 17613
@@ -100688,7 +100688,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Vault
   - uid: 17622
@@ -100699,7 +100699,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Gravity Generator
   - uid: 17623
@@ -100710,7 +100710,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bridge, Back
   - uid: 17624
@@ -100721,7 +100721,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Captain's Office
   - uid: 17625
@@ -100732,7 +100732,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Captain's Room
   - uid: 17626
@@ -100743,7 +100743,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bridge, Front
   - uid: 17661
@@ -100754,7 +100754,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: AI Core, Core
   - uid: 17676
@@ -100765,7 +100765,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Nuke Containment
   - uid: 18558
@@ -100776,7 +100776,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bridge, Northwest
   - uid: 18723
@@ -100787,7 +100787,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: AI Core Entrance, South
   - uid: 18724
@@ -100797,7 +100797,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: AI Core Entrance, North
   - uid: 18725
@@ -100808,7 +100808,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: AI Core Outside, East
   - uid: 18726
@@ -100818,7 +100818,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: AI Core Outside, North
   - uid: 19040
@@ -100829,10 +100829,10 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bridge Supplies
-- proto: SurveillanceCameraEngineering
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 3184
     components:
@@ -100842,7 +100842,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Singularity Chamber, North
   - uid: 12792
@@ -100853,7 +100853,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Atmos Hall, Southeast
   - uid: 12793
@@ -100863,7 +100863,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Atmos Hall, South
   - uid: 13648
@@ -100874,7 +100874,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Atmos Hall, Northwest
   - uid: 16532
@@ -100885,7 +100885,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Singularity Chamber, East
   - uid: 17419
@@ -100896,7 +100896,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Atmos Hall, Northeast
   - uid: 17628
@@ -100907,7 +100907,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Particle Accelerator
   - uid: 17629
@@ -100917,7 +100917,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Solars, Northwest
   - uid: 17631
@@ -100927,7 +100927,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Engineering Reception
   - uid: 17632
@@ -100938,7 +100938,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Engineering Hall
   - uid: 17634
@@ -100948,7 +100948,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: AME & Storage
   - uid: 17639
@@ -100959,7 +100959,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Tech Storage
   - uid: 17677
@@ -100969,7 +100969,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Atmos Reception
   - uid: 17903
@@ -100980,7 +100980,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Atmos Hall, Southwest
   - uid: 18164
@@ -100991,7 +100991,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Atmos Miners
   - uid: 18559
@@ -101002,7 +101002,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Engineering Storage
   - uid: 18727
@@ -101013,7 +101013,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Solars, Eastern
   - uid: 19017
@@ -101024,7 +101024,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Singularity Chamber, West
   - uid: 19093
@@ -101035,7 +101035,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: CE's Office
   - uid: 19096
@@ -101046,7 +101046,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Solars, Southwest
   - uid: 19100
@@ -101056,7 +101056,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Singularity Chamber, South
   - uid: 19607
@@ -101067,7 +101067,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Burn Chamber Entrance
   - uid: 19609
@@ -101078,10 +101078,10 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraEngineering
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Singularity Chamber, Entrance
-- proto: SurveillanceCameraGeneral
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 3912
     components:
@@ -101091,7 +101091,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Arrivals, Engineering
   - uid: 5352
@@ -101101,7 +101101,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Arrivals, Medical
   - uid: 15173
@@ -101112,7 +101112,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Morgue Hallway
   - uid: 16546
@@ -101123,7 +101123,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: North Science Hallway
   - uid: 17348
@@ -101133,7 +101133,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: North Medical Hallway
   - uid: 17618
@@ -101144,7 +101144,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Arrivals, Front
   - uid: 17619
@@ -101155,7 +101155,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Arrivals, Cryosleep
   - uid: 17630
@@ -101166,7 +101166,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Toolroom
   - uid: 17640
@@ -101176,7 +101176,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Roundabout, Southwest
   - uid: 17646
@@ -101187,7 +101187,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Virology Hallway
   - uid: 17647
@@ -101198,7 +101198,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Medical / Vault Hallway
   - uid: 17649
@@ -101209,7 +101209,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Dorms, Hallway
   - uid: 17663
@@ -101220,7 +101220,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: East Science Hallway
   - uid: 17664
@@ -101231,7 +101231,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Evac
   - uid: 17665
@@ -101242,7 +101242,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bridge Entrance, North
   - uid: 17675
@@ -101253,7 +101253,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bridge Entrance, South
   - uid: 17854
@@ -101263,7 +101263,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Changing Room
   - uid: 17863
@@ -101274,7 +101274,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Library / HoP Hallway
   - uid: 17912
@@ -101284,7 +101284,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Atmos View Hallway
   - uid: 18132
@@ -101295,7 +101295,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Security Hallway
   - uid: 18555
@@ -101306,7 +101306,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Roundabout, Northeast
   - uid: 18556
@@ -101317,7 +101317,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Outside Vault
   - uid: 18557
@@ -101328,7 +101328,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Janitorial Hallway
   - uid: 18560
@@ -101339,7 +101339,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Reporter's Hallway
   - uid: 18561
@@ -101350,7 +101350,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Breaching Point
   - uid: 18564
@@ -101361,7 +101361,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Dorms, Entrance
   - uid: 18565
@@ -101372,7 +101372,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Atmospherics Hallway
   - uid: 18730
@@ -101382,7 +101382,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Library Hallway
   - uid: 18731
@@ -101392,7 +101392,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Visitor Shuttle Dock
   - uid: 18741
@@ -101403,7 +101403,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: AME Hall, North
   - uid: 18742
@@ -101414,7 +101414,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: AME Hall, West
   - uid: 18743
@@ -101424,7 +101424,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Cargo Hallway
   - uid: 19035
@@ -101435,7 +101435,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bridge Entrance
   - uid: 19036
@@ -101446,7 +101446,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Arrivals, Docking
   - uid: 19041
@@ -101456,7 +101456,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Engineering Hallway
   - uid: 19608
@@ -101467,10 +101467,10 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraGeneral
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: HoP Hallway
-- proto: SurveillanceCameraMedical
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 17592
     components:
@@ -101480,7 +101480,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraMedical
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Chemistry Workroom
   - uid: 17593
@@ -101491,7 +101491,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraMedical
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Chemistry Backroom
   - uid: 17609
@@ -101501,7 +101501,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraMedical
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Medical Locker Room
   - uid: 17610
@@ -101512,7 +101512,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraMedical
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Surgery & Backroom
   - uid: 17611
@@ -101522,7 +101522,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraMedical
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: CMO's Office
   - uid: 17643
@@ -101533,7 +101533,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraMedical
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Virology Workspace
   - uid: 17644
@@ -101543,7 +101543,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraMedical
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Virology Waiting Room
   - uid: 18539
@@ -101553,7 +101553,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraMedical
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Medical Entrance
   - uid: 18728
@@ -101564,7 +101564,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraMedical
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Medical Outpost
   - uid: 19022
@@ -101574,7 +101574,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraMedical
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Morgue
   - uid: 19606
@@ -101585,7 +101585,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraMedical
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Medical Bay
 - proto: SurveillanceCameraRouterCommand
@@ -101644,7 +101644,7 @@ entities:
     - type: Transform
       pos: 35.5,-95.5
       parent: 2
-- proto: SurveillanceCameraScience
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 16981
     components:
@@ -101654,7 +101654,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraScience
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: RD's Office
   - uid: 17614
@@ -101665,7 +101665,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraScience
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Robotics
   - uid: 17615
@@ -101676,7 +101676,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraScience
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Xenoarcheology
   - uid: 17617
@@ -101686,7 +101686,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraScience
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Science Main Hall
   - uid: 19094
@@ -101697,10 +101697,10 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraScience
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Artifact Chamber
-- proto: SurveillanceCameraSecurity
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 5345
     components:
@@ -101709,7 +101709,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Security Outpost
   - uid: 7212
@@ -101719,7 +101719,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Mini-Armory
   - uid: 11940
@@ -101730,7 +101730,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Security Entrance
   - uid: 13856
@@ -101741,7 +101741,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Warden's Office
   - uid: 14568
@@ -101752,7 +101752,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Interrogation Room
   - uid: 14573
@@ -101763,7 +101763,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Genpop, Exit
   - uid: 14574
@@ -101774,7 +101774,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Genpop, Lockers
   - uid: 14806
@@ -101785,7 +101785,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Genpop, South
   - uid: 14812
@@ -101796,7 +101796,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Genpop, North
   - uid: 14815
@@ -101807,7 +101807,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Genpop, Containment Area
   - uid: 15451
@@ -101818,7 +101818,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: HoS' Office
   - uid: 15455
@@ -101829,7 +101829,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Security Hall
   - uid: 15456
@@ -101840,7 +101840,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Genpop Crossing
   - uid: 15457
@@ -101851,7 +101851,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Main Armory
   - uid: 15459
@@ -101862,7 +101862,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Locker Room
   - uid: 16285
@@ -101872,7 +101872,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Brigmed
   - uid: 18293
@@ -101883,10 +101883,10 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Detective's Office
-- proto: SurveillanceCameraService
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 7213
     components:
@@ -101896,7 +101896,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraService
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Lawyer's Office
   - uid: 15171
@@ -101907,7 +101907,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraService
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bartender Backroom
   - uid: 15172
@@ -101918,7 +101918,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraService
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Freezer
   - uid: 17596
@@ -101929,7 +101929,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraService
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Botany
   - uid: 17620
@@ -101939,7 +101939,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraService
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Reporter's Room
   - uid: 17621
@@ -101949,7 +101949,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraService
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Chapel
   - uid: 17641
@@ -101960,7 +101960,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraService
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Kitchen
   - uid: 17642
@@ -101971,7 +101971,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraService
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bar, Counter
   - uid: 18462
@@ -101982,7 +101982,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraService
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bar, Stage
   - uid: 18729
@@ -101993,7 +101993,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraService
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Library
   - uid: 19042
@@ -102004,7 +102004,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraService
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Janitorial
   - uid: 19337
@@ -102014,7 +102014,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraService
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Chaplain's Room
   - uid: 19605
@@ -102025,10 +102025,10 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraService
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Clown & Mime Rooms
-- proto: SurveillanceCameraSupply
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 4688
     components:
@@ -102038,7 +102038,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSupply
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Suit Room
   - uid: 8204
@@ -102049,7 +102049,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSupply
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Cargo Breakroom
   - uid: 8835
@@ -102060,7 +102060,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSupply
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Cargo Reception
   - uid: 17589
@@ -102070,7 +102070,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSupply
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Salvage
   - uid: 17590
@@ -102081,7 +102081,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSupply
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Cargo Entrance
   - uid: 17591
@@ -102091,7 +102091,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSupply
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: QM's Office
   - uid: 17660
@@ -102102,7 +102102,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSupply
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Cargo Dock, West
   - uid: 18566
@@ -102113,7 +102113,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSupply
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Cargo Employee Entrance
   - uid: 19023
@@ -102124,7 +102124,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSupply
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Cargo Delivery Conveyors
   - uid: 19092
@@ -102135,7 +102135,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSupply
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Cargo Materials
   - uid: 19130
@@ -102145,7 +102145,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSupply
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Cargo Dock, East
 - proto: SurveillanceCameraWirelessRouterEntertainment
@@ -105661,7 +105661,7 @@ entities:
     - type: Transform
       pos: 5.5,-3.5
       parent: 2
-- proto: WallmountTelescreen
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 6917
     components:
@@ -105669,7 +105669,7 @@ entities:
       rot: -1.5707963267948966 rad
       pos: -1.5,-13.5
       parent: 2
-- proto: WallmountTelevision
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 15276
     components:

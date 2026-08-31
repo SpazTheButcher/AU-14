@@ -215969,7 +215969,7 @@ entities:
     - type: Transform
       pos: 75.5,-237.5
       parent: 1
-- proto: ComputerTelevision
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 25864
     components:
@@ -263445,7 +263445,7 @@ entities:
     - type: Transform
       pos: 2.5,-233.5
       parent: 1
-- proto: WallmountTelescreen
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 33592
     components:

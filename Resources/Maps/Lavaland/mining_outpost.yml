@@ -5225,7 +5225,7 @@ entities:
     - type: Transform
       pos: 9.5,11.5
       parent: 1
-- proto: WallmountTelevision
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 861
     components:

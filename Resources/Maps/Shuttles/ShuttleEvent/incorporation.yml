@@ -2469,7 +2469,7 @@ entities:
     - type: Transform
       pos: -0.5,7.5
       parent: 1
-- proto: ComputerSurveillanceCameraMonitor
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 76
     components:
@@ -4987,7 +4987,7 @@ entities:
     - type: Transform
       pos: -0.5,-0.5
       parent: 1
-- proto: SurveillanceCameraCommand
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 859
     components:
@@ -4997,7 +4997,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: viewscreen
   - uid: 860
@@ -5007,7 +5007,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: captain's office
   - uid: 861
@@ -5018,7 +5018,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: medbay
   - uid: 862
@@ -5029,7 +5029,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: hallway
   - uid: 863
@@ -5040,7 +5040,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: dock
   - uid: 864
@@ -5051,7 +5051,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: supply
   - uid: 865
@@ -5062,7 +5062,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: port nacelle
   - uid: 866
@@ -5073,7 +5073,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraCommand
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: starboard nacelle
 - proto: SurveillanceCameraRouterCommand

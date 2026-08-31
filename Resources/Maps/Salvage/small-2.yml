@@ -357,7 +357,7 @@ entities:
       rot: 1.5707963267948966 rad
       pos: -2.5,-2.5
       parent: 55
-- proto: ComputerTelevision
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 113
     components:

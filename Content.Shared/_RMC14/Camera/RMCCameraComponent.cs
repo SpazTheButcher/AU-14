@@ -17,3 +17,15 @@ public sealed partial class RMCCameraComponent : Component
     [DataField, AutoNetworkedField]
     public string? NameOverride;
 }
+
+[ByRefEvent]
+public record struct RMCLegacyCameraIdChangedEvent(
+    EntityUid Camera,
+    EntProtoId? OldId,
+    EntProtoId? NewId);
+
+[ByRefEvent]
+public record struct RMCLegacyCameraMapInitEvent(EntityUid Camera);
+
+[ByRefEvent]
+public record struct RMCLegacyCameraComputerMapInitEvent(EntityUid Computer);

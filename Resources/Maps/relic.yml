@@ -15487,7 +15487,7 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 33.5,-1.5
       parent: 2
-- proto: ComputerSurveillanceCameraMonitor
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 225
     components:
@@ -43626,7 +43626,7 @@ entities:
     - type: Transform
       pos: 37.5,-7.5
       parent: 2
-- proto: SurveillanceCameraCommand
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 7457
     components:
@@ -43676,7 +43676,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       id: AI Upload
-- proto: SurveillanceCameraEngineering
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 6583
     components:
@@ -43733,7 +43733,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       id: Gravity Generator
-- proto: SurveillanceCameraGeneral
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 4740
     components:
@@ -43912,7 +43912,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       id: Air Tunnel West
-- proto: SurveillanceCameraMedical
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 7431
     components:
@@ -43994,7 +43994,7 @@ entities:
     - type: Transform
       pos: 49.5,48.5
       parent: 2
-- proto: SurveillanceCameraScience
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 4741
     components:
@@ -44012,7 +44012,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       id: Accurate Depiction of an Academic's Living Conditions
-- proto: SurveillanceCameraSecurity
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 7485
     components:
@@ -44046,7 +44046,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       id: Security Outpost
-- proto: SurveillanceCameraService
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 4737
     components:
@@ -44071,7 +44071,7 @@ entities:
       parent: 2
     - type: SurveillanceCamera
       id: Nightclub
-- proto: SurveillanceCameraSupply
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 7614
     components:

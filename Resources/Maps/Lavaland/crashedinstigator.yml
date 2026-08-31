@@ -3115,7 +3115,7 @@ entities:
     - type: Transform
       pos: 9.5,11.5
       parent: 1
-- proto: SurveillanceCameraSecurity
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 337
     components:
@@ -3125,7 +3125,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Aft-Port
   - uid: 339
@@ -3136,7 +3136,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Aft-Starboard
 - proto: SyndieFlag

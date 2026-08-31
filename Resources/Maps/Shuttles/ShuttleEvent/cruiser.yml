@@ -1502,14 +1502,14 @@ entities:
     - type: Transform
       pos: -1.5,16.5
       parent: 1
-- proto: ComputerSurveillanceCameraMonitor
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 176
     components:
     - type: Transform
       pos: -0.5,13.5
       parent: 1
-- proto: ComputerSurveillanceWirelessCameraMonitor
+- proto: CMUMonitorCameraColonyCMB
   entities:
   - uid: 166
     components:
@@ -3111,7 +3111,7 @@ entities:
     - type: Transform
       pos: -3.5,12.5
       parent: 1
-- proto: SurveillanceCameraSecurity
+- proto: CMUSurveillanceCameraColonyCMB
   entities:
   - uid: 539
     components:
@@ -3120,7 +3120,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Bridge
   - uid: 540
@@ -3130,7 +3130,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Dorms
   - uid: 541
@@ -3140,7 +3140,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Medical
   - uid: 542
@@ -3151,7 +3151,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Aft Airlock
   - uid: 543
@@ -3162,7 +3162,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Port Airlock
   - uid: 544
@@ -3173,7 +3173,7 @@ entities:
       parent: 1
     - type: SurveillanceCamera
       setupAvailableNetworks:
-      - SurveillanceCameraSecurity
+      - CMUSurveillanceCameraColonyCMB
       nameSet: True
       id: Starboard Airlock
 - proto: Syringe
