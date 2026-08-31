@@ -95,6 +95,12 @@ public sealed partial class DropshipTacticalHoverComponent : Component
     /// </summary>
     public readonly HashSet<EntityUid> FlightTerrainCandidates = new();
 
+    /// <summary>
+    /// Last broadphase-query count for one collision probe. Retained for
+    /// diagnostics and enforced by <see cref="GunshipSpatialQueryBudget"/>.
+    /// </summary>
+    public int LastFlightCollisionSpatialQueries;
+
     public bool HoverEffectsPoseInitialized;
     public EntityUid? HoverEffectsMap;
     public Vector2 HoverEffectsPosition;

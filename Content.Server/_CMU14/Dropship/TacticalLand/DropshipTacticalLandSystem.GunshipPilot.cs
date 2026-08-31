@@ -1067,6 +1067,26 @@ public sealed partial class DropshipTacticalLandSystem
 
         var blocked = false;
         var groundRotation = _transform.GetWorldRotation(targetMap);
+        HashSet<EntityUid>? flightTerrainCandidates = null;
+        if (TryComp(dropship.Owner, out DropshipTacticalHoverComponent? collisionHover))
+        {
+            flightTerrainCandidates = collisionHover.FlightTerrainCandidates;
+            flightTerrainCandidates.Clear();
+
+            var queryBudget = new GunshipSpatialQueryBudget(1);
+            if (!queryBudget.TryConsume())
+                return false;
+
+            var radius = dropship.Comp.LocalAABB.Size.Length() * 0.5f + 1f;
+            _entityLookup.GetEntitiesInRange(
+                Transform(targetMap).MapID,
+                targetPosition,
+                radius,
+                flightTerrainCandidates,
+                LookupFlags.Static | LookupFlags.Dynamic);
+            collisionHover.LastFlightCollisionSpatialQueries = queryBudget.Used;
+        }
+
         foreach (var rotatedCenter in GetRotatedGunshipFootprintCenters(dropship, targetRotation, boundaryOnly))
         {
             var sample = targetPosition + rotatedCenter;
@@ -1082,25 +1102,9 @@ public sealed partial class DropshipTacticalLandSystem
             var foundPhysicalBlocker = false;
             if (TryComp(dropship.Owner, out DropshipTacticalHoverComponent? flightHover))
             {
-                var candidates = flightHover.FlightTerrainCandidates;
-                candidates.Clear();
+                var candidates = flightTerrainCandidates!;
                 var sampleBounds = Box2.UnitCentered.Scale(0.98f).Translated(sample);
                 var sampleWorldBounds = new Box2Rotated(sampleBounds, targetRotation, sample);
-                _entityLookup.GetEntitiesIntersecting(
-                    targetMap,
-                    sampleWorldBounds,
-                    candidates,
-                    LookupFlags.Static | LookupFlags.Dynamic);
-
-                // Raised walkways and their edge pieces may belong to a
-                // support grid rather than the primary terrain grid. Query
-                // every broadphase on this map as well or those fixtures can
-                // pass through the hull and collide with its occupants.
-                _entityLookup.GetEntitiesIntersecting(
-                    Transform(targetMap).MapID,
-                    sampleWorldBounds.CalcBoundingBox(),
-                    candidates,
-                    LookupFlags.Static | LookupFlags.Dynamic);
 
                 // Thin anchored fixtures such as raised platform edges can be
                 // omitted by the swept overlap when their anchor tile is an
@@ -1135,8 +1139,8 @@ public sealed partial class DropshipTacticalLandSystem
                         continue;
 
                     var worldPosition = _transform.GetWorldPosition(candidateXform);
-                    if (candidateXform.GridUid != targetMap &&
-                        !sampleWorldBounds.Contains(worldPosition))
+                    var candidateBounds = _entityLookup.GetWorldAABB(candidate);
+                    if (!candidateBounds.Intersects(sampleWorldBounds.CalcBoundingBox()))
                     {
                         continue;
                     }
@@ -1202,6 +1206,7 @@ public sealed partial class DropshipTacticalLandSystem
                 groundRotation,
                 blockMask,
                 overlapHover,
+                flightTerrainCandidates!,
                 blockers,
                 ref blocked);
         }
@@ -1217,20 +1222,10 @@ public sealed partial class DropshipTacticalLandSystem
         Angle groundRotation,
         CollisionGroup blockMask,
         DropshipTacticalHoverComponent hover,
+        HashSet<EntityUid> candidates,
         HashSet<EntityUid> blockers,
         ref bool blocked)
     {
-        var candidates = hover.FlightTerrainCandidates;
-        candidates.Clear();
-
-        var radius = dropship.Comp.LocalAABB.Size.Length() * 0.5f + 1f;
-        _entityLookup.GetEntitiesInRange(
-            Transform(targetMap).MapID,
-            targetPosition,
-            radius,
-            candidates,
-            LookupFlags.Static | LookupFlags.Dynamic);
-
         if (hover.CachedFootprintCenters.Count == 0)
             CacheGunshipFootprint((dropship.Owner, hover), dropship.Comp);
 
