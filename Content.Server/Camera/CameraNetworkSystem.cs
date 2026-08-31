@@ -27,6 +27,7 @@ public sealed class CameraNetworkSystem : EntitySystem
     private readonly Dictionary<ProtoId<CameraNetworkPrototype>, EntityUid> _seedNetworks = [];
     private readonly Dictionary<EntityUid, PendingMarkerChange> _pendingMarkerReceivers = [];
     private readonly Dictionary<EntityUid, PendingMobileMarkerChange> _mobileMarkerUpdates = [];
+    private bool _seedNetworksInitialized;
 
     public ulong MarkerRevision { get; private set; }
 
@@ -48,7 +49,22 @@ public sealed class CameraNetworkSystem : EntitySystem
         SubscribeLocalEvent<CameraMapMarkerComponent, ComponentShutdown>(OnMarkerShutdown);
         SubscribeLocalEvent<CameraMapMarkerComponent, MoveEvent>(OnMarkerMove);
         SubscribeLocalEvent<EntityTerminatingEvent>(OnEntityTerminating);
+        SubscribeLocalEvent<PrototypesReloadedEventArgs>(OnPrototypesReloaded);
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
+    }
+
+    private void OnPrototypesReloaded(PrototypesReloadedEventArgs args)
+    {
+        if (args.WasModified<CameraNetworkPrototype>())
+            EnsureSeedNetworks();
+    }
+
+    private void EnsureSeedNetworks()
+    {
+        foreach (var prototype in _prototypeManager.EnumeratePrototypes<CameraNetworkPrototype>())
+        {
+            ResolveNetwork(prototype.ID);
+        }
     }
 
     private void OnMemberStartup(Entity<CameraNetworkMemberComponent> ent, ref ComponentStartup args)
@@ -146,6 +162,12 @@ public sealed class CameraNetworkSystem : EntitySystem
     public override void Update(float frameTime)
     {
         base.Update(frameTime);
+
+        if (!_seedNetworksInitialized)
+        {
+            EnsureSeedNetworks();
+            _seedNetworksInitialized = true;
+        }
 
         foreach (var (marker, pending) in _mobileMarkerUpdates.ToArray())
         {
