@@ -119,7 +119,16 @@ public sealed partial class GridVehicleMoverSystem : EntitySystem
         {
             hits.Add(hit.Owner);
         }
-        hits.Sort(static (left, right) => left.Id.CompareTo(right.Id));
+        var movementStart = transform.GetWorldPosition(uid);
+        hits.Sort((left, right) =>
+        {
+            var leftPosition = transform.GetWorldPosition(left);
+            var rightPosition = transform.GetWorldPosition(right);
+            var leftOrder = ImpactEnergySolver.GetContactOrder(movementStart, tx.Position, leftPosition);
+            var rightOrder = ImpactEnergySolver.GetContactOrder(movementStart, tx.Position, rightPosition);
+            var order = leftOrder.CompareTo(rightOrder);
+            return order != 0 ? order : left.Id.CompareTo(right.Id);
+        });
         var playedCollisionSound = false;
         var mobHits = new ValueList<EntityUid>(0);
 

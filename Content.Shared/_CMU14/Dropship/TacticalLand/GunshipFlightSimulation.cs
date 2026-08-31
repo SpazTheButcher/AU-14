@@ -38,6 +38,17 @@ public static class GunshipFlightSimulation
         return GetSweepSteps(cornerTravel, maximumSpacing);
     }
 
+    public static int GetCombinedSweepSteps(
+        float linearDistance,
+        float angleRadians,
+        float hullRadius,
+        float maximumSpacing = MaximumSweepSpacing)
+    {
+        return Math.Max(
+            GetLinearSweepSteps(linearDistance, maximumSpacing),
+            GetAngularSweepSteps(angleRadians, hullRadius, maximumSpacing));
+    }
+
     private static int GetSweepSteps(float travel, float maximumSpacing)
     {
         if (!float.IsFinite(travel) || !float.IsFinite(maximumSpacing) || maximumSpacing <= 0f)

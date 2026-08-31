@@ -362,7 +362,7 @@ public sealed class GunshipPilotHudOverlay : Overlay
         if (hud.Dropship == null)
         {
             DrawUnlinkedVisorTint(handle, bounds, hud);
-            const string message = "No dropship controls linked.";
+            var message = Loc.GetString("cmu-gunship-hud-no-controls-linked");
             var measured = handle.DrawString(_font, Vector2.Zero, message, Color.Transparent);
             var position = new Vector2(bounds.Left + (bounds.Width - measured.X) * 0.5f, bounds.Top + 18f);
             handle.DrawString(_font, position + Vector2.One * 2f, message, Color.Black);
@@ -411,7 +411,7 @@ public sealed class GunshipPilotHudOverlay : Overlay
         handle.DrawLine(new Vector2(center.X, center.Y - 38f), new Vector2(center.X, center.Y + 38f), HudDim);
 
         var labelPosition = new Vector2(left + 8f, top + 5f);
-        handle.DrawString(_smallFont, labelPosition, "DRIFT", HudColor);
+        handle.DrawString(_smallFont, labelPosition, Loc.GetString("cmu-gunship-hud-drift"), HudColor);
 
         var localVelocity = Angle.FromDegrees(-hud.ShipRotationDegrees).RotateVec(hud.LinearVelocity);
         var speed = localVelocity.Length();
@@ -457,7 +457,8 @@ public sealed class GunshipPilotHudOverlay : Overlay
 
         handle.DrawRect(box, IntegrityBorder, false);
 
-        var text = $"HULL {MathF.Round(ratio * 100f):0}%";
+        var text = Loc.GetString("cmu-gunship-hud-hull-percent",
+            ("percent", MathF.Round(ratio * 100f)));
         var textSize = handle.DrawString(_smallFont, Vector2.Zero, text, Color.Transparent);
         var textPosition = box.Center - textSize / 2f;
         handle.DrawString(_smallFont, textPosition + Vector2.One, text, Color.Black);
@@ -491,7 +492,8 @@ public sealed class GunshipPilotHudOverlay : Overlay
 
         handle.DrawRect(box, ThrustBorder, false);
 
-        var text = $"THRUST {MathF.Round(ratio * 100f):0}%";
+        var text = Loc.GetString("cmu-gunship-hud-thrust-percent",
+            ("percent", MathF.Round(ratio * 100f)));
         var textSize = handle.DrawString(_smallFont, Vector2.Zero, text, Color.Transparent);
         var textPosition = box.Center - textSize / 2f;
         handle.DrawString(_smallFont, textPosition + Vector2.One, text, Color.Black);
@@ -522,7 +524,7 @@ public sealed class GunshipPilotHudOverlay : Overlay
         handle.DrawRect(box, AmmoColor, false);
 
         var count = Math.Max(0, hud.DirectFireAmmo);
-        var text = $"DIRECT AMMO {count}";
+        var text = Loc.GetString("cmu-gunship-hud-direct-ammo", ("count", count));
         var textSize = handle.DrawString(_smallFont, Vector2.Zero, text, Color.Transparent);
         var textPosition = box.Center - textSize / 2f;
         handle.DrawString(_smallFont, textPosition + Vector2.One, text, Color.Black);

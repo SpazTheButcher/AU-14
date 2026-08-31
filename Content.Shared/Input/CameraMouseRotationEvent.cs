@@ -2,6 +2,7 @@ using Robust.Shared.Serialization;
 
 namespace Content.Shared.Input;
 
+// CMU14 - Start: predicted mouse-driven camera rotation messages.
 [Serializable, NetSerializable]
 public sealed class CameraMouseRotationEvent(double radians) : EntityEventArgs
 {
@@ -13,3 +14,4 @@ public sealed class CameraMouseRotationAckEvent(double radians) : EntityEventArg
 {
     public readonly double Radians = radians;
 }
+// CMU14 - End

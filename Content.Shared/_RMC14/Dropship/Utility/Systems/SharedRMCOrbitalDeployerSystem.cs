@@ -151,7 +151,7 @@ public abstract partial class SharedRMCOrbitalDeployerSystem : EntitySystem
             hover.GroundMap is not { } groundMap ||
             !TryComp(groundMap, out MapGridComponent? groundGrid))
         {
-            _popup.PopupPredictedCursor("The LAG-14 can only deploy while the gunship is in stable tactical hover.",
+            _popup.PopupPredictedCursor(Loc.GetString("cmu-gunship-lag14-requires-stable-hover"),
                 user,
                 PopupType.SmallCaution);
             return false;
@@ -161,7 +161,7 @@ public abstract partial class SharedRMCOrbitalDeployerSystem : EntitySystem
         var tile = _map.WorldToTile(groundMap, groundGrid, worldPosition);
         if (!_map.TryGetTileRef(groundMap, groundGrid, tile, out var tileRef) || tileRef.Tile.IsEmpty)
         {
-            _popup.PopupPredictedCursor("There is no ground directly below the LAG-14.", user, PopupType.SmallCaution);
+            _popup.PopupPredictedCursor(Loc.GetString("cmu-gunship-lag14-no-ground-below"), user, PopupType.SmallCaution);
             return false;
         }
 
@@ -170,7 +170,7 @@ public abstract partial class SharedRMCOrbitalDeployerSystem : EntitySystem
                                          CollisionGroup.HighImpassable;
         if (_turf.IsTileBlocked(tileRef, blockMask))
         {
-            _popup.PopupPredictedCursor("The LAG-14 deployment area below is obstructed.", user, PopupType.SmallCaution);
+            _popup.PopupPredictedCursor(Loc.GetString("cmu-gunship-lag14-area-obstructed"), user, PopupType.SmallCaution);
             return false;
         }
 

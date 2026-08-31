@@ -29,6 +29,9 @@ public sealed partial class DropshipIntegrityComponent : Component
     public bool Wrecked;
 
     [DataField, AutoNetworkedField]
+    public DropshipFlightState FlightState = DropshipFlightState.Landed;
+
+    [DataField, AutoNetworkedField]
     public List<DropshipMalfunction> ActiveMalfunctions = new();
 
     [DataField, AutoNetworkedField]
@@ -57,6 +60,9 @@ public sealed partial class DropshipIntegrityComponent : Component
 
     [DataField]
     public float MinimumDamagingImpactSpeed = 1.5f;
+
+    [DataField]
+    public float XenoAcidProjectileDamageMultiplier = 4f;
 
     [DataField]
     public SoundSpecifier ImpactSound = new SoundPathSpecifier("/Audio/_RMC14/Effects/metal_crash.ogg",

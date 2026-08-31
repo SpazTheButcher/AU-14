@@ -160,7 +160,7 @@ public sealed partial class GunshipDirectFireSystem : EntitySystem
         if (TryComp(grid, out DropshipIntegrityComponent? integrity) &&
             integrity.ActiveMalfunctions.Contains(DropshipMalfunction.WeaponShort))
         {
-            message = "Weapon short detected. The direct-fire system is offline.";
+            message = Loc.GetString("cmu-gunship-direct-fire-weapon-short");
             return false;
         }
 
@@ -173,7 +173,7 @@ public sealed partial class GunshipDirectFireSystem : EntitySystem
             ammoUid is not { } loadedAmmo ||
             ammo == null)
         {
-            args.Reason = "The direct-fire weapon has no compatible ammunition loaded.";
+            args.Reason = Loc.GetString("cmu-gunship-direct-fire-no-ammunition");
             return;
         }
 

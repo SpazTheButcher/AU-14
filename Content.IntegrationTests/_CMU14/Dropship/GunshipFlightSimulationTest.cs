@@ -61,4 +61,28 @@ public sealed class GunshipFlightSimulationTest
 
         Assert.That(steps, Is.EqualTo(7));
     }
+
+    [Test]
+    public void CombinedSweepUsesTheMoreRestrictiveMotion()
+    {
+        var steps = GunshipFlightSimulation.GetCombinedSweepSteps(
+            linearDistance: 1f,
+            angleRadians: MathF.PI * 0.5f,
+            hullRadius: 2f,
+            maximumSpacing: 0.5f);
+
+        Assert.That(steps, Is.EqualTo(7));
+    }
+
+    [Test]
+    public void CombinedSweepStillSamplesTranslationWhenRotationIsStationary()
+    {
+        var steps = GunshipFlightSimulation.GetCombinedSweepSteps(
+            linearDistance: 1.01f,
+            angleRadians: 0f,
+            hullRadius: 8f,
+            maximumSpacing: 0.5f);
+
+        Assert.That(steps, Is.EqualTo(3));
+    }
 }

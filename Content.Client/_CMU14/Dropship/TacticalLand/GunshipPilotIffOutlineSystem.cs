@@ -35,6 +35,7 @@ public sealed partial class GunshipPilotIffOutlineSystem : EntitySystem
     [Dependency] private ITileDefinitionManager _tile = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private CMUClientZLevelsSystem _zLevels = default!;
 
     private ShaderInstance _friendlyShader = default!;
     private ShaderInstance _neutralShader = default!;
@@ -47,7 +48,6 @@ public sealed partial class GunshipPilotIffOutlineSystem : EntitySystem
     private readonly HashSet<Entity<MobStateComponent>> _viewportMobs = new();
     private readonly List<Box2> _openingBounds = new();
     private readonly List<Entity<MapGridComponent>> _openingGrids = new();
-    private CMUClientZLevelsSystem _zLevels = default!;
     private TimeSpan _nextUpdate;
 
     public override void Initialize()
@@ -57,7 +57,6 @@ public sealed partial class GunshipPilotIffOutlineSystem : EntitySystem
         _friendlyShader = CreateShader(FriendlyColor);
         _neutralShader = CreateShader(NeutralColor);
         _hostileShader = CreateShader(HostileColor);
-        _zLevels = EntityManager.System<CMUClientZLevelsSystem>();
     }
 
     public override void Shutdown()

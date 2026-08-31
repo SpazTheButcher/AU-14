@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 
 namespace Content.Shared._CMU14.Destruction;
 
@@ -17,6 +18,20 @@ public static class ImpactEnergySolver
         var available = MathF.Abs(availableSpeed);
         var required = MathF.Max(0f, requiredSpeed);
         return MathF.Sqrt(MathF.Max(0f, available * available - required * required));
+    }
+
+    /// <summary>
+    /// Returns a stable geometric key for resolving swept contacts from the
+    /// start of a motion toward its target. Stationary probes use radial
+    /// distance so rotation-only checks still resolve the nearest contact first.
+    /// </summary>
+    public static float GetContactOrder(Vector2 start, Vector2 target, Vector2 contact)
+    {
+        var delta = target - start;
+        if (delta == Vector2.Zero)
+            return Vector2.DistanceSquared(start, contact);
+
+        return Vector2.Dot(contact - start, Vector2.Normalize(delta));
     }
 
     /// <summary>

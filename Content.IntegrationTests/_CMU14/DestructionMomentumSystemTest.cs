@@ -1,6 +1,7 @@
 using Content.Server._CMU14.Destruction;
 using Content.Shared._CMU14.Destruction;
 using Content.Shared.Damage;
+using System.Numerics;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 
@@ -116,6 +117,29 @@ public sealed class DestructionMomentumSystemTest
     public void RemainingSpeedCannotGoBelowZero()
     {
         Assert.That(ImpactEnergySolver.GetRemainingSpeed(3f, 5f), Is.Zero.Within(0.001f));
+    }
+
+    [Test]
+    public void SweptContactsAreOrderedFrontToBack()
+    {
+        var start = Vector2.Zero;
+        var target = new Vector2(10f, 0f);
+
+        var near = ImpactEnergySolver.GetContactOrder(start, target, new Vector2(2f, 4f));
+        var far = ImpactEnergySolver.GetContactOrder(start, target, new Vector2(8f, -3f));
+
+        Assert.That(near, Is.LessThan(far));
+    }
+
+    [Test]
+    public void StationaryContactsAreOrderedByDistance()
+    {
+        var center = new Vector2(5f, 5f);
+
+        var near = ImpactEnergySolver.GetContactOrder(center, center, new Vector2(6f, 5f));
+        var far = ImpactEnergySolver.GetContactOrder(center, center, new Vector2(8f, 5f));
+
+        Assert.That(near, Is.LessThan(far));
     }
 
     [Test]

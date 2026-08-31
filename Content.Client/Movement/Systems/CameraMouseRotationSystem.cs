@@ -12,6 +12,7 @@ using Robust.Shared.Timing;
 
 namespace Content.Client.Movement.Systems;
 
+// CMU14 - Start: mouse-driven camera rotation used by gunship piloting.
 public sealed partial class CameraMouseRotationSystem : EntitySystem
 {
     private const float DegreesPerPixel = 0.15f;
@@ -214,3 +215,4 @@ public sealed partial class CameraMouseRotationSystem : EntitySystem
         RaisePredictiveEvent(new CameraMouseRotationEvent(_targetRotation.Theta));
     }
 }
+// CMU14 - End
