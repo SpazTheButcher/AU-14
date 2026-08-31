@@ -55,32 +55,6 @@ public sealed class RMCCameraBui : RMCPopOutBui<RMCCameraWindow>
         Window.NetworkEditor.EditorCameraSelected += _ => RefreshEditorPreview();
 
         Refresh();
-        if (State is RMCCameraBuiState state)
-        {
-            Window.SetFeatures(state.MapEnabled, state.EditorEnabled);
-            if (state.EditorEnabled)
-                Window.NetworkEditor.SetState(state.Editor);
-            if (state.MapEnabled)
-                UpdateMap(state.Map);
-        }
-    }
-
-    protected override void UpdateState(BoundUserInterfaceState state)
-    {
-        base.UpdateState(state);
-
-        if (state is not RMCCameraBuiState cameraState)
-            return;
-
-        _mapState = cameraState.Map;
-        if (Window != null)
-        {
-            Window.SetFeatures(cameraState.MapEnabled, cameraState.EditorEnabled);
-            if (cameraState.EditorEnabled)
-                Window.NetworkEditor.SetState(cameraState.Editor);
-        }
-        if (cameraState.MapEnabled)
-            UpdateMap(_mapState);
     }
 
     protected override void ReceiveMessage(BoundUserInterfaceMessage message)

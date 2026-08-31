@@ -402,7 +402,7 @@ public sealed partial class RMCCameraSystem
         FinishEditorCommand(computer, args.Actor, error);
     }
 
-    protected override void OnCameraRemoved(Entity<RMCCameraComponent> camera)
+    private void OnEditorCameraShutdown(Entity<RMCCameraComponent> camera, ref ComponentShutdown args)
     {
         var query = EntityQueryEnumerator<RMCCameraComputerComponent>();
         while (query.MoveNext(out var computerUid, out var computer))
@@ -410,7 +410,6 @@ public sealed partial class RMCCameraSystem
             if (TerminatingOrDeleted(computerUid))
                 continue;
 
-            RebuildComputerCameras(computerUid, computer);
             UpdateUserInterface((computerUid, computer));
         }
     }
@@ -592,7 +591,6 @@ public sealed partial class RMCCameraSystem
 
     private void RefreshAfterEditorMutation(Entity<RMCCameraComputerComponent> computer)
     {
-        RebuildComputerCameras(computer.Owner, computer.Comp);
         UpdateUserInterface(computer);
     }
 }

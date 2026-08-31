@@ -6,6 +6,7 @@ using Content.Server.GameTicking;
 using Content.Server.Maps;
 using Content.Server.Power;
 using Content.Server.Power.Components;
+using Content.Server.Speech;
 using Content.Server._RMC14.Camera;
 using Content.Server.SurveillanceCamera;
 using Content.Server.Wires;
@@ -381,21 +382,21 @@ public sealed class CameraNetworkSystemTest
 
                     Assert.Multiple(() =>
                     {
-                        Assert.That(rmc.BuildAvailableNetworks(firstUid).Select(network => network.Id),
-                            Does.Not.Contain((ProtoId<CameraNetworkPrototype>) NetworkA));
-                        Assert.That(rmc.BuildAvailableNetworks(secondUid).Single(network => network.Id == NetworkA).Name,
-                            Is.EqualTo("CMU test camera network A"));
                         Assert.That(rmc.BuildEditorState((firstUid, first)).Networks
                             .Single(network => network.Id == networkANet).Name, Is.EqualTo("Local engineering"));
                         Assert.That(rmc.BuildEditorState((firstUid, first)).Networks
                             .Single(network => network.Id == networkANet).Hidden, Is.True);
+                        Assert.That(rmc.BuildEditorState((secondUid, second)).Networks
+                            .Single(network => network.Id == networkANet).Name, Is.EqualTo("CMU test camera network A"));
+                        Assert.That(rmc.BuildEditorState((secondUid, second)).Networks
+                            .Single(network => network.Id == networkANet).Hidden, Is.False);
                     });
 
                     var hidden = rmc.BuildEditorState((firstUid, first));
                     Assert.That(rmc.TrySetSeededNetworkHidden(
                         (firstUid, first), actor, hidden.Revision, networkA, false, out _), Is.True);
-                    Assert.That(rmc.BuildAvailableNetworks(firstUid).Single(network => network.Id == NetworkA).Name,
-                        Is.EqualTo("Local engineering"));
+                    Assert.That(rmc.BuildEditorState((firstUid, first)).Networks
+                        .Single(network => network.Id == networkANet).Hidden, Is.False);
                     Assert.That(rmc.BuildEditorState((secondUid, second)).Revision, Is.Zero);
                 }
                 finally
@@ -487,7 +488,7 @@ public sealed class CameraNetworkSystemTest
                 var entMan = server.EntMan;
                 var rmc = entMan.System<RMCCameraSystem>();
                 var networks = entMan.System<CameraNetworkSystem>();
-                var consoleUid = entMan.SpawnEntity("CMUTestLegacyRmcComputer", MapCoordinates.Nullspace);
+                var consoleUid = entMan.SpawnEntity("CMUTestRmcMapComputer", MapCoordinates.Nullspace);
                 var actor = entMan.SpawnEntity(null, MapCoordinates.Nullspace);
                 var source = entMan.SpawnEntity(null, MapCoordinates.Nullspace);
 
@@ -500,8 +501,7 @@ public sealed class CameraNetworkSystemTest
 
                     Assert.Multiple(() =>
                     {
-                        Assert.That(rmc.BuildAvailableNetworks(consoleUid).Select(network => network.Id),
-                            Does.Contain((ProtoId<CameraNetworkPrototype>) NetworkB));
+                        Assert.That(networks.GetEffectiveNetworkEntities(consoleUid), Does.Contain(networkB));
                         Assert.That(editor.Networks.Select(network => network.Id),
                             Does.Not.Contain(entMan.GetNetEntity(networkB)));
                         Assert.That(rmc.TryRenameEditorNetwork(
@@ -735,12 +735,7 @@ public sealed class CameraNetworkSystemTest
 
                     Assert.That(rmc.TrySaveEditorCamera((consoleUid, console), actor, 0, entMan.GetNetEntity(camera),
                         "Returned camera", [networkA], out _), Is.True);
-                    rmc.RebuildComputerCameras(consoleUid, console);
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(console.CameraIds, Does.Contain(entMan.GetNetEntity(camera)));
-                        Assert.That(networks.GetNetworkMembers(NetworkA), Does.Contain(camera));
-                    });
+                    Assert.That(networks.GetNetworkMembers(NetworkA), Does.Contain(camera));
                 }
                 finally
                 {
@@ -785,21 +780,7 @@ public sealed class CameraNetworkSystemTest
                 try
                 {
                     var first = entMan.GetComponent<RMCCameraComputerComponent>(firstConsoleUid);
-                    var second = entMan.GetComponent<RMCCameraComputerComponent>(secondConsoleUid);
                     var networkA = networks.ResolveNetwork(NetworkA);
-                    rmc.RebuildComputerCameras(firstConsoleUid, first);
-                    rmc.RebuildComputerCameras(secondConsoleUid, second);
-                    Assert.That(rmc.TrySelectCamera((firstConsoleUid, first), camera), Is.True);
-                    Assert.That(rmc.TrySelectCamera((secondConsoleUid, second), camera), Is.True);
-
-                    var initialState = rmc.BuildBuiState((firstConsoleUid, first));
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(first.CameraNames, Does.Contain("Old camera A"));
-                        Assert.That(initialState.Map.Grids.SelectMany(cameraGrid => cameraGrid.Markers)
-                            .Single(marker => marker.Camera == entMan.GetNetEntity(camera)).Name,
-                            Is.EqualTo("Old camera A"));
-                    });
 
                     Assert.That(rmc.TrySaveEditorCamera((firstConsoleUid, first), actor, 0,
                         entMan.GetNetEntity(camera), "Renamed camera", [networkA], out _), Is.True);
@@ -810,19 +791,16 @@ public sealed class CameraNetworkSystemTest
                         "camera display names need not be unique");
                     networks.Update(0f);
 
-                    var firstState = rmc.BuildBuiState((firstConsoleUid, first));
-                    var secondState = rmc.BuildBuiState((secondConsoleUid, second));
+                    var firstState = rmc.BuildEditorState((firstConsoleUid, first));
+                    var second = entMan.GetComponent<RMCCameraComputerComponent>(secondConsoleUid);
+                    var secondState = rmc.BuildEditorState((secondConsoleUid, second));
                     Assert.Multiple(() =>
                     {
                         Assert.That(entMan.GetComponent<MetaDataComponent>(camera).EntityName, Is.EqualTo("Renamed camera"));
-                        Assert.That(first.CameraNames, Does.Contain("Renamed camera"));
-                        Assert.That(second.CameraNames, Does.Contain("Renamed camera"));
-                        Assert.That(firstState.Map.Grids.SelectMany(cameraGrid => cameraGrid.Markers)
-                            .Single(marker => marker.Camera == entMan.GetNetEntity(camera)).Name, Is.EqualTo("Renamed camera"));
-                        Assert.That(secondState.Map.Grids.SelectMany(cameraGrid => cameraGrid.Markers)
-                            .Single(marker => marker.Camera == entMan.GetNetEntity(camera)).Name, Is.EqualTo("Renamed camera"));
-                        Assert.That(rmc.GetComputerCameraName((firstConsoleUid, first), camera, out var activeName), Is.True);
-                        Assert.That(activeName, Is.EqualTo("Renamed camera"));
+                        Assert.That(firstState.Cameras.Single(entry => entry.Camera == entMan.GetNetEntity(camera)).Name,
+                            Is.EqualTo("Renamed camera"));
+                        Assert.That(secondState.Cameras.Single(entry => entry.Camera == entMan.GetNetEntity(camera)).Name,
+                            Is.EqualTo("Renamed camera"));
                     });
                 }
                 finally
@@ -1096,12 +1074,8 @@ public sealed class CameraNetworkSystemTest
                     Assert.That(rmc.TryDeleteEditorNetwork((consoleUid, console), actor, beforeDelete.Revision,
                         ownedUid, out _), Is.True);
 
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(console.CameraIds, Does.Not.Contain(entMan.GetNetEntity(camera)));
-                        Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).RuntimeNetworks,
-                            Does.Not.Contain(ownedUid));
-                    });
+                    Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).RuntimeNetworks,
+                        Does.Not.Contain(ownedUid));
                 }
                 finally
                 {
@@ -1180,227 +1154,6 @@ public sealed class CameraNetworkSystemTest
             });
         }
         finally { server.Dispose(); }
-    }
-
-    [Test]
-    public void RmcBuiStateRetainsLogicalNetworkIdsNamesAndSelection()
-    {
-        var state = new RMCCameraBuiState(
-            new CameraMapUiState(null, []),
-            [
-                new CameraNetworkUiData((ProtoId<CameraNetworkPrototype>) NetworkA, "cmu-test-camera-network-a"),
-                new CameraNetworkUiData((ProtoId<CameraNetworkPrototype>) NetworkB, "cmu-test-camera-network-b"),
-            ],
-            (ProtoId<CameraNetworkPrototype>) NetworkB);
-        var message = new RMCCameraNetworkBuiMsg((ProtoId<CameraNetworkPrototype>) NetworkA);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(state.Networks.Select(network => network.Id), Is.EqualTo(new[]
-            {
-                (ProtoId<CameraNetworkPrototype>) NetworkA,
-                (ProtoId<CameraNetworkPrototype>) NetworkB,
-            }));
-            Assert.That(state.Networks.Select(network => network.Name), Is.EqualTo(new[]
-            {
-                "cmu-test-camera-network-a",
-                "cmu-test-camera-network-b",
-            }));
-            Assert.That(state.ActiveNetwork, Is.EqualTo((ProtoId<CameraNetworkPrototype>) NetworkB));
-            Assert.That(message.Network, Is.EqualTo((ProtoId<CameraNetworkPrototype>) NetworkA));
-        });
-    }
-
-    [Test]
-    public async Task RmcBuildsLocalizedAvailableNetworksInStableOrder()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var rmc = entMan.System<RMCCameraSystem>();
-                var computer = entMan.SpawnEntity("CMUTestDualNetworkRmcComputer", MapCoordinates.Nullspace);
-                try
-                {
-                    var console = entMan.GetComponent<RMCCameraComputerComponent>(computer);
-                    var state = rmc.BuildBuiState((computer, console));
-
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(state.Networks.Select(network => network.Id), Is.EqualTo(new[]
-                        {
-                            (ProtoId<CameraNetworkPrototype>) NetworkA,
-                            (ProtoId<CameraNetworkPrototype>) NetworkB,
-                        }));
-                        Assert.That(state.Networks.Select(network => network.Name), Is.EqualTo(new[]
-                        {
-                            "CMU test camera network A",
-                            "CMU test camera network B",
-                        }));
-                        Assert.That(console.ActiveNetwork, Is.EqualTo((ProtoId<CameraNetworkPrototype>) NetworkA));
-                        Assert.That(state.ActiveNetwork, Is.EqualTo((ProtoId<CameraNetworkPrototype>) NetworkA));
-                    });
-                }
-                finally
-                {
-                    entMan.DeleteEntity(computer);
-                }
-            });
-        }
-        finally { server.Dispose(); }
-    }
-
-    [Test]
-    public async Task RmcSelectingAuthorizedNetworkFiltersCamerasAndMap()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var mapSystem = entMan.System<SharedMapSystem>();
-                var rmc = entMan.System<RMCCameraSystem>();
-                mapSystem.CreateMap(out var mapId);
-                var grid = mapSystem.CreateGridEntity(mapId).Owner;
-                var computer = entMan.SpawnEntity("CMUTestDualNetworkRmcComputer", new EntityCoordinates(grid, Vector2.Zero));
-                var cameraA = entMan.SpawnEntity("CMUTestRmcShipCamera", new EntityCoordinates(grid, Vector2.One));
-                var cameraB = entMan.SpawnEntity("CMUTestRmcCameraB", new EntityCoordinates(grid, new Vector2(2, 2)));
-                try
-                {
-                    entMan.AddComponent<CameraMapMarkerComponent>(cameraA);
-                    entMan.AddComponent<CameraMapMarkerComponent>(cameraB);
-                    var console = entMan.GetComponent<RMCCameraComputerComponent>(computer);
-
-                    Assert.That(rmc.TrySelectCamera((computer, console), cameraA), Is.True);
-                    Assert.That(rmc.TrySelectNetwork((computer, console), NetworkB), Is.True);
-                    var state = rmc.BuildBuiState((computer, console));
-
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(console.ActiveNetwork, Is.EqualTo((ProtoId<CameraNetworkPrototype>) NetworkB));
-                        Assert.That(console.CurrentCamera, Is.Null);
-                        Assert.That(console.CameraIds, Is.EqualTo(new[] { entMan.GetNetEntity(cameraB) }));
-                        Assert.That(rmc.TrySelectCamera((computer, console), cameraA), Is.False);
-                        Assert.That(state.Map.Grids.SelectMany(cameraGrid => cameraGrid.Markers)
-                                .Select(marker => marker.Camera),
-                            Is.EqualTo(new[] { entMan.GetNetEntity(cameraB) }));
-                    });
-                }
-                finally
-                {
-                    entMan.DeleteEntity(computer);
-                    entMan.DeleteEntity(cameraA);
-                    entMan.DeleteEntity(cameraB);
-                    entMan.DeleteEntity(grid);
-                }
-            });
-        }
-        finally { server.Dispose(); }
-    }
-
-    [Test]
-    public async Task RmcRuntimeGrantedNetworkAppearsSelectsAndShowsItsCameras()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var networks = entMan.System<CameraNetworkSystem>();
-                var rmc = entMan.System<RMCCameraSystem>();
-                var mapSystem = entMan.System<SharedMapSystem>();
-                mapSystem.CreateMap(out var mapId);
-                var grid = mapSystem.CreateGridEntity(mapId).Owner;
-                var computer = entMan.SpawnEntity("CMUTestLegacyRmcComputer", new EntityCoordinates(grid, Vector2.Zero));
-                var camera = entMan.SpawnEntity("CMUTestRmcCameraB", new EntityCoordinates(grid, Vector2.One));
-                var granter = entMan.SpawnEntity(null, MapCoordinates.Nullspace);
-                try
-                {
-                    var console = entMan.GetComponent<RMCCameraComputerComponent>(computer);
-                    entMan.AddComponent<CameraMapMarkerComponent>(camera);
-                    Assert.That(networks.GrantNetwork(computer, NetworkB, granter), Is.True);
-
-                    Assert.That(rmc.TrySelectNetwork((computer, console), NetworkB), Is.True);
-                    var state = rmc.BuildBuiState((computer, console));
-
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(state.Networks.Select(network => network.Id), Does.Contain((ProtoId<CameraNetworkPrototype>) NetworkB));
-                        Assert.That(console.CameraIds, Does.Contain(entMan.GetNetEntity(camera)));
-                        Assert.That(state.Map.Grids.SelectMany(cameraGrid => cameraGrid.Markers).Select(marker => marker.Camera),
-                            Does.Contain(entMan.GetNetEntity(camera)));
-                        Assert.That(entMan.GetComponent<CameraNetworkReceiverComponent>(computer).Networks,
-                            Does.Not.Contain((ProtoId<CameraNetworkPrototype>) NetworkB));
-                    });
-                }
-                finally
-                {
-                    entMan.DeleteEntity(computer);
-                    entMan.DeleteEntity(camera);
-                    entMan.DeleteEntity(granter);
-                    entMan.DeleteEntity(grid);
-                }
-            });
-        }
-        finally { server.Dispose(); }
-    }
-
-    [Test]
-    public async Task RmcRemovingSelectedNetworkMembershipClearsGloballyAccessibleCamera()
-    {
-        var pair = await PoolManager.GetServerClient(new PoolSettings { Connected = true });
-        var server = pair.Server;
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var networks = entMan.System<CameraNetworkSystem>();
-                var rmc = entMan.System<RMCCameraSystem>();
-                var session = server.PlayerMan.Sessions.Single();
-                var previousAttached = session.AttachedEntity;
-                var computer = entMan.SpawnEntity("CMUTestDualNetworkRmcComputer", MapCoordinates.Nullspace);
-                var camera = entMan.SpawnEntity("CMUTestRmcShipCamera", MapCoordinates.Nullspace);
-                var watcher = entMan.SpawnEntity(null, MapCoordinates.Nullspace);
-                try
-                {
-                    var console = entMan.GetComponent<RMCCameraComputerComponent>(computer);
-                    server.PlayerMan.SetAttachedEntity(session, watcher);
-                    entMan.EventBus.RaiseLocalEvent(computer,
-                        new BoundUIOpenedEvent(RMCCameraUiKey.Key, computer, watcher));
-                    Assert.That(rmc.TrySelectCamera((computer, console), camera), Is.True);
-                    var watcherComp = entMan.GetComponent<RMCCameraWatcherComponent>(watcher);
-                    Assert.That(watcherComp.Overrides, Does.Contain(entMan.GetNetEntity(camera)));
-                    Assert.That(session.ViewSubscriptions, Does.Contain(camera));
-                    Assert.That(networks.SetMemberNetworks(camera, [NetworkB]), Is.True);
-
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(networks.CanAccess(computer, camera), Is.True);
-                        Assert.That(console.CameraIds, Does.Not.Contain(entMan.GetNetEntity(camera)));
-                        Assert.That(console.CurrentCamera, Is.Null);
-                        Assert.That(watcherComp.Overrides, Is.Empty);
-                        Assert.That(session.ViewSubscriptions, Does.Not.Contain(camera));
-                    });
-                }
-                finally
-                {
-                    server.PlayerMan.SetAttachedEntity(session, previousAttached);
-                    entMan.DeleteEntity(computer);
-                    entMan.DeleteEntity(camera);
-                    entMan.DeleteEntity(watcher);
-                }
-            });
-        }
-        finally { await pair.CleanReturnAsync(); }
     }
 
     [Test]
@@ -1683,7 +1436,8 @@ public sealed class CameraNetworkSystemTest
                         Assert.That(cameraSession.SelectedCamera, Is.EqualTo(camera));
                         Assert.That(playerSession.ViewSubscriptions, Does.Contain(camera));
                         Assert.That(playerSession.ViewSubscriptions, Does.Not.Contain(remoteGrid.Owner));
-                        Assert.That(entMan.GetComponent<RMCCameraComputerComponent>(monitor).CurrentCamera, Is.Null);
+                        Assert.That(cameraSessions.HasActiveViewers(camera), Is.True);
+                        Assert.That(cameraSessions.GetSessionsForCamera(camera).Single(), Is.SameAs(cameraSession));
                     });
 
                     entMan.EventBus.RaiseLocalEvent(monitor,
@@ -1694,6 +1448,7 @@ public sealed class CameraNetworkSystemTest
                         Assert.That(cameraSessions.TryGetSession(playerSession, monitor, out _), Is.False);
                         Assert.That(playerSession.ViewSubscriptions, Does.Not.Contain(camera));
                         Assert.That(playerSession.ViewSubscriptions, Does.Not.Contain(remoteGrid.Owner));
+                        Assert.That(cameraSessions.HasActiveViewers(camera), Is.False);
                     });
                 }
                 finally
@@ -1793,6 +1548,8 @@ public sealed class CameraNetworkSystemTest
                 var mapSystem = entMan.System<SharedMapSystem>();
                 var monitors = entMan.System<SurveillanceCameraMonitorSystem>();
                 var cameraSessions = entMan.System<CameraSessionSystem>();
+                var microphones = entMan.System<SurveillanceCameraMicrophoneSystem>();
+                var appearances = entMan.System<SharedAppearanceSystem>();
                 var userInterface = entMan.System<SharedUserInterfaceSystem>();
                 var playerSession = server.PlayerMan.Sessions.Single();
                 var previousAttached = playerSession.AttachedEntity;
@@ -1807,9 +1564,12 @@ public sealed class CameraNetworkSystemTest
                 var camera = entMan.SpawnEntity("CMUTestSurveillanceCameraStandard",
                     new EntityCoordinates(remoteGrid.Owner, Vector2.Zero));
                 var viewer = entMan.SpawnEntity(null, new EntityCoordinates(consoleGrid.Owner, Vector2.Zero));
+                var speaker = entMan.SpawnEntity(null, new EntityCoordinates(remoteGrid.Owner, Vector2.Zero));
 
                 try
                 {
+                    var microphone = entMan.AddComponent<SurveillanceCameraMicrophoneComponent>(camera);
+                    var speechProbe = entMan.AddComponent<CameraSpeechProbeComponent>(monitor);
                     server.PlayerMan.SetAttachedEntity(playerSession, viewer);
                     userInterface.OpenUi(monitor, SurveillanceCameraMonitorUiKey.Key, viewer);
                     Assert.That(userInterface.IsUiOpen(
@@ -1820,6 +1580,8 @@ public sealed class CameraNetworkSystemTest
 
                     Assert.That(cameraSessions.TryGetSession(playerSession, monitor, out var cameraSession), Is.True);
                     Assert.That(cameraSessions.SelectCamera(cameraSession.Id, camera), Is.True);
+                    Assert.That(appearances.TryGetData(camera, SurveillanceCameraVisualsKey.Key,
+                        out SurveillanceCameraVisuals selectedVisual), Is.True);
 
                     Assert.Multiple(() =>
                     {
@@ -1827,25 +1589,40 @@ public sealed class CameraNetworkSystemTest
                         Assert.That(cameraSession.SelectedCamera, Is.EqualTo(camera));
                         Assert.That(playerSession.ViewSubscriptions, Does.Contain(camera));
                         Assert.That(playerSession.ViewSubscriptions, Does.Not.Contain(remoteGrid.Owner));
-                        Assert.That(entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor).ActiveCamera,
-                            Is.Null);
-                        Assert.That(entMan.GetComponent<SurveillanceCameraComponent>(camera).ActiveMonitors,
-                            Does.Not.Contain(monitor));
+                        Assert.That(cameraSessions.HasActiveViewers(camera), Is.True);
+                        Assert.That(cameraSessions.GetSessionsForCamera(camera).Single(), Is.SameAs(cameraSession));
+                        Assert.That(selectedVisual, Is.EqualTo(SurveillanceCameraVisuals.InUse));
+                    });
+
+                    microphones.RelayEntityMessage(camera, microphone, new ListenEvent("before close", speaker));
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(speechProbe.Events, Is.EqualTo(1));
+                        Assert.That(speechProbe.Speaker, Is.EqualTo(speaker));
+                        Assert.That(speechProbe.Message, Is.EqualTo("before close"));
                     });
 
                     entMan.EventBus.RaiseLocalEvent(monitor,
                         new BoundUIClosedEvent(SurveillanceCameraMonitorUiKey.Key, monitor, viewer));
 
+                    microphones.RelayEntityMessage(camera, microphone, new ListenEvent("after close", speaker));
+                    Assert.That(appearances.TryGetData(camera, SurveillanceCameraVisualsKey.Key,
+                        out SurveillanceCameraVisuals closedVisual), Is.True);
+
                     Assert.Multiple(() =>
                     {
                         Assert.That(cameraSessions.TryGetSession(playerSession, monitor, out _), Is.False);
                         Assert.That(playerSession.ViewSubscriptions, Does.Not.Contain(camera));
+                        Assert.That(cameraSessions.HasActiveViewers(camera), Is.False);
+                        Assert.That(speechProbe.Events, Is.EqualTo(1));
+                        Assert.That(closedVisual, Is.EqualTo(SurveillanceCameraVisuals.Active));
                     });
                 }
                 finally
                 {
                     server.PlayerMan.SetAttachedEntity(playerSession, previousAttached);
                     entMan.DeleteEntity(viewer);
+                    entMan.DeleteEntity(speaker);
                     entMan.DeleteEntity(camera);
                     entMan.DeleteEntity(monitor);
                     entMan.DeleteEntity(consoleGrid);
@@ -1854,81 +1631,6 @@ public sealed class CameraNetworkSystemTest
             });
         }
         finally { await pair.CleanReturnAsync(); }
-    }
-
-    [Test]
-    public async Task RmcRejectingUnavailableNetworkKeepsSelectionAndCameras()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var rmc = entMan.System<RMCCameraSystem>();
-                var computer = entMan.SpawnEntity("CMUTestDualNetworkRmcComputer", MapCoordinates.Nullspace);
-                var cameraA = entMan.SpawnEntity("CMUTestRmcShipCamera", MapCoordinates.Nullspace);
-                var cameraB = entMan.SpawnEntity("CMUTestRmcCameraB", MapCoordinates.Nullspace);
-                try
-                {
-                    var console = entMan.GetComponent<RMCCameraComputerComponent>(computer);
-                    Assert.That(rmc.TrySelectNetwork((computer, console), NetworkB), Is.True);
-                    var previousCameras = console.CameraIds.ToList();
-
-                    Assert.That(rmc.TrySelectNetwork((computer, console), "CMUTestUnknownCameraNetwork"), Is.False);
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(console.ActiveNetwork, Is.EqualTo((ProtoId<CameraNetworkPrototype>) NetworkB));
-                        Assert.That(console.CameraIds, Is.EqualTo(previousCameras));
-                        Assert.That(entMan.GetComponent<CameraNetworkReceiverComponent>(computer).Networks,
-                            Is.EquivalentTo(new[] { NetworkA, NetworkB }));
-                    });
-                }
-                finally
-                {
-                    entMan.DeleteEntity(computer);
-                    entMan.DeleteEntity(cameraA);
-                    entMan.DeleteEntity(cameraB);
-                }
-            });
-        }
-        finally { server.Dispose(); }
-    }
-
-    [Test]
-    public async Task RmcFallsBackToFirstAvailableNetworkWhenActiveNetworkIsRemoved()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var networks = entMan.System<CameraNetworkSystem>();
-                var rmc = entMan.System<RMCCameraSystem>();
-                var computer = entMan.SpawnEntity("CMUTestDualNetworkRmcComputer", MapCoordinates.Nullspace);
-                try
-                {
-                    var console = entMan.GetComponent<RMCCameraComputerComponent>(computer);
-                    Assert.That(rmc.TrySelectNetwork((computer, console), NetworkB), Is.True);
-                    Assert.That(networks.SetReceiverNetworks(computer, [NetworkA]), Is.True);
-
-                    var state = rmc.BuildBuiState((computer, console));
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(console.ActiveNetwork, Is.EqualTo((ProtoId<CameraNetworkPrototype>) NetworkA));
-                        Assert.That(state.ActiveNetwork, Is.EqualTo((ProtoId<CameraNetworkPrototype>) NetworkA));
-                    });
-                }
-                finally
-                {
-                    entMan.DeleteEntity(computer);
-                }
-            });
-        }
-        finally { server.Dispose(); }
     }
 
     [TestPrototypes]
@@ -1942,21 +1644,6 @@ public sealed class CameraNetworkSystemTest
           id: CMUTestCameraNetworkB
           name: cmu-test-camera-network-b
           configurable: false
-
-        # Legacy RMC IDs are entity-prototype references. These abstract
-        # placeholders intentionally share IDs with the logical test networks.
-        - type: entity
-          abstract: true
-          id: CMUTestCameraNetworkA
-
-        - type: entity
-          abstract: true
-          id: CMUTestCameraNetworkB
-
-        # Exists as an entity ID but deliberately has no matching camera network.
-        - type: entity
-          abstract: true
-          id: CMUTestUnknownCameraNetwork
 
         - type: gameMap
           id: CMUTestCameraZMap
@@ -2049,6 +1736,7 @@ public sealed class CameraNetworkSystemTest
           name: CMU Test Surveillance Camera
           components:
           - type: SurveillanceCamera
+          - type: Appearance
           - type: CameraNetworkMember
             networks: [CMUTestCameraNetworkA]
             sourceKinds: Standard
@@ -2095,52 +1783,9 @@ public sealed class CameraNetworkSystemTest
           - type: SurveillanceCamera
 
         - type: entity
-          id: CMUTestLegacyRmcCamera
-          components:
-          - type: RMCCamera
-            id: CMUTestCameraNetworkA
-
-        - type: entity
-          id: CMUTestLegacyRmcComputer
-          components:
-          - type: RMCCameraComputer
-            protoIds: [CMUTestCameraNetworkA]
-
-        - type: entity
-          id: CMUTestExplicitRmcCamera
-          components:
-          - type: RMCCamera
-            id: CMUTestCameraNetworkA
-          - type: CameraNetworkMember
-            networks: [CMUTestCameraNetworkB]
-            sourceKinds: Rmc
-
-        - type: entity
-          id: CMUTestExplicitRmcComputer
-          components:
-          - type: RMCCameraComputer
-            protoIds: [CMUTestCameraNetworkA]
-          - type: CameraNetworkReceiver
-            networks: [CMUTestCameraNetworkB]
-            supportedSources: Rmc
-
-        - type: entity
-          id: CMUTestUnknownLegacyRmcCamera
-          components:
-          - type: RMCCamera
-            id: CMUTestUnknownCameraNetwork
-
-        - type: entity
-          id: CMUTestUnknownLegacyRmcComputer
-          components:
-          - type: RMCCameraComputer
-            protoIds: [CMUTestUnknownCameraNetwork]
-
-        - type: entity
           id: CMUTestRmcMapComputer
           components:
           - type: RMCCameraComputer
-            protoIds: []
           - type: CameraNetworkReceiver
             networks: [CMUTestCameraNetworkA]
             supportedSources: Rmc
@@ -2149,7 +1794,6 @@ public sealed class CameraNetworkSystemTest
           id: CMUTestDualNetworkRmcComputer
           components:
           - type: RMCCameraComputer
-            protoIds: []
           - type: CameraNetworkReceiver
             networks: [CMUTestCameraNetworkA, CMUTestCameraNetworkB]
             supportedSources: Rmc
@@ -2163,7 +1807,6 @@ public sealed class CameraNetworkSystemTest
                 type: RMCCameraBui
                 interactionRange: 0
           - type: RMCCameraComputer
-            protoIds: []
           - type: CameraNetworkReceiver
             networks: [CMUTestCameraNetworkA, CMUTestCameraNetworkB]
             supportedSources: Rmc
@@ -2181,7 +1824,6 @@ public sealed class CameraNetworkSystemTest
           name: CMU Test RMC Ship Camera
           components:
           - type: RMCCamera
-            id: CMUTestCameraNetworkA
           - type: CameraNetworkMember
             networks: [CMUTestCameraNetworkA]
             sourceKinds: Rmc
@@ -2191,7 +1833,6 @@ public sealed class CameraNetworkSystemTest
           name: Editable RMC camera A
           components:
           - type: RMCCamera
-            id: CMUTestCameraNetworkA
             nameOverride: Old camera A
           - type: SurveillanceCamera
           - type: CameraNetworkMember
@@ -2205,7 +1846,6 @@ public sealed class CameraNetworkSystemTest
           name: Editable RMC camera B
           components:
           - type: RMCCamera
-            id: CMUTestCameraNetworkB
             nameOverride: Old camera B
           - type: SurveillanceCamera
           - type: CameraNetworkMember
@@ -2220,7 +1860,6 @@ public sealed class CameraNetworkSystemTest
           components:
           - type: Item
           - type: RMCCamera
-            id: CMUTestCameraNetworkA
           - type: SurveillanceCamera
           - type: CameraNetworkMember
             networks: [CMUTestCameraNetworkA]
@@ -2231,7 +1870,6 @@ public sealed class CameraNetworkSystemTest
           name: Editable RMC mortar camera
           components:
           - type: RMCCamera
-            id: CMUTestCameraNetworkA
           - type: SurveillanceCamera
           - type: MortarCamera
           - type: CameraNetworkMember
@@ -2243,7 +1881,6 @@ public sealed class CameraNetworkSystemTest
           name: Editable RMC non-surveillance source
           components:
           - type: RMCCamera
-            id: CMUTestCameraNetworkA
           - type: CameraNetworkMember
             networks: [CMUTestCameraNetworkA]
             sourceKinds: Rmc
@@ -2253,7 +1890,6 @@ public sealed class CameraNetworkSystemTest
           name: CMU Test RMC Mortar Camera
           components:
           - type: RMCCamera
-            id: CMUTestCameraNetworkA
           - type: CameraNetworkMember
             networks: [CMUTestCameraNetworkA]
             sourceKinds: Rmc
@@ -2263,7 +1899,6 @@ public sealed class CameraNetworkSystemTest
           name: CMU Test RMC Camera B
           components:
           - type: RMCCamera
-            id: CMUTestCameraNetworkB
           - type: CameraNetworkMember
             networks: [CMUTestCameraNetworkB]
             sourceKinds: Rmc
@@ -2286,306 +1921,6 @@ public sealed class CameraNetworkSystemTest
         """;
 
     [Test]
-    public async Task LegacyRmcFieldsCreateLogicalMembershipAndReceiver()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                _ = entMan.System<RMCCameraSystem>();
-                var camera = entMan.SpawnEntity("CMUTestLegacyRmcCamera", MapCoordinates.Nullspace);
-                var computer = entMan.SpawnEntity("CMUTestLegacyRmcComputer", MapCoordinates.Nullspace);
-
-                try
-                {
-                    var member = entMan.GetComponent<CameraNetworkMemberComponent>(camera);
-                    var receiver = entMan.GetComponent<CameraNetworkReceiverComponent>(computer);
-                    var console = entMan.GetComponent<RMCCameraComputerComponent>(computer);
-
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(member.Networks, Is.EquivalentTo(new[] { NetworkA }));
-                        Assert.That(member.SourceKinds, Is.EqualTo(CameraSourceKinds.Rmc));
-                        Assert.That(receiver.Networks, Is.EquivalentTo(new[] { NetworkA }));
-                        Assert.That(receiver.SupportedSources, Is.EqualTo(CameraSourceKinds.Rmc));
-                        Assert.That(console.CameraIds, Does.Contain(entMan.GetNetEntity(camera)));
-                    });
-                }
-                finally
-                {
-                    entMan.DeleteEntity(camera);
-                    entMan.DeleteEntity(computer);
-                }
-            });
-        }
-        finally
-        {
-            server.Dispose();
-        }
-    }
-
-    [Test]
-    public async Task ExplicitRmcComponentsOverrideLegacyFields()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var camera = entMan.SpawnEntity("CMUTestExplicitRmcCamera", MapCoordinates.Nullspace);
-                var computer = entMan.SpawnEntity("CMUTestExplicitRmcComputer", MapCoordinates.Nullspace);
-                try
-                {
-                    Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).Networks,
-                        Is.EquivalentTo(new[] { NetworkB }));
-                    Assert.That(entMan.GetComponent<CameraNetworkReceiverComponent>(computer).Networks,
-                        Is.EquivalentTo(new[] { NetworkB }));
-                }
-                finally
-                {
-                    entMan.DeleteEntity(camera);
-                    entMan.DeleteEntity(computer);
-                }
-            });
-        }
-        finally { server.Dispose(); }
-    }
-
-    [Test]
-    public async Task LegacyCameraIdChangeUpdatesOnlyBridgeCreatedMembership()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var rmc = entMan.System<RMCCameraSystem>();
-                var camera = entMan.SpawnEntity("CMUTestLegacyRmcCamera", MapCoordinates.Nullspace);
-                try
-                {
-                    rmc.SetCameraId(camera, NetworkB, entMan.GetComponent<RMCCameraComponent>(camera));
-                    Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).Networks,
-                        Is.EquivalentTo(new[] { NetworkB }));
-                }
-                finally
-                {
-                    entMan.DeleteEntity(camera);
-                }
-            });
-        }
-        finally { server.Dispose(); }
-    }
-
-    [Test]
-    public async Task UnknownLegacyNetworkIsSkipped()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var camera = entMan.SpawnEntity("CMUTestUnknownLegacyRmcCamera", MapCoordinates.Nullspace);
-                var computer = entMan.SpawnEntity("CMUTestUnknownLegacyRmcComputer", MapCoordinates.Nullspace);
-                try
-                {
-                    Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).Networks, Is.Empty);
-                    Assert.That(entMan.GetComponent<CameraNetworkReceiverComponent>(computer).Networks, Is.Empty);
-                }
-                finally
-                {
-                    entMan.DeleteEntity(camera);
-                    entMan.DeleteEntity(computer);
-                }
-            });
-        }
-        finally { server.Dispose(); }
-    }
-
-    [Test]
-    public async Task RmcSelectionRejectsStandardAndUnauthorizedSources()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var rmc = entMan.System<RMCCameraSystem>();
-                var networks = entMan.System<CameraNetworkSystem>();
-                var computer = entMan.SpawnEntity("CMUTestLegacyRmcComputer", MapCoordinates.Nullspace);
-                var standard = entMan.SpawnEntity("CMUTestCameraStandardA", MapCoordinates.Nullspace);
-                var rmcCamera = entMan.SpawnEntity("CMUTestCameraRmc", MapCoordinates.Nullspace);
-                try
-                {
-                    var console = entMan.GetComponent<RMCCameraComputerComponent>(computer);
-                    Assert.That(rmc.TrySelectCamera((computer, console), standard), Is.False);
-                    Assert.That(rmc.TrySelectCamera((computer, console), rmcCamera), Is.True);
-                    Assert.That(networks.SetReceiverNetworks(computer, [NetworkB]), Is.True);
-                    Assert.That(rmc.TrySelectCamera((computer, console), rmcCamera), Is.False);
-                }
-                finally
-                {
-                    entMan.DeleteEntity(computer);
-                    entMan.DeleteEntity(standard);
-                    entMan.DeleteEntity(rmcCamera);
-                }
-            });
-        }
-        finally { server.Dispose(); }
-    }
-
-    [TestCase(false)]
-    [TestCase(true)]
-    public async Task RmcSelectionRejectsUnavailableSource(bool deleted)
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var rmc = entMan.System<RMCCameraSystem>();
-                var computer = entMan.SpawnEntity("CMUTestLegacyRmcComputer", MapCoordinates.Nullspace);
-                var camera = entMan.SpawnEntity("CMUTestCameraRmc", MapCoordinates.Nullspace);
-                try
-                {
-                    if (deleted)
-                        entMan.DeleteEntity(camera);
-                    else
-                        entMan.System<MetaDataSystem>().SetEntityPaused(camera, true);
-
-                    Assert.That(rmc.TrySelectCamera((computer,
-                            entMan.GetComponent<RMCCameraComputerComponent>(computer)), camera),
-                        Is.False);
-                    Assert.That(entMan.GetComponent<RMCCameraComputerComponent>(computer).CurrentCamera, Is.Null);
-                }
-                finally
-                {
-                    entMan.DeleteEntity(computer);
-                    if (!entMan.Deleted(camera))
-                        entMan.DeleteEntity(camera);
-                }
-            });
-        }
-        finally { server.Dispose(); }
-    }
-
-    [Test]
-    public async Task FinalNetworkLossDisconnectsRmcWatchers()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var rmc = entMan.System<RMCCameraSystem>();
-                var networks = entMan.System<CameraNetworkSystem>();
-                var computer = entMan.SpawnEntity("CMUTestLegacyRmcComputer", MapCoordinates.Nullspace);
-                var camera = entMan.SpawnEntity("CMUTestCameraRmc", MapCoordinates.Nullspace);
-                try
-                {
-                    var console = entMan.GetComponent<RMCCameraComputerComponent>(computer);
-                    Assert.That(rmc.TrySelectCamera((computer, console), camera), Is.True);
-                    Assert.That(networks.SetReceiverNetworks(computer, [NetworkB]), Is.True);
-                    Assert.That(console.CurrentCamera, Is.Null);
-                }
-                finally
-                {
-                    entMan.DeleteEntity(computer);
-                    entMan.DeleteEntity(camera);
-                }
-            });
-        }
-        finally { server.Dispose(); }
-    }
-
-    [Test]
-    public async Task RmcRejectsClickAfterStateCameraLosesAuthorization()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var rmc = entMan.System<RMCCameraSystem>();
-                var networks = entMan.System<CameraNetworkSystem>();
-                var computer = entMan.SpawnEntity("CMUTestLegacyRmcComputer", MapCoordinates.Nullspace);
-                var camera = entMan.SpawnEntity("CMUTestRmcShipCamera", MapCoordinates.Nullspace);
-                try
-                {
-                    var console = entMan.GetComponent<RMCCameraComputerComponent>(computer);
-                    rmc.RebuildComputerCameras(computer, console);
-                    Assert.That(console.CameraIds, Does.Contain(entMan.GetNetEntity(camera)));
-
-                    Assert.That(networks.SetReceiverNetworks(computer, [NetworkB]), Is.True);
-                    Assert.That(rmc.TrySelectCamera((computer, console), camera), Is.False);
-                    Assert.That(console.CurrentCamera, Is.Null);
-                }
-                finally
-                {
-                    entMan.DeleteEntity(computer);
-                    entMan.DeleteEntity(camera);
-                }
-            });
-        }
-        finally { server.Dispose(); }
-    }
-
-    [Test]
-    public async Task RemovedRmcCameraClearsCurrentSelection()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var rmc = entMan.System<RMCCameraSystem>();
-                var computer = entMan.SpawnEntity("CMUTestLegacyRmcComputer", MapCoordinates.Nullspace);
-                var camera = entMan.SpawnEntity("CMUTestCameraRmc", MapCoordinates.Nullspace);
-                try
-                {
-                    var console = entMan.GetComponent<RMCCameraComputerComponent>(computer);
-                    Assert.That(rmc.TrySelectCamera((computer, console), camera), Is.True);
-                    var netCamera = entMan.GetNetEntity(camera);
-
-                    entMan.DeleteEntity(camera);
-
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(console.CurrentCamera, Is.Null);
-                        Assert.That(console.CameraIds, Does.Not.Contain(netCamera));
-                    });
-                }
-                finally
-                {
-                    entMan.DeleteEntity(computer);
-                    if (!entMan.Deleted(camera))
-                        entMan.DeleteEntity(camera);
-                }
-            });
-        }
-        finally { server.Dispose(); }
-    }
-
-    [Test]
     public async Task TwoLzGrantersRequireTwoRevokes()
     {
         var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
@@ -2596,7 +1931,7 @@ public sealed class CameraNetworkSystemTest
             {
                 var entMan = server.EntMan;
                 var networks = entMan.System<CameraNetworkSystem>();
-                var receiver = entMan.SpawnEntity("CMUTestLegacyRmcComputer", MapCoordinates.Nullspace);
+                var receiver = entMan.SpawnEntity("CMUTestRmcMapComputer", MapCoordinates.Nullspace);
                 var camera = entMan.SpawnEntity("CMUTestCameraRmc", MapCoordinates.Nullspace);
                 var firstGranter = entMan.SpawnEntity(null, MapCoordinates.Nullspace);
                 var secondGranter = entMan.SpawnEntity(null, MapCoordinates.Nullspace);
@@ -2627,425 +1962,6 @@ public sealed class CameraNetworkSystemTest
             });
         }
         finally { server.Dispose(); }
-    }
-
-    [Test]
-    public async Task StandardMonitorCompatibilitySelectionDoesNotMutateSharedState()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var monitors = entMan.System<SurveillanceCameraMonitorSystem>();
-                var monitor = entMan.SpawnEntity("CMUTestSurveillanceMonitor", MapCoordinates.Nullspace);
-                var camera = entMan.SpawnEntity("CMUTestSurveillanceCameraStandard", MapCoordinates.Nullspace);
-
-                try
-                {
-                    var selected = monitors.TrySelectCamera(
-                        new Entity<SurveillanceCameraMonitorComponent>(
-                            monitor,
-                            entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor)),
-                        camera);
-
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(selected, Is.True);
-                        Assert.That(entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor).ActiveCamera,
-                            Is.Null);
-                        Assert.That(entMan.GetComponent<SurveillanceCameraComponent>(camera).ActiveMonitors,
-                            Does.Not.Contain(monitor));
-                    });
-                }
-                finally
-                {
-                    entMan.DeleteEntity(monitor);
-                    entMan.DeleteEntity(camera);
-                }
-            });
-        }
-        finally
-        {
-            server.Dispose();
-        }
-    }
-
-    [Test]
-    public async Task StandardMonitorStateContainsAuthorizedMapAndEntityCameraList()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var mapSystem = entMan.System<SharedMapSystem>();
-                var monitors = entMan.System<SurveillanceCameraMonitorSystem>();
-                mapSystem.CreateMap(out var mapId);
-                var grid = mapSystem.CreateGridEntity(mapId).Owner;
-                var monitor = entMan.SpawnEntity("CMUTestSurveillanceMonitorDualNetwork", new EntityCoordinates(grid, Vector2.Zero));
-                var authorizedCamera = entMan.SpawnEntity(
-                    "CMUTestSurveillanceCameraStandard",
-                    new EntityCoordinates(grid, Vector2.One));
-                var authorizedSecondCamera = entMan.SpawnEntity(
-                    "CMUTestCameraStandardB",
-                    new EntityCoordinates(grid, new Vector2(2, 2)));
-                var unauthorizedCamera = entMan.SpawnEntity(
-                    "CMUTestSurveillanceCameraRmc",
-                    new EntityCoordinates(grid, new Vector2(3, 3)));
-
-                try
-                {
-                    entMan.AddComponent<CameraMapMarkerComponent>(authorizedCamera);
-                    entMan.AddComponent<CameraMapMarkerComponent>(authorizedSecondCamera);
-                    entMan.AddComponent<CameraMapMarkerComponent>(unauthorizedCamera);
-
-                    var state = monitors.BuildUiState((monitor,
-                        entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor)));
-
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(state.Networks.Select(network => network.Id),
-                            Is.EqualTo(new[]
-                            {
-                                (ProtoId<CameraNetworkPrototype>) NetworkA,
-                                (ProtoId<CameraNetworkPrototype>) NetworkB,
-                            }));
-                        Assert.That(state.Networks.All(network => !string.IsNullOrEmpty(network.Name)), Is.True);
-                        Assert.That(state.CameraList, Has.Count.EqualTo(1));
-                        Assert.That(state.CameraList[0].Camera, Is.EqualTo(entMan.GetNetEntity(authorizedCamera)));
-                        Assert.That(state.CameraList[0].Name, Is.Not.Empty);
-                        Assert.That(state.CameraMap.Grids.SelectMany(cameraGrid => cameraGrid.Markers)
-                                .Select(marker => marker.Camera),
-                            Is.EquivalentTo(new[]
-                            {
-                                entMan.GetNetEntity(authorizedCamera),
-                                entMan.GetNetEntity(authorizedSecondCamera),
-                            }));
-                    });
-                }
-                finally
-                {
-                    entMan.DeleteEntity(monitor);
-                    entMan.DeleteEntity(authorizedCamera);
-                    entMan.DeleteEntity(authorizedSecondCamera);
-                    entMan.DeleteEntity(unauthorizedCamera);
-                    entMan.DeleteEntity(grid);
-                }
-            });
-        }
-        finally
-        {
-            server.Dispose();
-        }
-    }
-
-    [Test]
-    public async Task RmcBuiStateContainsMapButKeepsFullCameraList()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var mapSystem = entMan.System<SharedMapSystem>();
-                var cameras = entMan.System<RMCCameraSystem>();
-                mapSystem.CreateMap(out var mapId);
-                var grid = mapSystem.CreateGridEntity(mapId).Owner;
-                var computer = entMan.SpawnEntity("CMUTestRmcMapComputer", new EntityCoordinates(grid, Vector2.Zero));
-                var shipCamera = entMan.SpawnEntity("CMUTestRmcShipCamera", new EntityCoordinates(grid, Vector2.One));
-                var mortarCamera = entMan.SpawnEntity("CMUTestRmcMortarCamera", new EntityCoordinates(grid, new Vector2(2, 2)));
-
-                try
-                {
-                    entMan.AddComponent<CameraMapMarkerComponent>(shipCamera);
-                    cameras.RebuildComputerCameras(computer);
-
-                    var state = cameras.BuildBuiState((computer,
-                        entMan.GetComponent<RMCCameraComputerComponent>(computer)));
-                    var console = entMan.GetComponent<RMCCameraComputerComponent>(computer);
-
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(console.CameraIds, Is.EquivalentTo(new[]
-                        {
-                            entMan.GetNetEntity(shipCamera),
-                            entMan.GetNetEntity(mortarCamera),
-                        }));
-                        Assert.That(state.Map.Grids.SelectMany(cameraGrid => cameraGrid.Markers)
-                                .Select(marker => marker.Camera),
-                            Is.EquivalentTo(new[] { entMan.GetNetEntity(shipCamera) }));
-                    });
-                }
-                finally
-                {
-                    entMan.DeleteEntity(computer);
-                    entMan.DeleteEntity(shipCamera);
-                    entMan.DeleteEntity(mortarCamera);
-                    entMan.DeleteEntity(grid);
-                }
-            });
-        }
-        finally
-        {
-            server.Dispose();
-        }
-    }
-
-    [Test]
-    public async Task StandardMonitorRejectsRmcSource()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var monitors = entMan.System<SurveillanceCameraMonitorSystem>();
-                var monitor = entMan.SpawnEntity("CMUTestSurveillanceMonitor", MapCoordinates.Nullspace);
-                var camera = entMan.SpawnEntity("CMUTestSurveillanceCameraRmc", MapCoordinates.Nullspace);
-
-                try
-                {
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(monitors.TrySelectCamera((monitor,
-                                entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor)), camera),
-                            Is.False);
-                        Assert.That(entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor).ActiveCamera,
-                            Is.Null);
-                        Assert.That(entMan.GetComponent<SurveillanceCameraComponent>(camera).ActiveMonitors,
-                            Does.Not.Contain(monitor));
-                    });
-                }
-                finally
-                {
-                    entMan.DeleteEntity(monitor);
-                    entMan.DeleteEntity(camera);
-                }
-            });
-        }
-        finally
-        {
-            server.Dispose();
-        }
-    }
-
-    [Test]
-    public async Task StandardMonitorRejectsPausedAndDeletedSource()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var monitors = entMan.System<SurveillanceCameraMonitorSystem>();
-                var monitor = entMan.SpawnEntity("CMUTestSurveillanceMonitor", MapCoordinates.Nullspace);
-                var camera = entMan.SpawnEntity("CMUTestSurveillanceCameraStandard", MapCoordinates.Nullspace);
-
-                try
-                {
-                    entMan.System<MetaDataSystem>().SetEntityPaused(camera, true);
-                    Assert.That(monitors.TrySelectCamera((monitor,
-                            entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor)), camera),
-                        Is.False);
-
-                    entMan.System<MetaDataSystem>().SetEntityPaused(camera, false);
-                    entMan.DeleteEntity(camera);
-                    Assert.That(monitors.TrySelectCamera((monitor,
-                            entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor)), camera),
-                        Is.False);
-                }
-                finally
-                {
-                    entMan.DeleteEntity(monitor);
-                    if (!entMan.Deleted(camera))
-                        entMan.DeleteEntity(camera);
-                }
-            });
-        }
-        finally
-        {
-            server.Dispose();
-        }
-    }
-
-    [Test]
-    public async Task StandardMonitorRejectsInactiveSource()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var monitors = entMan.System<SurveillanceCameraMonitorSystem>();
-                var cameras = entMan.System<SurveillanceCameraSystem>();
-                var monitor = entMan.SpawnEntity("CMUTestSurveillanceMonitor", MapCoordinates.Nullspace);
-                var camera = entMan.SpawnEntity("CMUTestSurveillanceCameraStandard", MapCoordinates.Nullspace);
-
-                try
-                {
-                    cameras.SetActive(camera, false);
-
-                    Assert.That(monitors.TrySelectCamera((monitor,
-                            entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor)), camera),
-                        Is.False);
-                    Assert.That(entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor).ActiveCamera, Is.Null);
-                }
-                finally
-                {
-                    entMan.DeleteEntity(monitor);
-                    entMan.DeleteEntity(camera);
-                }
-            });
-        }
-        finally
-        {
-            server.Dispose();
-        }
-    }
-
-    [Test]
-    public async Task FinalNetworkLossDisconnectsStandardMonitor()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var monitors = entMan.System<SurveillanceCameraMonitorSystem>();
-                var networks = entMan.System<CameraNetworkSystem>();
-                var monitor = entMan.SpawnEntity("CMUTestSurveillanceMonitor", MapCoordinates.Nullspace);
-                var camera = entMan.SpawnEntity("CMUTestSurveillanceCameraStandard", MapCoordinates.Nullspace);
-
-                try
-                {
-                    Assert.That(monitors.TrySelectCamera((monitor,
-                            entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor)), camera),
-                        Is.True);
-
-                    Assert.That(networks.SetReceiverNetworks(monitor, []), Is.True);
-
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor).ActiveCamera,
-                            Is.Null);
-                        Assert.That(entMan.GetComponent<SurveillanceCameraComponent>(camera).ActiveMonitors,
-                            Does.Not.Contain(monitor));
-                    });
-                }
-                finally
-                {
-                    entMan.DeleteEntity(monitor);
-                    entMan.DeleteEntity(camera);
-                }
-            });
-        }
-        finally
-        {
-            server.Dispose();
-        }
-    }
-
-    [Test]
-    public async Task MemberShutdownDisconnectsStandardMonitor()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var monitors = entMan.System<SurveillanceCameraMonitorSystem>();
-                var monitor = entMan.SpawnEntity("CMUTestSurveillanceMonitor", MapCoordinates.Nullspace);
-                var camera = entMan.SpawnEntity("CMUTestSurveillanceCameraStandard", MapCoordinates.Nullspace);
-
-                try
-                {
-                    var monitorComponent = entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor);
-                    Assert.That(monitors.TrySelectCamera((monitor, monitorComponent), camera), Is.True);
-
-                    entMan.RemoveComponent<CameraNetworkMemberComponent>(camera);
-
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(monitorComponent.ActiveCamera, Is.Null);
-                        Assert.That(entMan.GetComponent<SurveillanceCameraComponent>(camera).ActiveMonitors,
-                            Does.Not.Contain(monitor));
-                    });
-                }
-                finally
-                {
-                    entMan.DeleteEntity(monitor);
-                    entMan.DeleteEntity(camera);
-                }
-            });
-        }
-        finally
-        {
-            server.Dispose();
-        }
-    }
-
-    [Test]
-    public async Task StandardMonitorRejectsClickAfterStateCameraLosesAuthorization()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var monitors = entMan.System<SurveillanceCameraMonitorSystem>();
-                var networks = entMan.System<CameraNetworkSystem>();
-                var monitor = entMan.SpawnEntity("CMUTestSurveillanceMonitor", MapCoordinates.Nullspace);
-                var camera = entMan.SpawnEntity("CMUTestSurveillanceCameraStandard", MapCoordinates.Nullspace);
-
-                try
-                {
-                    var monitorComponent = entMan.GetComponent<SurveillanceCameraMonitorComponent>(monitor);
-                    var state = monitors.BuildUiState((monitor, monitorComponent));
-                    Assert.That(state.CameraList.Select(data => data.Camera), Does.Contain(entMan.GetNetEntity(camera)));
-
-                    Assert.That(networks.SetReceiverNetworks(monitor, []), Is.True);
-                    Assert.That(monitors.TrySelectCamera((monitor, monitorComponent), camera), Is.False);
-                    Assert.That(monitorComponent.ActiveCamera, Is.Null);
-                }
-                finally
-                {
-                    entMan.DeleteEntity(monitor);
-                    entMan.DeleteEntity(camera);
-                }
-            });
-        }
-        finally
-        {
-            server.Dispose();
-        }
     }
 
     [Test]
@@ -3256,110 +2172,6 @@ public sealed class CameraNetworkSystemTest
     }
 
     [Test]
-    public async Task OpenCameraSetupAllowsRepeatedNameAndNetworkChanges()
-    {
-        var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
-        try
-        {
-            await LoadPrototypes(server);
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var wires = entMan.System<WiresSystem>();
-                var ui = entMan.System<UserInterfaceSystem>();
-                var mapSystem = entMan.System<SharedMapSystem>();
-                var rmc = entMan.System<RMCCameraSystem>();
-                mapSystem.CreateMap(out var mapId);
-                var grid = mapSystem.CreateGridEntity(mapId);
-                var camera = entMan.SpawnEntity("CMUTestPanelGatedSurveillanceCamera",
-                    new EntityCoordinates(grid, Vector2.Zero));
-                var monitor = entMan.SpawnEntity("CMUMonitorCameraColonyGovforSpy",
-                    new EntityCoordinates(grid, Vector2.One));
-                var user = entMan.SpawnEntity("CMMobHuman", MapCoordinates.Nullspace);
-                var component = entMan.GetComponent<SurveillanceCameraComponent>(camera);
-                var panel = entMan.GetComponent<WiresPanelComponent>(camera);
-                var monitorComponent = entMan.GetComponent<RMCCameraComputerComponent>(monitor);
-
-                try
-                {
-                    Assert.That(wires.TogglePanel(camera, panel, true, user), Is.True);
-
-                    var verbs = new GetVerbsEvent<AlternativeVerb>(user, camera, null, null, true, true, true, []);
-                    entMan.EventBus.RaiseLocalEvent(camera, verbs, true);
-                    verbs.Verbs.Single(verb => verb.Text == Loc.GetString("surveillance-camera-setup")).Act!();
-
-                    entMan.EventBus.RaiseLocalEvent(camera, new SurveillanceCameraSetupSetName("camera-alpha")
-                    {
-                        UiKey = SurveillanceCameraSetupUiKey.Camera,
-                    });
-                    entMan.EventBus.RaiseLocalEvent(camera, new SurveillanceCameraSetupSetNetwork(0)
-                    {
-                        UiKey = SurveillanceCameraSetupUiKey.Camera,
-                    });
-
-                    Assert.That(ui.IsUiOpen(camera, SurveillanceCameraSetupUiKey.Camera, user), Is.True);
-                    Assert.That(ui.TryGetUiState<SurveillanceCameraLogicalNetworkSetupBoundUiState>(
-                        camera, SurveillanceCameraSetupUiKey.Camera, out var state), Is.True);
-                    Assert.That(rmc.TrySelectNetwork((monitor, monitorComponent),
-                        "CMUSurveillanceCameraColonyCMB"), Is.True);
-                    rmc.RebuildComputerCameras(monitor, monitorComponent);
-                    var alphaState = rmc.BuildBuiState((monitor, monitorComponent));
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(component.CameraId, Is.EqualTo("camera-alpha"));
-                        Assert.That(entMan.GetComponent<MetaDataComponent>(camera).EntityName,
-                            Is.EqualTo("camera-alpha"));
-                        Assert.That(component.NameSet, Is.True);
-                        Assert.That(component.NetworkSet, Is.True);
-                        Assert.That(state!.NameDisabled, Is.False);
-                        Assert.That(state.NetworkDisabled, Is.False);
-                        Assert.That(monitorComponent.CameraNames, Does.Contain("camera-alpha"));
-                        Assert.That(alphaState.Map.Grids.SelectMany(gridState => gridState.Markers)
-                            .Single(marker => marker.Camera == entMan.GetNetEntity(camera)).Name,
-                            Is.EqualTo("camera-alpha"));
-                    });
-
-                    entMan.EventBus.RaiseLocalEvent(camera, new SurveillanceCameraSetupSetName("camera-bravo")
-                    {
-                        UiKey = SurveillanceCameraSetupUiKey.Camera,
-                    });
-                    entMan.EventBus.RaiseLocalEvent(camera, new SurveillanceCameraSetupSetNetwork(1)
-                    {
-                        UiKey = SurveillanceCameraSetupUiKey.Camera,
-                    });
-
-                    Assert.That(rmc.TrySelectNetwork((monitor, monitorComponent),
-                        "CMUSurveillanceCameraColonyGOVFOR"), Is.True);
-                    rmc.RebuildComputerCameras(monitor, monitorComponent);
-                    var bravoState = rmc.BuildBuiState((monitor, monitorComponent));
-
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(component.CameraId, Is.EqualTo("camera-bravo"));
-                        Assert.That(entMan.GetComponent<MetaDataComponent>(camera).EntityName,
-                            Is.EqualTo("camera-bravo"));
-                        Assert.That(entMan.GetComponent<CameraNetworkMemberComponent>(camera).Networks,
-                            Is.EquivalentTo(new[] { "CMUSurveillanceCameraColonyGOVFOR" }));
-                        Assert.That(ui.IsUiOpen(camera, SurveillanceCameraSetupUiKey.Camera, user), Is.True);
-                        Assert.That(monitorComponent.CameraNames, Does.Contain("camera-bravo"));
-                        Assert.That(bravoState.Map.Grids.SelectMany(gridState => gridState.Markers)
-                            .Single(marker => marker.Camera == entMan.GetNetEntity(camera)).Name,
-                            Is.EqualTo("camera-bravo"));
-                    });
-                }
-                finally
-                {
-                    entMan.DeleteEntity(user);
-                    entMan.DeleteEntity(monitor);
-                    entMan.DeleteEntity(camera);
-                    entMan.DeleteEntity(grid);
-                }
-            });
-        }
-        finally { server.Dispose(); }
-    }
-
-    [Test]
     public async Task ClosingCameraPanelClosesSetupUiAndRejectsStaleNetworkRequest()
     {
         var (server, _) = await PoolManager.GenerateServer(new PoolSettings(), TestContext.Out);
@@ -3505,8 +2317,6 @@ public sealed class CameraNetworkSystemTest
                         Assert.That(marker.Visible, Is.False);
                         Assert.That(marker.Mobile, Is.True);
                         Assert.That(marker.UpdateInterval, Is.EqualTo(updateInterval));
-                        Assert.That(surveillance.ActiveViewers, Is.Empty);
-                        Assert.That(surveillance.ActiveMonitors, Is.Empty);
                     });
                 }
                 finally
@@ -3707,7 +2517,6 @@ public sealed class CameraNetworkSystemTest
                 var entMan = server.EntMan;
                 var networks = entMan.System<CameraNetworkSystem>();
                 var cameras = entMan.System<SurveillanceCameraSystem>();
-                var rmc = entMan.System<RMCCameraSystem>();
                 var maps = entMan.System<SharedMapSystem>();
                 maps.CreateMap(out var mapId);
                 var grid = maps.CreateGridEntity(mapId).Owner;
@@ -3720,12 +2529,7 @@ public sealed class CameraNetworkSystemTest
                     var member = entMan.GetComponent<CameraNetworkMemberComponent>(camera);
                     networks.SetReceiverNetworks(receiver, member.Networks);
                     cameras.SetActive(camera, true, surveillance);
-                    if (entMan.TryGetComponent(receiver, out RMCCameraComputerComponent? computer))
-                    {
-                        Assert.That(rmc.TrySelectNetwork((receiver, computer), member.Networks.Single()), Is.True);
-                        rmc.RebuildComputerCameras(receiver, computer);
-                        Assert.That(rmc.TrySelectCamera((receiver, computer), camera), Is.True, "powered selection");
-                    }
+                    Assert.That(networks.CanAccess(receiver, camera), Is.True, "powered camera is accessible");
 
                     var wires = entMan.GetComponent<WiresComponent>(camera);
                     var powerWire = wires.WiresList.Single(wire => wire.Action is PowerWireAction);
@@ -3745,9 +2549,7 @@ public sealed class CameraNetworkSystemTest
                     {
                         Assert.That(surveillance.Active, Is.False, "power loss disables camera");
                         Assert.That(inactiveMarker.Status, Is.EqualTo(CameraMapMarkerStatus.Inactive));
-                        if (entMan.TryGetComponent(receiver, out RMCCameraComputerComponent? inactiveComputer))
-                            Assert.That(rmc.TrySelectCamera((receiver, inactiveComputer), camera), Is.False,
-                                "inactive camera cannot be selected");
+                        Assert.That(surveillance.Active, Is.False, "inactive camera cannot be selected");
                     });
 
                     Assert.That(powerAction.Mend(receiver, powerWire), Is.True);
@@ -3762,12 +2564,8 @@ public sealed class CameraNetworkSystemTest
                     {
                         Assert.That(surveillance.Active, Is.True, "restored APC power enables camera");
                         Assert.That(activeMarker.Status, Is.EqualTo(CameraMapMarkerStatus.Active));
-                        if (entMan.TryGetComponent(receiver, out RMCCameraComputerComponent? activeComputer))
-                        {
-                            rmc.RebuildComputerCameras(receiver, activeComputer);
-                            Assert.That(rmc.TrySelectCamera((receiver, activeComputer), camera), Is.True,
-                                "restored camera can be selected");
-                        }
+                        Assert.That(networks.CanAccess(receiver, camera), Is.True,
+                            "restored camera remains accessible");
                     });
                 }
                 finally
@@ -3779,69 +2577,6 @@ public sealed class CameraNetworkSystemTest
             });
         }
         finally { server.Dispose(); }
-    }
-
-    [Test]
-    public async Task SelectedRmcCameraPowerLossClearsFeedAndViewerOverride()
-    {
-        var pair = await PoolManager.GetServerClient(new PoolSettings
-        {
-            Connected = true,
-            Fresh = true,
-            Destructive = true,
-        });
-        var server = pair.Server;
-        try
-        {
-            await server.WaitAssertion(() =>
-            {
-                var entMan = server.EntMan;
-                var networks = entMan.System<CameraNetworkSystem>();
-                var rmc = entMan.System<RMCCameraSystem>();
-                var session = server.PlayerMan.Sessions.Single();
-                var previousAttached = session.AttachedEntity;
-                var computer = entMan.SpawnEntity("RMCMonitorCameraAlmayer", MapCoordinates.Nullspace);
-                var camera = entMan.SpawnEntity("RMCSurveillanceCameraAlmayer", MapCoordinates.Nullspace);
-                var watcher = entMan.SpawnEntity(null, MapCoordinates.Nullspace);
-
-                try
-                {
-                    var console = entMan.GetComponent<RMCCameraComputerComponent>(computer);
-                    var member = entMan.GetComponent<CameraNetworkMemberComponent>(camera);
-                    networks.SetReceiverNetworks(computer, member.Networks);
-                    rmc.RebuildComputerCameras(computer, console);
-                    server.PlayerMan.SetAttachedEntity(session, watcher);
-                    entMan.EventBus.RaiseLocalEvent(computer,
-                        new BoundUIOpenedEvent(RMCCameraUiKey.Key, computer, watcher));
-                    Assert.That(rmc.TrySelectCamera((computer, console), camera), Is.True);
-
-                    var watcherComp = entMan.GetComponent<RMCCameraWatcherComponent>(watcher);
-                    Assert.That(watcherComp.Overrides, Does.Contain(entMan.GetNetEntity(camera)));
-                    Assert.That(session.ViewSubscriptions, Does.Contain(camera));
-
-                    var surveillance = entMan.GetComponent<SurveillanceCameraComponent>(camera);
-                    entMan.System<SurveillanceCameraSystem>().SetActive(camera, false, surveillance);
-                    var powerLost = new PowerChangedEvent(false, 0f);
-                    entMan.EventBus.RaiseLocalEvent(camera, ref powerLost);
-                    networks.Update(0f);
-
-                    Assert.Multiple(() =>
-                    {
-                        Assert.That(console.CurrentCamera, Is.Null);
-                        Assert.That(watcherComp.Overrides, Is.Empty);
-                        Assert.That(session.ViewSubscriptions, Does.Not.Contain(camera));
-                    });
-                }
-                finally
-                {
-                    server.PlayerMan.SetAttachedEntity(session, previousAttached);
-                    entMan.DeleteEntity(computer);
-                    entMan.DeleteEntity(camera);
-                    entMan.DeleteEntity(watcher);
-                }
-            });
-        }
-        finally { await pair.CleanReturnAsync(); }
     }
 
     [Test]
@@ -4783,6 +3518,32 @@ public enum MarkerLifecycleChange : byte
     GridTransfer,
     PowerLoss,
     MarkerRemoval,
+}
+
+[RegisterComponent]
+public sealed partial class CameraSpeechProbeComponent : Component
+{
+    public int Events;
+    public EntityUid? Speaker;
+    public string? Message;
+}
+
+public sealed class CameraSpeechProbeSystem : EntitySystem
+{
+    public override void Initialize()
+    {
+        base.Initialize();
+        SubscribeLocalEvent<CameraSpeechProbeComponent, SurveillanceCameraSpeechSendEvent>(OnSpeech);
+    }
+
+    private void OnSpeech(
+        Entity<CameraSpeechProbeComponent> ent,
+        ref SurveillanceCameraSpeechSendEvent args)
+    {
+        ent.Comp.Events++;
+        ent.Comp.Speaker = args.Speaker;
+        ent.Comp.Message = args.Message;
+    }
 }
 
 [RegisterComponent]

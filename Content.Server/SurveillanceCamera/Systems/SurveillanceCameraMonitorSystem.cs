@@ -9,7 +9,6 @@ using Content.Shared.UserInterface;
 using Robust.Server.GameObjects;
 using Robust.Shared.Configuration;
 using Robust.Shared.Player;
-using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
 namespace Content.Server.SurveillanceCamera;
@@ -22,7 +21,6 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
     [Dependency] private readonly CameraNetworkSystem _cameraNetworks = default!;
     [Dependency] private readonly CameraSessionSystem _cameraSessions = default!;
     [Dependency] private readonly IConfigurationManager _configuration = default!;
-    [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly UserInterfaceSystem _userInterface = default!;
 
@@ -36,13 +34,6 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
         SubscribeLocalEvent<SurveillanceCameraMonitorComponent, AfterActivatableUIOpenEvent>(OnToggleInterface);
         Subs.BuiEvents<SurveillanceCameraMonitorComponent>(SurveillanceCameraMonitorUiKey.Key, subs =>
         {
-            // Compatibility handlers remain during the staged client rollout.
-            subs.Event<SurveillanceCameraRefreshCamerasMessage>(OnRefreshCamerasMessage);
-            subs.Event<SurveillanceCameraRefreshSubnetsMessage>(OnRefreshSubnetsMessage);
-            subs.Event<SurveillanceCameraDisconnectMessage>(OnDisconnectMessage);
-            subs.Event<SurveillanceCameraMonitorSubnetRequestMessage>(OnSubnetRequest);
-            subs.Event<SurveillanceCameraMonitorSwitchMessage>(OnSwitchMessage);
-
             subs.Event<CameraSessionResyncMessage>(OnResyncMessage);
             subs.Event<CameraSessionSelectMessage>(OnSessionSelectMessage);
             subs.Event<CameraSessionSelectNetworkMessage>(OnSessionSelectNetworkMessage);
@@ -103,45 +94,6 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
     {
         if (TryGetSession(uid, component, args.Actor, out var session) && session.Id == args.SessionId)
             SendSnapshot(uid, args.Actor, session);
-    }
-
-    private void OnSubnetRequest(EntityUid uid, SurveillanceCameraMonitorComponent component,
-        SurveillanceCameraMonitorSubnetRequestMessage args)
-    {
-        if (TryGetSession(uid, component, args.Actor, out var session))
-            _cameraSessions.SelectNetwork(session.Id, _cameraNetworks.ResolveNetwork(args.Network));
-    }
-
-    private void OnDisconnectMessage(EntityUid uid, SurveillanceCameraMonitorComponent component,
-        SurveillanceCameraDisconnectMessage args)
-    {
-        if (TryGetSession(uid, component, args.Actor, out var session))
-            _cameraSessions.SelectCamera(session.Id, null);
-    }
-
-    private void OnRefreshCamerasMessage(EntityUid uid, SurveillanceCameraMonitorComponent component,
-        SurveillanceCameraRefreshCamerasMessage args)
-    {
-        if (TryGetSession(uid, component, args.Actor, out var session))
-            SendSnapshot(uid, args.Actor, session);
-    }
-
-    private void OnRefreshSubnetsMessage(EntityUid uid, SurveillanceCameraMonitorComponent component,
-        SurveillanceCameraRefreshSubnetsMessage args)
-    {
-        if (TryGetSession(uid, component, args.Actor, out var session))
-            SendSnapshot(uid, args.Actor, session);
-    }
-
-    private void OnSwitchMessage(EntityUid uid, SurveillanceCameraMonitorComponent component,
-        SurveillanceCameraMonitorSwitchMessage args)
-    {
-        if (TryGetSession(uid, component, args.Actor, out var session)
-            && TryGetEntity(args.Camera, out var camera)
-            && camera is { } cameraUid)
-        {
-            _cameraSessions.SelectCamera(session.Id, cameraUid);
-        }
     }
 
     private void OnPowerChanged(EntityUid uid, SurveillanceCameraMonitorComponent component, ref PowerChangedEvent args)
@@ -214,15 +166,6 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
 
         _cameraSessions.CloseSession(actor.PlayerSession, uid);
         UpdateMonitorVisual(uid);
-    }
-
-    public bool TrySelectCamera(Entity<SurveillanceCameraMonitorComponent> monitor, EntityUid camera)
-    {
-        var selected = false;
-        foreach (var session in _cameraSessions.GetSessions(monitor.Owner))
-            selected |= _cameraSessions.SelectCamera(session.Id, camera);
-
-        return selected || IsSelectable(monitor.Owner, camera);
     }
 
     public void AfterOpenUserInterface(
@@ -385,15 +328,6 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
             RemComp<ActiveSurveillanceCameraMonitorComponent>(uid);
     }
 
-    private bool IsSelectable(EntityUid receiver, EntityUid camera)
-    {
-        return !TerminatingOrDeleted(camera)
-            && !Paused(camera)
-            && _cameraNetworks.CanAccess(receiver, camera)
-            && TryComp(camera, out SurveillanceCameraComponent? source)
-            && source.Active;
-    }
-
     private bool CanUseMonitor(EntityUid monitor, EntityUid actor)
     {
         return !TerminatingOrDeleted(actor)
@@ -403,51 +337,4 @@ public sealed partial class SurveillanceCameraMonitorSystem : EntitySystem
             && _accessReader.IsAllowed(actor, monitor);
     }
 
-    /// <summary>
-    /// Compatibility projection for tests and legacy callers. The live standard
-    /// UI uses the targeted camera-session protocol above.
-    /// </summary>
-    public SurveillanceCameraMonitorUiState BuildUiState(Entity<SurveillanceCameraMonitorComponent> monitor)
-    {
-        var effectiveNetworks = _cameraNetworks.GetEffectiveNetworks(monitor.Owner);
-        var activeNetwork = effectiveNetworks
-            .OrderBy(network => Loc.GetString(_prototypeManager.Index<CameraNetworkPrototype>(network).Name), StringComparer.Ordinal)
-            .ThenBy(network => network.ToString(), StringComparer.Ordinal)
-            .FirstOrDefault();
-        ProtoId<CameraNetworkPrototype>? selected = activeNetwork == default
-            ? (ProtoId<CameraNetworkPrototype>?) null
-            : activeNetwork;
-        var networks = effectiveNetworks
-            .Select(network => new CameraNetworkUiData(
-                network,
-                Loc.GetString(_prototypeManager.Index<CameraNetworkPrototype>(network).Name)))
-            .OrderBy(network => network.Name, StringComparer.Ordinal)
-            .ThenBy(network => network.Id.ToString(), StringComparer.Ordinal)
-            .ToList();
-
-        var cameras = selected is { } selectedNetwork
-            && TryComp(monitor.Owner, out CameraNetworkReceiverComponent? receiver)
-            ? _cameraNetworks.GetAccessibleCameras((monitor.Owner, receiver))
-                .Where(camera => TryComp(camera, out CameraNetworkMemberComponent? member)
-                    && member.Networks.Contains(selectedNetwork))
-                .OrderBy(camera => Name(camera), StringComparer.Ordinal)
-                .ThenBy(camera => camera.Id)
-                .Select(camera => new CameraListUiData(
-                    GetNetEntity(camera),
-                    Name(camera),
-                    TryComp(camera, out SurveillanceCameraComponent? source) && source.Active,
-                    new HashSet<ProtoId<CameraNetworkPrototype>>(Comp<CameraNetworkMemberComponent>(camera).Networks)))
-                .ToList()
-            : [];
-
-        var mapEnabled = _configuration.GetCVar(CCVars.CMUCameraMapEnabled);
-        return new SurveillanceCameraMonitorUiState(
-            default,
-            null,
-            networks,
-            selected,
-            cameras,
-            mapEnabled ? _cameraNetworks.BuildMapState(monitor.Owner) : new CameraMapUiState(default, []),
-            mapEnabled);
-    }
 }

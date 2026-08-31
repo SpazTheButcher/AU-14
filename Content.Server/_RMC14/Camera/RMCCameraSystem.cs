@@ -8,24 +8,17 @@ using Content.Shared.SurveillanceCamera;
 using Robust.Server.GameObjects;
 using Robust.Shared.Configuration;
 using Robust.Shared.Player;
-using Robust.Shared.Prototypes;
-using Robust.Shared.Timing;
 
 namespace Content.Server._RMC14.Camera;
 
 public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
 {
-    private static readonly TimeSpan ViewerValidationInterval = TimeSpan.FromSeconds(0.5);
-
     [Dependency] private CameraNetworkSystem _cameraNetworks = default!;
     [Dependency] private CameraSessionSystem _cameraSessions = default!;
     [Dependency] private IConfigurationManager _configuration = default!;
-    [Dependency] private IPrototypeManager _prototypeManager = default!;
-    [Dependency] private IGameTiming _serverTiming = default!;
     [Dependency] private UserInterfaceSystem _userInterface = default!;
 
     private EntityQuery<ActorComponent> _actorQuery;
-    private TimeSpan _nextViewerValidation;
 
     public override void Initialize()
     {
@@ -33,46 +26,9 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
 
         _actorQuery = GetEntityQuery<ActorComponent>();
 
-        SubscribeLocalEvent<RMCCameraComputerComponent, CameraReceiverChangedEvent>(OnCameraReceiverChanged);
         SubscribeLocalEvent<RMCCameraComputerComponent, CameraSessionChangedEvent>(OnCameraSessionChanged);
         SubscribeLocalEvent<RMCCameraNetworkEditorComponent, ComponentShutdown>(OnCameraEditorShutdown);
-    }
-
-    public override void Update(float frameTime)
-    {
-        base.Update(frameTime);
-
-        if (_serverTiming.CurTime < _nextViewerValidation)
-            return;
-
-        _nextViewerValidation = _serverTiming.CurTime + ViewerValidationInterval;
-        var query = EntityQueryEnumerator<RMCCameraComputerComponent>();
-        while (query.MoveNext(out var uid, out var computer))
-        {
-            foreach (var watcher in computer.Watchers.ToArray())
-            {
-                if (!CanUseComputer((uid, computer), watcher))
-                    RemoveComputerWatcher((uid, computer), watcher);
-            }
-        }
-    }
-
-    private void OnCameraReceiverChanged(
-        Entity<RMCCameraComputerComponent> ent,
-        ref CameraReceiverChangedEvent args)
-    {
-        var old = ent.Comp.CurrentCamera;
-        RebuildComputerCameras(ent.Owner, ent.Comp);
-
-        if (old is { } camera && !CanSelectCamera(ent, camera))
-        {
-            ent.Comp.CurrentCamera = null;
-            Refresh(ent, camera);
-            return;
-        }
-
-        Dirty(ent);
-        UpdateUserInterface(ent);
+        SubscribeLocalEvent<RMCCameraComponent, ComponentShutdown>(OnEditorCameraShutdown);
     }
 
     private void OnCameraSessionChanged(
@@ -87,100 +43,6 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
         }
 
         SendSessionDelta(computer, args.Actor, session);
-    }
-
-    public override void RebuildComputerCameras(EntityUid computerUid, RMCCameraComputerComponent? computer = null)
-    {
-        if (!Resolve(computerUid, ref computer, false)
-            || !TryComp(computerUid, out CameraNetworkReceiverComponent? receiver))
-        {
-            return;
-        }
-
-        EnsureActiveNetwork((computerUid, computer), BuildAvailableNetworks(computerUid));
-
-        var effectiveNetworks = _cameraNetworks.GetEffectiveNetworks(computerUid);
-        var cameras = _cameraNetworks.GetAccessibleCameras((computerUid, receiver))
-            .Where(camera => TryComp(camera, out RMCCameraComponent? _))
-            .Where(camera => computer.ActiveNetwork is { } selectedNetwork &&
-                             effectiveNetworks.Contains(selectedNetwork) &&
-                             TryComp(camera, out CameraNetworkMemberComponent? member) &&
-                             member.Networks.Contains(selectedNetwork))
-            .Select(camera => (Camera: camera, Component: Comp<RMCCameraComponent>(camera)))
-            .OrderBy(camera => GetCameraName(camera.Camera, camera.Component), StringComparer.Ordinal)
-            .ThenBy(camera => camera.Camera.Id)
-            .ToList();
-
-        computer.CameraIds = cameras.Select(camera => GetNetEntity(camera.Camera)).ToList();
-        computer.CameraNames = cameras.Select(camera => GetCameraName(camera.Camera, camera.Component)).ToList();
-
-        if (computer.CurrentCamera is { } current &&
-            !computer.CameraIds.Contains(GetNetEntity(current)))
-        {
-            computer.CurrentCamera = null;
-        }
-
-        Dirty(computerUid, computer);
-    }
-
-    public RMCCameraBuiState BuildBuiState(Entity<RMCCameraComputerComponent> computer)
-    {
-        var mapEnabled = _configuration.GetCVar(CCVars.CMUCameraMapEnabled);
-        var editorEnabled = _configuration.GetCVar(CCVars.CMUCameraEditorEnabled);
-        var networks = BuildAvailableNetworks(computer.Owner);
-        EnsureActiveNetwork(computer, networks);
-        return new RMCCameraBuiState(
-            mapEnabled
-                ? BuildSelectedMapState(computer.Owner, computer.Comp.ActiveNetwork)
-                : new CameraMapUiState(default, []),
-            networks,
-            computer.Comp.ActiveNetwork,
-            editorEnabled ? BuildEditorState(computer) : null,
-            mapEnabled,
-            editorEnabled);
-    }
-
-    public List<CameraNetworkUiData> BuildAvailableNetworks(EntityUid computer)
-    {
-        if (!TryComp(computer, out CameraNetworkReceiverComponent? receiver))
-            return [];
-
-        var hiddenNetworks = TryComp(computer, out RMCCameraNetworkEditorComponent? editor)
-            ? editor.HiddenSeededNetworks
-            : [];
-        return _cameraNetworks.GetEffectiveNetworks(computer)
-            .Where(network => !hiddenNetworks.Contains(_cameraNetworks.ResolveNetwork(network)))
-            .Select(network => TryResolveNetworkName(computer, _cameraNetworks.ResolveNetwork(network), out var name)
-                ? new CameraNetworkUiData(network, name)
-                : null)
-            .Where(network => network != null)
-            .Select(network => network!)
-            .OrderBy(network => network.Name, StringComparer.Ordinal)
-            .ThenBy(network => network.Id.ToString(), StringComparer.Ordinal)
-            .ToList();
-    }
-
-    public bool TrySelectNetwork(
-        Entity<RMCCameraComputerComponent> computer,
-        ProtoId<CameraNetworkPrototype> network)
-    {
-        if (!BuildAvailableNetworks(computer.Owner).Any(available => available.Id == network))
-            return false;
-
-        var old = computer.Comp.CurrentCamera;
-        computer.Comp.ActiveNetwork = network;
-        RebuildComputerCameras(computer.Owner, computer.Comp);
-        if (old is { } camera && !computer.Comp.CameraIds.Contains(GetNetEntity(camera)))
-        {
-            computer.Comp.CurrentCamera = null;
-            Refresh(computer, old);
-        }
-        else
-        {
-            Dirty(computer);
-            UpdateUserInterface(computer);
-        }
-        return true;
     }
 
     protected override void RefreshRejectedSelection(Entity<RMCCameraComputerComponent> computer)
@@ -198,37 +60,19 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
             && _cameraSessions.SelectCamera(session.Id, camera);
     }
 
-    public override bool TrySelectCamera(Entity<RMCCameraComputerComponent> computer, EntityUid camera)
-    {
-        if (!CanSelectCamera(computer, camera))
-            return false;
-
-        var old = computer.Comp.CurrentCamera;
-        computer.Comp.CurrentCamera = camera;
-        Refresh(computer, old);
-        return true;
-    }
-
     private bool CanSelectCamera(
         Entity<RMCCameraComputerComponent> computer,
         EntityUid camera,
-        EntityUid? activeNetwork = null)
+        EntityUid? activeNetwork)
     {
         return !TerminatingOrDeleted(camera)
                && !Paused(camera)
                && _cameraNetworks.CanAccess(computer.Owner, camera)
                && TryComp(camera, out CameraNetworkMemberComponent? member)
                && (member.SourceKinds & CameraSourceKinds.Rmc) != CameraSourceKinds.None
-               && (activeNetwork is { } selectedNetwork
-                   ? _cameraNetworks.IsMemberOfNetwork(camera, selectedNetwork)
-                   : computer.Comp.ActiveNetwork is { } legacyNetwork && member.Networks.Contains(legacyNetwork))
+               && activeNetwork is { } selectedNetwork
+               && _cameraNetworks.IsMemberOfNetwork(camera, selectedNetwork)
                && (!TryComp(camera, out SurveillanceCameraComponent? surveillance) || surveillance.Active);
-    }
-
-    protected override void Refresh(Entity<RMCCameraComputerComponent> ent, EntityUid? old)
-    {
-        base.Refresh(ent, old);
-        UpdateUserInterface(ent);
     }
 
     private void UpdateUserInterface(Entity<RMCCameraComputerComponent> computer)
@@ -241,14 +85,6 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
             if (_userInterface.IsUiOpen(computer.Owner, RMCCameraUiKey.Key, session.Actor))
                 SendSessionDelta(computer, session.Actor, session);
         }
-    }
-
-    protected override void OnNetworkBuiMsg(Entity<RMCCameraComputerComponent> computer, RMCCameraNetworkBuiMsg args)
-    {
-        if (!TryGetSession(computer, args.Actor, out var session))
-            return;
-
-        _cameraSessions.SelectNetwork(session.Id, _cameraNetworks.ResolveNetwork(args.Network));
     }
 
     protected override void OnSessionNetworkBuiMsg(
@@ -269,46 +105,6 @@ public sealed partial class RMCCameraSystem : SharedRMCCameraSystem
     {
         if (TryGetSession(computer, args.Actor, out var session) && session.Id == args.SessionId)
             SendSessionSnapshot(computer, args.Actor, session);
-    }
-
-    private void EnsureActiveNetwork(
-        Entity<RMCCameraComputerComponent> computer,
-        List<CameraNetworkUiData> networks)
-    {
-        if (computer.Comp.ActiveNetwork is { } active && networks.Any(network => network.Id == active))
-            return;
-
-        if (networks.Count == 0)
-            computer.Comp.ActiveNetwork = default;
-        else
-            computer.Comp.ActiveNetwork = networks[0].Id;
-        Dirty(computer);
-    }
-
-    private CameraMapUiState BuildSelectedMapState(
-        EntityUid computer,
-        ProtoId<CameraNetworkPrototype>? activeNetwork)
-    {
-        var map = _cameraNetworks.BuildMapState(computer);
-        if (activeNetwork is not { } selectedNetwork)
-            return new CameraMapUiState(map.ConsoleGrid, []);
-
-        if (!_cameraNetworks.GetEffectiveNetworks(computer).Contains(selectedNetwork))
-            return new CameraMapUiState(map.ConsoleGrid, []);
-
-        var grids = map.Grids
-            .Select(grid => new CameraMapGridUiData(
-                grid.Grid,
-                grid.Name,
-                grid.Markers
-                    .Where(marker => TryGetEntity(marker.Camera, out var camera) &&
-                                     TryComp(camera, out CameraNetworkMemberComponent? member) &&
-                                     member.Networks.Contains(selectedNetwork))
-                    .ToList()))
-            .Where(grid => grid.Markers.Count > 0)
-            .ToList();
-
-        return new CameraMapUiState(map.ConsoleGrid, grids);
     }
 
     private List<EntityUid> GetVisibleNetworkEntities(EntityUid computer)

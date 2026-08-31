@@ -1,6 +1,3 @@
-using Content.Shared.Camera;
-using Content.Shared.SurveillanceCamera;
-using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared._RMC14.Camera;
@@ -9,23 +6,6 @@ namespace Content.Shared._RMC14.Camera;
 public enum RMCCameraUiKey
 {
     Key,
-}
-
-[Serializable, NetSerializable]
-public sealed class RMCCameraBuiState(
-    CameraMapUiState map,
-    List<CameraNetworkUiData>? networks = null,
-    ProtoId<CameraNetworkPrototype>? activeNetwork = null,
-    RMCCameraNetworkEditorUiState? editor = null,
-    bool mapEnabled = false,
-    bool editorEnabled = false) : BoundUserInterfaceState
-{
-    public CameraMapUiState Map { get; } = map;
-    public List<CameraNetworkUiData> Networks { get; } = networks ?? [];
-    public ProtoId<CameraNetworkPrototype>? ActiveNetwork { get; } = activeNetwork;
-    public RMCCameraNetworkEditorUiState Editor { get; } = editor ?? new(0, [], []);
-    public bool MapEnabled { get; } = mapEnabled;
-    public bool EditorEnabled { get; } = editorEnabled;
 }
 
 [Serializable, NetSerializable]
@@ -42,12 +22,6 @@ public sealed class RMCCameraNextBuiMsg : BoundUserInterfaceMessage;
 
 [Serializable, NetSerializable]
 public sealed class RMCCameraRefreshSubnetsBuiMsg : BoundUserInterfaceMessage;
-
-[Serializable, NetSerializable]
-public sealed class RMCCameraNetworkBuiMsg(ProtoId<CameraNetworkPrototype> network) : BoundUserInterfaceMessage
-{
-    public ProtoId<CameraNetworkPrototype> Network { get; } = network;
-}
 
 [Serializable, NetSerializable]
 public sealed class RMCCameraSessionNetworkBuiMsg(NetEntity network) : BoundUserInterfaceMessage

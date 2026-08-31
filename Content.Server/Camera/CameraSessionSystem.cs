@@ -183,6 +183,23 @@ public sealed class CameraSessionSystem : EntitySystem
         return ids.Select(id => _sessions[id]).ToArray();
     }
 
+    public IReadOnlyCollection<CameraViewerSession> GetSessionsForCamera(EntityUid camera)
+    {
+        if (!_sessionsBySelectedCamera.TryGetValue(camera, out var ids))
+            return Array.Empty<CameraViewerSession>();
+
+        return ids.Select(id => _sessions.GetValueOrDefault(id))
+            .Where(session => session is { Shadow: false })
+            .Cast<CameraViewerSession>()
+            .ToArray();
+    }
+
+    public bool HasActiveViewers(EntityUid camera)
+    {
+        return _sessionsBySelectedCamera.TryGetValue(camera, out var ids)
+            && ids.Any(id => _sessions.GetValueOrDefault(id) is { Shadow: false });
+    }
+
     public bool HasActiveSelection(EntityUid receiver)
     {
         return _sessionsByReceiver.TryGetValue(receiver, out var ids)
@@ -285,11 +302,12 @@ public sealed class CameraSessionSystem : EntitySystem
         if (session.SelectedCamera == camera)
             return;
 
-        if (session.SelectedCamera is { } previous)
+        var previous = session.SelectedCamera;
+        if (previous is { } previousCamera)
         {
-            RemoveIndex(_sessionsBySelectedCamera, previous, session.Id);
+            RemoveIndex(_sessionsBySelectedCamera, previousCamera, session.Id);
             if (!session.Shadow)
-                _viewSubscriber.RemoveViewSubscriber(previous, session.Viewer);
+                _viewSubscriber.RemoveViewSubscriber(previousCamera, session.Viewer);
         }
 
         session.SelectedCamera = camera;
@@ -297,6 +315,7 @@ public sealed class CameraSessionSystem : EntitySystem
 
         if (camera is not { } selected)
         {
+            RaiseSelectionChanged(previous, null);
             if (notify)
                 RaiseSessionChanged(session);
             return;
@@ -305,8 +324,24 @@ public sealed class CameraSessionSystem : EntitySystem
         AddIndex(_sessionsBySelectedCamera, selected, session.Id);
         if (!session.Shadow)
             _viewSubscriber.AddViewSubscriber(selected, session.Viewer);
+        RaiseSelectionChanged(previous, selected);
         if (notify)
             RaiseSessionChanged(session);
+    }
+
+    private void RaiseSelectionChanged(EntityUid? previous, EntityUid? selected)
+    {
+        if (previous is { } oldCamera)
+        {
+            var oldEvent = new CameraSessionSelectionChangedEvent();
+            RaiseLocalEvent(oldCamera, ref oldEvent);
+        }
+
+        if (selected is { } newCamera && selected != previous)
+        {
+            var newEvent = new CameraSessionSelectionChangedEvent();
+            RaiseLocalEvent(newCamera, ref newEvent);
+        }
     }
 
     private void OnCameraDeactivated(SurveillanceCameraDeactivateEvent args)
@@ -419,6 +454,9 @@ public sealed class CameraSessionSystem : EntitySystem
             index.Remove(key);
     }
 }
+
+[ByRefEvent]
+public record struct CameraSessionSelectionChangedEvent;
 
 public sealed class CameraViewerSession(
     uint id,

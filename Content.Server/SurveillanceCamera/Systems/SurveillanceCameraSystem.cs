@@ -17,8 +17,8 @@ public sealed partial class SurveillanceCameraSystem : EntitySystem
 {
     [Dependency] private IPrototypeManager _prototypeManager = default!;
     [Dependency] private ActionBlockerSystem _actionBlocker = default!;
-    [Dependency] private ViewSubscriberSystem _viewSubscriberSystem = default!;
     [Dependency] private CameraNetworkSystem _cameraNetworks = default!;
+    [Dependency] private CameraSessionSystem _cameraSessions = default!;
     [Dependency] private UserInterfaceSystem _userInterface = default!;
     [Dependency] private SharedAppearanceSystem _appearance = default!;
     [Dependency] private WiresSystem _wires = default!;
@@ -62,6 +62,7 @@ public sealed partial class SurveillanceCameraSystem : EntitySystem
         SubscribeLocalEvent<SurveillanceCameraComponent, SurveillanceCameraSetupSetNetwork>(OnSetNetwork);
         SubscribeLocalEvent<SurveillanceCameraComponent, GetVerbsEvent<AlternativeVerb>>(AddVerbs);
         SubscribeLocalEvent<SurveillanceCameraComponent, PanelChangedEvent>(OnPanelChanged);
+        SubscribeLocalEvent<SurveillanceCameraComponent, CameraSessionSelectionChangedEvent>(OnSessionSelectionChanged);
 
         SubscribeLocalEvent<SurveillanceCameraComponent, EmpPulseEvent>(OnEmpPulse);
         SubscribeLocalEvent<SurveillanceCameraComponent, EmpDisabledRemoved>(OnEmpDisabledRemoved);
@@ -248,16 +249,7 @@ public sealed partial class SurveillanceCameraSystem : EntitySystem
 
         var ev = new SurveillanceCameraDeactivateEvent(camera);
 
-        RemoveActiveViewers(camera, new(component.ActiveViewers), null, component);
         component.Active = false;
-
-        // Send a targetted event to all monitors.
-        foreach (var monitor in component.ActiveMonitors)
-        {
-            RaiseLocalEvent(monitor, ev, true);
-        }
-
-        component.ActiveMonitors.Clear();
 
         // Send a local event that's broadcasted everywhere afterwards.
         RaiseLocalEvent(ev);
@@ -288,108 +280,6 @@ public sealed partial class SurveillanceCameraSystem : EntitySystem
         UpdateVisuals(camera, component);
     }
 
-    public void AddActiveViewer(EntityUid camera, EntityUid player, EntityUid? monitor = null, SurveillanceCameraComponent? component = null, ActorComponent? actor = null)
-    {
-        if (!Resolve(camera, ref component)
-            || !component.Active
-            || !Resolve(player, ref actor))
-        {
-            return;
-        }
-
-        _viewSubscriberSystem.AddViewSubscriber(camera, actor.PlayerSession);
-        component.ActiveViewers.Add(player);
-
-        if (monitor != null)
-        {
-            component.ActiveMonitors.Add(monitor.Value);
-        }
-
-        UpdateVisuals(camera, component);
-    }
-
-    public void AddActiveViewers(EntityUid camera, HashSet<EntityUid> players, EntityUid? monitor = null, SurveillanceCameraComponent? component = null)
-    {
-        if (!Resolve(camera, ref component) || !component.Active)
-        {
-            return;
-        }
-
-        foreach (var player in players)
-        {
-            AddActiveViewer(camera, player, monitor, component);
-        }
-
-        // Add monitor without viewers
-        if (players.Count == 0 && monitor != null)
-        {
-            component.ActiveMonitors.Add(monitor.Value);
-            UpdateVisuals(camera, component);
-        }
-    }
-
-    // Switch the set of active viewers from one camera to another.
-    public void SwitchActiveViewers(EntityUid oldCamera, EntityUid newCamera, HashSet<EntityUid> players, EntityUid? monitor = null, SurveillanceCameraComponent? oldCameraComponent = null, SurveillanceCameraComponent? newCameraComponent = null)
-    {
-        if (!Resolve(oldCamera, ref oldCameraComponent)
-            || !Resolve(newCamera, ref newCameraComponent)
-            || !oldCameraComponent.Active
-            || !newCameraComponent.Active)
-        {
-            return;
-        }
-
-        if (monitor != null)
-        {
-            oldCameraComponent.ActiveMonitors.Remove(monitor.Value);
-            newCameraComponent.ActiveMonitors.Add(monitor.Value);
-        }
-
-        foreach (var player in players)
-        {
-            RemoveActiveViewer(oldCamera, player, null, oldCameraComponent);
-            AddActiveViewer(newCamera, player, null, newCameraComponent);
-        }
-    }
-
-    public void RemoveActiveViewer(EntityUid camera, EntityUid player, EntityUid? monitor = null, SurveillanceCameraComponent? component = null, ActorComponent? actor = null)
-    {
-        if (!Resolve(camera, ref component))
-            return;
-
-        if (Resolve(player, ref actor))
-            _viewSubscriberSystem.RemoveViewSubscriber(camera, actor.PlayerSession);
-
-        component.ActiveViewers.Remove(player);
-
-        if (monitor != null)
-        {
-            component.ActiveMonitors.Remove(monitor.Value);
-        }
-
-        UpdateVisuals(camera, component);
-    }
-
-    public void RemoveActiveViewers(EntityUid camera, HashSet<EntityUid> players, EntityUid? monitor = null, SurveillanceCameraComponent? component = null)
-    {
-        if (!Resolve(camera, ref component))
-        {
-            return;
-        }
-
-        foreach (var player in players)
-        {
-            RemoveActiveViewer(camera, player, monitor, component);
-        }
-
-        // Even if not removing any viewers, remove the monitor
-        if (players.Count == 0 && monitor != null)
-        {
-            component.ActiveMonitors.Remove(monitor.Value);
-            UpdateVisuals(camera, component);
-        }
-    }
-
     private void UpdateVisuals(EntityUid uid, SurveillanceCameraComponent? component = null, AppearanceComponent? appearance = null)
     {
         // Don't log missing, because otherwise tests fail.
@@ -405,12 +295,19 @@ public sealed partial class SurveillanceCameraSystem : EntitySystem
             key = SurveillanceCameraVisuals.Active;
         }
 
-        if (component.ActiveViewers.Count > 0 || component.ActiveMonitors.Count > 0)
+        if (_cameraSessions.HasActiveViewers(uid))
         {
             key = SurveillanceCameraVisuals.InUse;
         }
 
         _appearance.SetData(uid, SurveillanceCameraVisualsKey.Key, key, appearance);
+    }
+
+    private void OnSessionSelectionChanged(
+        Entity<SurveillanceCameraComponent> camera,
+        ref CameraSessionSelectionChangedEvent args)
+    {
+        UpdateVisuals(camera.Owner, camera.Comp);
     }
 
     private void OnEmpPulse(EntityUid uid, SurveillanceCameraComponent component, ref EmpPulseEvent args)

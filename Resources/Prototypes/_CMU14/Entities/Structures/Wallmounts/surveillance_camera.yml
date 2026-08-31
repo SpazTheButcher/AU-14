@@ -24,7 +24,6 @@
     - CMUSurveillanceCameraColonyGOVFOR
     - CMUSurveillanceCameraColonyWEYU
   - type: RMCCamera
-    id: CMUSurveillanceCameraColonyGOVFOR
   - type: CameraMapMarker
   - type: CameraNetworkMember
     networks: [CMUSurveillanceCameraColonyGOVFOR]
@@ -51,7 +50,6 @@
     - CMUSurveillanceCameraColonyGOVFOR
     - CMUSurveillanceCameraColonyWEYU
   - type: RMCCamera
-    id: CMUSurveillanceCameraColonyWEYU
   - type: CameraMapMarker
   - type: CameraNetworkMember
     networks: [CMUSurveillanceCameraColonyWEYU]
@@ -78,7 +76,6 @@
     - CMUSurveillanceCameraColonyGOVFOR
     - CMUSurveillanceCameraColonyWEYU
   - type: RMCCamera
-    id: CMUSurveillanceCameraColonyCMB
   - type: CameraMapMarker
   - type: CameraNetworkMember
     networks: [CMUSurveillanceCameraColonyCMB]
@@ -94,8 +91,6 @@
   - type: Transform
     anchored: true
   - type: RMCCameraComputer
-    protoIds:
-    - CMUSurveillanceCameraColonyGOVFOR
   - type: CameraNetworkReceiver
     networks: [CMUSurveillanceCameraColonyGOVFOR]
     supportedSources: Rmc
@@ -110,8 +105,6 @@
   - type: Transform
     anchored: true
   - type: RMCCameraComputer
-    protoIds:
-    - CMUSurveillanceCameraColonyWEYU
   - type: CameraNetworkReceiver
     networks: [CMUSurveillanceCameraColonyWEYU]
     supportedSources: Rmc
@@ -126,9 +119,6 @@
   - type: Transform
     anchored: true
   - type: RMCCameraComputer
-    protoIds:
-    - CMUSurveillanceCameraColonyCMB
-    - CMUSurveillanceCameraColonyWEYU
   - type: CameraNetworkReceiver
     networks: [CMUSurveillanceCameraColonyCMB, CMUSurveillanceCameraColonyWEYU]
     supportedSources: Rmc
@@ -143,9 +133,6 @@
   - type: Transform
     anchored: true
   - type: RMCCameraComputer
-    protoIds:
-    - CMUSurveillanceCameraColonyCMB
-    - CMUSurveillanceCameraColonyGOVFOR
   - type: CameraNetworkReceiver
     networks: [CMUSurveillanceCameraColonyCMB, CMUSurveillanceCameraColonyGOVFOR]
     supportedSources: Rmc
@@ -160,8 +147,6 @@
   - type: Transform
     anchored: true
   - type: RMCCameraComputer
-    protoIds:
-    - CMUSurveillanceCameraColonyCMB
   - type: CameraNetworkReceiver
     networks: [CMUSurveillanceCameraColonyCMB]
     supportedSources: Rmc

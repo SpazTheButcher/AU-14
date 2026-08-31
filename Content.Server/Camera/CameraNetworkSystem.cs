@@ -27,8 +27,6 @@ public sealed class CameraNetworkSystem : EntitySystem
     private readonly Dictionary<ProtoId<CameraNetworkPrototype>, EntityUid> _seedNetworks = [];
     private readonly Dictionary<EntityUid, EntityUid> _pendingMarkerReceivers = [];
     private readonly Dictionary<EntityUid, TimeSpan> _mobileMarkerUpdates = [];
-    private readonly HashSet<EntityUid> _legacyMembers = [];
-    private readonly HashSet<EntityUid> _legacyReceivers = [];
 
     public ulong AuthorizationRevision { get; private set; }
     public ulong DirectoryRevision { get; private set; }
@@ -44,11 +42,6 @@ public sealed class CameraNetworkSystem : EntitySystem
         SubscribeLocalEvent<CameraNetworkReceiverComponent, ComponentShutdown>(OnReceiverShutdown);
         SubscribeLocalEvent<CameraNetworkReceiverComponent, CameraNetworkGrantRequestEvent>(OnGrantRequest);
         SubscribeLocalEvent<CameraNetworkIdentityComponent, ComponentShutdown>(OnNetworkShutdown);
-        SubscribeLocalEvent<RMCCameraComponent, RMCLegacyCameraMapInitEvent>(OnLegacyCameraMapInit);
-        SubscribeLocalEvent<RMCCameraComputerComponent, RMCLegacyCameraComputerMapInitEvent>(OnLegacyComputerMapInit);
-        SubscribeLocalEvent<RMCCameraComponent, RMCLegacyCameraIdChangedEvent>(OnLegacyCameraIdChanged);
-        SubscribeLocalEvent<RMCCameraComponent, RMCLegacyCameraRemovedEvent>(OnLegacyCameraRemoved);
-        SubscribeLocalEvent<RMCCameraComputerComponent, RMCLegacyCameraComputerRemovedEvent>(OnLegacyComputerRemoved);
         SubscribeLocalEvent<CameraMapMarkerComponent, ComponentStartup>(OnMarkerStartup);
         SubscribeLocalEvent<CameraMapMarkerComponent, ComponentShutdown>(OnMarkerShutdown);
         SubscribeLocalEvent<CameraMapMarkerComponent, MoveEvent>(OnMarkerMove);
@@ -105,8 +98,6 @@ public sealed class CameraNetworkSystem : EntitySystem
         // other round-cleanup subscribers cannot manufacture duplicate identities.
         _pendingMarkerReceivers.Clear();
         _mobileMarkerUpdates.Clear();
-        _legacyMembers.Clear();
-        _legacyReceivers.Clear();
         AuthorizationRevision = 0;
         DirectoryRevision = 0;
         MarkerRevision = 0;
@@ -118,74 +109,6 @@ public sealed class CameraNetworkSystem : EntitySystem
             GrantNetwork(ent.Owner, args.Network, args.Source);
         else
             RevokeNetwork(ent.Owner, args.Network, args.Source);
-    }
-
-    private void OnLegacyCameraMapInit(Entity<RMCCameraComponent> ent, ref RMCLegacyCameraMapInitEvent args)
-    {
-        if (HasComp<CameraNetworkMemberComponent>(ent))
-            return;
-
-        var member = EnsureComp<CameraNetworkMemberComponent>(ent);
-        member.SourceKinds = CameraSourceKinds.Rmc;
-        SetMemberNetworks(ent, ValidateLegacyNetworks(ent.Owner, ent.Comp.Id));
-        _legacyMembers.Add(ent.Owner);
-    }
-
-    private void OnLegacyComputerMapInit(Entity<RMCCameraComputerComponent> ent, ref RMCLegacyCameraComputerMapInitEvent args)
-    {
-        if (HasComp<CameraNetworkReceiverComponent>(ent))
-            return;
-
-        var receiver = EnsureComp<CameraNetworkReceiverComponent>(ent);
-        receiver.SupportedSources = CameraSourceKinds.Rmc;
-        SetReceiverNetworks(ent, ValidateLegacyNetworks(ent.Owner, ent.Comp.ProtoIds));
-        _legacyReceivers.Add(ent.Owner);
-    }
-
-    private void OnLegacyCameraIdChanged(Entity<RMCCameraComponent> ent, ref RMCLegacyCameraIdChangedEvent args)
-    {
-        if (!_legacyMembers.Contains(ent.Owner) || !TryComp(ent, out CameraNetworkMemberComponent? member))
-            return;
-
-        SetMemberNetworks(ent, ValidateLegacyNetworks(ent.Owner, args.NewId));
-    }
-
-    private void OnLegacyCameraRemoved(Entity<RMCCameraComponent> ent, ref RMCLegacyCameraRemovedEvent args)
-    {
-        if (_legacyMembers.Remove(ent.Owner))
-            RemCompDeferred<CameraNetworkMemberComponent>(ent.Owner);
-    }
-
-    private void OnLegacyComputerRemoved(
-        Entity<RMCCameraComputerComponent> ent,
-        ref RMCLegacyCameraComputerRemovedEvent args)
-    {
-        if (_legacyReceivers.Remove(ent.Owner))
-            RemCompDeferred<CameraNetworkReceiverComponent>(ent.Owner);
-    }
-
-    private HashSet<ProtoId<CameraNetworkPrototype>> ValidateLegacyNetworks(
-        EntityUid entity,
-        IEnumerable<EntProtoId> legacyIds)
-    {
-        var networks = new HashSet<ProtoId<CameraNetworkPrototype>>();
-        foreach (var legacyId in legacyIds)
-        {
-            if (_prototypeManager.HasIndex<CameraNetworkPrototype>(legacyId))
-            {
-                networks.Add(new ProtoId<CameraNetworkPrototype>(legacyId.Id));
-                continue;
-            }
-
-            Log.Warning($"RMC camera prototype '{MetaData(entity).EntityPrototype?.ID ?? "unknown"}' has invalid legacy camera network '{legacyId}'.");
-        }
-
-        return networks;
-    }
-
-    private HashSet<ProtoId<CameraNetworkPrototype>> ValidateLegacyNetworks(EntityUid entity, EntProtoId? legacyId)
-    {
-        return legacyId == null ? [] : ValidateLegacyNetworks(entity, [legacyId.Value]);
     }
 
     private void OnMarkerStartup(Entity<CameraMapMarkerComponent> ent, ref ComponentStartup args)
@@ -248,8 +171,6 @@ public sealed class CameraNetworkSystem : EntitySystem
     private void OnEntityTerminating(ref EntityTerminatingEvent args)
     {
         var entity = args.Entity.Owner;
-        _legacyMembers.Remove(entity);
-        _legacyReceivers.Remove(entity);
         _pendingMarkerReceivers.Remove(entity);
         CleanupSourceGrants(entity);
 

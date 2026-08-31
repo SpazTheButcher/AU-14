@@ -38,8 +38,6 @@
       enum.RMCCameraUiKey.Key:
         type: RMCCameraBui
   - type: RMCCameraComputer
-    protoIds:
-    - RMCTelevision
     title: rmc-television-title
   - type: CameraNetworkReceiver
     networks: [RMCTelevision]
@@ -97,8 +95,6 @@
       enum.RMCCameraUiKey.Key:
         type: RMCCameraBui
   - type: RMCCameraComputer
-    protoIds:
-    - RMCTelevision
     title: rmc-television-title
   - type: CameraNetworkReceiver
     networks: [RMCTelevision]

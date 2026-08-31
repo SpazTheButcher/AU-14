@@ -32,7 +32,6 @@
   - type: ActiveListener
     range: 10
   - type: RMCCamera
-    id: RMCTelevision
     rename: false
   - type: CameraNetworkMember
     networks: [RMCTelevision]
